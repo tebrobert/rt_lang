@@ -51,47 +51,13 @@ class Flatmap:
         return f'Flatmap(lambda ..., {self.fa})'
     def runnable(self): return True
 
-'''
-def compile_v1(typed, lamb_arg_stack=[]):
-    def dev(*args):
-        #return
-        list(map(lambda s: print(f'dev {s}'), args))
-        print('\n')
-
-    if type(typed) is Typed_Idf:
-        tidf = typed
-        if tidf.s == 'input':
-            return Input()
-        if tidf.s == 'print':
-            return CallableShowableLambda_1(lambda s: Print(s), 'lambda s: Print(s)')
-        if tidf.s == 'flatmap':
-            return CallableShowableLambda_1(lambda a_fb: CallableShowableLambda_1(lambda fa: Flatmap(a_fb, fa), f'lambda fa: Flatmap({a_fb}, fa)'), 'lambda a_fb: lambda fa: Flatmap(a_fb, fa)')
-       #if lamb_arg_stack is not [] and tidf.s == lamb_arg_stack[0]:
-        if lamb_arg_stack is not [] and tidf.s in lamb_arg_stack:
-            return Arg()
-        raise CompileErr(f"Unexpected identifier {tidf}")
-
-    if type(typed) is Typed_Call_1:
-        tcall = typed
-        # NO IDEA HOW TO DO IT RIGHT
-        compiled_f = compile(tcall.typed_f, lamb_arg_stack=lamb_arg_stack)
-        compiled_x = compile(tcall.typed_x, lamb_arg_stack=lamb_arg_stack)
-        if callable(compiled_f) and type(compiled_x) is not Arg:
-            dev('br 1', tcall, compiled_f, compiled_x)
-            return compiled_f(compiled_x)
-        if callable(compiled_f) and type(compiled_x) is Arg:
-            return compiled_f
-        raise CompileErr(f"Can't compile {typed}")
-        
-    
-    if type(typed) is Typed_Lambda_1:
-        tlamb = typed
-        return compile(tlamb.typed_res, [tlamb.tidf_x.s]+lamb_arg_stack)
-    
-    raise CompileErr(f"Unexpected typed expression {typed}")
-'''
-
 def show(typed, lamb_arg_stack=[]):
+    if type(typed) is Typed_Lit:
+        tlit = typed
+        if tlit.typ == T_Str:
+            return f"\"{tlit.s}\""
+        raise CompileErr(f"Unexpected literal `{tlit}`")
+
     if type(typed) is Typed_Idf:
         tidf = typed
 

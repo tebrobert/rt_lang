@@ -1,4 +1,4 @@
-x <- input
-y <- input
-print(x)
-print(y)
+print("Hey! What is your name?")
+name <- input
+print("Welcome, ...")
+print(name)

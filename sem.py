@@ -5,6 +5,20 @@ class SemErr(ValueError):
     def __init__(self, msg):
         self.msg = f"SemErr: {msg}"
 
+class Typed_Lit:
+    def __init__(self, s, typ):
+        self.s = s
+        self.typ = typ
+
+    def __repr__(self, indent=''):
+        return f'{indent}Typed_Lit("{self.s}", {self.typ})'
+
+    def copy_typified(self, new_typ):
+        return self
+    
+    def find_idf_type(self, s):
+        return T_A
+
 class Typed_Idf:
     def __init__(self, s, typ):
         self.s = s
@@ -20,7 +34,6 @@ class Typed_Idf:
         if self.s == s:
             return self.typ 
         return T_A
-
 
 class Typed_Call_1:
     def __init__(self, typed_f, typed_x, typ):
@@ -68,6 +81,9 @@ class Typed_Lambda_1:
 
 def sem_rec(expr):
     type_expr = type(expr)
+    
+    if type_expr is Expr_Lit_Str:
+        return Typed_Lit(expr.s, T_Str)
     
     if type_expr is Expr_Idf:
         return Typed_Idf(expr.s,

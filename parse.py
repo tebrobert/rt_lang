@@ -4,38 +4,45 @@ class ParseErr(ValueError):
     def __init__(self, msg):
         self.msg = f"ParseErr: {msg}"
 
+class Expr_Lit_Str:
+    def __init__(self, s):
+        self.s = s
+    def __repr__(self, indent=''):
+        return f'{indent}Expr_Lit_Str("{self.s}")'
+
 class Expr_Idf:
     def __init__(self, s):
         self.s = s
-
     def __repr__(self, indent=''):
         return f'{indent}Expr_Idf("{self.s}")'
-
 
 class Expr_Call_1:
     def __init__(self, expr_f, expr_x):
         self.expr_f = expr_f
         self.expr_x = expr_x
-
     def __repr__(self, indent=''):
         shift = indent + 4*' '
         return f'{indent}Expr_Call_1(\n{self.expr_f.__repr__(shift)},\n{self.expr_x.__repr__(shift)}\n{indent})'
-
 
 class Expr_Lambda_1:
     def __init__(self, eidf_x, expr_res):
         if type(eidf_x) is not Expr_Idf:
             raise ParseErr(f'Expr_Idf expected as the first arg of Expr_Lambda_1')
-        
         self.eidf_x = eidf_x
         self.expr_res = expr_res
-
     def __repr__(self, indent=''):
         shift = indent + 4*' '
         return f'{indent}Expr_Lambda_1(\n{self.eidf_x.__repr__(shift)},\n{self.expr_res.__repr__(shift)}\n{indent})'
 
-
 def parse(tokens):
+    def parse_lit_str(tokens, i):
+        token = tokens[i]
+
+        if type(token) is not Token_Lit_Str:
+            raise ParseErr(f'Token_Lit_Str expected given {i} {tokens}')
+
+        return Expr_Lit_Str(token.s), i + 1
+        
     def parseIdf(tokens, i):
         token = tokens[i]
 
@@ -85,7 +92,7 @@ def parse(tokens):
         return expr_call_1, k
         
     def parseExpr(tokens, i):
-        for f in [parseLambda1, parseIdf, parseBraced]:
+        for f in [parseLambda1, parseIdf, parseBraced, parse_lit_str]:
             try:
                 expr, j = f(tokens, i)
                 break

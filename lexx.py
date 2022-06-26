@@ -4,6 +4,10 @@ class LexxErr(ValueError):
     def __init__(self, msg):
         self.msg = f"LexxErr: {msg}"
 
+class Token_Lit_Str:
+    def __init__(self, s): self.s = s
+    def __repr__(self): return f'Token_Lit_Str("{self.s}")'
+
 class Token_Idf:
     def __init__(self, s): self.s = s
     def __repr__(self): return f'Token_Idf("{self.s}")'
@@ -57,6 +61,18 @@ def lexx(code):
             else : raise LexxErr(f'Unexpected sequence "={char}"')
 
         elif char == ' ':
+            b += 1
+
+        elif char == '"':
+            b += 1
+            a = b
+            char = code[b]
+            while char != '"':
+                if char == end_of_code:
+                    raise LexxErr(f"No closing `\"` for string literal.")
+                b += 1
+                char = code[b]
+            tokens.append(Token_Lit_Str(code[a:b]))
             b += 1
 
         else: raise LexxErr(f'Unexpected char "{char}"')
