@@ -1,3 +1,9 @@
+from desugar import *
+
+class LexxErr(ValueError):
+    def __init__(self, msg):
+        self.msg = f"LexxErr: {msg}"
+
 class Token_Idf:
     def __init__(self, s): self.s = s
     def __repr__(self): return f'Token_Idf("{self.s}")'
@@ -20,12 +26,12 @@ def lexx(code):
     char = code[b]
 
     while char != end_of_code:
-        if 'a' <= char <= 'z':
+        if 'a' <= char <= 'z' or 'A' <= char <= 'Z' or char == "_":
             a = b
             while True:
                 b += 1
                 char = code[b]
-                if not('a' <= char <= 'z' or '0' <= char <= '9' or char == '_'):
+                if not('a' <= char <= 'z' or 'A' <= char <= 'Z' or '0' <= char <= '9' or char == '_'):
                     break
 
             tokens.append(Token_Idf(code[a:b]))
@@ -48,12 +54,12 @@ def lexx(code):
                 tokens.append(Token_Eq_Gr())
                 b += 2
 
-            else : raise Exception(f'Unexpected sequence "={char}"')
+            else : raise LexxErr(f'Unexpected sequence "={char}"')
 
         elif char == ' ':
             b += 1
 
-        else: raise Exception(f'Unexpected char "{char}"')
+        else: raise LexxErr(f'Unexpected char "{char}"')
 
         char = code[b]
 

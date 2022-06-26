@@ -1,5 +1,8 @@
 from lexx import *
 
+class ParseErr(ValueError):
+    def __init__(self, msg):
+        self.msg = f"ParseErr: {msg}"
 
 class Expr_Idf:
     def __init__(self, s):
@@ -33,10 +36,6 @@ class Expr_Lambda_1:
 
 
 def parse(tokens):
-    class ParseErr(ValueError):
-        def __init__(self, msg):
-            self.msg = msg
-        
     def parseIdf(tokens, i):
         token = tokens[i]
 

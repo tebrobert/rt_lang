@@ -82,7 +82,7 @@ def sem_rec(expr):
         list(map(lambda s: print(f'dev {s}'), args))
         print('\n')
     def wip(s=None):
-        raise Exception(f'work in progress' + ('' if s is None else f' ({s})'))
+        raise SemErr(f'work in progress' + ('' if s is None else f' ({s})'))
     
     if type_expr is Expr_Call_1:
         typed_f = sem_rec(expr.expr_f)
@@ -169,7 +169,10 @@ def sem_rec(expr):
 def sem(expr):
     typed = sem_rec(expr)
     if not (type(typed.typ) is Type_1 and typed.typ.s == "RIO"):
-        raise SemErr(f"The code type should be RIO but {typed.typ} found.")
+        if type(typed.typ) is Unk_0:
+                unk = typed
+                raise SemErr(f"Unexpected identifier {unk.s}")
+        raise SemErr(f"The code type should be RIO[A] but {typed.typ} found.")
     return typed
 
 
