@@ -1,0 +1,104 @@
+def +(x: Int, y: Int): Int
+def +(x: Int, y: Float): Float
+def +(x: Float, y: Int): Float
+def +(x: Float, y: Float): Float
+
+def *(x: Int, y: Int): Int
+def *(x: Int, y: Float): Float
+def *(x: Float, y: Int): Float
+def *(x: Float, y: Float): Float
+
+
+
+
+trait Plus[A, B]:
+    def +(x: A, y: B): A
+trait Multiply[A, B]:
+    def *(x: A, y: B): A
+
+impl Plus[Str, Str]:
+    def +(x, y) = ...
+impl Multiply[Str, Int]:
+    def *(x, y) = ...
+
+impl Plus[Int, Int]:
+    def +(x, y) = ...
+impl Multiply[Int, Int]:
+    def *(x, y) = ...
+
+
+impl Plus[Float, Int]:
+    def +(x, y) = ...
+impl Multiply[Float, Int]:
+    def *(x, y) = ...
+
+
+impl Plus[Int, Float]:
+    def +(x, y): Float = ... ###############
+impl Multiply[Int, Float]:
+    def *(x, y): Float = ... ###############
+
+
+
+
+
+
+
+# String - Arr[Char], Vec20[Char] ?
+# 1. Plus functions
+# 2. Function overloading
+# 3. Operators
+
+
+
+# list access
+
+#1
+[][0]   # RAISE ERROR!      # traditionally, defect, we should rely on a programmer
+
+#2
+[][0]   # None              # the operator always returns Option[A]
+
+#3
+[][0]   # doesn't compile
+xs[i]   # somehow requires the fact 0 <= i < xs.len     # seems too hard to implement
+
+
+
+
+
+# floor division
+
+#1
+1 // 0  # RAISE ERROR!      # traditionally, defect, we should rely on a programmer
+
+#2
+1 // 0  # None              # the operator // always returns Option[Int]
+
+#3
+1 // 0  # doesn't compile
+1 // x  # somehow requires the fact x!=0     # кажется усилия не будут оправданы
+
+#4
+1 // 0  # inf               # values of the Int type are also "inf", "-inf", "nan"
+
+
+
+
+
+[0] * 1_000 ^ 100
+# raise error
+# None
+# doesn't compile
+
+
+
+
+
+
+
+
+
+
+
+
