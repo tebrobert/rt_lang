@@ -36,7 +36,7 @@ def app():
         code = test_code if test_code != () else input('Code: ')
         if test_code != (): print(f"Code: {code}")
         run_code(code)
-    elif len(argv) == 2:
+    elif len(argv) >= 2:
         code_path = argv[1]
         with open(code_path) as f:
             code = f.read()
@@ -56,7 +56,7 @@ Usage:
         )
 
 def dev():
-    return False
+    return "--dev" in argv
 
 def get_test_code():
     return (
