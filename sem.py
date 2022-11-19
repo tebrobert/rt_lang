@@ -51,8 +51,7 @@ def sem_rec(expr):
                 return Typed_Call_1(typed_f, new_typed_x, typed_f.typ.t2)
             
             def concreted(typ_f, typ_x):
-                def solve(typ_f, typ_x):
-                    return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
+                def solve(typ_f, typ_x): return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
 
                 def solve_rec(typ_sub_fx, typ_sub_x, f_x_synchedUnks):
                     typ_f, typ_x, synched_unks = f_x_synchedUnks
@@ -73,20 +72,16 @@ def sem_rec(expr):
                             return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
                     
                     if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Unk_0:
-                        if typ_sub_x.s in f_x_synchedUnks:
-                            raise SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
+                        if typ_sub_x.s in f_x_synchedUnks: raise SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
                         raise SemErr(f"Yet can't call {typ_f} with {typ_x} currentrly matching {typ_sub_fx} and {typ_sub_x}")
                     
-                    if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Type_1:
-                        return solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
+                    if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Type_1: return solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
                     
                     if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Unk_0:
-                        if typ_sub_x.s in f_x_synchedUnks:
-                            raise SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
+                        if typ_sub_x.s in f_x_synchedUnks: raise SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
                         raise SemErr(f"Yet can't call {typ_f} with {typ_x} currentrly matching {typ_sub_fx} and {typ_sub_x}")
                     
-                    if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Type_2:
-                        return solve_rec(typ_sub_fx.t2, typ_sub_x.t2, solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks)))
+                    if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Type_2: return solve_rec(typ_sub_fx.t2, typ_sub_x.t2, solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks)))
                     
                     raise SemErr(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
                 
