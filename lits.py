@@ -10,10 +10,7 @@ builtin_print = "print"
 builtin_flatmap = "flatmap"
 
 class LitError(ValueError):
-    def __init__(self, msg):
-        self.msg = msg
-
-def is_type(o): return type(o) in [Unk_0, Type_0, Type_1, Type_2]
+    def __init__(self, msg): self.msg = msg
 
 class Unk_0: #unknown
     def __init__(self, s):
@@ -55,6 +52,8 @@ class Type_2:
     def copy(self, t1=None, t2=None): return Type_2(self.s, t1 if t1 is not None else self.t1, t2 if t2 is not None else self.t2)
     def has_unk(self): return self.t1.has_unk() or self.t2.has_unk()
     def concrete(self, typ_from, typ_to): return Type_2(self.s, self.t1.concrete(typ_from, typ_to), self.t2.concrete(typ_from, typ_to))
+
+def is_type(o): return type(o) in [Unk_0, Type_0, Type_1, Type_2]
 
 T_Int = Type_0(builtin_Int)
 T_Str = Type_0(builtin_Str)

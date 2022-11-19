@@ -1,6 +1,5 @@
 class DesugarErr(ValueError):
-    def __init__(self, msg):
-        self.msg = f"DesugarErr: {msg}"
+    def __init__(self, msg): self.msg = f"DesugarErr: {msg}"
 
 def desugar(code):
     lines = list(filter(lambda line: line != "", code.split("\n")))

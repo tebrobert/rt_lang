@@ -1,50 +1,31 @@
 from sem import *
 
 class CompileErr(ValueError):
-    def __init__(self, msg):
-        self.msg = f"CompileErr: {msg}"
-
-'''
-class Arg:
-    def __repr__(self):
-        return f'Arg'
-    def runnable(self): return False
-'''
+    def __init__(self, msg): self.msg = f"CompileErr: {msg}"
 
 class CallableShowableLambda_1:
     def __init__(self, f, s):
-        if not callable(f):
-            raise ValueError("f should be callable")
-        if not type(s) is str:
-            raise ValueError("s should be a string")
-        self.s = s
-        self.f = f
-    def __call__(self, arg):
-        return self.f(arg)
-    def __repr__(self):
-        return self.s
+        if not callable(f): raise ValueError("f should be callable")
+        if not type(s) is str: raise ValueError("s should be a string")
+        self.s, self.f = s, f
+    def __call__(self, arg): return self.f(arg)
+    def __repr__(self): return self.s
     def runnable(self): return False
     
 class Input:
-    def __repr__(self):
-        return f'Input'
+    def __repr__(self): return f'Input'
     def runnable(self): return True
 
 class Print:
-    def __init__(self, s):
-        self.s = s
-    def __repr__(self):
-        return f'Print("{self.s}")'
+    def __init__(self, s): self.s = s
+    def __repr__(self): return f'Print("{self.s}")'
     def runnable(self): return True
 
 class Flatmap:
     def __init__(self, a_fb, fa):
-        if not callable(a_fb):
-            raise ValueError("a_fb should be callable")
-        if not fa.runnable():
-            raise ValueError(f"fa should be runnable but it is {fa=}, also {a_fb=}")
-        self.a_fb = a_fb
-        self.fa = fa
+        if not callable(a_fb): raise ValueError("a_fb should be callable")
+        if not fa.runnable(): raise ValueError(f"fa should be runnable but it is {fa=}, also {a_fb=}")
+        self.a_fb, self.fa = a_fb, fa
     def __repr__(self):
         if type(self.a_fb) is CallableShowableLambda_1:
             return f'Flatmap({self.a_fb}, {self.fa})'

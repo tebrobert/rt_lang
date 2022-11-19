@@ -2,111 +2,50 @@ from parse import *
 from lits import *
 
 class SemErr(ValueError):
-    def __init__(self, msg):
-        self.msg = f"SemErr: {msg}"
+    def __init__(self, msg): self.msg = f"SemErr: {msg}"
 
 class Typed_Lit:
-    def __init__(self, s, typ):
-        self.s = s
-        self.typ = typ
-
-    def __repr__(self, indent=''):
-        return f'{indent}Typed_Lit("{self.s}", {self.typ})'
-
-    def copy_typified(self, new_typ):
-        return self
-    
-    def find_idf_type(self, s):
-        return T_A
+    def __init__(self, s, typ): self.s, self.typ = s, typ
+    def __repr__(self, indent=''): return f'{indent}Typed_Lit("{self.s}", {self.typ})'
+    def copy_typified(self, new_typ): return self
+    def find_idf_type(self, s): return T_A
 
 class Typed_Idf:
-    def __init__(self, s, typ):
-        self.s = s
-        self.typ = typ
-
-    def __repr__(self, indent=''):
-        return f'{indent}Typed_Idf("{self.s}", {self.typ})'
-
-    def copy_typified(self, new_typ):
-        return Typed_Idf(self.s, new_typ)
-    
-    def find_idf_type(self, s):
-        if self.s == s:
-            return self.typ 
-        return T_A
-
+    def __init__(self, s, typ): self.s, self.typ = s, typ
+    def __repr__(self, indent=''): return f'{indent}Typed_Idf("{self.s}", {self.typ})'
+    def copy_typified(self, new_typ): return Typed_Idf(self.s, new_typ)
+    def find_idf_type(self, s): return self.typ if self.s == s else T_A
 class Typed_Call_1:
-    def __init__(self, typed_f, typed_x, typ):
-        self.typed_f = typed_f
-        self.typed_x = typed_x
-        self.typ = typ
-
+    def __init__(self, typed_f, typed_x, typ): self.typed_f, self.typed_x, self.typ = typed_f, typed_x, typ
     def __repr__(self, indent=''):
         shift = indent + 4*' '
         return f'{indent}Typed_Call_1(\n{self.typed_f.__repr__(shift)},\n{self.typed_x.__repr__(shift)},\n{self.typ.__repr__(shift)}\n{indent})'
-
-
-    def copy_typified(self, new_typ):
-        return Typed_Call_1(self.typed_f, self.typed_x, new_typ)
-    
+    def copy_typified(self, new_typ): return Typed_Call_1(self.typed_f, self.typed_x, new_typ)
     def find_idf_type(self, s):
         lookup_by_f = self.typed_f.find_idf_type(s)
-        if not type(lookup_by_f) is Unk_0:
-            return lookup_by_f
-        return self.typed_x.find_idf_type(s)
-
-
+        return lookup_by_f if not type(lookup_by_f) is Unk_0 else self.typed_x.find_idf_type(s)
 class Typed_Lambda_1:
     def __init__(self, tidf_x, typed_res, typ=None):
-        if not (type(tidf_x) is Typed_Idf):
-            raise SemErr('Typed_Idf expected as the first arg of Typed_Lambda_1')
-        
-        if not (typ is None or type(typ) is Type_2 and typ.s == builtin_Func):
-            raise SemErr(f'{builtin_Func} or None expected as the typ arg of Typed_Lambda_1')
-        
+        if not (type(tidf_x) is Typed_Idf): raise SemErr('Typed_Idf expected as the first arg of Typed_Lambda_1')
+        if not (typ is None or type(typ) is Type_2 and typ.s == builtin_Func): raise SemErr(f'{builtin_Func} or None expected as the typ arg of Typed_Lambda_1')
         self.tidf_x = tidf_x
         self.typed_res = typed_res
         self.typ = typ if typ is not None else T_Func(tidf_x.typ, typed_res.typ)
-        
     def __repr__(self, indent=''):
         shift = indent + 4*' '
         return f'{indent}Typed_Lambda_1(\n{self.tidf_x.__repr__(shift)},\n{self.typed_res.__repr__(shift)},\n{self.typ.__repr__(shift)}\n{indent})'
-
-    def copy_typified(self, new_typ):
-        return Typed_Lambda_1(self.tidf_x, self.typed_res, new_typ)
-    
-    def find_idf_type(self, s):
-        return self.typed_res.find_idf_type(s)
-
-
+    def copy_typified(self, new_typ): return Typed_Lambda_1(self.tidf_x, self.typed_res, new_typ)
+    def find_idf_type(self, s): return self.typed_res.find_idf_type(s)
 def sem_rec(expr):
     type_expr = type(expr)
-    
-    if type_expr is Expr_Lit_Str:
-        return Typed_Lit(expr.s, T_Str)
-    
-    if type_expr is Expr_Idf:
-        return Typed_Idf(expr.s,
-            idf_to_type[expr.s]
-            if expr.s in idf_to_type else
-
-            T_A
-        )
-    
-    def dev(*args):
-        return
-        list(map(lambda s: print(f'dev {s}'), args))
-        print('\n')
-    def wip(s=None):
-        raise SemErr(f'work in progress' + ('' if s is None else f' ({s})'))
+    if type_expr is Expr_Lit_Str: return Typed_Lit(expr.s, T_Str)
+    if type_expr is Expr_Idf: return Typed_Idf(expr.s, idf_to_type[expr.s] if expr.s in idf_to_type else T_A)
     
     if type_expr is Expr_Call_1:
         typed_f = sem_rec(expr.expr_f)
         typed_x = sem_rec(expr.expr_x)
-        dev('call',typed_f,typed_x)
         
-        if type(typed_f.typ) is Type_2 \
-        and typed_f.typ.s == builtin_Func:
+        if type(typed_f.typ) is Type_2 and typed_f.typ.s == builtin_Func:
             if type(typed_x.typ) is Unk_0:
                 new_typed_x = typed_x.copy_typified(typed_f.typ.t1)
                 return Typed_Call_1(typed_f, new_typed_x, typed_f.typ.t2)
@@ -118,14 +57,9 @@ def sem_rec(expr):
                 def solve_rec(typ_sub_fx, typ_sub_x, f_x_synchedUnks):
                     typ_f, typ_x, synched_unks = f_x_synchedUnks
                     
-                    if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Type_0 and typ_sub_fx.s == typ_sub_x.s:
-                        return (typ_f, typ_x, synched_unks)
-                    
-                    if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Unk_0:
-                        wip('solve_rec 1')
-                    
-                    if type(typ_sub_fx) is Unk_0 and type(typ_sub_x) is Type_0:
-                        return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
+                    if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Type_0 and typ_sub_fx.s == typ_sub_x.s: return (typ_f, typ_x, synched_unks)
+                    if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Unk_0: wip('solve_rec 1')
+                    if type(typ_sub_fx) is Unk_0 and type(typ_sub_x) is Type_0: return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
                     
                     if type(typ_sub_fx) is Unk_0:
                         if type(typ_sub_x) is Unk_0:
@@ -159,7 +93,6 @@ def sem_rec(expr):
                 return solve(typ_f, typ_x)[0]
             
             new_typ_f = concreted(typed_f.typ, typed_x.typ)
-            dev('copy_typified', typed_f, typed_x, new_typ_f)
             new_typed_f = typed_f.copy_typified(new_typ_f)
             new_typed_x = typed_x.copy_typified(new_typ_f.t1)
             return Typed_Call_1(new_typed_f, new_typed_x, new_typ_f.t2)
@@ -169,12 +102,8 @@ def sem_rec(expr):
     if type_expr is Expr_Lambda_1:
         tidf_x = sem_rec(expr.eidf_x)
         typed_res = sem_rec(expr.expr_res)
-        dev('lamb', tidf_x, typed_res)
         
         lookup_typ_x = typed_res.find_idf_type(tidf_x.s)
-        
-        #if type(lookup_typ_x) is Unk_0:
-        #    raise SemErr('Couldn\'t find the arg type')
         
         retyped_x = tidf_x.copy_typified(lookup_typ_x)
         
