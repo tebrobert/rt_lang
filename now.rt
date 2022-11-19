@@ -2,6 +2,15 @@ def +(x: Int, y: Int): Int
 def +(x: Int, y: Float): Float
 def +(x: Float, y: Int): Float
 def +(x: Float, y: Float): Float
+def +(x: Str, y: CanBe[Str]): Str
+def +(x: CanBe[Str], y: Str): Str
+def +(x: CanBe[Str], y: CanBe[Str]): Str
+
+
+def +(x: Int, y: Int): Int
+def +(x: Int, y: Float): Float
+def +(x: Float, y: Int): Float
+def +(x: Float, y: Float): Float
 
 def *(x: Int, y: Int): Int
 def *(x: Int, y: Float): Float
@@ -58,6 +67,7 @@ impl Multiply[Int, Float]:
 
 #2
 [][0]   # None              # the operator always returns Option[A]
+myOption.getOrDie
 
 #3
 [][0]   # doesn't compile
