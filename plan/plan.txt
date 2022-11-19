@@ -4,10 +4,19 @@ refactor:
 
 ...
 
-impliment the plus operator
+implement overloadings
+implement the plus function
+implement operator syntax
 
 ...
 
-final refactor:
+refactor:
 	put everything in a single rt.py file
+
+implement flags:
+	validate
+	build
+	run (default)
+
+implement better error locationg
 

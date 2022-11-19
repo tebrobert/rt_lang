@@ -1,16 +1,0 @@
-xs :: LazyList[Int] = interval(10, 30, 2)
-
-xs :: LazyList[Int] = [10, 30, 2].map(_+1)
-
-struct Lazy[A]:
-    x :: Var[Mb[A]] = Var(Null)
-    init(f :: ()->A)
-    nameCall
-     :: ()->A##this and the next lines are comments
-     :: A #
-      = fold $
-        _ => do:
-            (a = f()).toJust().setTo(x)
-            pure $ a
-        id, x
-         

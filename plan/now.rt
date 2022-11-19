@@ -1,22 +1,21 @@
-def +(x: Int, y: Int): Int
-def +(x: Int, y: Float): Float
-def +(x: Float, y: Int): Float
-def +(x: Float, y: Float): Float
-def +(x: Str, y: CanBe[Str]): Str
-def +(x: CanBe[Str], y: Str): Str
-def +(x: CanBe[Str], y: CanBe[Str]): Str
+def float(x: Int): Float
 
+def str(x: Int): Str
+def str(x: Float): Str
+def str(x: Bool): Str
+def str(x: Str): Str = id
 
-def +(x: Int, y: Int): Int
-def +(x: Int, y: Float): Float
-def +(x: Float, y: Int): Float
-def +(x: Float, y: Float): Float
+def +(y: Int)(x: Int): Int
+def +(y: has[float])(x: has[float]): Float
+def +(y: has[str])(x: has[str]): Str
 
-def *(x: Int, y: Int): Int
-def *(x: Int, y: Float): Float
-def *(x: Float, y: Int): Float
-def *(x: Float, y: Float): Float
+# anonymous functions
+# anonymous structs
+# "has" - anonymous trait
 
+x.f()       ~ f(x)
+xs.map(str) ~ map(str)(xs) #~  xs map str
+5.-(1)      ~ -(1)(5)       ~  5 - 1
 
 
 

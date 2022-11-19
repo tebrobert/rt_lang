@@ -19,6 +19,6 @@ vs Tuple vs Struct     vs Dict
                                 # static                    # dynamic
 .0 .1 .2 .3 .4  Int             Vect5[Int]                  Arr, List
 .0 .1 .2        Int, Int, Str   Tuple3[Int, Int, Str]
-.name .g        Str, Gender     Struct[name:Str, g:Gender]  Dict
+.name .g        Str, Gender     struct[name:Str, g:Gender]  Dict
 
 #Motivation
