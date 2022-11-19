@@ -1,0 +1,13 @@
+refactor:
+	open the project in ide, ensure there's no errors
+	ensure there's no duplicates, particularly for built-ins names
+
+...
+
+impliment the plus operator
+
+...
+
+final refactor:
+	put everything in a single rt.py file
+
