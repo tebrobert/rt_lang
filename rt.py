@@ -41,35 +41,14 @@ def run_code(code, dev):
         print(e.msg)
 
 def main():
-    tests = [
-        "input",
-        "(s => s)(input)",
-        "(s => s)(s => s)(input)",
-        "(s => s)((s => s)(input))",
-        "flatmap(s => print(s))(input)",
-    ]
-    
-    def testChecker(strTestNum):
-        try:
-            idx = int(strTestNum) - 1
-            tests[idx]
-            return idx
-        except: raise argparse.ArgumentTypeError(f"The number should be between 1 and {len(tests)}")
-    
     args = (FunctionalArgParser()
-        .add("code", nargs='?')
+        .add("code")
         .add("--dev", action="store_true")
-        .add("--test", type=testChecker)
     ).parse()
 
-    if args.test is not None:
-        code=tests[args.test]
-        print(f"TEST CODE:\n{code}\n\nRUNNING:")
+    with open(args.code) as f:
+        code = f.read()
         run_code(code=code, dev=args.dev)
-    elif args.code is not None:
-        with open(args.code) as f:
-            code = f.read()
-            run_code(code=code, dev=args.dev)
 
 if __name__ == "__main__":
     main()

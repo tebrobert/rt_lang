@@ -61,11 +61,11 @@ def show(typed, lamb_arg_stack=[]):
     if type(typed) is Typed_Idf:
         tidf = typed
 
-        if tidf.s == "input":
+        if tidf.s == builtin_input:
             return "Input()"
-        if tidf.s == "print":
+        if tidf.s == builtin_print:
             return "(lambda s: Print(s))"
-        if tidf.s == "flatmap":
+        if tidf.s == builtin_flatmap:
             return "(lambda a_fb: lambda fa: Flatmap(a_fb, fa))"
         if tidf.s in lamb_arg_stack:
             return tidf.s

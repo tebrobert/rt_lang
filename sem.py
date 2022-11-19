@@ -61,8 +61,8 @@ class Typed_Lambda_1:
         if not (type(tidf_x) is Typed_Idf):
             raise SemErr('Typed_Idf expected as the first arg of Typed_Lambda_1')
         
-        if not (typ is None or type(typ) is Type_2 and typ.s == "Func"):
-            raise SemErr('Func or None expected as the typ arg of Typed_Lambda_1')
+        if not (typ is None or type(typ) is Type_2 and typ.s == builtin_Func):
+            raise SemErr(f'{builtin_Func} or None expected as the typ arg of Typed_Lambda_1')
         
         self.tidf_x = tidf_x
         self.typed_res = typed_res
@@ -106,7 +106,7 @@ def sem_rec(expr):
         dev('call',typed_f,typed_x)
         
         if type(typed_f.typ) is Type_2 \
-        and typed_f.typ.s == 'Func':
+        and typed_f.typ.s == builtin_Func:
             if type(typed_x.typ) is Unk_0:
                 new_typed_x = typed_x.copy_typified(typed_f.typ.t1)
                 return Typed_Call_1(typed_f, new_typed_x, typed_f.typ.t2)
@@ -134,13 +134,13 @@ def sem_rec(expr):
                             else: wip('solve_rec 4')
                         else:
                             if typ_sub_fx.s in f_x_synchedUnks:
-                                raise SemErr("Can't match the types #remember the case A=>A vs A=>List[A]")
+                                raise SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
                             #raise SemErr(f"Yet can't call {typ_f} with {typ_x} currentrly matching {typ_sub_fx} and {typ_sub_x}")
                             return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
                     
                     if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Unk_0:
                         if typ_sub_x.s in f_x_synchedUnks:
-                            raise SemErr("Can't match the types #remember the case A=>A vs A=>List[A]")
+                            raise SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
                         raise SemErr(f"Yet can't call {typ_f} with {typ_x} currentrly matching {typ_sub_fx} and {typ_sub_x}")
                     
                     if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Type_1:
@@ -148,7 +148,7 @@ def sem_rec(expr):
                     
                     if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Unk_0:
                         if typ_sub_x.s in f_x_synchedUnks:
-                            raise SemErr("Can't match the types #remember the case A=>A vs A=>List[A]")
+                            raise SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
                         raise SemErr(f"Yet can't call {typ_f} with {typ_x} currentrly matching {typ_sub_fx} and {typ_sub_x}")
                     
                     if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Type_2:
@@ -164,7 +164,7 @@ def sem_rec(expr):
             new_typed_x = typed_x.copy_typified(new_typ_f.t1)
             return Typed_Call_1(new_typed_f, new_typed_x, new_typ_f.t2)
             
-        raise SemErr('typed_f should be a Func')
+        raise SemErr(f'typed_f should be a {builtin_Func}')
     
     if type_expr is Expr_Lambda_1:
         tidf_x = sem_rec(expr.eidf_x)
@@ -184,11 +184,11 @@ def sem_rec(expr):
 
 def sem(expr):
     typed = sem_rec(expr)
-    if not (type(typed.typ) is Type_1 and typed.typ.s == "RIO"):
+    if not (type(typed.typ) is Type_1 and typed.typ.s == builtin_RIO):
         if type(typed.typ) is Unk_0:
                 unk = typed
                 raise SemErr(f"Unexpected identifier {unk.s}")
-        raise SemErr(f"The code type should be RIO[A] but {typed.typ} found.")
+        raise SemErr(f"The code type should be {builtin_RIO}[A] but {typed.typ} found.")
     return typed
 
 
@@ -212,6 +212,6 @@ solve_rec(sub_fx, sub_x, (f, x, synched_unks)) => (updated_f, updated_x, updated
 too_much(unk0, typ, synched_unks) => Nothing
 = if Unk0_A in Type2:
       if Unk0_A in synched_unks:
-          err #remember the case A=>A vs A=>List[A]
+          err #remember the case A=>A vs A=>{builtin_List}[A]
       else: exc # A => (B, C) vs (A, B) => C to (A, B) => (C, D) - looks too complicated and unlikely
 """

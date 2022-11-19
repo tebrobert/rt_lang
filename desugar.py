@@ -46,12 +46,3 @@ def desugar(code):
         return f"flatmap({current_arg} => {flatmapize(arrowized_rest_lines, last_line)})({current_monad})"
     
     return flatmapize(arrowized_init_lines, last_line)
-
-if __name__ == "__main__":
-    code = """
-s <- input
-print(s)
-print(s)
-"""
-    desugared = desugar(code)
-    print(desugared)
