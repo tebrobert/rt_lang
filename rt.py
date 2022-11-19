@@ -1,72 +1,76 @@
 from run import *
 from sys import argv
 from os import system
+import argparse
 
-def run_code(code):
+class FunctionalArgParser():
+    def __init__(self):
+        self.argParser = argparse.ArgumentParser()
+    def add(self, x, **kwargs):
+        self.argParser.add_argument(x, **kwargs)
+        return self
+    def parse(self):
+        return self.argParser.parse_args()
+
+def run_code(code, dev):
     try:
-        if dev(): system("cls")
-        if dev(): print(f'code:\n{code}\n')
+        if dev: system("cls")
+        if dev: print(f'CODE:\n{code}\n')
         
         desugared = desugar(code)
-        if dev(): print(f'desugared:\n{desugared}\n')
+        if dev: print(f'DESUGARED:\n{desugared}\n')
         
         tokens = lexx(desugared)
-        if dev(): print(f'tokens:\n[\n',*map(lambda t: f'    {t},\n',tokens),']\n', sep='')
+        if dev: print(f'TOKENS:\n[\n',*map(lambda t: f'    {t},\n',tokens),']\n', sep='')
         
         expr = parse(tokens) 
-        if dev(): print(f'expr:\n{expr}\n')
+        if dev: print(f'EXPR:\n{expr}\n')
         
         typed = sem(expr)
-        if dev(): print(f'typed:\n{typed}\n')
+        if dev: print(f'TYPED:\n{typed}\n')
         
         shown = show(typed)
-        if dev(): print(f'shown:\n{shown}\n')
+        if dev: print(f'SHOWN:\n{shown}\n')
         
         program = compile(shown)
         
-        if dev(): print('Running...')
+        if dev: print('RUNNING:')
         unsafe_run(program)
 
     except Exception as e:
         print(e.msg)
 
-def app():
-    if len(argv) == 1:
-        test_code = get_test_code()
-        code = test_code if test_code != () else input('Code: ')
-        if test_code != (): print(f"Code: {code}")
-        run_code(code)
-    elif len(argv) >= 2:
-        code_path = argv[1]
-        with open(code_path) as f:
+def main():
+    tests = [
+        "input",
+        "(s => s)(input)",
+        "(s => s)(s => s)(input)",
+        "(s => s)((s => s)(input))",
+        "flatmap(s => print(s))(input)",
+    ]
+    
+    def testChecker(strTestNum):
+        try:
+            idx = int(strTestNum) - 1
+            tests[idx]
+            return idx
+        except: raise argparse.ArgumentTypeError(f"The number should be between 1 and {len(tests)}")
+    
+    args = (FunctionalArgParser()
+        .add("code", nargs='?')
+        .add("--dev", action="store_true")
+        .add("--test", type=testChecker)
+    ).parse()
+
+    if args.test is not None:
+        code=tests[args.test]
+        print(f"TEST CODE:\n{code}\n\nRUNNING:")
+        run_code(code=code, dev=args.dev)
+    elif args.code is not None:
+        with open(args.code) as f:
             code = f.read()
-            run_code(code)
-    elif len(argv) == 3 and argv[1] == "--code":
-        code = argv[2]
-        run_code(code)
-    else:
-        rt = "rt"
-        print(
-f"""
-Usage:
-    {rt}
-    {rt} <code_path>
-    {rt} --code <code>
-"""
-        )
-
-def dev():
-    return "--dev" in argv
-
-def get_test_code():
-    return (
-        #"input"
-        #"(s => s)(input)"
-        #"(s => s)(s => s)(input)"
-        #"(s => s)((s => s)(input))"
-        #"flatmap(s => print(s))(input)"
-    )
+            run_code(code=code, dev=args.dev)
 
 if __name__ == "__main__":
-    app()
+    main()
 
