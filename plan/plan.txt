@@ -1,11 +1,8 @@
-refactor:
-	ensure there's no duplicates, particularly for built-ins names
-
-...
-
-implement overloadings
+refactor: make it tailrec
 implement the plus function
 implement operator syntax
+--implement functions
+implement overloadings
 
 ...
 
