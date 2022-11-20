@@ -48,7 +48,7 @@ class Type_2:
         self.t1 = t1
         self.t2 = t2
     def __eq__(self, that): return type(that) == Type_2 and that.s == self.s and that.t1 == self.t1 and that.t2 == self.t2
-    def __repr__(self, indent=''): return indent + f'({self.t1}) => {self.t2}' if self.s == builtin_Func and self.t1.s == builtin_Func else f'{self.t1} => {self.t2}' if self.s == builtin_Func else f'{self.s}[{self.t1}, {self.t2}]'
+    def __repr__(self, indent=''): return indent + (f'({self.t1}) => {self.t2}' if self.s == builtin_Func and self.t1.s == builtin_Func else f'{self.t1} => {self.t2}' if self.s == builtin_Func else f'{self.s}[{self.t1}, {self.t2}]')
     def copy(self, t1=None, t2=None): return Type_2(self.s, t1 if t1 is not None else self.t1, t2 if t2 is not None else self.t2)
     def has_unk(self): return self.t1.has_unk() or self.t2.has_unk()
     def concrete(self, typ_from, typ_to): return Type_2(self.s, self.t1.concrete(typ_from, typ_to), self.t2.concrete(typ_from, typ_to))

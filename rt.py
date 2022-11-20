@@ -21,7 +21,8 @@ def run_code(code, dev):
         if dev: print(f'DESUGARED:\n{desugared}\n')
         
         tokens = lexx(desugared)
-        if dev: print(f'TOKENS:\n[\n',*map(lambda t: f'    {t},\n',tokens),']\n', sep='')
+       #if dev: print(f'TOKENS:\n[\n',*map(lambda t: f'    {t},\n',tokens),']\n', sep='')
+        if dev: print(f'TOKENS:\n{tokens}\n')
         
         expr = parse(tokens) 
         if dev: print(f'EXPR:\n{expr}\n')
