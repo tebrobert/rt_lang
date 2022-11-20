@@ -38,8 +38,8 @@ def main():
             print(currentElement, end=": ")
             try:
                 code = readFile(f"{pathCurrentTest}/{path1Code}")
-                desugared = desugar(code); assert desugar == readFile(f"{pathCurrentTest}/{path1Code}"), f"!=DESUGARED, got: {desugared}"
-                tokens = lexx(desugared)
+                desugared = desugar(code); assert desugar == readFile(f"{pathCurrentTest}/{path2Desugared}"), f"!=desugared, got: {desugared}"
+                tokens = lexx(desugared); assert tokens == readFile(f"{pathCurrentTest}/{path3Tokens}"), f"!=tokens, got: {tokens}"
                 expr = parse(tokens)
                 typed = sem(expr)
                 shown = show(typed)
