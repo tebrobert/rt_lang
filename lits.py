@@ -11,6 +11,7 @@ builtin_flatmap = "flatmap"
 
 class LitError(ValueError):
     def __init__(self, msg): self.msg = msg
+    def __repr__(self): return self.msg
 
 class Unk_0: #unknown
     def __init__(self, s):

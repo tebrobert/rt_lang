@@ -2,6 +2,7 @@ from desugar import *
 
 class LexxErr(ValueError):
     def __init__(self, msg): self.msg = f"LexxErr: {msg}"
+    def __repr__(self): return self.msg
 
 class Token_Lit_Str:
     def __init__(self, s): self.s = s

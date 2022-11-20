@@ -3,6 +3,7 @@ from lits import *
 
 class SemErr(ValueError):
     def __init__(self, msg): self.msg = f"SemErr: {msg}"
+    def __repr__(self): return self.msg
 
 class Typed_Lit:
     def __init__(self, s, typ): self.s, self.typ = s, typ

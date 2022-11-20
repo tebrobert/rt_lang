@@ -1,6 +1,5 @@
 class RecExc(Exception):
-    def __init__(self, *args, **kwargs):
-        self.args, self.kwargs = args, kwargs
+    def __init__(self, *args, **kwargs): self.args, self.kwargs = args, kwargs
 
 def tailrec(f):
     def dec(*args, **kwargs):

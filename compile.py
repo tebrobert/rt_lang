@@ -2,6 +2,7 @@ from sem import *
 
 class CompileErr(ValueError):
     def __init__(self, msg): self.msg = f"CompileErr: {msg}"
+    def __repr__(self): return self.msg
 
 class CallableShowableLambda_1:
     def __init__(self, f, s):

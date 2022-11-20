@@ -2,6 +2,7 @@ from lexx import *
 
 class ParseErr(ValueError):
     def __init__(self, msg): self.msg = f"ParseErr: {msg}"
+    def __repr__(self): return self.msg
 
 class Expr_Lit_Str:
     def __init__(self, s): self.s = s
