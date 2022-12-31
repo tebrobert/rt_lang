@@ -1,4 +1,4 @@
-from sem import *
+from modules.sem import *
 
 class CompileErr(ValueError):
     def __init__(self, msg): self.msg = f"CompileErr: {msg}"

@@ -1,4 +1,4 @@
-from desugar import *
+from modules.desugar import *
 
 class LexxErr(ValueError):
     def __init__(self, msg): self.msg = f"LexxErr: {msg}"

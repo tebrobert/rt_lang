@@ -1,4 +1,3 @@
-implement tests - before big refactor
 refactor: make it tailrec
 implement the plus function
 implement operator syntax

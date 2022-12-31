@@ -1,5 +1,5 @@
-from parse import *
-from lits import *
+from modules.parse import *
+from modules.lits import *
 
 class SemErr(ValueError):
     def __init__(self, msg): self.msg = f"SemErr: {msg}"

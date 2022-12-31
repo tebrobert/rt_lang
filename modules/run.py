@@ -1,4 +1,4 @@
-from compile import *
+from modules.compile import *
 
 class RunErr(ValueError):
     def __init__(self, msg): self.msg = f"RunErr: {msg}"

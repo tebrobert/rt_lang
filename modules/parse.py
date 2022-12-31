@@ -1,4 +1,4 @@
-from lexx import *
+from modules.lexx import *
 
 class ParseErr(ValueError):
     def __init__(self, msg): self.msg = f"ParseErr: {msg}"
