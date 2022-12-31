@@ -1,25 +1,37 @@
 from modules.desugar import *
 
 class LexxErr(ValueError):
-    def __init__(self, msg): self.msg = f"LexxErr: {msg}"
-    def __repr__(self): return self.msg
+    def __init__(self, msg):
+        self.msg = f"LexxErr: {msg}"
+
+    def __repr__(self):
+        return self.msg
 
 class Token_Lit_Str:
-    def __init__(self, s): self.s = s
-    def __repr__(self): return f'Token_Lit_Str("{self.s}")'
+    def __init__(self, s):
+        self.s = s
+
+    def __repr__(self):
+        return f'Token_Lit_Str("{self.s}")'
 
 class Token_Idf:
-    def __init__(self, s): self.s = s
-    def __repr__(self): return f'Token_Idf("{self.s}")'
+    def __init__(self, s):
+        self.s = s
+
+    def __repr__(self):
+        return f'Token_Idf("{self.s}")'
 
 class Token_Paren_Open:
-    def __repr__(self): return 'Token_Paren_Open()'
+    def __repr__(self):
+        return 'Token_Paren_Open()'
 
 class Token_Paren_Close:
-    def __repr__(self): return 'Token_Paren_Close()'
+    def __repr__(self):
+        return 'Token_Paren_Close()'
 
 class Token_Eq_Gr:
-    def __repr__(self): return 'Token_Eq_Gr()'
+    def __repr__(self):
+        return 'Token_Eq_Gr()'
 
 def lexx(code):
     end_of_code = '\0'

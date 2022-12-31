@@ -10,51 +10,115 @@ builtin_print = "print"
 builtin_flatmap = "flatmap"
 
 class LitError(ValueError):
-    def __init__(self, msg): self.msg = msg
-    def __repr__(self): return self.msg
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __repr__(self):
+        return self.msg
 
 class Unk_0: #unknown
     def __init__(self, s):
-        if not type(s) is str: raise LitError('The args of Unk_0 have bad types')
+        if not type(s) is str:
+            raise LitError('The args of Unk_0 have bad types')
+
         self.s = s
-    def __eq__(self, that): return type(that) == Unk_0 and that.s == self.s
-    def has_unk(self): return True
-    def concrete(self, typ_from, typ_to): return typ_to if self == typ_from else self
-    def __repr__(self, indent=''): return f'{indent}{self.s}'
+
+    def __eq__(self, that):
+        return type(that) == Unk_0 and that.s == self.s
+
+    def has_unk(self):
+        return True
+
+    def concrete(self, typ_from, typ_to):
+        return typ_to if self == typ_from else self
+
+    def __repr__(self, indent=''):
+        return f'{indent}{self.s}'
 
 class Type_0:
     def __init__(self, s):
-        if not type(s) is str: raise LitError('The args of Type_0 have bad types')
+        if not type(s) is str:
+            raise LitError('The args of Type_0 have bad types')
+
         self.s = s
-    def __eq__(self, that): return type(that) == Type_0 and that.s == self.s
-    def has_unk(self): return False
-    def concrete(self, typ_from, typ_to): return self
-    def __repr__(self, indent=''): return f'{indent}{self.s}'
+
+    def __eq__(self, that):
+        return type(that) == Type_0 and that.s == self.s
+
+    def has_unk(self):
+        return False
+
+    def concrete(self, typ_from, typ_to):
+        return self
+
+    def __repr__(self, indent=''):
+        return f'{indent}{self.s}'
 
 class Type_1:
     def __init__(self, s, t1):
-        if not (type(s) is str and is_type(t1)): raise LitError('The args of Type_1 have bad types')
+        if not (type(s) is str and is_type(t1)):
+            raise LitError('The args of Type_1 have bad types')
+
         self.s = s
         self.t1 = t1
-    def __eq__(self, that): return type(that) == Type_1 and that.s == self.s and that.t1 == self.t1
-    def __repr__(self, indent=''): return f'{indent}{self.s}[{self.t1}]'
-    def copy(self, t1): return Type_1(self.s, t1)
-    def has_unk(self): return self.t1.has_unk()
-    def concrete(self, typ_from, typ_to): return Type_1(self.s, self.t1.concrete(typ_from, typ_to))
+
+    def __eq__(self, that):
+        return (type(that) == Type_1 and that.s == self.s
+            and that.t1 == self.t1
+        )
+
+    def __repr__(self, indent=''):
+        return f'{indent}{self.s}[{self.t1}]'
+
+    def copy(self, t1):
+        return Type_1(self.s, t1)
+
+
+    def has_unk(self):
+        return self.t1.has_unk()
+
+    def concrete(self, typ_from, typ_to):
+        return Type_1(self.s, self.t1.concrete(typ_from, typ_to))
 
 class Type_2:
     def __init__(self, s, t1, t2):
-        if not (type(s) is str and is_type(t1) and is_type(t2)): raise LitError('The args of Type_2 have bad types')
+        if not (type(s) is str and is_type(t1) and is_type(t2)):
+            raise LitError('The args of Type_2 have bad types')
+
         self.s = s
         self.t1 = t1
         self.t2 = t2
-    def __eq__(self, that): return type(that) == Type_2 and that.s == self.s and that.t1 == self.t1 and that.t2 == self.t2
-    def __repr__(self, indent=''): return indent + (f'({self.t1}) => {self.t2}' if self.s == builtin_Func and self.t1.s == builtin_Func else f'{self.t1} => {self.t2}' if self.s == builtin_Func else f'{self.s}[{self.t1}, {self.t2}]')
-    def copy(self, t1=None, t2=None): return Type_2(self.s, t1 if t1 is not None else self.t1, t2 if t2 is not None else self.t2)
-    def has_unk(self): return self.t1.has_unk() or self.t2.has_unk()
-    def concrete(self, typ_from, typ_to): return Type_2(self.s, self.t1.concrete(typ_from, typ_to), self.t2.concrete(typ_from, typ_to))
 
-def is_type(o): return type(o) in [Unk_0, Type_0, Type_1, Type_2]
+    def __eq__(self, that):
+        return (type(that) == Type_2 and that.s == self.s
+            and that.t1 == self.t1 and that.t2 == self.t2
+        )
+
+    def __repr__(self, indent=''):
+        return indent + (
+            f'({self.t1}) => {self.t2}' if self.s == builtin_Func and self.t1.s == builtin_Func
+            else f'{self.t1} => {self.t2}' if self.s == builtin_Func
+            else f'{self.s}[{self.t1}, {self.t2}]'
+        )
+
+    def copy(self, t1=None, t2=None):
+        return Type_2(self.s,
+            t1 if t1 is not None else self.t1,
+            t2 if t2 is not None else self.t2
+        )
+
+    def has_unk(self):
+        return self.t1.has_unk() or self.t2.has_unk()
+
+    def concrete(self, typ_from, typ_to):
+        return Type_2(
+            self.s,
+            self.t1.concrete(typ_from, typ_to),
+            self.t2.concrete(typ_from, typ_to)
+        )
+
+def is_type(o):
+    return type(o) in [Unk_0, Type_0, Type_1, Type_2]
 
 T_Int = Type_0(builtin_Int)
 T_Str = Type_0(builtin_Str)
@@ -78,5 +142,9 @@ types = {
 idf_to_type = {
     builtin_input: T_RIO(T_Str),
     builtin_print: T_Func(T_Str, T_RIO(T_Unit)),
-    builtin_flatmap: T_Func(T_Func(T_A, T_RIO(T_B)), T_Func(T_RIO(T_A), T_RIO(T_B))),
+    builtin_flatmap: T_Func(
+        T_Func(T_A, T_RIO(T_B)),
+        T_Func(T_RIO(T_A),
+        T_RIO(T_B))
+    ),
 }
