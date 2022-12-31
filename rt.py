@@ -39,9 +39,9 @@ def main():
             try:
                 code = readFile(f"{pathCurrentTest}/{path1Code}")
                 desugared = desugar(code); assert desugared == readFile(f"{pathCurrentTest}/{path2Desugared}"), f"!=desugared, got: {desugared}"
-                tokens = lexx(desugared); assert tokens == readFile(f"{pathCurrentTest}/{path3Tokens}"), f"!=tokens, got: {tokens}"
-                expr = parse(tokens); assert expr == readFile(f"{pathCurrentTest}/{path4Expr}"), f"!=expr, got: {expr}"
-                typed = sem(expr); assert typed == readFile(f"{pathCurrentTest}/{path5Typed}"), f"!=typed, got: {typed}"
+                tokens = lexx(desugared); assert str(tokens) == readFile(f"{pathCurrentTest}/{path3Tokens}"), f"!=tokens, got: {tokens}"
+                expr = parse(tokens); assert str(expr) == readFile(f"{pathCurrentTest}/{path4Expr}"), f"!=expr, got: {expr}"
+                typed = sem(expr); assert str(typed) == readFile(f"{pathCurrentTest}/{path5Typed}"), f"!=typed, got: {typed}"
                 shown = show(typed); assert shown == readFile(f"{pathCurrentTest}/{path6Shown}"), f"!=shown, got: {shown}"
                 compiled = compile(shown)
                 print("PASSED")
