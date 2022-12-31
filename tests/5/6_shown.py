@@ -1,0 +1,1 @@
+(((lambda a_fb: lambda fa: Flatmap(a_fb, fa)))((lambda s: ((lambda s: Print(s)))(s))))(Input())

@@ -1,0 +1,1 @@
+((lambda s: s))(((lambda s: s))(Input()))

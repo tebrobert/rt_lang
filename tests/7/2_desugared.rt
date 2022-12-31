@@ -1,0 +1,1 @@
+flatmap(x  => flatmap(y  => flatmap(_ => print(y))(print(x)))( input))( input)

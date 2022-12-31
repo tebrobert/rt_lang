@@ -1,0 +1,25 @@
+Expr_Call_1(
+    Expr_Call_1(
+        Expr_Idf("flatmap"),
+        Expr_Lambda_1(
+            Expr_Idf("s"),
+            Expr_Call_1(
+                Expr_Call_1(
+                    Expr_Idf("flatmap"),
+                    Expr_Lambda_1(
+                        Expr_Idf("_"),
+                        Expr_Call_1(
+                            Expr_Idf("print"),
+                            Expr_Idf("s")
+                        )
+                    )
+                ),
+                Expr_Call_1(
+                    Expr_Idf("print"),
+                    Expr_Idf("s")
+                )
+            )
+        )
+    ),
+    Expr_Idf("input")
+)
