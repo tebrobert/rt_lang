@@ -105,16 +105,20 @@ def lexx(code):
             )
 
         elif current_char == '"':
-            idx_string_end = token_idx_end + 1
-            idx_string_start = idx_string_end
-            current_string_char = code_ext[idx_string_end]
-
-            while current_string_char != '"':
-                if current_string_char == end_of_code:
-                    raise LexxErr(f"No closing `\"` for string literal.")
-                idx_string_end += 1
+            def get_idx_string_end_rec(code_ext, idx_string_end):
                 current_string_char = code_ext[idx_string_end]
 
+                if current_string_char == '"':
+                    return idx_string_end
+
+                if current_string_char == end_of_code:
+                    raise LexxErr(f"No closing `\"` for string literal.")
+
+                return get_idx_string_end_rec(code_ext, idx_string_end + 1)
+
+            idx_string_start = token_idx_end + 1
+            idx_string_end = get_idx_string_end_rec(code_ext, idx_string_start)
+            
             return rec(
                 code_ext = code_ext,
                 token_idx_end = idx_string_end + 1,
