@@ -1,4 +1,4 @@
-from modules.sem import *
+from modules._4_sem import *
 
 class CompileErr(ValueError):
     def __init__(self, msg):
