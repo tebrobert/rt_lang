@@ -1,5 +1,5 @@
-from modules._3_parse import *
-from modules._0_lits import *
+from lang._3_parse import *
+from lang._0_lits import *
 
 class SemErr(ValueError):
     def __init__(self, msg):

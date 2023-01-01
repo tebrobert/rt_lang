@@ -1,4 +1,4 @@
-from modules.fail import *
+from utils.fail import *
 
 class DesugarErr(ValueError):
     def __init__(self, msg):
