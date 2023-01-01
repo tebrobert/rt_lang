@@ -14,5 +14,5 @@ implement flags:
 	build
 	run (default)
 
-implement better error locationg
+implement better error locating
 
