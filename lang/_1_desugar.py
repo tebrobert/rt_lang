@@ -8,27 +8,11 @@ class DesugarErr(ValueError):
         return self.msg
 
 def arrowize(line):
-    i = 0
-    char = line[0]
-    while "a" <= char <= "z" or "A" <= char <= "Z"  or "0" <= char <= "9" or char == "_":
-        i += 1
-        if i == len(line):
-            return (False, "_", line)
-        char = line[i]
-    while char == " ":
-        i += 1
-        if i == len(line):
-            return (False, "_", line)
-        char = line[i]
-    if line[i] != "<":
+    if "<-" in line:
+        idx = line.index("<-")
+        return (True, line[:idx], line[idx+2:])
+    else:
         return (False, "_", line)
-    i += 1
-    if i == len(line):
-        return (False, "_", line)
-    if line[i] != "-":
-        return (False, "_", line)
-    i += 1
-    return (True, line[:i-2], line[i:])
 
 def flatmapize(arrowized_init_lines, last_line):
     if arrowized_init_lines == []:
