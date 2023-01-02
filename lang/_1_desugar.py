@@ -30,4 +30,3 @@ def desugar(code):
             if "<-" in lines[-1] else
         flatmapize(list(map(arrow_split, lines[:-1])), lines[-1])
     )
-

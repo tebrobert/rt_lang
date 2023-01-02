@@ -7,6 +7,7 @@ def tailrec(f):
         while True:
             try:
                 return f(*args, **kwargs)
+
             except RecExc as re:
                 args, kwargs = re.args, re.kwargs
 
