@@ -14,6 +14,7 @@ def arrowize(line):
     else:
         return (False, "_", line)
 
+#needs to be tailrec
 def flatmapize(arrowized_init_lines, last_line):
     if arrowized_init_lines == []:
         return last_line
