@@ -1,3 +1,4 @@
+from utils.fail import *
 from lang._4_sem import *
 
 class CompileErr(ValueError):
@@ -10,11 +11,11 @@ class CompileErr(ValueError):
 class CallableShowableLambda_1:
     def __init__(self, f, s):
         if not callable(f):
-            raise ValueError("f should be callable")
-        
+            return fail(ValueError("f should be callable"))
+
         if not type(s) is str:
-            raise ValueError("s should be a string")
-        
+            return fail(ValueError("s should be a string"))
+
         self.s, self.f = s, f
 
     def __call__(self, arg):
@@ -46,18 +47,18 @@ class Print:
 class Flatmap:
     def __init__(self, a_fb, fa):
         if not callable(a_fb):
-            raise ValueError("a_fb should be callable")
+            return fail(ValueError("a_fb should be callable"))
 
         if not fa.runnable():
-            raise ValueError(f"fa should be runnable but it is {fa=}, also {a_fb=}")
+            return fail(ValueError(f"fa should be runnable but it is {fa=}, also {a_fb=}"))
 
         self.a_fb, self.fa = a_fb, fa
 
     def __repr__(self):
-        if type(self.a_fb) is CallableShowableLambda_1:
-            return f'Flatmap({self.a_fb}, {self.fa})'
+        if not type(self.a_fb) is CallableShowableLambda_1:
+            return fail(CompileErr("Cannot show lambda"))
 
-        return f'Flatmap(lambda ..., {self.fa})'
+        return f'Flatmap({self.a_fb}, {self.fa})'
 
     def runnable(self):
         return True
@@ -69,7 +70,7 @@ def show(typed, lamb_arg_stack=[]):
         if tlit.typ == T_Str:
             return f"\"{tlit.s}\""
 
-        raise CompileErr(f"Unexpected literal `{tlit}`")
+        return fail(CompileErr(f"Unexpected literal `{tlit}`"))
 
     if type(typed) is Typed_Idf:
         tidf = typed
@@ -86,7 +87,7 @@ def show(typed, lamb_arg_stack=[]):
         if tidf.s in lamb_arg_stack:
             return tidf.s
 
-        raise CompileErr(f"Unexpected identifier `{tidf.s}`")
+        return fail(CompileErr(f"Unexpected identifier `{tidf.s}`"))
 
     if type(typed) is Typed_Call_1:
         tcall = typed
@@ -99,7 +100,7 @@ def show(typed, lamb_arg_stack=[]):
         s = tlamb.tidf_x.s
         return f"(lambda {s}: {show(tlamb.typed_res, [s]+lamb_arg_stack)})"
     
-    raise CompileErr(f"Unexpected typed expression {typed}")
+    return fail(CompileErr(f"Unexpected typed expression {typed}"))
 
 def compile(shown):
     return eval(shown)

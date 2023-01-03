@@ -17,4 +17,4 @@ def unsafeRunCompiled(rio):
     elif type_rio is Flatmap:
         return unsafeRunCompiled(rio.a_fb(unsafeRunCompiled(rio.fa)))
     else:
-        raise RunErr(f'Unexpected type "{type_rio}" "{rio}".')
+        return fail(RunErr(f'Unexpected type "{type_rio}" "{rio}".'))
