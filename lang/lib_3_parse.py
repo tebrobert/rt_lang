@@ -1,5 +1,5 @@
 from utils.tailrec import *
-from lang._2_lexx import *
+from lang.lib_2_lexx import *
 
 class ParseErr(ValueError):
     def __init__(self, msg):

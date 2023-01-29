@@ -1,6 +1,6 @@
 from utils.fail import *
 from utils.tailrec import *
-from lang._1_desugar import *
+from lang.lib_1_desugar import *
 
 class LexxErr(ValueError):
     def __init__(self, msg):

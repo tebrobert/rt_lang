@@ -1,4 +1,4 @@
-from lang._5_compile import *
+from lang.lib_5_compile import *
 
 class RunErr(ValueError):
     def __init__(self, msg):

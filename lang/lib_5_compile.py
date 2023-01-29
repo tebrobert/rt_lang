@@ -1,5 +1,5 @@
 from utils.fail import *
-from lang._4_sem import *
+from lang.lib_4_sem import *
 
 class CompileErr(ValueError):
     def __init__(self, msg):

@@ -1,6 +1,6 @@
 import argparse
 import os
-from lang._6_run import *
+from lang.lib_6_run import *
 
 def readFile(filePath):
     with open(filePath) as f:
