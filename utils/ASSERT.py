@@ -1,13 +1,13 @@
 from utils.flattap import *
 from utils.TRY import *
 
-def ASSERT(label, expected):
+def ASSERT(label, expectedStr):
     def partiallyApplied(actual):
-        assert actual == expected, f"!={label}, got: {actual}"
+        assert str(actual) == expectedStr, f"!={label}, got: {actual}"
     return partiallyApplied
 
-def TRY_ASSERT(label, expected, action, value):
+def TRY_ASSERT(label, expectedStr, lazyActual):
     return flattap(
-        lambda: TRY(lambda: action(value)),
-        ASSERT(label, expected)
+        lambda: TRY(lazyActual),
+        ASSERT(label, expectedStr)
     )

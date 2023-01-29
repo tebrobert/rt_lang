@@ -16,17 +16,76 @@ class ArgParser:
     def parse(self):
         return self.argParser.parse_args()
 
-def printHeaderedIfDev(dev, header):
-    return lambda value: print(f"{header}:\n{value}\n\n" if dev else "", end="")
+args = ArgParser() \
+    .add("code", nargs="?") \
+    .add("--dev", action="store_true") \
+    .add("--test", action="store_true") \
+    .parse()
+
+def printHeaderedIf(cond):
+    return lambda header: lambda value: \
+        print(f"{header}:\n{value}\n\n" if cond else "", end="")
+
+def doMbHeadered(action, value, mbPrintHeadered):
+    return flattap(
+        lambda: action(value),
+        mbPrintHeadered
+    )
+
+def assertedDesugar(readResult, code):
+    return TRY_ASSERT("desugared",
+        readResult("2_desugared.rt.txt"), lambda: desugar(code)
+    )
+
+def assertedLexx(readResult, desugared):
+    return TRY_ASSERT("tokens",
+        readResult("3_tokens.py.txt"), lambda: lexx(desugared)
+    )
+
+def assertedParse(readResult, tokens):
+    return TRY_ASSERT("expr",
+        readResult("4_expr.py.txt"), lambda: parse(tokens)
+    )
+
+def assertedSem(readResult, expr):
+    return TRY_ASSERT("typed",
+        readResult("5_typed.txt"), lambda: sem(expr)
+    )
+
+def assertedShow(readResult, typed):
+    return TRY_ASSERT("shown",
+        readResult("6_shown.py.txt"), lambda: show(typed)
+    )
+
+def runTests():
+    pathTests = "tests/"
+    for currentElement in sorted(os.listdir(pathTests)):
+        pathCurrentTest = f"{pathTests}{currentElement}/"
+        readCurrentTestFile = lambda fileName: \
+            readFile(f"{pathCurrentTest}/{fileName}")
+        print(currentElement, end=": ")
+        try:
+            code = readCurrentTestFile("1_code.rt.txt")
+            desugared = assertedDesugar(readCurrentTestFile, code)
+            tokens = assertedLexx(readCurrentTestFile, desugared)
+            expr = assertedParse(readCurrentTestFile, tokens)
+            typed = assertedSem(readCurrentTestFile, expr)
+            _shown = assertedShow(readCurrentTestFile, typed)
+            print("PASSED")
+        except AssertionError as e:
+            print(f"FAILED: {e}")
+        except Exception as e:
+            print(f"FAILED: {e}")
 
 def unsafeRunCode(code, dev):
     try:
         print(f"1_CODE:\n{code}\n" if dev else "", end="")
-        desugared = flattap(lambda: desugar(code), printHeaderedIfDev(dev, "2_DESUGARED"))
-        tokens = flattap(lambda: lexx(desugared), printHeaderedIfDev(dev, "3_TOKENS"))
-        expr = flattap(lambda: parse(tokens), printHeaderedIfDev(dev, "4_EXPR"))
-        typed = flattap(lambda: sem(expr), printHeaderedIfDev(dev, "5_TYPED"))
-        shown = flattap(lambda: show(typed), printHeaderedIfDev(dev, "6_SHOWN"))
+        printHeaderedIfDev = printHeaderedIf(dev)
+        desugared = doMbHeadered(desugar, code, printHeaderedIfDev("2_DESUGARED"))
+        tokens = doMbHeadered(lexx, desugared, printHeaderedIfDev("3_TOKENS"))
+        expr = doMbHeadered(parse, tokens, printHeaderedIfDev("4_EXPR"))
+        typed = doMbHeadered(sem, expr, printHeaderedIfDev("5_TYPED"))
+        shown = doMbHeadered(show, typed, printHeaderedIfDev("6_SHOWN"))
         built = build(shown)
         print("7_RUNNING:\n" if dev else "", end="")
         unsafeRunBuilt(built)
@@ -34,47 +93,8 @@ def unsafeRunCode(code, dev):
         print(e)
 
 def main():
-    args = (ArgParser()
-        .add("code", nargs="?")
-        .add("--dev", action="store_true")
-        .add("--test", action="store_true")
-        .parse()
-    )
-
     if args.test:
-        pathTests = 'tests/'
-        path1Code      = '1_code.rt.txt'
-        path2Desugared = '2_desugared.rt.txt'
-        path3Tokens    = '3_tokens.py.txt'
-        path4Expr      = '4_expr.py.txt'
-        path5Typed     = '5_typed.txt'
-        path6Shown     = '6_shown.py.txt'
-        for currentElement in sorted(os.listdir(pathTests)):
-            pathCurrentTest = f"{pathTests}{currentElement}/"
-            print(currentElement, end=": ")
-            try:
-                code = readFile(f"{pathCurrentTest}/{path1Code}")
-
-                desugared = TRY_ASSERT("desugared", readFile(f"{pathCurrentTest}/{path2Desugared}"), desugar, code)
-
-                tokens = lexx(desugared)
-                assert str(tokens) == readFile(f"{pathCurrentTest}/{path3Tokens}"), f"!=tokens, got: {tokens}"
-
-                expr = parse(tokens)
-                assert str(expr) == readFile(f"{pathCurrentTest}/{path4Expr}"), f"!=expr, got: {expr}"
-
-                typed = sem(expr)
-                assert str(typed) == readFile(f"{pathCurrentTest}/{path5Typed}"), f"!=typed, got: {typed}"
-
-                shown = show(typed)
-                assert shown == readFile(f"{pathCurrentTest}/{path6Shown}"), f"!=shown, got: {shown}"
-
-                _ = build(shown)
-                print("PASSED")
-            except AssertionError as e:
-                print("FAILED: "+str(e))
-            except Exception as e:
-                print("FAILED: "+str(e))
+        runTests()
     elif args.code is not None:
         unsafeRunCode(code=readFile(args.code), dev=args.dev)
 
