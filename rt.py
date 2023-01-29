@@ -24,8 +24,8 @@ def unsafeRunCode(code, dev):
         expr = parse(tokens); print(f"4_EXPR:\n{expr}\n" if dev else "", end="")
         typed = sem(expr); print(f"5_TYPED:\n{typed}\n" if dev else "", end="")
         shown = show(typed); print(f"6_SHOWN:\n{shown}\n" if dev else "", end="")
-        compiled = compile(shown); print("7_RUNNING:\n" if dev else "", end="")
-        unsafeRunCompiled(compiled)
+        built = build(shown); print("7_RUNNING:\n" if dev else "", end="")
+        unsafeRunBuilt(built)
     except Exception as e:
         print(e)
 
@@ -66,7 +66,7 @@ def main():
                 shown = show(typed)
                 assert shown == readFile(f"{pathCurrentTest}/{path6Shown}"), f"!=shown, got: {shown}"
 
-                _ = compile(shown)
+                _ = build(shown)
                 print("PASSED")
             except AssertionError as e:
                 print("FAILED: "+str(e))

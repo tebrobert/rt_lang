@@ -48,7 +48,7 @@ class Type_0:
     def has_unknown(self):
         return False
 
-    def concrete(self, typ_from, typ_to):
+    def concrete(self, _typ_from, _typ_to):
         return self
 
     def __repr__(self, indent=''):

@@ -1,4 +1,3 @@
-from utils.tailrec import *
 from lang.lib_2_lexx import *
 
 class ParseErr(ValueError):
@@ -36,7 +35,7 @@ class Expr_Call_1:
 class Expr_Lambda_1:
     def __init__(self, eidf_x, expr_res):
         if type(eidf_x) is not Expr_Idf:
-            return fail(ParseErr(f'Expr_Idf expected as the first arg of Expr_Lambda_1'))
+            fail(ParseErr(f'Expr_Idf expected as the first arg of Expr_Lambda_1'))
 
         self.eidf_x, self.expr_res = eidf_x, expr_res
 
@@ -85,7 +84,7 @@ def parseCall(tokens, expr_f, i):
         return fail(ParseErr(f'Token_Paren_Open: expected, given {i} {tokens}'))
 
     if type(tokens[i+1]) is Token_Paren_Close:
-        return fail(ParseErr(f'Remove deprecated empty pathenthesis, given {i} {tokens}'))
+        return fail(ParseErr(f'Remove deprecated empty parenthesis, given {i} {tokens}'))
 
     expr_x, j = parseExpr(tokens, i + 1)
 

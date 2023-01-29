@@ -1,4 +1,4 @@
-from lang.lib_5_compile import *
+from lang.lib_5_build import *
 
 class RunErr(ValueError):
     def __init__(self, msg):
@@ -7,7 +7,7 @@ class RunErr(ValueError):
     def __repr__(self):
         return self.msg
 
-def unsafeRunCompiled(rio):
+def unsafeRunBuilt(rio):
     type_rio = type(rio)
 
     if type_rio is Input:
@@ -15,6 +15,6 @@ def unsafeRunCompiled(rio):
     elif type_rio is Print:
         return print(rio.s)
     elif type_rio is Flatmap:
-        return unsafeRunCompiled(rio.a_fb(unsafeRunCompiled(rio.fa)))
+        return unsafeRunBuilt(rio.a_fb(unsafeRunBuilt(rio.fa)))
     else:
         return fail(RunErr(f'Unexpected type "{type_rio}" "{rio}".'))

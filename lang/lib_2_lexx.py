@@ -1,5 +1,3 @@
-from utils.fail import *
-from utils.tailrec import *
 from lang.lib_1_desugar import *
 
 class LexxErr(ValueError):

@@ -1,9 +1,8 @@
-from utils.fail import *
 from lang.lib_4_sem import *
 
-class CompileErr(ValueError):
+class BuildErr(ValueError):
     def __init__(self, msg):
-        self.msg = f"CompileErr: {msg}"
+        self.msg = f"BuildErr: {msg}"
 
     def __repr__(self):
         return self.msg
@@ -56,7 +55,7 @@ class Flatmap:
 
     def __repr__(self):
         if not type(self.a_fb) is CallableShowableLambda_1:
-            fail(CompileErr("Cannot show lambda"))
+            fail(BuildErr("Cannot show lambda"))
 
         return f'Flatmap({self.a_fb}, {self.fa})'
 
@@ -70,7 +69,7 @@ def show(typed, lamb_arg_stack=[]):
         if tlit.typ == T_Str:
             return f"\"{tlit.s}\""
 
-        return fail(CompileErr(f"Unexpected literal `{tlit}`"))
+        return fail(BuildErr(f"Unexpected literal `{tlit}`"))
 
     if type(typed) is Typed_Idf:
         tidf = typed
@@ -87,7 +86,7 @@ def show(typed, lamb_arg_stack=[]):
         if tidf.s in lamb_arg_stack:
             return tidf.s
 
-        return fail(CompileErr(f"Unexpected identifier `{tidf.s}`"))
+        return fail(BuildErr(f"Unexpected identifier `{tidf.s}`"))
 
     if type(typed) is Typed_Call_1:
         tcall = typed
@@ -100,7 +99,7 @@ def show(typed, lamb_arg_stack=[]):
         s = tlamb.tidf_x.s
         return f"(lambda {s}: {show(tlamb.typed_res, [s]+lamb_arg_stack)})"
     
-    return fail(CompileErr(f"Unexpected typed expression {typed}"))
+    return fail(BuildErr(f"Unexpected typed expression {typed}"))
 
-def compile(shown):
+def build(shown):
     return eval(shown)
