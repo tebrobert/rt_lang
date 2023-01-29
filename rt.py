@@ -41,27 +41,27 @@ def doMbHeadered(action, value, mbPrintHeadered):
     return flattap(lambda: action(value), mbPrintHeadered)
 
 def assertedDesugar(readResult, code):
-    return TRY_ASSERT_TEST("desugared",
+    return TRY_ASSERT_EQUAL("desugared",
         readResult("2_desugared.rt.txt"), lambda: desugar(code)
     )
 
 def assertedLexx(readResult, desugared):
-    return TRY_ASSERT_TEST("tokens",
+    return TRY_ASSERT_EQUAL("tokens",
         readResult("3_tokens.py.txt"), lambda: lexx(desugared)
     )
 
 def assertedParse(readResult, tokens):
-    return TRY_ASSERT_TEST("expr",
+    return TRY_ASSERT_EQUAL("expr",
         readResult("4_expr.py.txt"), lambda: parse(tokens)
     )
 
 def assertedSem(readResult, expr):
-    return TRY_ASSERT_TEST("typed",
+    return TRY_ASSERT_EQUAL("typed",
         readResult("5_typed.txt"), lambda: sem(expr)
     )
 
 def assertedShow(readResult, typed):
-    return TRY_ASSERT_TEST("shown",
+    return TRY_ASSERT_EQUAL("shown",
         readResult("6_shown.py.txt"), lambda: show(typed)
     )
 

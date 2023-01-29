@@ -8,25 +8,38 @@ class DesugarErr(ValueError):
     def __repr__(self):
         return self.msg
 
-def arrow_split(line):
-    if "<-" in line:
-        idx = line.index("<-")
-        return (line[:idx], line[idx+2:])
-    return ("_", line)
+    @staticmethod
+    def failIf(cond, msg):
+        if cond:
+            fail(DesugarErr(msg))
+
+def arrowSplit(line):
+    def forceArrowSplit(lineWithArrow):
+        idx = lineWithArrow.index("<-")
+        arg = lineWithArrow[:idx]
+        monad = lineWithArrow[idx + 2:]
+        DesugarErr.failIf("<-" in monad,
+            "Can't have more than one `<-` in a line."
+        )
+        return (arg, monad)
+    return (("_", line) if "<-" not in line else
+        forceArrowSplit(lineWithArrow=line)
+    )
 
 @tailrec
-def flatmapize(arrow_split_init_lines, flapmapized):
-    if arrow_split_init_lines == []:
-        return flapmapized
-    arg, monad = arrow_split_init_lines[-1]
-    return rec(arrow_split_init_lines[:-1], f"flatmap({arg} => {flapmapized})({monad})")
+def flatmapize(arrowSplitInitLines, flapmapized):
+    def forceFlatmapize():
+        arg, monad = arrowSplitInitLines[-1]
+        return rec(arrowSplitInitLines[:-1],
+            f"flatmap({arg} => {flapmapized})({monad})"
+        )
+    return flapmapized if arrowSplitInitLines == [] else forceFlatmapize()
+
+errMsgBadLastLineArrow = \
+    "The last line can't contain `<-`, you'd probably like to remove it."
 
 def desugar(code):
     lines = list(filter(lambda line: line != "", code.split("\n")))
-    return (
-        fail(DesugarErr("Yet empty file is unsupported"))
-            if lines == [] else
-        fail(DesugarErr("The last line can't contain `<-`, you'd probably like to remove it."))
-            if "<-" in lines[-1] else
-        flatmapize(list(map(arrow_split, lines[:-1])), lines[-1])
-    )
+    DesugarErr.failIf(lines == [], "Yet empty file is unsupported")
+    DesugarErr.failIf("<-" in lines[-1], errMsgBadLastLineArrow)
+    return flatmapize(list(map(arrowSplit, lines[:-1])), lines[-1])
