@@ -15,10 +15,10 @@ class Typed_Lit:
     def __repr__(self, indent=''):
         return f'{indent}Typed_Lit("{self.s}", {self.typ})'
 
-    def copy_typified(self, new_typ):
+    def copy_typified(self, _new_typ):
         return self
 
-    def find_idf_type(self, s):
+    def find_idf_type(self, _s):
         return T_A
 
 class Typed_Idf:
@@ -98,53 +98,53 @@ def sem_rec(expr):
             if type(typed_x.typ) is Unknown_0:
                 new_typed_x = typed_x.copy_typified(typed_f.typ.t1)
                 return Typed_Call_1(typed_f, new_typed_x, typed_f.typ.t2)
-            
-            def concreted(typ_f, typ_x):
-                def solve(typ_f, typ_x):
-                    return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
 
-                def solve_rec(typ_sub_fx, typ_sub_x, f_x_synchedUnks):
-                    typ_f, typ_x, synched_unks = f_x_synchedUnks
-                    
-                    if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Type_0 and typ_sub_fx.s == typ_sub_x.s:
-                        return (typ_f, typ_x, synched_unks)
+            def solve(typ_f, typ_x):
+                return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
 
-                    if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Unknown_0:
-                        wip('solve_rec 1')
+            def solve_rec(typ_sub_fx, typ_sub_x, f_x_synchedUnks):
+                typ_f, typ_x, synched_unks = f_x_synchedUnks
 
-                    if type(typ_sub_fx) is Unknown_0 and type(typ_sub_x) is Type_0:
-                        return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
-                    
-                    if type(typ_sub_fx) is Unknown_0:
-                        if type(typ_sub_x) is Unknown_0:
-                            if typ_sub_fx.s == typ_sub_x.s:
-                                return (typ_f, typ_x, synched_unks.union({typ_sub_fx.s}))
-                            else:
-                                wip('solve_rec 4')
+                if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Type_0 and typ_sub_fx.s == typ_sub_x.s:
+                    return (typ_f, typ_x, synched_unks)
+
+                if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Unknown_0:
+                    fail("Not implemented: solve_rec 1")
+
+                if type(typ_sub_fx) is Unknown_0 and type(typ_sub_x) is Type_0:
+                    return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
+
+                if type(typ_sub_fx) is Unknown_0:
+                    if type(typ_sub_x) is Unknown_0:
+                        if typ_sub_fx.s == typ_sub_x.s:
+                            return (typ_f, typ_x, synched_unks.union({typ_sub_fx.s}))
                         else:
-                            if typ_sub_fx.s in f_x_synchedUnks:
-                                return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
-
-                            return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
-                    
-                    if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Unknown_0:
-                        if typ_sub_x.s in f_x_synchedUnks:
+                            fail("Not implemented: solve_rec 4")
+                    else:
+                        if typ_sub_fx.s in f_x_synchedUnks:
                             return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
-                        return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
-                    
-                    if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Type_1:
-                        return solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
-                    
-                    if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Unknown_0:
-                        if typ_sub_x.s in f_x_synchedUnks:
-                            return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
-                        return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
-                    
-                    if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Type_2:
-                        return solve_rec(typ_sub_fx.t2, typ_sub_x.t2, solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks)))
-                    
-                    return fail(SemErr(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}"))
 
+                        return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
+
+                if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Unknown_0:
+                    if typ_sub_x.s in f_x_synchedUnks:
+                        return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
+                    return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
+
+                if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Type_1:
+                    return solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
+
+                if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Unknown_0:
+                    if typ_sub_x.s in f_x_synchedUnks:
+                        return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
+                    return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
+
+                if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Type_2:
+                    return solve_rec(typ_sub_fx.t2, typ_sub_x.t2, solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks)))
+
+                return fail(SemErr(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}"))
+
+            def concreted(typ_f, typ_x):
                 return solve(typ_f, typ_x)[0]
             
             new_typ_f = concreted(typed_f.typ, typed_x.typ)
