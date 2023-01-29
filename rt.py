@@ -22,9 +22,16 @@ args = ArgParser() \
     .add("--test", action="store_true") \
     .parse()
 
+def printIf(cond, value):
+    if cond:
+        print(value)
+
+def printHeaderIf(cond, header):
+    printIf(cond, f"{header}:")
+
 def printHeaderedIf(cond):
     return lambda header: lambda value: \
-        print(f"{header}:\n{value}\n\n" if cond else "", end="")
+        (printHeaderIf(cond, header), printIf(cond, f"{value}\n"))
 
 def doMbHeadered(action, value, mbPrintHeadered):
     return flattap(
@@ -79,15 +86,15 @@ def runTests():
 
 def unsafeRunCode(code, dev):
     try:
-        print(f"1_CODE:\n{code}\n" if dev else "", end="")
         printHeaderedIfDev = printHeaderedIf(dev)
+        printHeaderedIfDev("1_CODE")(code)
         desugared = doMbHeadered(desugar, code, printHeaderedIfDev("2_DESUGARED"))
         tokens = doMbHeadered(lexx, desugared, printHeaderedIfDev("3_TOKENS"))
         expr = doMbHeadered(parse, tokens, printHeaderedIfDev("4_EXPR"))
         typed = doMbHeadered(sem, expr, printHeaderedIfDev("5_TYPED"))
         shown = doMbHeadered(show, typed, printHeaderedIfDev("6_SHOWN"))
         built = build(shown)
-        print("7_RUNNING:\n" if dev else "", end="")
+        printHeaderIf(dev, "7_RUNNING")
         unsafeRunBuilt(built)
     except Exception as e:
         print(e)
