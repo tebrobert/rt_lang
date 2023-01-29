@@ -10,9 +10,13 @@ def readFile(filePath):
 class ArgParser:
     def __init__(self):
         self.argParser = argparse.ArgumentParser()
+
     def add(self, x, **kwargs):
-        self.argParser.add_argument(x, **kwargs)
-        return self
+        newParser = ArgParser()
+        newParser.argParser = self.argParser
+        newParser.argParser.add_argument(x, **kwargs)
+        return newParser
+
     def parse(self):
         return self.argParser.parse_args()
 
@@ -34,33 +38,30 @@ def printHeaderedIf(cond):
         (printHeaderIf(cond, header), printIf(cond, f"{value}\n"))
 
 def doMbHeadered(action, value, mbPrintHeadered):
-    return flattap(
-        lambda: action(value),
-        mbPrintHeadered
-    )
+    return flattap(lambda: action(value), mbPrintHeadered)
 
 def assertedDesugar(readResult, code):
-    return TRY_ASSERT("desugared",
+    return TRY_ASSERT_TEST("desugared",
         readResult("2_desugared.rt.txt"), lambda: desugar(code)
     )
 
 def assertedLexx(readResult, desugared):
-    return TRY_ASSERT("tokens",
+    return TRY_ASSERT_TEST("tokens",
         readResult("3_tokens.py.txt"), lambda: lexx(desugared)
     )
 
 def assertedParse(readResult, tokens):
-    return TRY_ASSERT("expr",
+    return TRY_ASSERT_TEST("expr",
         readResult("4_expr.py.txt"), lambda: parse(tokens)
     )
 
 def assertedSem(readResult, expr):
-    return TRY_ASSERT("typed",
+    return TRY_ASSERT_TEST("typed",
         readResult("5_typed.txt"), lambda: sem(expr)
     )
 
 def assertedShow(readResult, typed):
-    return TRY_ASSERT("shown",
+    return TRY_ASSERT_TEST("shown",
         readResult("6_shown.py.txt"), lambda: show(typed)
     )
 
