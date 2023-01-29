@@ -39,12 +39,12 @@ def main():
 
     if args.test:
         pathTests = 'tests/'
-        path1Code      = '1_code.rt'
-        path2Desugared = '2_desugared.rt'
-        path3Tokens    = '3_tokens.py'
-        path4Expr      = '4_expr.py'
+        path1Code      = '1_code.rt.txt'
+        path2Desugared = '2_desugared.rt.txt'
+        path3Tokens    = '3_tokens.py.txt'
+        path4Expr      = '4_expr.py.txt'
         path5Typed     = '5_typed.txt'
-        path6Shown     = '6_shown.py'
+        path6Shown     = '6_shown.py.txt'
         for currentElement in sorted(os.listdir(pathTests)):
             pathCurrentTest = f"{pathTests}{currentElement}/"
             print(currentElement, end=": ")
