@@ -11,10 +11,10 @@ class CompileErr(ValueError):
 class CallableShowableLambda_1:
     def __init__(self, f, s):
         if not callable(f):
-            return fail(ValueError("f should be callable"))
+            fail(ValueError("f should be callable"))
 
         if not type(s) is str:
-            return fail(ValueError("s should be a string"))
+            fail(ValueError("s should be a string"))
 
         self.s, self.f = s, f
 
@@ -47,16 +47,16 @@ class Print:
 class Flatmap:
     def __init__(self, a_fb, fa):
         if not callable(a_fb):
-            return fail(ValueError("a_fb should be callable"))
+            fail(ValueError("a_fb should be callable"))
 
         if not fa.runnable():
-            return fail(ValueError(f"fa should be runnable but it is {fa=}, also {a_fb=}"))
+            fail(ValueError(f"fa should be runnable but it is {fa=}, also {a_fb=}"))
 
         self.a_fb, self.fa = a_fb, fa
 
     def __repr__(self):
         if not type(self.a_fb) is CallableShowableLambda_1:
-            return fail(CompileErr("Cannot show lambda"))
+            fail(CompileErr("Cannot show lambda"))
 
         return f'Flatmap({self.a_fb}, {self.fa})'
 

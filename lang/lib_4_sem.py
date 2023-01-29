@@ -57,10 +57,10 @@ class Typed_Call_1:
 class Typed_Lambda_1:
     def __init__(self, tidf_x, typed_res, typ=None):
         if not (type(tidf_x) is Typed_Idf):
-            return fail(SemErr('Typed_Idf expected as the first arg of Typed_Lambda_1'))
+            fail(SemErr('Typed_Idf expected as the first arg of Typed_Lambda_1'))
 
         if not (typ is None or type(typ) is Type_2 and typ.s == builtin_Func):
-            return fail(SemErr(f'{builtin_Func} or None expected as the typ arg of Typed_Lambda_1'))
+            fail(SemErr(f'{builtin_Func} or None expected as the typ arg of Typed_Lambda_1'))
 
         self.tidf_x = tidf_x
         self.typed_res = typed_res
@@ -130,7 +130,7 @@ def sem_rec(expr):
                     if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Unknown_0:
                         if typ_sub_x.s in f_x_synchedUnks:
                             return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
-                        return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currentrly matching {typ_sub_fx} and {typ_sub_x}"))
+                        return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
                     
                     if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Type_1:
                         return solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
@@ -138,7 +138,7 @@ def sem_rec(expr):
                     if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Unknown_0:
                         if typ_sub_x.s in f_x_synchedUnks:
                             return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
-                        return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currentrly matching {typ_sub_fx} and {typ_sub_x}"))
+                        return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
                     
                     if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Type_2:
                         return solve_rec(typ_sub_fx.t2, typ_sub_x.t2, solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks)))
