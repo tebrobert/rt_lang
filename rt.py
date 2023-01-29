@@ -1,5 +1,6 @@
 import argparse
 import os
+from utils.ASSERT import *
 from lang.lib_6_run import *
 
 def readFile(filePath):
@@ -15,16 +16,19 @@ class ArgParser:
     def parse(self):
         return self.argParser.parse_args()
 
+def printHeaderedIfDev(dev, header):
+    return lambda value: print(f"{header}:\n{value}\n\n" if dev else "", end="")
+
 def unsafeRunCode(code, dev):
-    if dev:
-        print(f'1_CODE:\n{code}')
     try:
-        desugared = desugar(code); print(f"2_DESUGARED:\n{desugared}\n" if dev else "", end="")
-        tokens = lexx(desugared); print(f"3_TOKENS:\n{tokens}\n" if dev else "", end="")
-        expr = parse(tokens); print(f"4_EXPR:\n{expr}\n" if dev else "", end="")
-        typed = sem(expr); print(f"5_TYPED:\n{typed}\n" if dev else "", end="")
-        shown = show(typed); print(f"6_SHOWN:\n{shown}\n" if dev else "", end="")
-        built = build(shown); print("7_RUNNING:\n" if dev else "", end="")
+        print(f"1_CODE:\n{code}\n" if dev else "", end="")
+        desugared = flattap(lambda: desugar(code), printHeaderedIfDev(dev, "2_DESUGARED"))
+        tokens = flattap(lambda: lexx(desugared), printHeaderedIfDev(dev, "3_TOKENS"))
+        expr = flattap(lambda: parse(tokens), printHeaderedIfDev(dev, "4_EXPR"))
+        typed = flattap(lambda: sem(expr), printHeaderedIfDev(dev, "5_TYPED"))
+        shown = flattap(lambda: show(typed), printHeaderedIfDev(dev, "6_SHOWN"))
+        built = build(shown)
+        print("7_RUNNING:\n" if dev else "", end="")
         unsafeRunBuilt(built)
     except Exception as e:
         print(e)
@@ -51,8 +55,7 @@ def main():
             try:
                 code = readFile(f"{pathCurrentTest}/{path1Code}")
 
-                desugared = desugar(code)
-                assert desugared == readFile(f"{pathCurrentTest}/{path2Desugared}"), f"!=desugared, got: {desugared}"
+                desugared = TRY_ASSERT("desugared", readFile(f"{pathCurrentTest}/{path2Desugared}"), desugar, code)
 
                 tokens = lexx(desugared)
                 assert str(tokens) == readFile(f"{pathCurrentTest}/{path3Tokens}"), f"!=tokens, got: {tokens}"
