@@ -10,6 +10,7 @@ builtin_Func = "Func"
 builtin_input = "input"
 builtin_print = "print"
 builtin_flatmap = "flatmap"
+builtin_pure = "pure"
 
 class LitError(ValueError):
     def __init__(self, msg):
@@ -139,4 +140,5 @@ idf_to_type = {
         T_Func(T_A, T_RIO(T_B)),
         T_Func(T_RIO(T_A), T_RIO(T_B))
     ),
+    builtin_pure: T_Func(T_A, T_RIO(T_A))
 }

@@ -59,6 +59,16 @@ class Flatmap:
     def runnable(self):
         return True
 
+class Pure:
+    def __init__(self, a):
+        self.a = a
+    
+    def __repr__(self):
+        return f"Pure({self.a})"
+    
+    def runnable(self):
+        return True
+
 def showTypedLit(tlit):
     if tlit.typ == T_Str:
         return f"\"{tlit.s}\""
@@ -71,6 +81,8 @@ def showTypedIdf(tidf, lambArgStack):
         return "(lambda s: Print(s))"
     if tidf.s == builtin_flatmap:
         return "(lambda a_fb: lambda fa: Flatmap(a_fb, fa))"
+    if tidf.s == builtin_pure:
+        return "(lambda a: Pure(a))"
     if tidf.s in lambArgStack:
         return tidf.s
     return fail(BuildErr(f"Unexpected identifier `{tidf.s}`"))

@@ -16,5 +16,7 @@ def unsafeRunBuilt(rio):
         return print(rio.s)
     elif type_rio is Flatmap:
         return unsafeRunBuilt(rio.a_fb(unsafeRunBuilt(rio.fa)))
+    elif type_rio is Pure:
+        return rio.a
     else:
         return fail(RunErr(f'Unexpected type "{type_rio}" "{rio}".'))
