@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 from utils.ASSERT import *
 from lang.lib_6_run import *
 
@@ -17,14 +18,9 @@ class ArgParser:
         newParser.argParser.add_argument(x, **kwargs)
         return newParser
 
-    def parse(self):
-        return self.argParser.parse_args()
-
-args = ArgParser() \
-    .add("code", nargs="?") \
-    .add("--dev", action="store_true") \
-    .add("--test", action="store_true") \
-    .parse()
+    def parse(self, argLine):
+        argv = [] if argLine=="" else argLine.split(" ")
+        return self.argParser.parse_args(argv)
 
 def printIf(cond, value):
     if cond:
@@ -100,11 +96,23 @@ def unsafeRunCode(code, dev):
     except Exception as e:
         print(e)
 
-def main():
+argParser = ArgParser() \
+    .add("code", nargs="?") \
+    .add("--dev", action="store_true") \
+    .add("--test", action="store_true") \
+
+def main(argLine):
+    args = argParser.parse(argLine)
     if args.test:
         runTests()
     elif args.code is not None:
         unsafeRunCode(code=readFile(args.code), dev=args.dev)
 
+def promtArgs():
+    return input("Enter comand line args: ")
+
 if __name__ == "__main__":
-    main()
+    argLine = (promtArgs() if len(sys.argv) == 1 else
+        "".join(sys.argv[1:])
+    )
+    main(argLine)
