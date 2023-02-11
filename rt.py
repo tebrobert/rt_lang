@@ -63,7 +63,7 @@ def assertedShow(readResult, typed):
 
 def runTests():
     pathTests = "tests/"
-    for currentElement in sorted(os.listdir(pathTests)):
+    for currentElement in sorted(os.listdir(pathTests), key=int):
         pathCurrentTest = f"{pathTests}{currentElement}/"
         readCurrentTestFile = lambda fileName: \
             readFile(f"{pathCurrentTest}/{fileName}")
@@ -113,6 +113,6 @@ def promtArgs():
 
 if __name__ == "__main__":
     argLine = (promtArgs() if len(sys.argv) == 1 else
-        "".join(sys.argv[1:])
+        " ".join(sys.argv[1:])
     )
     main(argLine)

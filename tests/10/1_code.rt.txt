@@ -1,0 +1,5 @@
+greeting <- pure("Hey! What is your name?")
+print(greeting)
+name <- input
+print("Welcome, ...")
+print(name)
