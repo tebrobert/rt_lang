@@ -1,8 +1,8 @@
 Launch a code sample:
-python ./rt.py ./tests/9/1_code.rt
+python rt.py sample.rt
 
 Launch a code sample and see how it really works:
-python ./rt.py ./tests/9/1_code.rt --dev
+python rt.py sample.rt --dev
 
 Get help:
-python ./rt.py -h
+python rt.py -h

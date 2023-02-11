@@ -17,7 +17,7 @@ def arrowSplit(line):
     def forceArrowSplit(lineWithArrow):
         idx = lineWithArrow.index("<-")
         arg = lineWithArrow[:idx]
-        monad = lineWithArrow[idx + 2:]
+        monad = lineWithArrow[idx+2: ]
         DesugarErr.failIf("<-" in monad,
             "Can't have more than one `<-` in a line."
         )
@@ -35,11 +35,40 @@ def flatmapize(arrowSplitInitLines, flapmapized):
         )
     return flapmapized if arrowSplitInitLines == [] else forceFlatmapize()
 
+@tailrec
+def deEq(lines, deEqLines):
+    def forceDeEq(line):
+        idx = line.index("=")
+        left = line[:idx]
+        right = line[idx+1: ]
+        DesugarErr.failIf("=" in right,
+            "Can't have more than one `=` in a line."
+        )
+        return f"{left} <- pure({right})"
+
+    return (deEqLines if lines == [] else
+        rec(lines[1:], deEqLines + [
+            lines[0] if not hasEq(lines[0]) else forceDeEq(lines[0])
+        ])
+    )
+
 errMsgBadLastLineArrow = \
     "The last line can't contain `<-`, you'd probably like to remove it."
+errMsgBadLastLineEq = \
+    "The last line can't contain `=`, you'd probably like to remove it."
+
+def hasEq(line):
+    return ( line.count("=") > line.count("=>")
+        + line.count("==")
+        + line.count("!=")
+        + line.count(">=")
+        + line.count("<=")
+    )
 
 def desugar(code):
     lines = list(filter(lambda line: line != "", code.split("\n")))
     DesugarErr.failIf(lines == [], "Yet empty file is unsupported")
     DesugarErr.failIf("<-" in lines[-1], errMsgBadLastLineArrow)
-    return flatmapize(list(map(arrowSplit, lines[:-1])), lines[-1])
+    DesugarErr.failIf(hasEq(lines[-1]), errMsgBadLastLineEq)
+    deEqLines = deEq(lines, [])
+    return flatmapize(list(map(arrowSplit, deEqLines[:-1])), deEqLines[-1])
