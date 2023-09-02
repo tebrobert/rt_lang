@@ -1,4 +1,4 @@
-def flattap(action, resultProcessor):
+def flattap(action, result_processor):
     res = action()
-    resultProcessor(res)
+    result_processor(res)
     return res
