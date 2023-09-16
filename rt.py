@@ -112,11 +112,12 @@ def main():
         unsafe_run_code(code=read_file(args.code), dev=args.dev)
 
 
-argParser = (ArgParser()
-             .add("code", nargs="?")
-             .add("--dev", action="store_true")
-             .add("--test", action="store_true")
-             )
+argParser = (
+    ArgParser()
+    .add("code", nargs="?")
+    .add("--dev", action="store_true")
+    .add("--test", action="store_true")
+)
 
 path_tests = "tests/"
 
