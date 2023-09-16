@@ -1,33 +1,11 @@
 from utils.fail import *
 
-builtin_Int = "Int"
-builtin_Str = "Str"
-builtin_Unit = "Unit"
-builtin_List = "List"
-builtin_RIO = "RIO"
-builtin_Func = "Func"
-
-builtin_input = "input"
-builtin_print = "print"
-builtin_flatmap = "flatmap"
-builtin_pure = "pure"
-
 class LitError(ValueError):
     def __init__(self, msg):
         self.msg = msg
 
     def __repr__(self):
         return self.msg
-
-
-def has_unknown(rt_type):
-    return (
-        True if type(rt_type) is Unknown0 else
-        False if type(rt_type) is Type0 else
-        has_unknown(rt_type.t1) if type(rt_type) is Type1 else
-        has_unknown(rt_type.t1) or has_unknown(rt_type.t2) if type(rt_type) is Type2 else
-        fail(f"The value {rt_type} of type {type(rt_type)} is not an rt-type.")
-    )
 
 
 class Unknown0:
@@ -115,6 +93,28 @@ class Type2:
 
 def is_type(o):
     return type(o) in [Unknown0, Type0, Type1, Type2]
+
+def has_unknown(rt_type):
+    return (
+        True if type(rt_type) is Unknown0 else
+        False if type(rt_type) is Type0 else
+        has_unknown(rt_type.t1) if type(rt_type) is Type1 else
+        has_unknown(rt_type.t1) or has_unknown(rt_type.t2) if type(rt_type) is Type2 else
+        fail(f"The value {rt_type} of type {type(rt_type)} is not an rt-type.")
+    )
+
+
+builtin_Int = "Int"
+builtin_Str = "Str"
+builtin_Unit = "Unit"
+builtin_List = "List"
+builtin_RIO = "RIO"
+builtin_Func = "Func"
+
+builtin_input = "input"
+builtin_print = "print"
+builtin_flatmap = "flatmap"
+builtin_pure = "pure"
 
 T_Int = Type0(builtin_Int)
 T_Str = Type0(builtin_Str)
