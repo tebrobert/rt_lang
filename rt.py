@@ -145,5 +145,4 @@ def get_args():
 
 
 if __name__ == "__main__":
-    run_tests()
-    #main(get_args())
+    main(get_args())
