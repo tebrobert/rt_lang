@@ -106,8 +106,9 @@ def has_unknown(rt_type):
         True if type(rt_type) is Unknown0 else
         False if type(rt_type) is Type0 else
         has_unknown(rt_type.t1) if type(rt_type) is Type1 else
-        has_unknown(rt_type.t1) or has_unknown(rt_type.t2) if type(rt_type) is Type2 else
-        fail(f"The value {rt_type} of type {type(rt_type)} is not an rt-type.")
+        has_unknown(rt_type.t1) or has_unknown(rt_type.t2) if type(
+            rt_type) is Type2 else
+        fail(f"The value {rt_type} {type(rt_type)} is not an type.")
     )
 
 
