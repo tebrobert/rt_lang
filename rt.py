@@ -95,7 +95,7 @@ def unsafe_run_code(code, dev):
         print(e)
 
 
-def get_args_line():
+def get_args():
     return (
         sys.argv[1:] if sys.argv[1:] else
         input("Enter command line args: ").split(" ")
@@ -103,7 +103,7 @@ def get_args_line():
 
 
 def main():
-    args = argParser.parse(get_args_line())
+    args = argParser.parse(get_args())
     if args.test:
         run_tests()
     elif args.code is not None:
