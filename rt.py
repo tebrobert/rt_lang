@@ -123,8 +123,8 @@ def unsafe_run_code(code, dev):
         print(e)
 
 
-def main(arg_line):
-    args = argParser.parse(arg_line)
+def main(args_line):
+    args = argParser.parse(args_line)
     if args.test:
         run_tests()
     elif args.code is not None:
@@ -135,7 +135,7 @@ def prompt_args():
     return input("Enter command line args: ")
 
 
-def get_args():
+def get_args_line():
     return (prompt_args() if len(sys.argv) == 1 else
             " ".join(sys.argv[1:])
             )
@@ -148,4 +148,4 @@ argParser = (ArgParser()
              )
 
 if __name__ == "__main__":
-    main(get_args())
+    main(get_args_line())
