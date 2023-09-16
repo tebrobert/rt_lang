@@ -59,8 +59,8 @@ def asserted_sem(read_result, expr):
 
 
 def asserted_show(read_result, typed):
-    res = rt_try(lambda: show(typed))
-    rt_assert_equal("shown", read_result("6_shown.py.txt"))(res)
+    shown = rt_try(lambda: show(typed))
+    rt_assert_equal("shown", read_result("6_shown.py.txt"))(shown)
 
 
 def read_test_file(current_element):
@@ -112,14 +112,6 @@ def unsafe_run_code(code, dev):
         print(e)
 
 
-def main():
-    args = argParser.parse(get_args_line())
-    if args.test:
-        run_tests()
-    elif args.code is not None:
-        unsafe_run_code(code=read_file(args.code), dev=args.dev)
-
-
 def get_args_line():
     def prompt_args():
         return input("Enter command line args: ")
@@ -128,6 +120,14 @@ def get_args_line():
         prompt_args().split(" ") if len(sys.argv) == 1 else
         sys.argv[1:]
     )
+
+
+def main():
+    args = argParser.parse(get_args_line())
+    if args.test:
+        run_tests()
+    elif args.code is not None:
+        unsafe_run_code(code=read_file(args.code), dev=args.dev)
 
 
 argParser = (ArgParser()
