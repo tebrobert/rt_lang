@@ -1,6 +1,8 @@
-import argparse
 import os
 import sys
+
+from utils.arg_parser import *
+from utils.read_file import *
 from utils.rt_assert import *
 from lang.lib_6_run import *
 
@@ -11,25 +13,6 @@ Steps:
 Shortcuts:
 ...
 """
-
-
-class ArgParser:
-    def __init__(self):
-        self.argParser = argparse.ArgumentParser()
-
-    def add(self, x, **kwargs):
-        new_parser = ArgParser()
-        new_parser.argParser = self.argParser
-        new_parser.argParser.add_argument(x, **kwargs)
-        return new_parser
-
-    def parse(self, arg_line):
-        return self.argParser.parse_args(arg_line)
-
-
-def read_file(file_path):
-    with open(file_path) as f:
-        return f.read()
 
 
 def print_if(cond, value):
