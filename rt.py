@@ -15,27 +15,23 @@ Shortcuts:
 """
 
 
-def print_if(cond, value):
-    if cond:
-        print(value)
+def print_if(cond):
+    def print_if_cond(value, end="\n"):
+        if cond:
+            print(value, end=end)
+
+    return print_if_cond
 
 
-def print_header_if(cond, header):
-    print_if(cond, f"{header}:")
+def print_with_header_if(cond):
+    def mb_print_with_header(header):
+        def mb_print_headered(value):
+            print_if(cond)(f"{header}:")
+            print_if(cond)(f"{value}\n")
 
+        return mb_print_headered
 
-def print_headered_if(cond):
-    def f(header):
-        def g(value):
-            return print_header_if(cond, header), print_if(cond, f"{value}\n")
-
-        return g
-
-    return f
-
-
-def do_mb_headered(action, value, mb_print_headered):
-    return flattap(lambda: action(value), mb_print_headered)
+    return mb_print_with_header
 
 
 def asserted_desugar(read_result, code):
@@ -90,19 +86,20 @@ def run_tests():
             print(f"FAILED: {e}")
 
 
-def get_stage(print_headered_if_dev):
-    def stage(action, value, header):
-        return do_mb_headered(action, value,
-            print_headered_if_dev(header)
+def get_stage(dev):
+    def stage(action, value, header, show_res=True):
+        print_if(dev)(header)
+        return flattap(lambda: action(value),
+            lambda res: print_if(dev and show_res)(res, end="\n\n")
         )
 
     return stage
 
 
 def unsafe_run_code(code, dev):
-    print_headered_if_dev = print_headered_if(dev)
-    stage = get_stage(print_headered_if_dev)
-    print_headered_if_dev("1_CODE")(code)
+    stage = get_stage(dev)
+    print_if(dev)("1_CODE")
+    print_if(dev)(code)
     try:
         desugared = stage(desugar, code, "2_DESUGARED")
         tokens = stage(lexx, desugared, "3_TOKENS")
@@ -110,8 +107,7 @@ def unsafe_run_code(code, dev):
         typed = stage(sem, expr, "5_TYPED")
         shown = stage(show, typed, "6_SHOWN")
         compiled = rt_compile(shown)
-        print_header_if(dev, "7_RUNNING")
-        unsafe_run_built(compiled)
+        stage(unsafe_run_built, compiled, "7_RUNNING", show_res=False)
     except Exception as e:
         print(e)
 
