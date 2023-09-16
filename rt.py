@@ -2,6 +2,7 @@ import os
 import sys
 
 from utils.arg_parser import *
+from utils.print import *
 from utils.read_file import *
 from utils.rt_assert import *
 from lang.lib_6_run import *
@@ -13,25 +14,6 @@ Steps:
 Shortcuts:
 ...
 """
-
-
-def print_if(cond):
-    def print_if_cond(value, end="\n"):
-        if cond:
-            print(value, end=end)
-
-    return print_if_cond
-
-
-def print_with_header_if(cond):
-    def mb_print_with_header(header):
-        def mb_print_headered(value):
-            print_if(cond)(f"{header}:")
-            print_if(cond)(f"{value}\n")
-
-        return mb_print_headered
-
-    return mb_print_with_header
 
 
 def asserted_desugar(read_result, code):
