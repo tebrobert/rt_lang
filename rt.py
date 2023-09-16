@@ -24,8 +24,7 @@ class ArgParser:
         return new_parser
 
     def parse(self, arg_line):
-        argv = [] if arg_line == "" else arg_line.split(" ")
-        return self.argParser.parse_args(argv)
+        return self.argParser.parse_args(arg_line)
 
 
 def read_file(file_path):
@@ -87,15 +86,18 @@ def asserted_show(read_result, typed):
     )
 
 
-def run_tests():
-    path_tests = "tests/"
-    for currentElement in sorted(os.listdir(path_tests), key=int):
-        path_current_test = f"{path_tests}{currentElement}/"
+def read_test_file(currentElement):
+    def read_current_test_file(file_name):
+        return read_file(f"{path_tests}{currentElement}/{file_name}")
 
-        def read_current_test_file(file_name):
-            return read_file(f"{path_current_test}/{file_name}")
+    return read_current_test_file
+
+
+def run_tests():
+    for currentElement in sorted(os.listdir(path_tests), key=int):
 
         print(currentElement, end=": ")
+        read_current_test_file = read_test_file(currentElement)
 
         try:
             code = read_current_test_file("1_code.rt.txt")
@@ -143,9 +145,10 @@ def get_args_line():
     def prompt_args():
         return input("Enter command line args: ")
 
-    return (prompt_args() if len(sys.argv) == 1 else
-            " ".join(sys.argv[1:])
-            )
+    return (
+        prompt_args().split(" ") if len(sys.argv) == 1 else
+        sys.argv[1:]
+    )
 
 
 argParser = (ArgParser()
@@ -153,6 +156,8 @@ argParser = (ArgParser()
              .add("--dev", action="store_true")
              .add("--test", action="store_true")
              )
+
+path_tests = "tests/"
 
 if __name__ == "__main__":
     main()
