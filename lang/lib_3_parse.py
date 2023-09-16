@@ -80,13 +80,13 @@ def parse_braced(tokens, i):
 
 
 def parse_lambda_1(tokens, i):
-    eidf_x, j = parse_idf(tokens, i)
+    e_idf_x, j = parse_idf(tokens, i)
     if type(tokens[j]) is not TokenEqGr:
         return fail(ParseErr(
             f'Token_Eq_Gr expected at {j} given {i} {tokens}'
         ))
     expr_res, k = parse_expr(tokens, j + 1)
-    return ExprLambda1(eidf_x, expr_res), k
+    return ExprLambda1(e_idf_x, expr_res), k
 
 
 @tailrec
@@ -130,8 +130,8 @@ def parse_any_of(tokens, i, parsers):
 
 def parse_expr(tokens, i):
     return parse_any_of(tokens, i,
-                        [parse_lambda_1, parse_idf, parse_braced, parse_lit_str]
-                        )
+        [parse_lambda_1, parse_idf, parse_braced, parse_lit_str]
+    )
 
 
 def parse(tokens):

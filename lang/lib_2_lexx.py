@@ -72,8 +72,8 @@ def lexx_idf(code_ext, tokens, token_idx_end):
     idx_idf_start = token_idx_end
     idx_idf_end = get_idx_idf_end_rec(code_ext, idx_idf_start + 1)
     return (code_ext, idx_idf_end,
-            tokens + [TokenIdf(code_ext[idx_idf_start:idx_idf_end])]
-            )
+    tokens + [TokenIdf(code_ext[idx_idf_start:idx_idf_end])]
+    )
 
 
 def lexx_eq_gr(code_ext, tokens, token_idx_end):
@@ -81,7 +81,8 @@ def lexx_eq_gr(code_ext, tokens, token_idx_end):
             if code_ext[token_idx_end + 1] == '>'
             else fail(LexxErr(
         f'Unexpected sequence "={code_ext[token_idx_end + 1]}"'
-    ))
+    )
+    )
             )
 
 
@@ -89,8 +90,8 @@ def lexx_string(code_ext, tokens, token_idx_end):
     idx_string_start = token_idx_end + 1
     idx_string_end = get_idx_string_end_rec(code_ext, idx_string_start)
     return (code_ext, idx_string_end + 1,
-            tokens + [TokenLitStr(code_ext[idx_string_start:idx_string_end])]
-            )
+    tokens + [TokenLitStr(code_ext[idx_string_start:idx_string_end])]
+    )
 
 
 @tailrec

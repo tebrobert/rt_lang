@@ -21,8 +21,8 @@ def arrow_split(line):
         arg = line_with_arrow[:idx]
         monad = line_with_arrow[idx + 2:]
         DesugarErr.fail_if("<-" in monad,
-                           "Can't have more than one `<-` in a line."
-                           )
+            "Can't have more than one `<-` in a line."
+        )
         return arg, monad
 
     return (("_", line) if "<-" not in line else
@@ -35,8 +35,8 @@ def flatmapize(arrow_split_init_lines, flapmapized):
     def force_flatmapize():
         arg, monad = arrow_split_init_lines[-1]
         return rec(arrow_split_init_lines[:-1],
-                   f"flatmap({arg} => {flapmapized})({monad})"
-                   )
+            f"flatmap({arg} => {flapmapized})({monad})"
+        )
 
     return flapmapized if arrow_split_init_lines == [] else force_flatmapize()
 
@@ -48,14 +48,15 @@ def de_eq(lines, de_eq_lines):
         left = line[:idx]
         right = line[idx + 1:]
         DesugarErr.fail_if("=" in right,
-                           "Can't have more than one `=` in a line."
-                           )
+            "Can't have more than one `=` in a line."
+        )
         return f"{left} <- pure({right})"
 
     return (de_eq_lines if lines == [] else
             rec(lines[1:], de_eq_lines + [
                 lines[0] if not has_eq(lines[0]) else force_de_eq(lines[0])
-            ])
+            ]
+            )
             )
 
 

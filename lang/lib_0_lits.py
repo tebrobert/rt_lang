@@ -83,18 +83,18 @@ class Type2:
 
     def copy(self, t1=None, t2=None):
         return Type2(self.s,
-                     self.t1 if t1 is None else t1,
-                     self.t2 if t2 is None else t2
-                     )
+            self.t1 if t1 is None else t1,
+            self.t2 if t2 is None else t2
+        )
 
     def has_unknown(self):
         return has_unknown(self.t1) or has_unknown(self.t2)
 
     def concrete(self, typ_from, typ_to):
         return Type2(self.s,
-                     self.t1.concrete(typ_from, typ_to),
-                     self.t2.concrete(typ_from, typ_to)
-                     )
+            self.t1.concrete(typ_from, typ_to),
+            self.t2.concrete(typ_from, typ_to)
+        )
 
 
 def is_type(o):
