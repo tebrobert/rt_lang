@@ -2,7 +2,7 @@ import os
 import sys
 
 from utils.arg_parser import *
-from utils.print import *
+from utils.print_if import *
 from utils.read_file import *
 from utils.rt_assert import *
 from lang.lib_6_run import *
