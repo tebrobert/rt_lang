@@ -108,11 +108,11 @@ def sem_rec(expr):
             def solve(typ_f, typ_x):
                 return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
 
-            def solve_rec(typ_sub_fx, typ_sub_x, f_x_synchedUnks):
-                typ_f, typ_x, synched_unks = f_x_synchedUnks
+            def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
+                typ_f, typ_x, synched_unks = f_x_synched_unks
 
                 if type(typ_sub_fx) is Type0 and type(typ_sub_x) is Type0 and typ_sub_fx.s == typ_sub_x.s:
-                    return (typ_f, typ_x, synched_unks)
+                    return typ_f, typ_x, synched_unks
 
                 if type(typ_sub_fx) is Type0 and type(typ_sub_x) is Unknown0:
                     fail("Not implemented: solve_rec 1")
@@ -123,18 +123,18 @@ def sem_rec(expr):
                 if type(typ_sub_fx) is Unknown0:
                     if type(typ_sub_x) is Unknown0:
                         if typ_sub_fx.s == typ_sub_x.s:
-                            return (typ_f, typ_x, synched_unks.union({typ_sub_fx.s}))
+                            return typ_f, typ_x, synched_unks.union({typ_sub_fx.s})
                         else:
                             fail("Not implemented: solve_rec 4")
                     else:
-                        if typ_sub_fx.s in f_x_synchedUnks:
+                        if typ_sub_fx.s in f_x_synched_unks:
                             return fail(
                                 SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
 
                         return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
 
                 if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Unknown0:
-                    if typ_sub_x.s in f_x_synchedUnks:
+                    if typ_sub_x.s in f_x_synched_unks:
                         return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
                     return fail(
                         SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
@@ -143,7 +143,7 @@ def sem_rec(expr):
                     return solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
 
                 if type(typ_sub_fx) is Type2 and type(typ_sub_x) is Unknown0:
-                    if typ_sub_x.s in f_x_synchedUnks:
+                    if typ_sub_x.s in f_x_synched_unks:
                         return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
                     return fail(
                         SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
@@ -165,12 +165,12 @@ def sem_rec(expr):
         return fail(SemErr(f'typed_f should be a {builtin_Func}'))
 
     if type_expr is ExprLambda1:
-        tidf_x = sem_rec(expr.eidf_x)
+        t_idf_x = sem_rec(expr.eidf_x)
         typed_res = sem_rec(expr.expr_res)
 
-        lookup_typ_x = typed_res.find_idf_type(tidf_x.s)
+        lookup_typ_x = typed_res.find_idf_type(t_idf_x.s)
 
-        retyped_x = tidf_x.copy_typified(lookup_typ_x)
+        retyped_x = t_idf_x.copy_typified(lookup_typ_x)
 
         return TypedLambda1(retyped_x, typed_res)
 

@@ -9,7 +9,7 @@ class BuildErr(ValueError):
         return self.msg
 
 
-class CallableShowableLambda_1:
+class CallableShowableLambda1:
     def __init__(self, f, s):
         if not callable(f):
             fail(ValueError("f should be callable"))
@@ -57,7 +57,7 @@ class Flatmap:
         self.a_fb, self.fa = a_fb, fa
 
     def __repr__(self):
-        if not type(self.a_fb) is CallableShowableLambda_1:
+        if not type(self.a_fb) is CallableShowableLambda1:
             fail(BuildErr("Cannot show lambda"))
         return f'Flatmap({self.a_fb}, {self.fa})'
 
@@ -76,40 +76,41 @@ class Pure:
         return True
 
 
-def showTypedLit(tlit):
-    if tlit.typ == T_Str:
-        return f"\"{tlit.s}\""
-    return fail(BuildErr(f"Unexpected literal `{tlit}`"))
+def show_typed_lit(t_lit):
+    if t_lit.typ == T_Str:
+        return f"\"{t_lit.s}\""
+    return fail(BuildErr(f"Unexpected literal `{t_lit}`"))
 
 
-def showTypedIdf(tidf, lambArgStack):
-    if tidf.s == builtin_input:
+def show_typed_idf(t_idf, lamb_arg_stack):
+    if t_idf.s == builtin_input:
         return "Input()"
-    if tidf.s == builtin_print:
+    if t_idf.s == builtin_print:
         return "(lambda s: Print(s))"
-    if tidf.s == builtin_flatmap:
+    if t_idf.s == builtin_flatmap:
         return "(lambda a_fb: lambda fa: Flatmap(a_fb, fa))"
-    if tidf.s == builtin_pure:
+    if t_idf.s == builtin_pure:
         return "(lambda a: Pure(a))"
-    if tidf.s in lambArgStack:
-        return tidf.s
-    return fail(BuildErr(f"Unexpected identifier `{tidf.s}`"))
+    if t_idf.s in lamb_arg_stack:
+        return t_idf.s
+    return fail(BuildErr(f"Unexpected identifier `{t_idf.s}`"))
 
 
-def show(typed, lambArgStack=[]):
+def show(typed, immutable_lamb_arg_stack=None):
+    lamb_arg_stack = [] if immutable_lamb_arg_stack is None else immutable_lamb_arg_stack
     if type(typed) is TypedLit:
-        return showTypedLit(typed)
+        return show_typed_lit(typed)
     if type(typed) is TypedIdf:
-        return showTypedIdf(typed, lambArgStack)
+        return show_typed_idf(typed, lamb_arg_stack)
     if type(typed) is TypedCall1:
-        tcall = typed
-        shown_f = show(tcall.typed_f, lambArgStack)
-        shown_x = show(tcall.typed_x, lambArgStack)
+        t_call = typed
+        shown_f = show(t_call.typed_f, lamb_arg_stack)
+        shown_x = show(t_call.typed_x, lamb_arg_stack)
         return f"({shown_f})({shown_x})"
     if type(typed) is TypedLambda1:
-        tlamb = typed
-        s = tlamb.t_idf_x.s
-        return f"(lambda {s}: {show(tlamb.typed_res, [s] + lambArgStack)})"
+        t_lamb = typed
+        s = t_lamb.t_idf_x.s
+        return f"(lambda {s}: {show(t_lamb.typed_res, [s] + lamb_arg_stack)})"
     fail(BuildErr(f"Unexpected typed expression {typed}"))
 
 

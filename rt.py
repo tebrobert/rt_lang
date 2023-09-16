@@ -114,7 +114,7 @@ def unsafe_run_code(code, dev):
         shown = do_mb_headered(show, typed, print_headered_if_dev("6_SHOWN"))
         built = build(shown)
         print_header_if(dev, "7_RUNNING")
-        unsafeRunBuilt(built)
+        unsafe_run_built(built)
     except Exception as e:
         print(e)
 

@@ -9,7 +9,7 @@ class RunErr(ValueError):
         return self.msg
 
 
-def unsafeRunBuilt(rio):
+def unsafe_run_built(rio):
     type_rio = type(rio)
 
     if type_rio is Input:
@@ -17,7 +17,7 @@ def unsafeRunBuilt(rio):
     elif type_rio is Print:
         return print(rio.s)
     elif type_rio is Flatmap:
-        return unsafeRunBuilt(rio.a_fb(unsafeRunBuilt(rio.fa)))
+        return unsafe_run_built(rio.a_fb(unsafe_run_built(rio.fa)))
     elif type_rio is Pure:
         return rio.a
     else:
