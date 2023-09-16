@@ -2,20 +2,19 @@ refactor: make it short
 implement the plus function binary
 Overloadings
 
-Defer:
-Unary plus, minus
-implement operator syntax
---implement functions
-Typeplasses
-...
-
-refactor:
-	put everything in a single rt.py file
+implement better error locating
 
 implement flags:
 	validate
 	build
 	run (default)
 
-implement better error locating
+
+
+Defer:
+Unary plus, minus
+implement operator syntax
+--implement functions
+Typeplasses
+...
 
