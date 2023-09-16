@@ -19,16 +19,16 @@ class LitError(ValueError):
     def __repr__(self):
         return self.msg
 
-class Unknown_0:
+class Unknown0:
     def __init__(self, s):
         if not type(s) is str:
             fail(LitError("The args of Unknown_0 have bad types"))
         self.s = s
 
     def __eq__(self, that):
-        return type(that) == Unknown_0 and that.s == self.s
+        return type(that) == Unknown0 and that.s == self.s
 
-    def hasUnknown(self):
+    def has_unknown(self):
         return True
 
     def concrete(self, typ_from, typ_to):
@@ -46,7 +46,7 @@ class Type_0:
     def __eq__(self, that):
         return type(that) == Type_0 and that.s == self.s
 
-    def hasUnknown(self):
+    def has_unknown(self):
         return False
 
     def concrete(self, _typ_from, _typ_to):
@@ -71,8 +71,8 @@ class Type_1:
     def copy(self, t1):
         return Type_1(self.s, t1)
 
-    def hasUnknown(self):
-        return self.t1.hasUnknown()
+    def has_unknown(self):
+        return self.t1.has_unknown()
 
     def concrete(self, typ_from, typ_to):
         return Type_1(self.s, self.t1.concrete(typ_from, typ_to))
@@ -102,8 +102,8 @@ class Type_2:
             self.t2 if t2 is None else t2
         )
 
-    def hasUnknown(self):
-        return self.t1.hasUnknown() or self.t2.hasUnknown()
+    def has_unknown(self):
+        return self.t1.has_unknown() or self.t2.has_unknown()
 
     def concrete(self, typ_from, typ_to):
         return Type_2(self.s,
@@ -112,7 +112,7 @@ class Type_2:
         )
 
 def is_type(o):
-    return "hasUnknown" in o.__dir__()
+    return "has_unknown" in o.__dir__()
 
 T_Int = Type_0(builtin_Int)
 T_Str = Type_0(builtin_Str)
@@ -121,8 +121,8 @@ T_List = lambda t1: Type_1(builtin_List, t1)
 T_RIO = lambda t1: Type_1(builtin_RIO, t1)
 T_Func = lambda t1, t2: Type_2(builtin_Func, t1, t2)
 
-T_A = Unknown_0("A")
-T_B = Unknown_0("B")
+T_A = Unknown0("A")
+T_B = Unknown0("B")
 
 types = {
     builtin_Int: T_Int,

@@ -52,7 +52,7 @@ class Typed_Call_1:
 
     def find_idf_type(self, s):
         lookup_by_f = self.typed_f.find_idf_type(s)
-        return lookup_by_f if not type(lookup_by_f) is Unknown_0 else self.typed_x.find_idf_type(s)
+        return lookup_by_f if not type(lookup_by_f) is Unknown0 else self.typed_x.find_idf_type(s)
 
 class Typed_Lambda_1:
     def __init__(self, tidf_x, typed_res, typ=None):
@@ -95,7 +95,7 @@ def sem_rec(expr):
         typed_x = sem_rec(expr.expr_x)
         
         if type(typed_f.typ) is Type_2 and typed_f.typ.s == builtin_Func:
-            if type(typed_x.typ) is Unknown_0:
+            if type(typed_x.typ) is Unknown0:
                 new_typed_x = typed_x.copy_typified(typed_f.typ.t1)
                 return Typed_Call_1(typed_f, new_typed_x, typed_f.typ.t2)
 
@@ -108,14 +108,14 @@ def sem_rec(expr):
                 if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Type_0 and typ_sub_fx.s == typ_sub_x.s:
                     return (typ_f, typ_x, synched_unks)
 
-                if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Unknown_0:
+                if type(typ_sub_fx) is Type_0 and type(typ_sub_x) is Unknown0:
                     fail("Not implemented: solve_rec 1")
 
-                if type(typ_sub_fx) is Unknown_0 and type(typ_sub_x) is Type_0:
+                if type(typ_sub_fx) is Unknown0 and type(typ_sub_x) is Type_0:
                     return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
 
-                if type(typ_sub_fx) is Unknown_0:
-                    if type(typ_sub_x) is Unknown_0:
+                if type(typ_sub_fx) is Unknown0:
+                    if type(typ_sub_x) is Unknown0:
                         if typ_sub_fx.s == typ_sub_x.s:
                             return (typ_f, typ_x, synched_unks.union({typ_sub_fx.s}))
                         else:
@@ -126,7 +126,7 @@ def sem_rec(expr):
 
                         return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
 
-                if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Unknown_0:
+                if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Unknown0:
                     if typ_sub_x.s in f_x_synchedUnks:
                         return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
                     return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
@@ -134,7 +134,7 @@ def sem_rec(expr):
                 if type(typ_sub_fx) is Type_1 and type(typ_sub_x) is Type_1:
                     return solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
 
-                if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Unknown_0:
+                if type(typ_sub_fx) is Type_2 and type(typ_sub_x) is Unknown0:
                     if typ_sub_x.s in f_x_synchedUnks:
                         return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
                     return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
@@ -169,7 +169,7 @@ def sem_rec(expr):
 def sem(expr):
     typed = sem_rec(expr)
     if not (type(typed.typ) is Type_1 and typed.typ.s == builtin_RIO):
-        if type(typed.typ) is Unknown_0:
+        if type(typed.typ) is Unknown0:
             unk = typed
             return fail(SemErr(f"Unexpected identifier {unk.s}"))
         return fail(SemErr(f"The code type should be {builtin_RIO}[A] but {typed.typ} found."))
