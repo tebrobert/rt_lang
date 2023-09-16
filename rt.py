@@ -139,11 +139,10 @@ def main():
         unsafe_run_code(code=read_file(args.code), dev=args.dev)
 
 
-def prompt_args():
-    return input("Enter command line args: ")
-
-
 def get_args_line():
+    def prompt_args():
+        return input("Enter command line args: ")
+
     return (prompt_args() if len(sys.argv) == 1 else
             " ".join(sys.argv[1:])
             )
