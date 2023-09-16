@@ -25,9 +25,13 @@ def print_header_if(cond, header):
 
 
 def print_headered_if(cond):
-    return lambda header: lambda value: (
-        (print_header_if(cond, header), print_if(cond, f"{value}\n"))
-    )
+    def f(header):
+        def g(value):
+            return print_header_if(cond, header), print_if(cond, f"{value}\n")
+
+        return g
+
+    return f
 
 
 def do_mb_headered(action, value, mb_print_headered):
