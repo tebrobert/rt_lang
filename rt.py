@@ -88,19 +88,17 @@ def unsafe_run_code(code, dev):
         expr = stage(parse, tokens, "4_EXPR")
         typed = stage(sem, expr, "5_TYPED")
         shown = stage(show, typed, "6_SHOWN")
-        compiled = rt_compile(shown)
-        stage(unsafe_run_built, compiled, "7_RUNNING", show_res=False)
+        stage(unsafe_run_built, rt_compile(shown), "7_RUNNING",
+            show_res=False
+        )
     except Exception as e:
         print(e)
 
 
 def get_args_line():
-    def prompt_args():
-        return input("Enter command line args: ")
-
     return (
-        prompt_args().split(" ") if len(sys.argv) == 1 else
-        sys.argv[1:]
+        sys.argv[1:] if sys.argv[1:] else
+        input("Enter command line args: ").split(" ")
     )
 
 
