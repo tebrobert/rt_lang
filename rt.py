@@ -140,8 +140,8 @@ def prompt_args():
 
 def get_args():
     return (prompt_args() if len(sys.argv) == 1 else
-     " ".join(sys.argv[1:])
-     )
+            " ".join(sys.argv[1:])
+            )
 
 
 if __name__ == "__main__":

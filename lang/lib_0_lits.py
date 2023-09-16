@@ -1,5 +1,6 @@
 from utils.fail import *
 
+
 class LitError(ValueError):
     def __init__(self, msg):
         self.msg = msg
@@ -23,6 +24,7 @@ class Unknown0:
     def __repr__(self, indent=""):
         return f"{indent}{self.s}"
 
+
 class Type0:
     def __init__(self, s):
         if not type(s) is str:
@@ -38,6 +40,7 @@ class Type0:
     def __repr__(self, indent=""):
         return f"{indent}{self.s}"
 
+
 class Type1:
     def __init__(self, s, t1):
         if not (type(s) is str and is_type(t1)):
@@ -45,8 +48,9 @@ class Type1:
         self.s, self.t1 = s, t1
 
     def __eq__(self, that):
-        return type(that) == Type1 \
-               and (that.s, that.t1) == (self.s, self.t1)
+        return (type(that) == Type1
+                and (that.s, that.t1) == (self.s, self.t1)
+                )
 
     def __repr__(self, indent=""):
         return f"{indent}{self.s}[{self.t1}]"
@@ -57,6 +61,7 @@ class Type1:
     def concrete(self, typ_from, typ_to):
         return Type1(self.s, self.t1.concrete(typ_from, typ_to))
 
+
 class Type2:
     def __init__(self, s, t1, t2):
         if not (type(s) is str and is_type(t1) and is_type(t2)):
@@ -65,7 +70,7 @@ class Type2:
 
     def __eq__(self, that):
         return type(that) == Type2 \
-               and (that.s, that.t1, that.t2) == (self.s, self.t1, self.t2)
+            and (that.s, that.t1, that.t2) == (self.s, self.t1, self.t2)
 
     def __repr__(self, indent=""):
         return indent + (
@@ -91,8 +96,10 @@ class Type2:
                      self.t2.concrete(typ_from, typ_to)
                      )
 
+
 def is_type(o):
     return type(o) in [Unknown0, Type0, Type1, Type2]
+
 
 def has_unknown(rt_type):
     return (

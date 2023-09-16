@@ -1,12 +1,14 @@
 from lang.lib_3_parse import *
 from lang.lib_0_lits import *
 
+
 class SemErr(ValueError):
     def __init__(self, msg):
         self.msg = f"SemErr: {msg}"
 
     def __repr__(self):
         return self.msg
+
 
 class Typed_Lit:
     def __init__(self, s, typ):
@@ -21,6 +23,7 @@ class Typed_Lit:
     def find_idf_type(self, _s):
         return T_A
 
+
 class Typed_Idf:
     def __init__(self, s, typ):
         self.s, self.typ = s, typ
@@ -34,18 +37,19 @@ class Typed_Idf:
     def find_idf_type(self, s):
         return self.typ if self.s == s else T_A
 
+
 class Typed_Call_1:
     def __init__(self, typed_f, typed_x, typ):
         self.typed_f, self.typed_x, self.typ = typed_f, typed_x, typ
 
     def __repr__(self, indent=''):
-        shift = indent + 4*' '
+        shift = indent + 4 * ' '
         return (f'{indent}Typed_Call_1(\n'
-            + f'{self.typed_f.__repr__(shift)},\n'
-            + f'{self.typed_x.__repr__(shift)},\n'
-            + f'{self.typ.__repr__(shift)}\n'
-            + f'{indent})'
-        )
+                + f'{self.typed_f.__repr__(shift)},\n'
+                + f'{self.typed_x.__repr__(shift)},\n'
+                + f'{self.typ.__repr__(shift)}\n'
+                + f'{indent})'
+                )
 
     def copy_typified(self, new_typ):
         return Typed_Call_1(self.typed_f, self.typed_x, new_typ)
@@ -53,6 +57,7 @@ class Typed_Call_1:
     def find_idf_type(self, s):
         lookup_by_f = self.typed_f.find_idf_type(s)
         return lookup_by_f if not type(lookup_by_f) is Unknown0 else self.typed_x.find_idf_type(s)
+
 
 class Typed_Lambda_1:
     def __init__(self, tidf_x, typed_res, typ=None):
@@ -67,19 +72,20 @@ class Typed_Lambda_1:
         self.typ = typ if typ is not None else T_Func(tidf_x.typ, typed_res.typ)
 
     def __repr__(self, indent=''):
-        shift = indent + 4*' '
+        shift = indent + 4 * ' '
         return (f'{indent}Typed_Lambda_1(\n'
-            + f'{self.tidf_x.__repr__(shift)},\n'
-            + f'{self.typed_res.__repr__(shift)},\n'
-            + f'{self.typ.__repr__(shift)}'
-            + f'\n{indent})'
-        )
+                + f'{self.tidf_x.__repr__(shift)},\n'
+                + f'{self.typed_res.__repr__(shift)},\n'
+                + f'{self.typ.__repr__(shift)}'
+                + f'\n{indent})'
+                )
 
     def copy_typified(self, new_typ):
         return Typed_Lambda_1(self.tidf_x, self.typed_res, new_typ)
 
     def find_idf_type(self, s):
         return self.typed_res.find_idf_type(s)
+
 
 def sem_rec(expr):
     type_expr = type(expr)
@@ -89,11 +95,11 @@ def sem_rec(expr):
 
     if type_expr is Expr_Idf:
         return Typed_Idf(expr.s, idf_to_type[expr.s] if expr.s in idf_to_type else T_A)
-    
+
     if type_expr is Expr_Call_1:
         typed_f = sem_rec(expr.expr_f)
         typed_x = sem_rec(expr.expr_x)
-        
+
         if type(typed_f.typ) is Type2 and typed_f.typ.s == builtin_Func:
             if type(typed_x.typ) is Unknown0:
                 new_typed_x = typed_x.copy_typified(typed_f.typ.t1)
@@ -122,14 +128,16 @@ def sem_rec(expr):
                             fail("Not implemented: solve_rec 4")
                     else:
                         if typ_sub_fx.s in f_x_synchedUnks:
-                            return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
+                            return fail(
+                                SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
 
                         return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
 
                 if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Unknown0:
                     if typ_sub_x.s in f_x_synchedUnks:
                         return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
-                    return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
+                    return fail(
+                        SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
 
                 if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Type1:
                     return solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
@@ -137,34 +145,37 @@ def sem_rec(expr):
                 if type(typ_sub_fx) is Type2 and type(typ_sub_x) is Unknown0:
                     if typ_sub_x.s in f_x_synchedUnks:
                         return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
-                    return fail(SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
+                    return fail(
+                        SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
 
                 if type(typ_sub_fx) is Type2 and type(typ_sub_x) is Type2:
-                    return solve_rec(typ_sub_fx.t2, typ_sub_x.t2, solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks)))
+                    return solve_rec(typ_sub_fx.t2, typ_sub_x.t2,
+                                     solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks)))
 
                 return fail(SemErr(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}"))
 
             def concreted(typ_f, typ_x):
                 return solve(typ_f, typ_x)[0]
-            
+
             new_typ_f = concreted(typed_f.typ, typed_x.typ)
             new_typed_f = typed_f.copy_typified(new_typ_f)
             new_typed_x = typed_x.copy_typified(new_typ_f.t1)
             return Typed_Call_1(new_typed_f, new_typed_x, new_typ_f.t2)
-            
+
         return fail(SemErr(f'typed_f should be a {builtin_Func}'))
 
     if type_expr is Expr_Lambda_1:
         tidf_x = sem_rec(expr.eidf_x)
         typed_res = sem_rec(expr.expr_res)
-        
+
         lookup_typ_x = typed_res.find_idf_type(tidf_x.s)
-        
+
         retyped_x = tidf_x.copy_typified(lookup_typ_x)
-        
+
         return Typed_Lambda_1(retyped_x, typed_res)
-        
+
     return fail(SemErr(f'expr has unexpected type {type_expr}'))
+
 
 def sem(expr):
     typed = sem_rec(expr)
@@ -174,6 +185,7 @@ def sem(expr):
             return fail(SemErr(f"Unexpected identifier {unk.s}"))
         return fail(SemErr(f"The code type should be {builtin_RIO}[A] but {typed.typ} found."))
     return typed
+
 
 """
 solve(f, x) => (updated_f, updated_x, updated_synched_unks)

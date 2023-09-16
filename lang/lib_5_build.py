@@ -1,11 +1,13 @@
 from lang.lib_4_sem import *
 
+
 class BuildErr(ValueError):
     def __init__(self, msg):
         self.msg = f"BuildErr: {msg}"
 
     def __repr__(self):
         return self.msg
+
 
 class CallableShowableLambda_1:
     def __init__(self, f, s):
@@ -23,13 +25,15 @@ class CallableShowableLambda_1:
 
     def runnable(self):
         return False
-    
+
+
 class Input:
     def __repr__(self):
         return 'Input'
 
     def runnable(self):
         return True
+
 
 class Print:
     def __init__(self, s):
@@ -40,6 +44,7 @@ class Print:
 
     def runnable(self):
         return True
+
 
 class Flatmap:
     def __init__(self, a_fb, fa):
@@ -59,20 +64,23 @@ class Flatmap:
     def runnable(self):
         return True
 
+
 class Pure:
     def __init__(self, a):
         self.a = a
-    
+
     def __repr__(self):
         return f"Pure({self.a})"
-    
+
     def runnable(self):
         return True
+
 
 def showTypedLit(tlit):
     if tlit.typ == T_Str:
         return f"\"{tlit.s}\""
     return fail(BuildErr(f"Unexpected literal `{tlit}`"))
+
 
 def showTypedIdf(tidf, lambArgStack):
     if tidf.s == builtin_input:
@@ -86,6 +94,7 @@ def showTypedIdf(tidf, lambArgStack):
     if tidf.s in lambArgStack:
         return tidf.s
     return fail(BuildErr(f"Unexpected identifier `{tidf.s}`"))
+
 
 def show(typed, lambArgStack=[]):
     if type(typed) is Typed_Lit:
@@ -102,6 +111,7 @@ def show(typed, lambArgStack=[]):
         s = tlamb.tidf_x.s
         return f"(lambda {s}: {show(tlamb.typed_res, [s] + lambArgStack)})"
     fail(BuildErr(f"Unexpected typed expression {typed}"))
+
 
 def build(shown):
     return eval(shown)

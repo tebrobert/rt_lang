@@ -1,11 +1,13 @@
 from lang.lib_5_build import *
 
+
 class RunErr(ValueError):
     def __init__(self, msg):
         self.msg = f"RunErr: {msg}"
 
     def __repr__(self):
         return self.msg
+
 
 def unsafeRunBuilt(rio):
     type_rio = type(rio)
