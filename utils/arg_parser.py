@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 
 class ArgParser:
@@ -13,3 +14,10 @@ class ArgParser:
 
     def parse(self, arg_line):
         return self.argParser.parse_args(arg_line)
+
+
+def get_args():
+    return (
+        sys.argv[1:] if sys.argv[1:] else
+        input("Enter command line args: ").split(" ")
+    )

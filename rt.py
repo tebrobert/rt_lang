@@ -1,11 +1,9 @@
-import os
-import sys
-
+from os import listdir
+from lang.lib_6_run import *
 from utils.arg_parser import *
 from utils.print_if import *
 from utils.read_file import *
 from utils.rt_assert import *
-from lang.lib_6_run import *
 
 """
 Steps:
@@ -53,7 +51,7 @@ def read_test_file(current_element):
 
 
 def run_tests():
-    for current_element in sorted(os.listdir(path_tests), key=int):
+    for current_element in sorted(listdir(path_tests), key=int):
         print(current_element, end=": ")
         read_current_test_file = read_test_file(current_element)
         code = read_current_test_file("1_code.rt.txt")
@@ -68,38 +66,31 @@ def run_tests():
             print(f"FAILED: {e}")
 
 
-def get_stage(dev):
-    def stage(action, value, header, show_res=True):
+def get_runner(dev):
+    def run(action, value, header, show_res=True):
         print_if(dev)(header)
         return flattap(lambda: action(value),
             lambda res: print_if(dev and show_res)(res, end="\n\n")
         )
 
-    return stage
+    return run
 
 
 def unsafe_run_code(code, dev):
-    stage = get_stage(dev)
+    run = get_runner(dev)
     print_if(dev)("1_CODE")
     print_if(dev)(code)
     try:
-        desugared = stage(desugar, code, "2_DESUGARED")
-        tokens = stage(lexx, desugared, "3_TOKENS")
-        expr = stage(parse, tokens, "4_EXPR")
-        typed = stage(sem, expr, "5_TYPED")
-        shown = stage(show, typed, "6_SHOWN")
-        stage(unsafe_run_built, rt_compile(shown), "7_RUNNING",
+        desugared = run(desugar, code, "2_DESUGARED")
+        tokens = run(lexx, desugared, "3_TOKENS")
+        expr = run(parse, tokens, "4_EXPR")
+        typed = run(sem, expr, "5_TYPED")
+        shown = run(show, typed, "6_SHOWN")
+        run(unsafe_run_built, rt_compile(shown), "7_RUNNING",
             show_res=False
         )
     except Exception as e:
         print(e)
-
-
-def get_args():
-    return (
-        sys.argv[1:] if sys.argv[1:] else
-        input("Enter command line args: ").split(" ")
-    )
 
 
 def main():
