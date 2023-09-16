@@ -59,12 +59,6 @@ def de_eq(lines, de_eq_lines):
             )
 
 
-errMsgBadLastLineArrow = \
-    "The last line can't contain `<-`, you'd probably like to remove it."
-errMsgBadLastLineEq = \
-    "The last line can't contain `=`, you'd probably like to remove it."
-
-
 def has_eq(line):
     return (line.count("=") > line.count("=>")
             + line.count("==")
@@ -81,3 +75,9 @@ def desugar(code):
     DesugarErr.fail_if(has_eq(lines[-1]), errMsgBadLastLineEq)
     de_eq_lines = de_eq(lines, [])
     return flatmapize(list(map(arrow_split, de_eq_lines[:-1])), de_eq_lines[-1])
+
+
+errMsgBadLastLineArrow = \
+    "The last line can't contain `<-`, you'd probably like to remove it."
+errMsgBadLastLineEq = \
+    "The last line can't contain `=`, you'd probably like to remove it."

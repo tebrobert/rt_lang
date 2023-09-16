@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8f7071d2-7905-48dc-b8cb-3134590405bc" name="Changes" comment="pep" />
+    <list default="true" id="8f7071d2-7905-48dc-b8cb-3134590405bc" name="Changes" comment="pep">
+      <change beforePath="$PROJECT_DIR$/lang/lib_1_desugar.py" beforeDir="false" afterPath="$PROJECT_DIR$/lang/lib_1_desugar.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -110,7 +112,15 @@
       <option name="project" value="LOCAL" />
       <updated>1694873162144</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="pep">
+      <option name="closed" value="true" />
+      <created>1694875183641</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1694875183641</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
