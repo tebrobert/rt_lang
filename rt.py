@@ -138,8 +138,12 @@ def prompt_args():
     return input("Enter command line args: ")
 
 
+def get_args():
+    return (prompt_args() if len(sys.argv) == 1 else
+     " ".join(sys.argv[1:])
+     )
+
+
 if __name__ == "__main__":
-    argLine = (prompt_args() if len(sys.argv) == 1 else
-               " ".join(sys.argv[1:])
-               )
-    main(argLine)
+    run_tests()
+    #main(get_args())
