@@ -5,11 +5,6 @@ from utils.rt_assert import *
 from lang.lib_6_run import *
 
 
-def read_file(file_path):
-    with open(file_path) as f:
-        return f.read()
-
-
 class ArgParser:
     def __init__(self):
         self.argParser = argparse.ArgumentParser()
@@ -23,6 +18,11 @@ class ArgParser:
     def parse(self, arg_line):
         argv = [] if arg_line == "" else arg_line.split(" ")
         return self.argParser.parse_args(argv)
+
+
+def read_file(file_path):
+    with open(file_path) as f:
+        return f.read()
 
 
 def print_if(cond, value):
