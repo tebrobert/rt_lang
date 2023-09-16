@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8f7071d2-7905-48dc-b8cb-3134590405bc" name="Changes" comment="pep">
+    <list default="true" id="8f7071d2-7905-48dc-b8cb-3134590405bc" name="Changes" comment="refact">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rt.py" beforeDir="false" afterPath="$PROJECT_DIR$/rt.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -401,7 +402,15 @@
       <option name="project" value="LOCAL" />
       <updated>1694901232382</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="refact">
+      <option name="closed" value="true" />
+      <created>1694901397357</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1694901397357</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -409,7 +418,8 @@
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="intellij" />
     <MESSAGE value="pep" />
-    <option name="LAST_COMMIT_MESSAGE" value="pep" />
+    <MESSAGE value="refact" />
+    <option name="LAST_COMMIT_MESSAGE" value="refact" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">

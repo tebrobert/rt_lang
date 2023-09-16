@@ -106,7 +106,7 @@ def main():
     args = argParser.parse(get_args())
     if args.test:
         run_tests()
-    elif args.code is not None:
+    elif args.code:
         unsafe_run_code(code=read_file(args.code), dev=args.dev)
 
 
