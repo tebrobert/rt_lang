@@ -114,5 +114,5 @@ def show(typed, immutable_lamb_arg_stack=None):
     fail(BuildErr(f"Unexpected typed expression {typed}"))
 
 
-def build(shown):
+def rt_compile(shown):
     return eval(shown)
