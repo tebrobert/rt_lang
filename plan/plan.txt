@@ -1,9 +1,12 @@
-refactor: make it tailrec
-implement the plus function
+refactor: make it short
+implement the plus function binary
+Overloadings
+
+Defer:
+Unary plus, minus
 implement operator syntax
 --implement functions
-implement overloading
-
+Typeplasses
 ...
 
 refactor:
