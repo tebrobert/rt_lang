@@ -21,7 +21,13 @@ class LitError(ValueError):
 
 
 def has_unknown(rt_type):
-    return rt_type.has_unkown()
+    return (
+        True if type(rt_type) is Unknown0 else
+        False if type(rt_type) is Type0 else
+        has_unknown(rt_type.t1) if type(rt_type) is Type1 else
+        has_unknown(rt_type.t1) or has_unknown(rt_type.t2) if type(rt_type) is Type2 else
+        fail(f"The value {rt_type} of type {type(rt_type)} is not an rt-type.")
+    )
 
 
 class Unknown0:
@@ -32,9 +38,6 @@ class Unknown0:
 
     def __eq__(self, that):
         return type(that) == Unknown0 and that.s == self.s
-
-    def has_unknown(self):
-        return True
 
     def concrete(self, typ_from, typ_to):
         return typ_to if self == typ_from else self
@@ -50,9 +53,6 @@ class Type0:
 
     def __eq__(self, that):
         return type(that) == Type0 and that.s == self.s
-
-    def has_unknown(self):
-        return False
 
     def concrete(self, _typ_from, _typ_to):
         return self
@@ -75,9 +75,6 @@ class Type1:
 
     def copy(self, t1):
         return Type1(self.s, t1)
-
-    def has_unknown(self):
-        return has_unknown(self.t1)
 
     def concrete(self, typ_from, typ_to):
         return Type1(self.s, self.t1.concrete(typ_from, typ_to))
@@ -117,7 +114,7 @@ class Type2:
                      )
 
 def is_type(o):
-    return "has_unknown" in o.__dir__()
+    return type(o) in [Unknown0, Type0, Type1, Type2]
 
 T_Int = Type0(builtin_Int)
 T_Str = Type0(builtin_Str)
