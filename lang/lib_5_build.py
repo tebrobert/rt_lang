@@ -97,18 +97,18 @@ def showTypedIdf(tidf, lambArgStack):
 
 
 def show(typed, lambArgStack=[]):
-    if type(typed) is Typed_Lit:
+    if type(typed) is TypedLit:
         return showTypedLit(typed)
-    if type(typed) is Typed_Idf:
+    if type(typed) is TypedIdf:
         return showTypedIdf(typed, lambArgStack)
-    if type(typed) is Typed_Call_1:
+    if type(typed) is TypedCall1:
         tcall = typed
         shown_f = show(tcall.typed_f, lambArgStack)
         shown_x = show(tcall.typed_x, lambArgStack)
         return f"({shown_f})({shown_x})"
-    if type(typed) is Typed_Lambda_1:
+    if type(typed) is TypedLambda1:
         tlamb = typed
-        s = tlamb.tidf_x.s
+        s = tlamb.t_idf_x.s
         return f"(lambda {s}: {show(tlamb.typed_res, [s] + lambArgStack)})"
     fail(BuildErr(f"Unexpected typed expression {typed}"))
 

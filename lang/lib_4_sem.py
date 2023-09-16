@@ -10,7 +10,7 @@ class SemErr(ValueError):
         return self.msg
 
 
-class Typed_Lit:
+class TypedLit:
     def __init__(self, s, typ):
         self.s, self.typ = s, typ
 
@@ -24,7 +24,7 @@ class Typed_Lit:
         return T_A
 
 
-class Typed_Idf:
+class TypedIdf:
     def __init__(self, s, typ):
         self.s, self.typ = s, typ
 
@@ -32,13 +32,13 @@ class Typed_Idf:
         return f'{indent}Typed_Idf("{self.s}", {self.typ})'
 
     def copy_typified(self, new_typ):
-        return Typed_Idf(self.s, new_typ)
+        return TypedIdf(self.s, new_typ)
 
     def find_idf_type(self, s):
         return self.typ if self.s == s else T_A
 
 
-class Typed_Call_1:
+class TypedCall1:
     def __init__(self, typed_f, typed_x, typ):
         self.typed_f, self.typed_x, self.typ = typed_f, typed_x, typ
 
@@ -52,36 +52,36 @@ class Typed_Call_1:
                 )
 
     def copy_typified(self, new_typ):
-        return Typed_Call_1(self.typed_f, self.typed_x, new_typ)
+        return TypedCall1(self.typed_f, self.typed_x, new_typ)
 
     def find_idf_type(self, s):
         lookup_by_f = self.typed_f.find_idf_type(s)
         return lookup_by_f if not type(lookup_by_f) is Unknown0 else self.typed_x.find_idf_type(s)
 
 
-class Typed_Lambda_1:
-    def __init__(self, tidf_x, typed_res, typ=None):
-        if not (type(tidf_x) is Typed_Idf):
+class TypedLambda1:
+    def __init__(self, t_idf_x, typed_res, typ=None):
+        if not (type(t_idf_x) is TypedIdf):
             fail(SemErr('Typed_Idf expected as the first arg of Typed_Lambda_1'))
 
         if not (typ is None or type(typ) is Type2 and typ.s == builtin_Func):
             fail(SemErr(f'{builtin_Func} or None expected as the typ arg of Typed_Lambda_1'))
 
-        self.tidf_x = tidf_x
+        self.t_idf_x = t_idf_x
         self.typed_res = typed_res
-        self.typ = typ if typ is not None else T_Func(tidf_x.typ, typed_res.typ)
+        self.typ = typ if typ is not None else T_Func(t_idf_x.typ, typed_res.typ)
 
     def __repr__(self, indent=''):
         shift = indent + 4 * ' '
         return (f'{indent}Typed_Lambda_1(\n'
-                + f'{self.tidf_x.__repr__(shift)},\n'
+                + f'{self.t_idf_x.__repr__(shift)},\n'
                 + f'{self.typed_res.__repr__(shift)},\n'
                 + f'{self.typ.__repr__(shift)}'
                 + f'\n{indent})'
                 )
 
     def copy_typified(self, new_typ):
-        return Typed_Lambda_1(self.tidf_x, self.typed_res, new_typ)
+        return TypedLambda1(self.t_idf_x, self.typed_res, new_typ)
 
     def find_idf_type(self, s):
         return self.typed_res.find_idf_type(s)
@@ -90,20 +90,20 @@ class Typed_Lambda_1:
 def sem_rec(expr):
     type_expr = type(expr)
 
-    if type_expr is Expr_Lit_Str:
-        return Typed_Lit(expr.s, T_Str)
+    if type_expr is ExprLitStr:
+        return TypedLit(expr.s, T_Str)
 
-    if type_expr is Expr_Idf:
-        return Typed_Idf(expr.s, idf_to_type[expr.s] if expr.s in idf_to_type else T_A)
+    if type_expr is ExprIdf:
+        return TypedIdf(expr.s, idf_to_type[expr.s] if expr.s in idf_to_type else T_A)
 
-    if type_expr is Expr_Call_1:
+    if type_expr is ExprCall1:
         typed_f = sem_rec(expr.expr_f)
         typed_x = sem_rec(expr.expr_x)
 
         if type(typed_f.typ) is Type2 and typed_f.typ.s == builtin_Func:
             if type(typed_x.typ) is Unknown0:
                 new_typed_x = typed_x.copy_typified(typed_f.typ.t1)
-                return Typed_Call_1(typed_f, new_typed_x, typed_f.typ.t2)
+                return TypedCall1(typed_f, new_typed_x, typed_f.typ.t2)
 
             def solve(typ_f, typ_x):
                 return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
@@ -160,11 +160,11 @@ def sem_rec(expr):
             new_typ_f = concreted(typed_f.typ, typed_x.typ)
             new_typed_f = typed_f.copy_typified(new_typ_f)
             new_typed_x = typed_x.copy_typified(new_typ_f.t1)
-            return Typed_Call_1(new_typed_f, new_typed_x, new_typ_f.t2)
+            return TypedCall1(new_typed_f, new_typed_x, new_typ_f.t2)
 
         return fail(SemErr(f'typed_f should be a {builtin_Func}'))
 
-    if type_expr is Expr_Lambda_1:
+    if type_expr is ExprLambda1:
         tidf_x = sem_rec(expr.eidf_x)
         typed_res = sem_rec(expr.expr_res)
 
@@ -172,7 +172,7 @@ def sem_rec(expr):
 
         retyped_x = tidf_x.copy_typified(lookup_typ_x)
 
-        return Typed_Lambda_1(retyped_x, typed_res)
+        return TypedLambda1(retyped_x, typed_res)
 
     return fail(SemErr(f'expr has unexpected type {type_expr}'))
 

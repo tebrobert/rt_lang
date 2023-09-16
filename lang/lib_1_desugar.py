@@ -10,51 +10,51 @@ class DesugarErr(ValueError):
         return self.msg
 
     @staticmethod
-    def failIf(cond, msg):
+    def fail_if(cond, msg):
         if cond:
             fail(DesugarErr(msg))
 
 
-def arrowSplit(line):
-    def forceArrowSplit(lineWithArrow):
-        idx = lineWithArrow.index("<-")
-        arg = lineWithArrow[:idx]
-        monad = lineWithArrow[idx + 2:]
-        DesugarErr.failIf("<-" in monad,
-                          "Can't have more than one `<-` in a line."
-                          )
-        return (arg, monad)
+def arrow_split(line):
+    def force_arrow_split(line_with_arrow):
+        idx = line_with_arrow.index("<-")
+        arg = line_with_arrow[:idx]
+        monad = line_with_arrow[idx + 2:]
+        DesugarErr.fail_if("<-" in monad,
+                           "Can't have more than one `<-` in a line."
+                           )
+        return arg, monad
 
     return (("_", line) if "<-" not in line else
-            forceArrowSplit(lineWithArrow=line)
+            force_arrow_split(line_with_arrow=line)
             )
 
 
 @tailrec
-def flatmapize(arrowSplitInitLines, flapmapized):
-    def forceFlatmapize():
-        arg, monad = arrowSplitInitLines[-1]
-        return rec(arrowSplitInitLines[:-1],
+def flatmapize(arrow_split_init_lines, flapmapized):
+    def force_flatmapize():
+        arg, monad = arrow_split_init_lines[-1]
+        return rec(arrow_split_init_lines[:-1],
                    f"flatmap({arg} => {flapmapized})({monad})"
                    )
 
-    return flapmapized if arrowSplitInitLines == [] else forceFlatmapize()
+    return flapmapized if arrow_split_init_lines == [] else force_flatmapize()
 
 
 @tailrec
-def deEq(lines, deEqLines):
-    def forceDeEq(line):
+def de_eq(lines, de_eq_lines):
+    def force_de_eq(line):
         idx = line.index("=")
         left = line[:idx]
         right = line[idx + 1:]
-        DesugarErr.failIf("=" in right,
-                          "Can't have more than one `=` in a line."
-                          )
+        DesugarErr.fail_if("=" in right,
+                           "Can't have more than one `=` in a line."
+                           )
         return f"{left} <- pure({right})"
 
-    return (deEqLines if lines == [] else
-            rec(lines[1:], deEqLines + [
-                lines[0] if not hasEq(lines[0]) else forceDeEq(lines[0])
+    return (de_eq_lines if lines == [] else
+            rec(lines[1:], de_eq_lines + [
+                lines[0] if not has_eq(lines[0]) else force_de_eq(lines[0])
             ])
             )
 
@@ -65,7 +65,7 @@ errMsgBadLastLineEq = \
     "The last line can't contain `=`, you'd probably like to remove it."
 
 
-def hasEq(line):
+def has_eq(line):
     return (line.count("=") > line.count("=>")
             + line.count("==")
             + line.count("!=")
@@ -76,8 +76,8 @@ def hasEq(line):
 
 def desugar(code):
     lines = list(filter(lambda line: line != "", code.split("\n")))
-    DesugarErr.failIf(lines == [], "Yet empty file is unsupported")
-    DesugarErr.failIf("<-" in lines[-1], errMsgBadLastLineArrow)
-    DesugarErr.failIf(hasEq(lines[-1]), errMsgBadLastLineEq)
-    deEqLines = deEq(lines, [])
-    return flatmapize(list(map(arrowSplit, deEqLines[:-1])), deEqLines[-1])
+    DesugarErr.fail_if(lines == [], "Yet empty file is unsupported")
+    DesugarErr.fail_if("<-" in lines[-1], errMsgBadLastLineArrow)
+    DesugarErr.fail_if(has_eq(lines[-1]), errMsgBadLastLineEq)
+    de_eq_lines = de_eq(lines, [])
+    return flatmapize(list(map(arrow_split, de_eq_lines[:-1])), de_eq_lines[-1])
