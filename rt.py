@@ -34,14 +34,14 @@ def print_header_if(cond, header):
     print_if(cond, f"{header}:")
 
 
-def print_with_header_if(cond):
+def print_headered_if(cond):
     return lambda header: lambda value: (
         (print_header_if(cond, header), print_if(cond, f"{value}\n"))
     )
 
 
-def do_mb_with_header(action, value, mb_print_with_header):
-    return flattap(lambda: action(value), mb_print_with_header)
+def do_mb_headered(action, value, mb_print_headered):
+    return flattap(lambda: action(value), mb_print_headered)
 
 
 def asserted_desugar(read_result, code):
@@ -105,13 +105,13 @@ def run_tests():
 
 def unsafe_run_code(code, dev):
     try:
-        print_with_header_if_dev = print_with_header_if(dev)
-        print_with_header_if_dev("1_CODE")(code)
-        desugared = do_mb_with_header(desugar, code, print_with_header_if_dev("2_DESUGARED"))
-        tokens = do_mb_with_header(lexx, desugared, print_with_header_if_dev("3_TOKENS"))
-        expr = do_mb_with_header(parse, tokens, print_with_header_if_dev("4_EXPR"))
-        typed = do_mb_with_header(sem, expr, print_with_header_if_dev("5_TYPED"))
-        shown = do_mb_with_header(show, typed, print_with_header_if_dev("6_SHOWN"))
+        print_headered_if_dev = print_headered_if(dev)
+        print_headered_if_dev("1_CODE")(code)
+        desugared = do_mb_headered(desugar, code, print_headered_if_dev("2_DESUGARED"))
+        tokens = do_mb_headered(lexx, desugared, print_headered_if_dev("3_TOKENS"))
+        expr = do_mb_headered(parse, tokens, print_headered_if_dev("4_EXPR"))
+        typed = do_mb_headered(sem, expr, print_headered_if_dev("5_TYPED"))
+        shown = do_mb_headered(show, typed, print_headered_if_dev("6_SHOWN"))
         built = build(shown)
         print_header_if(dev, "7_RUNNING")
         unsafeRunBuilt(built)
