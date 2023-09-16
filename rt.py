@@ -107,8 +107,12 @@ def unsafe_run_code(code, dev):
     try:
         print_headered_if_dev = print_headered_if(dev)
         print_headered_if_dev("1_CODE")(code)
-        desugared = do_mb_headered(desugar, code, print_headered_if_dev("2_DESUGARED"))
-        tokens = do_mb_headered(lexx, desugared, print_headered_if_dev("3_TOKENS"))
+        desugared = do_mb_headered(desugar, code,
+            print_headered_if_dev("2_DESUGARED")
+        )
+        tokens = do_mb_headered(lexx, desugared,
+            print_headered_if_dev("3_TOKENS")
+        )
         expr = do_mb_headered(parse, tokens, print_headered_if_dev("4_EXPR"))
         typed = do_mb_headered(sem, expr, print_headered_if_dev("5_TYPED"))
         shown = do_mb_headered(show, typed, print_headered_if_dev("6_SHOWN"))
@@ -117,13 +121,6 @@ def unsafe_run_code(code, dev):
         unsafe_run_built(built)
     except Exception as e:
         print(e)
-
-
-argParser = (ArgParser()
-             .add("code", nargs="?")
-             .add("--dev", action="store_true")
-             .add("--test", action="store_true")
-             )
 
 
 def main(arg_line):
@@ -143,6 +140,12 @@ def get_args():
             " ".join(sys.argv[1:])
             )
 
+
+argParser = (ArgParser()
+             .add("code", nargs="?")
+             .add("--dev", action="store_true")
+             .add("--test", action="store_true")
+             )
 
 if __name__ == "__main__":
     main(get_args())
