@@ -1,5 +1,4 @@
 from lang.lib_0_0_lits import *
-from utils.fail import *
 
 
 class Unknown0:
@@ -55,34 +54,22 @@ class Type2:
         )
 
 
-def is_type(o):
-    return type(o) in [Unknown0, Type0, Type1, Type2]
-
-
-def not_a_type(typ):
-    return fail(f"The value {typ} {type(typ)} is not an type.")
-
-
 def has_unknown(typ):
-    return (
-        True if type(typ) is Unknown0 else
-        False if type(typ) is Type0 else
-        has_unknown(typ.t1) if type(typ) is Type1 else
-        has_unknown(typ.t1) or has_unknown(typ.t2) if type(
-            typ) is Type2 else
-        not_a_type(typ)
-    )
+    return {
+        Unknown0: lambda: True,
+        Type0: lambda: False,
+        Type1: lambda: has_unknown(typ.t1),
+        Type2: lambda: has_unknown(typ.t1) or has_unknown(typ.t2),
+    }[type(typ)]()
 
 
 def concrete(typ, typ_from, typ_to):
-    return (
-        (typ_to if typ == typ_from else typ) if type(typ) is Unknown0 else
-        typ if type(typ) is Type0 else
-        Type1(typ.s, concrete(typ.t1, typ_from, typ_to)) if type(
-            typ) is Type1 else
-        Type2(typ.s,
+    return {
+        Unknown0: lambda: typ_to if typ == typ_from else typ,
+        Type0: lambda: typ,
+        Type1: lambda: Type1(typ.s, concrete(typ.t1, typ_from, typ_to)),
+        Type2: lambda: Type2(typ.s,
             concrete(typ.t1, typ_from, typ_to),
             concrete(typ.t2, typ_from, typ_to)
-        ) if type(typ) is Type2 else
-        not_a_type(typ)
-    )
+        ),
+    }[type(typ)]()
