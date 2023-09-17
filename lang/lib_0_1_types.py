@@ -86,12 +86,30 @@ def is_type(o):
     return type(o) in [Unknown0, Type0, Type1, Type2]
 
 
-def has_unknown(rt_type):
+def not_a_type(typ):
+    return fail(f"The value {typ} {type(typ)} is not an type.")
+
+
+def has_unknown(typ):
     return (
-        True if type(rt_type) is Unknown0 else
-        False if type(rt_type) is Type0 else
-        has_unknown(rt_type.t1) if type(rt_type) is Type1 else
-        has_unknown(rt_type.t1) or has_unknown(rt_type.t2) if type(
-            rt_type) is Type2 else
-        fail(f"The value {rt_type} {type(rt_type)} is not an type.")
+        True if type(typ) is Unknown0 else
+        False if type(typ) is Type0 else
+        has_unknown(typ.t1) if type(typ) is Type1 else
+        has_unknown(typ.t1) or has_unknown(typ.t2) if type(
+            typ) is Type2 else
+        not_a_type(typ)
+    )
+
+
+def concrete(typ, typ_from, typ_to):
+    return (
+        (typ_to if typ == typ_from else typ) if type(typ) is Unknown0 else
+        typ if type(typ) is Type0 else
+        Type1(typ.s, concrete(typ.t1, typ_from, typ_to)) if type(
+            typ) is Type1 else
+        Type2(typ.s,
+            concrete(typ.t1, typ_from, typ_to),
+            concrete(typ.t2, typ_from, typ_to)
+        ) if type(typ) is Type2 else
+        not_a_type(typ)
     )
