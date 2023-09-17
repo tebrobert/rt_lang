@@ -1,4 +1,5 @@
 from lang.lib_0_0_lits import *
+from utils.fail import *
 
 
 class Unknown0:
@@ -55,16 +56,43 @@ class Type2:
         )
 
 
+def get_type_matcher(
+    lazy_if_unknown0,
+    lazy_if_type0,
+    lazy_if_type1,
+    lazy_if_type2,
+):
+    return lambda typ: ({
+        Unknown0: lazy_if_unknown0,
+        Type0: lazy_if_type0,
+        Type1: lazy_if_type1,
+        Type2: lazy_if_type2,
+    }
+    .get(
+        type(typ),
+        lambda _: fail(f"Value {typ} {type(typ)} is not a type")
+    ))()
+
+
 def has_unknown(typ):
-    return {
-        Unknown0: lambda: True,
-        Type0: lambda: False,
-        Type1: lambda: has_unknown(typ.t1),
-        Type2: lambda: has_unknown(typ.t1) or has_unknown(typ.t2),
-    }[type(typ)]()
+    return get_type_matcher(
+        lazy_if_unknown0=lambda: True,
+        lazy_if_type0=lambda: False,
+        lazy_if_type1=lambda: has_unknown(typ.t1),
+        lazy_if_type2=lambda: has_unknown(typ.t1) or has_unknown(typ.t2),
+    )(typ)
 
 
 def concrete(typ, typ_from, typ_to):
+    return get_type_matcher(
+        lazy_if_unknown0=lambda: typ_to if typ == typ_from else typ,
+        lazy_if_type0=lambda: typ,
+        lazy_if_type1=lambda: Type1(typ.s, concrete(typ.t1, typ_from, typ_to)),
+        lazy_if_type2=lambda: Type2(typ.s,
+            concrete(typ.t1, typ_from, typ_to),
+            concrete(typ.t2, typ_from, typ_to)
+        ),
+    )(typ)
     return {
         Unknown0: lambda: typ_to if typ == typ_from else typ,
         Type0: lambda: typ,
