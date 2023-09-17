@@ -1,7 +1,8 @@
+from lang.lib_0_0_lits import *
 from utils.fail import *
 
 
-class LitError(ValueError):
+class RtTypeError(ValueError):
     def __init__(self, msg):
         self.msg = msg
 
@@ -12,7 +13,7 @@ class LitError(ValueError):
 class Unknown0:
     def __init__(self, s):
         if not type(s) is str:
-            fail(LitError("The args of Unknown_0 have bad types"))
+            fail(RtTypeError("The args of Unknown_0 have bad types"))
         self.s = s
 
     def __eq__(self, that):
@@ -28,7 +29,7 @@ class Unknown0:
 class Type0:
     def __init__(self, s):
         if not type(s) is str:
-            fail(LitError("The args of Type_0 have bad types"))
+            fail(RtTypeError("The args of Type_0 have bad types"))
         self.s = s
 
     def __eq__(self, that):
@@ -44,7 +45,7 @@ class Type0:
 class Type1:
     def __init__(self, s, t1):
         if not (type(s) is str and is_type(t1)):
-            fail(LitError("The args of Type_1 have bad types"))
+            fail(RtTypeError("The args of Type_1 have bad types"))
         self.s, self.t1 = s, t1
 
     def __eq__(self, that):
@@ -65,7 +66,7 @@ class Type1:
 class Type2:
     def __init__(self, s, t1, t2):
         if not (type(s) is str and is_type(t1) and is_type(t2)):
-            fail(LitError("The args of Type_2 have bad types"))
+            fail(RtTypeError("The args of Type_2 have bad types"))
         self.s, self.t1, self.t2 = s, t1, t2
 
     def __eq__(self, that):
@@ -110,45 +111,3 @@ def has_unknown(rt_type):
             rt_type) is Type2 else
         fail(f"The value {rt_type} {type(rt_type)} is not an type.")
     )
-
-
-builtin_Int = "Int"
-builtin_Str = "Str"
-builtin_Unit = "Unit"
-builtin_List = "List"
-builtin_RIO = "RIO"
-builtin_Func = "Func"
-
-builtin_input = "input"
-builtin_print = "print"
-builtin_flatmap = "flatmap"
-builtin_pure = "pure"
-
-T_Int = Type0(builtin_Int)
-T_Str = Type0(builtin_Str)
-T_Unit = Type0(builtin_Unit)
-T_List = lambda t1: Type1(builtin_List, t1)
-T_RIO = lambda t1: Type1(builtin_RIO, t1)
-T_Func = lambda t1, t2: Type2(builtin_Func, t1, t2)
-
-T_A = Unknown0("A")
-T_B = Unknown0("B")
-
-types = {
-    builtin_Int: T_Int,
-    builtin_Str: T_Str,
-    builtin_Unit: T_Unit,
-    builtin_List: T_List,
-    builtin_RIO: T_RIO,
-    builtin_Func: T_Func,
-}
-
-idf_to_type = {
-    builtin_input: T_RIO(T_Str),
-    builtin_print: T_Func(T_Str, T_RIO(T_Unit)),
-    builtin_flatmap: T_Func(
-        T_Func(T_A, T_RIO(T_B)),
-        T_Func(T_RIO(T_A), T_RIO(T_B))
-    ),
-    builtin_pure: T_Func(T_A, T_RIO(T_A))
-}

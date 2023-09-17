@@ -1,0 +1,11 @@
+builtin_Int = "Int"
+builtin_Str = "Str"
+builtin_Unit = "Unit"
+builtin_List = "List"
+builtin_RIO = "RIO"
+builtin_Func = "Func"
+
+builtin_input = "input"
+builtin_print = "print"
+builtin_flatmap = "flatmap"
+builtin_pure = "pure"
