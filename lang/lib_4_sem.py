@@ -118,7 +118,7 @@ def sem_rec(expr):
                     fail("Not implemented: solve_rec 1")
 
                 if type(typ_sub_fx) is Unknown0 and type(typ_sub_x) is Type0:
-                    return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
+                    return solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
 
                 if type(typ_sub_fx) is Unknown0:
                     if type(typ_sub_x) is Unknown0:
@@ -131,7 +131,7 @@ def sem_rec(expr):
                             return fail(
                                 SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
 
-                        return solve(typ_f.concrete(typ_sub_fx, typ_sub_x), typ_x)
+                        return solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
 
                 if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Unknown0:
                     if typ_sub_x.s in f_x_synched_unks:

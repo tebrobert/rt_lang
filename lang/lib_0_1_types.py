@@ -9,9 +9,6 @@ class Unknown0:
     def __eq__(self, that):
         return type(that) == Unknown0 and that.s == self.s
 
-    def concrete(self, typ_from, typ_to):
-        return typ_to if self == typ_from else self
-
     def __repr__(self, indent=""):
         return f"{indent}{self.s}"
 
@@ -22,9 +19,6 @@ class Type0:
 
     def __eq__(self, that):
         return type(that) == Type0 and that.s == self.s
-
-    def concrete(self, _typ_from, _typ_to):
-        return self
 
     def __repr__(self, indent=""):
         return f"{indent}{self.s}"
@@ -44,9 +38,6 @@ class Type1:
 
     def copy(self, t1):
         return Type1(self.s, t1)
-
-    def concrete(self, typ_from, typ_to):
-        return Type1(self.s, self.t1.concrete(typ_from, typ_to))
 
 
 class Type2:
@@ -74,12 +65,6 @@ class Type2:
 
     def has_unknown(self):
         return has_unknown(self.t1) or has_unknown(self.t2)
-
-    def concrete(self, typ_from, typ_to):
-        return Type2(self.s,
-            self.t1.concrete(typ_from, typ_to),
-            self.t2.concrete(typ_from, typ_to)
-        )
 
 
 def is_type(o):
