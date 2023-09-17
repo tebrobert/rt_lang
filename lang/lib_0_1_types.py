@@ -41,8 +41,9 @@ class Type2:
         self.s, self.t1, self.t2 = s, t1, t2
 
     def __eq__(self, that):
-        return type(that) == Type2 \
-            and (that.s, that.t1, that.t2) == (self.s, self.t1, self.t2)
+        return (type(that) == Type2
+                and (that.s, that.t1, that.t2) == (self.s, self.t1, self.t2)
+                )
 
     def __repr__(self, indent=""):
         return indent + (
