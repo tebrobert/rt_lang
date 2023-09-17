@@ -9,18 +9,13 @@ class DesugarErr(ValueError):
     def __repr__(self):
         return self.msg
 
-    @staticmethod
-    def fail_if(cond, msg):
-        if cond:
-            fail(DesugarErr(msg))
-
 
 def arrow_split(line):
     def force_arrow_split(line_with_arrow):
         idx = line_with_arrow.index("<-")
         arg = line_with_arrow[:idx]
         monad = line_with_arrow[idx + 2:]
-        DesugarErr.fail_if("<-" in monad,
+        fail_if("<-" in monad,
             "Can't have more than one `<-` in a line."
         )
         return arg, monad
@@ -47,7 +42,7 @@ def de_eq(lines, de_eq_lines):
         idx = line.index("=")
         left = line[:idx]
         right = line[idx + 1:]
-        DesugarErr.fail_if("=" in right,
+        fail_if("=" in right,
             "Can't have more than one `=` in a line."
         )
         return f"{left} <- pure({right})"
@@ -71,9 +66,9 @@ def has_eq(line):
 
 def desugar(code):
     lines = list(filter(lambda line: line != "", code.split("\n")))
-    DesugarErr.fail_if(lines == [], "Yet empty file is unsupported")
-    DesugarErr.fail_if("<-" in lines[-1], errMsgBadLastLineArrow)
-    DesugarErr.fail_if(has_eq(lines[-1]), errMsgBadLastLineEq)
+    fail_if(lines == [], "Yet empty file is unsupported")
+    fail_if("<-" in lines[-1], errMsgBadLastLineArrow)
+    fail_if(has_eq(lines[-1]), errMsgBadLastLineEq)
     de_eq_lines = de_eq(lines, [])
     return flatmapize(list(map(arrow_split, de_eq_lines[:-1])), de_eq_lines[-1])
 
