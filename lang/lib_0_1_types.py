@@ -74,15 +74,6 @@ def match_type(
     ))()
 
 
-def has_unknown(typ):
-    return match_type(
-        lazy_if_unknown0=lambda: True,
-        lazy_if_type0=lambda: False,
-        lazy_if_type1=lambda: has_unknown(typ.t1),
-        lazy_if_type2=lambda: has_unknown(typ.t1) or has_unknown(typ.t2),
-    )(typ)
-
-
 def concrete(typ, typ_from, typ_to):
     return match_type(
         lazy_if_unknown0=lambda: typ_to if typ == typ_from else typ,
