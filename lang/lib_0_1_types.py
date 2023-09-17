@@ -56,7 +56,7 @@ class Type2:
         )
 
 
-def get_type_matcher(
+def match_type(
     lazy_if_unknown0,
     lazy_if_type0,
     lazy_if_type1,
@@ -75,7 +75,7 @@ def get_type_matcher(
 
 
 def has_unknown(typ):
-    return get_type_matcher(
+    return match_type(
         lazy_if_unknown0=lambda: True,
         lazy_if_type0=lambda: False,
         lazy_if_type1=lambda: has_unknown(typ.t1),
@@ -84,7 +84,7 @@ def has_unknown(typ):
 
 
 def concrete(typ, typ_from, typ_to):
-    return get_type_matcher(
+    return match_type(
         lazy_if_unknown0=lambda: typ_to if typ == typ_from else typ,
         lazy_if_type0=lambda: typ,
         lazy_if_type1=lambda: Type1(typ.s, concrete(typ.t1, typ_from, typ_to)),
