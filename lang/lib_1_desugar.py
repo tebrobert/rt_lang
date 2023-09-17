@@ -2,6 +2,15 @@ from utils.fail import *
 from utils.tailrec import *
 
 
+def has_eq(line):
+    return (line.count("=") > line.count("=>")
+            + line.count("==")
+            + line.count("!=")
+            + line.count(">=")
+            + line.count("<=")
+            )
+
+
 def arrow_split(line):
     def force_arrow_split(line_with_arrow):
         idx = line_with_arrow.index("<-")
@@ -45,15 +54,6 @@ def de_eq(lines, mb_de_eq_lines=None):
             rec(lines[1:], de_eq_lines + [
                 lines[0] if not has_eq(lines[0]) else force_de_eq(lines[0])
             ]))
-
-
-def has_eq(line):
-    return (line.count("=") > line.count("=>")
-            + line.count("==")
-            + line.count("!=")
-            + line.count(">=")
-            + line.count("<=")
-            )
 
 
 def desugar(code):
