@@ -70,7 +70,7 @@ def get_type_matcher(
     }
     .get(
         type(typ),
-        lambda _: fail(f"Value {typ} {type(typ)} is not a type")
+        lambda: fail(f"Value {typ} {type(typ)} is not a type")
     ))()
 
 
