@@ -93,12 +93,3 @@ def concrete(typ, typ_from, typ_to):
             concrete(typ.t2, typ_from, typ_to)
         ),
     )(typ)
-    return {
-        Unknown0: lambda: typ_to if typ == typ_from else typ,
-        Type0: lambda: typ,
-        Type1: lambda: Type1(typ.s, concrete(typ.t1, typ_from, typ_to)),
-        Type2: lambda: Type2(typ.s,
-            concrete(typ.t1, typ_from, typ_to),
-            concrete(typ.t2, typ_from, typ_to)
-        ),
-    }[type(typ)]()
