@@ -42,9 +42,7 @@ def de_eq(lines, de_eq_lines):
     return (de_eq_lines if lines == [] else
             rec(lines[1:], de_eq_lines + [
                 lines[0] if not has_eq(lines[0]) else force_de_eq(lines[0])
-            ]
-            )
-            )
+            ]))
 
 
 def has_eq(line):
