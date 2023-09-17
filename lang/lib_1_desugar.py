@@ -2,14 +2,6 @@ from utils.fail import *
 from utils.tailrec import *
 
 
-class DesugarErr(ValueError):
-    def __init__(self, msg):
-        self.msg = f"DesugarErr: {msg}"
-
-    def __repr__(self):
-        return self.msg
-
-
 def arrow_split(line):
     def force_arrow_split(line_with_arrow):
         idx = line_with_arrow.index("<-")
