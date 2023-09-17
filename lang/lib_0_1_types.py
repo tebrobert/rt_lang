@@ -63,9 +63,6 @@ class Type2:
             self.t2 if t2 is None else t2
         )
 
-    def has_unknown(self):
-        return has_unknown(self.t1) or has_unknown(self.t2)
-
 
 def is_type(o):
     return type(o) in [Unknown0, Type0, Type1, Type2]
