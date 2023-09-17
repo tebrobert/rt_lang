@@ -55,11 +55,11 @@ def has_eq(line):
 
 
 def desugar(code):
-    lines = list(filter(lambda line: line != "", code.split("\n")))
-    fail_if(lines == [], "Yet empty file is unsupported")
-    fail_if("<-" in lines[-1], errMsgBadLastLineArrow)
-    fail_if(has_eq(lines[-1]), errMsgBadLastLineEq)
-    de_eq_lines = de_eq(lines, [])
+    non_empty_lines = list(filter(lambda line: line != "", code.split("\n")))
+    fail_if(non_empty_lines == [], "Yet empty file is unsupported")
+    fail_if("<-" in non_empty_lines[-1], errMsgBadLastLineArrow)
+    fail_if(has_eq(non_empty_lines[-1]), errMsgBadLastLineEq)
+    de_eq_lines = de_eq(non_empty_lines, [])
     return flatmapize(list(map(arrow_split, de_eq_lines[:-1])), de_eq_lines[-1])
 
 
