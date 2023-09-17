@@ -36,9 +36,6 @@ class Type1:
     def __repr__(self, indent=""):
         return f"{indent}{self.s}[{self.t1}]"
 
-    def copy(self, t1):
-        return Type1(self.s, t1)
-
 
 class Type2:
     def __init__(self, s, t1, t2):
@@ -55,12 +52,6 @@ class Type2:
             else f"{self.t1} => {self.t2}"
             if self.s == builtin_Func
             else f"{self.s}[{self.t1}, {self.t2}]"
-        )
-
-    def copy(self, t1=None, t2=None):
-        return Type2(self.s,
-            self.t1 if t1 is None else t1,
-            self.t2 if t2 is None else t2
         )
 
 
