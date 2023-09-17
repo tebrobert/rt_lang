@@ -29,7 +29,7 @@ def flatmapize(arrow_split_init_lines, flapmapized):
 
 
 @tailrec
-def de_eq(lines, de_eq_lines):
+def de_eq(lines, mb_de_eq_lines=None):
     def force_de_eq(line):
         idx = line.index("=")
         left = line[:idx]
@@ -38,6 +38,8 @@ def de_eq(lines, de_eq_lines):
             "Can't have more than one `=` in a line."
         )
         return f"{left} <- pure({right})"
+
+    de_eq_lines = mb_de_eq_lines if mb_de_eq_lines else []
 
     return (de_eq_lines if lines == [] else
             rec(lines[1:], de_eq_lines + [
@@ -59,7 +61,7 @@ def desugar(code):
     fail_if(non_empty_lines == [], "Yet empty file is unsupported")
     fail_if("<-" in non_empty_lines[-1], errMsgBadLastLineArrow)
     fail_if(has_eq(non_empty_lines[-1]), errMsgBadLastLineEq)
-    de_eq_lines = de_eq(non_empty_lines, [])
+    de_eq_lines = de_eq(non_empty_lines)
     return flatmapize(list(map(arrow_split, de_eq_lines[:-1])), de_eq_lines[-1])
 
 
