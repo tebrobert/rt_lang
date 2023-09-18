@@ -3,12 +3,13 @@ from utils.tailrec import *
 
 
 def has_eq(line):
-    return (line.count("=") > line.count("=>")
-            + line.count("==")
-            + line.count("!=")
-            + line.count(">=")
-            + line.count("<=")
-            )
+    return (line.count("=") > sum([
+        line.count("=>"),
+        line.count("=="),
+        line.count("!="),
+        line.count(">="),
+        line.count("<="),
+    ]))
 
 
 def arrow_split(line):
