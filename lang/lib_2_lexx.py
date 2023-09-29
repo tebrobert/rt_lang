@@ -40,9 +40,6 @@ class TokenEqGr:
         return 'Token_Eq_Gr()'
 
 
-end_of_code = '\0'
-
-
 @tailrec
 def get_idx_string_end_rec(code_ext, idx_string_end):
     current_string_char = code_ext[idx_string_end]
@@ -121,3 +118,6 @@ def lexx_rec(code_ext, token_idx_end, tokens):
 
 def lexx(code):
     return lexx_rec(code + end_of_code, 0, [])
+
+
+end_of_code = '\0'
