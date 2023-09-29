@@ -39,7 +39,7 @@ def flatmapize(arrow_split_init_lines, flapmapized):
 
 
 @tailrec
-def de_eq(lines, mb_de_eq_lines=None):
+def de_eq(lines, de_eq_lines=[]):
     def force_de_eq(line):
         idx = line.index("=")
         left = line[:idx]
@@ -48,8 +48,6 @@ def de_eq(lines, mb_de_eq_lines=None):
             "Can't have more than one `=` in a line."
         )
         return f"{left} <- pure({right})"
-
-    de_eq_lines = mb_de_eq_lines if mb_de_eq_lines else []
 
     return (de_eq_lines if lines == [] else
             rec(lines[1:], de_eq_lines + [
