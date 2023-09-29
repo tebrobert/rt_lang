@@ -32,12 +32,21 @@ class TokenEqGr:
         return 'Token_Eq_Gr()'
 
 
-def is_non_initial_idf_char(char):
+def is_initial_idf_char(char):
     return (char == '_'
             or 'a' <= char <= 'z'
             or 'A' <= char <= 'Z'
+            )
+
+
+def is_non_initial_idf_char(char):
+    return (is_initial_idf_char(char)
             or '0' <= char <= '9'
             )
+
+
+def fail_bad_eq_seq(code_ext, token_idx_end):
+    fail(f'Unexpected sequence "={code_ext[token_idx_end + 1]}"')
 
 
 @tailrec
@@ -72,9 +81,7 @@ def lexx_idf(code_ext, tokens, token_idx_end):
 def lexx_eq_gr(code_ext, tokens, token_idx_end):
     return ((code_ext, token_idx_end + 2, tokens + [TokenEqGr()])
             if code_ext[token_idx_end + 1] == '>'
-            else fail(
-        f'Unexpected sequence "={code_ext[token_idx_end + 1]}"'
-    )
+            else fail_bad_eq_seq(code_ext, token_idx_end)
             )
 
 
@@ -93,10 +100,7 @@ def lexx_rec(code_ext, token_idx_end, tokens):
         tokens
         if current_char == end_of_code else
         rec(*lexx_idf(code_ext, tokens, token_idx_end))
-        if ('a' <= current_char <= 'z'
-            or 'A' <= current_char <= 'Z'
-            or current_char == "_"
-            ) else
+        if is_initial_idf_char(current_char) else
         rec(code_ext, token_idx_end + 1, tokens + [TokenParenOpen()])
         if current_char == '(' else
         rec(code_ext, token_idx_end + 1, tokens + [TokenParenClose()])
