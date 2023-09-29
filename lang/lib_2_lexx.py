@@ -1,14 +1,6 @@
 from lang.lib_1_desugar import *
 
 
-class LexxErr(ValueError):
-    def __init__(self, msg):
-        self.msg = f"LexxErr: {msg}"
-
-    def __repr__(self):
-        return self.msg
-
-
 class TokenLitStr:
     def __init__(self, s):
         self.s = s
@@ -46,7 +38,7 @@ def get_idx_string_end_rec(code_ext, idx_string_end):
     return (
         idx_string_end
         if current_string_char == '"' else
-        fail(LexxErr(f"No closing `\"` for string literal."))
+        fail(f"No closing `\"` for string literal.")
         if current_string_char == end_of_code else
         rec(code_ext, idx_string_end + 1)
     )
@@ -76,9 +68,8 @@ def lexx_idf(code_ext, tokens, token_idx_end):
 def lexx_eq_gr(code_ext, tokens, token_idx_end):
     return ((code_ext, token_idx_end + 2, tokens + [TokenEqGr()])
             if code_ext[token_idx_end + 1] == '>'
-            else fail(LexxErr(
+            else fail(
         f'Unexpected sequence "={code_ext[token_idx_end + 1]}"'
-    )
     )
             )
 
@@ -112,7 +103,7 @@ def lexx_rec(code_ext, token_idx_end, tokens):
         if current_char == ' ' else
         rec(*lexx_string(code_ext, tokens, token_idx_end))
         if current_char == '"' else
-        fail(LexxErr(f'Unexpected current_char "{current_char}"'))
+        fail(f'Unexpected current_char "{current_char}"')
     )
 
 
