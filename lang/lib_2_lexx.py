@@ -32,6 +32,14 @@ class TokenEqGr:
         return 'Token_Eq_Gr()'
 
 
+def is_non_initial_idf_char(char):
+    return (char == '_'
+            or 'a' <= char <= 'z'
+            or 'A' <= char <= 'Z'
+            or '0' <= char <= '9'
+            )
+
+
 @tailrec
 def get_idx_string_end_rec(code_ext, idx_string_end):
     current_string_char = code_ext[idx_string_end]
@@ -48,11 +56,7 @@ def get_idx_string_end_rec(code_ext, idx_string_end):
 def get_idx_idf_end_rec(code_ext, idf_current_idx):
     current_idf_char = code_ext[idf_current_idx]
     return (rec(code_ext, idf_current_idx + 1)
-            if ('a' <= current_idf_char <= 'z'
-                or 'A' <= current_idf_char <= 'Z'
-                or '0' <= current_idf_char <= '9'
-                or current_idf_char == '_'
-                )
+            if is_non_initial_idf_char(current_idf_char)
             else idf_current_idx
             )
 
