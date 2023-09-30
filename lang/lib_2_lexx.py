@@ -52,13 +52,12 @@ def fail_bad_eq_seq(code_ext, token_idx_end):
 @tailrec
 def get_idx_string_end_rec(code_ext, idx_string_end):
     current_string_char = code_ext[idx_string_end]
-    return (
-        idx_string_end
-        if current_string_char == '"' else
-        fail(f"No closing `\"` for string literal.")
-        if current_string_char == end_of_code else
-        rec(code_ext, idx_string_end + 1)
-    )
+    return (idx_string_end
+            if current_string_char == '"' else
+            fail(f"No closing `\"` for string literal.")
+            if current_string_char == end_of_code else
+            rec(code_ext, idx_string_end + 1)
+            )
 
 
 @tailrec
@@ -96,23 +95,21 @@ def lexx_string(code_ext, tokens, token_idx_end):
 @tailrec
 def lexx_rec(code_ext, token_idx_end, tokens):
     current_char = code_ext[token_idx_end]
-    return (
-        tokens
-        if current_char == end_of_code else
-        rec(*lexx_idf(code_ext, tokens, token_idx_end))
-        if is_initial_idf_char(current_char) else
-        rec(code_ext, token_idx_end + 1, tokens + [TokenParenOpen()])
-        if current_char == '(' else
-        rec(code_ext, token_idx_end + 1, tokens + [TokenParenClose()])
-        if current_char == ')' else
-        rec(*lexx_eq_gr(code_ext, tokens, token_idx_end))
-        if current_char == '=' else
-        rec(code_ext, token_idx_end + 1, tokens)
-        if current_char == ' ' else
-        rec(*lexx_string(code_ext, tokens, token_idx_end))
-        if current_char == '"' else
-        fail(f'Unexpected current_char "{current_char}"')
-    )
+    return (tokens if current_char == end_of_code else
+            rec(*lexx_idf(code_ext, tokens, token_idx_end))
+            if is_initial_idf_char(current_char) else
+            rec(code_ext, token_idx_end + 1, tokens + [TokenParenOpen()])
+            if current_char == '(' else
+            rec(code_ext, token_idx_end + 1, tokens + [TokenParenClose()])
+            if current_char == ')' else
+            rec(*lexx_eq_gr(code_ext, tokens, token_idx_end))
+            if current_char == '=' else
+            rec(code_ext, token_idx_end + 1, tokens)
+            if current_char == ' ' else
+            rec(*lexx_string(code_ext, tokens, token_idx_end))
+            if current_char == '"' else
+            fail(f'Unexpected current_char "{current_char}"')
+            )
 
 
 def lexx(code):
