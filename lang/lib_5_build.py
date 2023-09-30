@@ -45,7 +45,7 @@ def match_brick(
     }
     .get(
         type(typed),
-        lambda: fail(f"Value {typed} {type(typed)} is not a typed expression")
+        lambda: fail(f"Value {typed} {type(typed)} is not a Brick")
     ))()
 
 
