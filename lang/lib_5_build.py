@@ -31,7 +31,7 @@ class BrickPure:
         return f"BrickPure({self.a})"
 
 
-def match_rio(
+def match_brick(
     lazy_for_input,
     lazy_for_print,
     lazy_for_flatmap,
