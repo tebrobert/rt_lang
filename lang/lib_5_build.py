@@ -15,6 +15,55 @@ class CallableShowableLambda1:
         return self.s
 
 
+class Input:
+    def __repr__(self):
+        return "Input()"
+
+
+class Print:
+    def __init__(self, s):
+        self.s = s
+
+    def __repr__(self):
+        return f"Print({self.s})"
+
+
+class Flatmap:
+    def __init__(self, a_fb, fa):
+        self.a_fb, self.fa = a_fb, fa
+
+    def __repr__(self):
+        return f"Flatmap({self.a_fb}, {self.fa})"
+
+
+class Pure:
+    def __init__(self, a):
+        self.a = a
+
+    def __repr__(self):
+        return f"Pure({self.a})"
+
+
+def show_input():
+    return f"{Input()}"
+
+
+def show_print():
+    s = "s"
+    return f"(lambda {s}: {Print(s)})"
+
+
+def show_flatmap():
+    a_fb = "a_fb"
+    fa = "fa"
+    return f"(lambda {a_fb}: lambda {fa}: {Flatmap(a_fb, fa)})"
+
+
+def show_pure():
+    s = "s"
+    return f"(lambda {s}: {Pure(s)})"
+
+
 def show_typed_lit(t_lit):
     return (f"\"{t_lit.s}\"" if t_lit.typ == T_Str else
             fail(f"Unexpected literal `{t_lit}`")
@@ -25,12 +74,10 @@ def show_typed_idf(t_idf, lamb_arg_stack):
     return (
         t_idf.s if t_idf.s in lamb_arg_stack else
         match_builtin_idf(
-            lazy_for_input=lambda: "Input()",
-            lazy_for_print=lambda: "(lambda s: Print(s))",
-            lazy_for_flatmap=(
-                lambda: "(lambda a_fb: lambda fa: Flatmap(a_fb, fa))"
-            ),
-            lazy_for_pure=lambda: "(lambda a: Pure(a))",
+            lazy_for_input=show_input,
+            lazy_for_print=show_print,
+            lazy_for_flatmap=show_flatmap,
+            lazy_for_pure=show_pure,
         )(t_idf.s)
     )
 
