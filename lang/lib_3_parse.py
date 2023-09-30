@@ -64,7 +64,7 @@ def try_parse_braced(tokens, i):
     fail_if(type(tokens[i]) is not TokenParenOpen, ParseErr())
     expr, j = parse_expr(tokens, i + 1)
     fail_if(type(tokens[j]) is not TokenParenClose,
-        f'Token_Paren_Open expected at {j} given {i} {tokens}',
+        f'Token_Paren_Close expected at {j} given {i} {tokens}',
     )
     return expr, j + 1
 
