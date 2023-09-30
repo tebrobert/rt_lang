@@ -2,53 +2,71 @@ from lang.lib_4_sem import *
 from lang.lib_0_2_builtins import *
 
 
-class Input:
+class BrickInput:
     def __repr__(self):
-        return "Input()"
+        return "BrickInput()"
 
 
-class Print:
+class BrickPrint:
     def __init__(self, s):
         self.s = s
 
     def __repr__(self):
-        return f"Print({self.s})"
+        return f"BrickPrint({self.s})"
 
 
-class Flatmap:
+class BrickFlatmap:
     def __init__(self, a_fb, fa):
         self.a_fb, self.fa = a_fb, fa
 
     def __repr__(self):
-        return f"Flatmap({self.a_fb}, {self.fa})"
+        return f"BrickFlatmap({self.a_fb}, {self.fa})"
 
 
-class Pure:
+class BrickPure:
     def __init__(self, a):
         self.a = a
 
     def __repr__(self):
-        return f"Pure({self.a})"
+        return f"BrickPure({self.a})"
+
+
+def match_rio(
+    lazy_for_input,
+    lazy_for_print,
+    lazy_for_flatmap,
+    lazy_for_pure,
+):
+    return lambda typed: ({
+        BrickInput: lazy_for_input,
+        BrickPrint: lazy_for_print,
+        BrickFlatmap: lazy_for_flatmap,
+        BrickPure: lazy_for_pure,
+    }
+    .get(
+        type(typed),
+        lambda: fail(f"Value {typed} {type(typed)} is not a typed expression")
+    ))()
 
 
 def show_input():
-    return f"{Input()}"
+    return f"{BrickInput()}"
 
 
 def show_print():
     s = "s"
-    return f"(lambda {s}: {Print(s)})"
+    return f"(lambda {s}: {BrickPrint(s)})"
 
 
 def show_flatmap():
     a_fb = "a_fb"
     fa = "fa"
-    return f"(lambda {a_fb}: lambda {fa}: {Flatmap(a_fb, fa)})"
+    return f"(lambda {a_fb}: lambda {fa}: {BrickFlatmap(a_fb, fa)})"
 
 
 def show_pure():
     a = "a"
-    return f"(lambda {a}: {Pure(a)})"
+    return f"(lambda {a}: {BrickPure(a)})"
 
 
 def show_typed_lit(t_lit):

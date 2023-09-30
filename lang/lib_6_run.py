@@ -12,13 +12,13 @@ class RunErr(ValueError):
 def unsafe_run_built(rio):
     type_rio = type(rio)
 
-    if type_rio is Input:
+    if type_rio is BrickInput:
         return input()
-    elif type_rio is Print:
+    elif type_rio is BrickPrint:
         return print(rio.s)
-    elif type_rio is Flatmap:
+    elif type_rio is BrickFlatmap:
         return unsafe_run_built(rio.a_fb(unsafe_run_built(rio.fa)))
-    elif type_rio is Pure:
+    elif type_rio is BrickPure:
         return rio.a
     else:
         return fail(RunErr(f"""Unexpected type "{type_rio}" "{rio}"."""))

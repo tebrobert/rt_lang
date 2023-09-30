@@ -1,1 +1,1 @@
-((lambda s: s))(((lambda s: s))(Input()))
+((lambda s: s))(((lambda s: s))(BrickInput()))
