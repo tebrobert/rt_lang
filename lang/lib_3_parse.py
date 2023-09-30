@@ -5,6 +5,7 @@ class ParseErr(ValueError):
     def __init__(self):
         pass
 
+
 class ExprLitStr:
     def __init__(self, s):
         self.s = s
