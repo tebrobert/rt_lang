@@ -136,7 +136,8 @@ def parse(tokens):
     ext_tokens = tokens + [end_of_tokens]
     expr, i = parse_expr(ext_tokens, 0)
 
-    if ext_tokens[i] != end_of_tokens:
-        return fail(ParseErr(f'Unexpected token at {i} given {tokens}'))
+    fail_if(ext_tokens[i] != end_of_tokens,
+        f'Unexpected token at {i} given {tokens}',
+    )
 
     return expr
