@@ -3,7 +3,6 @@ from lang.lib_6_run import *
 from utils.arg_parser import *
 from utils.print_if import *
 from utils.read_file import *
-from utils.rt_assert import *
 
 """
 Steps:
