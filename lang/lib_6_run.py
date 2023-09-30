@@ -1,13 +1,6 @@
 from lang.lib_5_build import *
 
 
-class RunErr(ValueError):
-    def __init__(self, msg):
-        self.msg = f"RunErr: {msg}"
-
-    def __repr__(self):
-        return self.msg
-
 # stack unsafe
 def unsafe_run_built(rio):
     return match_brick(
