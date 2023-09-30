@@ -6,7 +6,7 @@ class TokenLitStr:
         self.s = s
 
     def __repr__(self):
-        return f'Token_Lit_Str("{self.s}")'
+        return f"""Token_Lit_Str("{self.s}")"""
 
 
 class TokenIdf:
@@ -14,47 +14,47 @@ class TokenIdf:
         self.s = s
 
     def __repr__(self):
-        return f'Token_Idf("{self.s}")'
+        return f"""Token_Idf("{self.s}")"""
 
 
 class TokenParenOpen:
     def __repr__(self):
-        return 'Token_Paren_Open()'
+        return "Token_Paren_Open()"
 
 
 class TokenParenClose:
     def __repr__(self):
-        return 'Token_Paren_Close()'
+        return "Token_Paren_Close()"
 
 
 class TokenEqGr:
     def __repr__(self):
-        return 'Token_Eq_Gr()'
+        return "Token_Eq_Gr()"
 
 
 def is_initial_idf_char(char):
-    return (char == '_'
-            or 'a' <= char <= 'z'
-            or 'A' <= char <= 'Z'
+    return (char == "_"
+            or "a" <= char <= "z"
+            or "A" <= char <= "Z"
             )
 
 
 def is_non_initial_idf_char(char):
     return (is_initial_idf_char(char)
-            or '0' <= char <= '9'
+            or "0" <= char <= "9"
             )
 
 
 def fail_bad_eq_seq(code_ext, token_idx_end):
-    fail(f'Unexpected sequence "={code_ext[token_idx_end + 1]}"')
+    fail(f"""Unexpected sequence "={code_ext[token_idx_end + 1]}".""")
 
 
 @tailrec
 def get_idx_string_end_rec(code_ext, idx_string_end):
     current_string_char = code_ext[idx_string_end]
     return (idx_string_end
-            if current_string_char == '"' else
-            fail(f"No closing `\"` for string literal.")
+            if current_string_char == "\"" else
+            fail(f"""No closing `"` for string literal.""")
             if current_string_char == end_of_code else
             rec(code_ext, idx_string_end + 1)
             )
@@ -79,7 +79,7 @@ def lexx_idf(code_ext, tokens, token_idx_end):
 
 def lexx_eq_gr(code_ext, tokens, token_idx_end):
     return ((code_ext, token_idx_end + 2, tokens + [TokenEqGr()])
-            if code_ext[token_idx_end + 1] == '>'
+            if code_ext[token_idx_end + 1] == ">"
             else fail_bad_eq_seq(code_ext, token_idx_end)
             )
 
@@ -88,7 +88,7 @@ def lexx_string(code_ext, tokens, token_idx_end):
     idx_string_start = token_idx_end + 1
     idx_string_end = get_idx_string_end_rec(code_ext, idx_string_start)
     return (code_ext, idx_string_end + 1,
-    tokens + [TokenLitStr(code_ext[idx_string_start:idx_string_end])]
+    tokens + [TokenLitStr(code_ext[idx_string_start:idx_string_end])],
     )
 
 
@@ -99,16 +99,16 @@ def lexx_rec(code_ext, token_idx_end, tokens):
             rec(*lexx_idf(code_ext, tokens, token_idx_end))
             if is_initial_idf_char(current_char) else
             rec(code_ext, token_idx_end + 1, tokens + [TokenParenOpen()])
-            if current_char == '(' else
+            if current_char == "(" else
             rec(code_ext, token_idx_end + 1, tokens + [TokenParenClose()])
-            if current_char == ')' else
+            if current_char == ")" else
             rec(*lexx_eq_gr(code_ext, tokens, token_idx_end))
-            if current_char == '=' else
+            if current_char == "=" else
             rec(code_ext, token_idx_end + 1, tokens)
-            if current_char == ' ' else
+            if current_char == " " else
             rec(*lexx_string(code_ext, tokens, token_idx_end))
-            if current_char == '"' else
-            fail(f'Unexpected current_char "{current_char}"')
+            if current_char == "\"" else
+            fail(f"""Unexpected current_char "{current_char}".""")
             )
 
 
@@ -116,4 +116,4 @@ def lexx(code):
     return lexx_rec(code + end_of_code, 0, [])
 
 
-end_of_code = '\0'
+end_of_code = "\0"

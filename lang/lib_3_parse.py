@@ -11,7 +11,7 @@ class ExprLitStr:
         self.s = s
 
     def __repr__(self, indent=''):
-        return f'{indent}Expr_Lit_Str("{self.s}")'
+        return f"""{indent}Expr_Lit_Str("{self.s}")"""
 
 
 class ExprIdf:
@@ -19,7 +19,7 @@ class ExprIdf:
         self.s = s
 
     def __repr__(self, indent=''):
-        return f'{indent}Expr_Idf("{self.s}")'
+        return f"""{indent}Expr_Idf("{self.s}")"""
 
 
 class ExprCall1:
@@ -27,26 +27,26 @@ class ExprCall1:
         self.expr_f, self.expr_x = expr_f, expr_x
 
     def __repr__(self, indent=''):
-        return (f'{indent}Expr_Call_1(\n'
-                + f'{self.expr_f.__repr__(indent + 4 * " ")},\n'
-                + f'{self.expr_x.__repr__(indent + 4 * " ")}\n'
-                + f'{indent})'
+        return (f"{indent}Expr_Call_1(\n"
+                + f"""{self.expr_f.__repr__(indent + 4 * " ")},\n"""
+                + f"""{self.expr_x.__repr__(indent + 4 * " ")}\n"""
+                + f"""{indent})"""
                 )
 
 
 class ExprLambda1:
     def __init__(self, expr_idf_arg, expr_res):
         fail_if(type(expr_idf_arg) is not ExprIdf,
-            f'Expr_Idf expected as the first arg of Expr_Lambda_1',
+            "Expr_Idf expected as the first arg of Expr_Lambda_1",
         )
 
         self.expr_idf_arg, self.expr_res = expr_idf_arg, expr_res
 
     def __repr__(self, indent=''):
-        return (f'{indent}Expr_Lambda_1(\n'
-                + f'{self.expr_idf_arg.__repr__(indent + 4 * " ")},\n'
-                + f'{self.expr_res.__repr__(indent + 4 * " ")}\n'
-                + f'{indent})'
+        return (f"{indent}Expr_Lambda_1(\n"
+                + f"""{self.expr_idf_arg.__repr__(indent + 4 * " ")},\n"""
+                + f"""{self.expr_res.__repr__(indent + 4 * " ")}\n"""
+                + f"""{indent})"""
                 )
 
 
@@ -64,7 +64,7 @@ def try_parse_braced(tokens, i):
     fail_if(type(tokens[i]) is not TokenParenOpen, ParseErr())
     expr, j = parse_expr(tokens, i + 1)
     fail_if(type(tokens[j]) is not TokenParenClose,
-        f'Token_Paren_Close expected at {j} given {i} {tokens}',
+        f"Token_Paren_Close expected at {j} given {i} {tokens}",
     )
     return expr, j + 1
 
@@ -79,15 +79,15 @@ def try_parse_lambda_1(tokens, i):
 @tailrec
 def parse_call(tokens, expr_f, i):
     fail_if(type(tokens[i]) is not TokenParenOpen,
-        f'Token_Paren_Open: expected, given {i} {tokens}',
+        f"Token_Paren_Open: expected, given {i} {tokens}",
     )
     fail_if(type(tokens[i + 1]) is TokenParenClose,
-        f'Remove deprecated empty parenthesis, given {i} {tokens}',
+        f"Remove deprecated empty parenthesis, given {i} {tokens}",
     )
 
     expr_x, j = parse_expr(tokens, i + 1)
     fail_if(type(tokens[j]) is not TokenParenClose,
-        f'Token_Paren_Open expected at {j} given {i} {tokens}',
+        f"Token_Paren_Open expected at {j} given {i} {tokens}",
     )
 
     k = j + 1
@@ -100,7 +100,7 @@ def parse_call(tokens, expr_f, i):
 
 @tailrec
 def parse_first_of(tokens, i, parsers):
-    fail_if(parsers == [], f'Can\'t parse Expr given {i} {tokens}')
+    fail_if(parsers == [], f"Can't parse Expr given {i} {tokens}.")
     try:
         return parsers[0](tokens, i)
     except ParseErr:
@@ -121,12 +121,12 @@ def parse_expr(tokens, i):
 
 
 def parse(tokens):
-    end_of_tokens = '\0'
+    end_of_tokens = "\0"
     ext_tokens = tokens + [end_of_tokens]
     expr, i = parse_expr(ext_tokens, 0)
 
     fail_if(ext_tokens[i] != end_of_tokens,
-        f'Unexpected token at {i} given {tokens}',
+        f"Unexpected token at {i} given {tokens}",
     )
 
     return expr

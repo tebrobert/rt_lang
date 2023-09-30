@@ -15,7 +15,7 @@ class TypedLit:
         self.s, self.typ = s, typ
 
     def __repr__(self, indent=''):
-        return f'{indent}Typed_Lit("{self.s}", {self.typ})'
+        return f"""{indent}Typed_Lit("{self.s}", {self.typ})"""
 
     def copy_typified(self, _new_typ):
         return self
@@ -29,7 +29,7 @@ class TypedIdf:
         self.s, self.typ = s, typ
 
     def __repr__(self, indent=''):
-        return f'{indent}Typed_Idf("{self.s}", {self.typ})'
+        return f"""{indent}Typed_Idf("{self.s}", {self.typ})"""
 
     def copy_typified(self, new_typ):
         return TypedIdf(self.s, new_typ)
@@ -42,13 +42,13 @@ class TypedCall1:
     def __init__(self, typed_f, typed_x, typ):
         self.typed_f, self.typed_x, self.typ = typed_f, typed_x, typ
 
-    def __repr__(self, indent=''):
-        shift = indent + 4 * ' '
-        return (f'{indent}Typed_Call_1(\n'
-                + f'{self.typed_f.__repr__(shift)},\n'
-                + f'{self.typed_x.__repr__(shift)},\n'
-                + f'{self.typ.__repr__(shift)}\n'
-                + f'{indent})'
+    def __repr__(self, indent=""):
+        shift = indent + 4 * " "
+        return (f"{indent}Typed_Call_1(\n"
+                + f"{self.typed_f.__repr__(shift)},\n"
+                + f"{self.typed_x.__repr__(shift)},\n"
+                + f"{self.typ.__repr__(shift)}\n"
+                + f"{indent})"
                 )
 
     def copy_typified(self, new_typ):
@@ -62,22 +62,22 @@ class TypedCall1:
 class TypedLambda1:
     def __init__(self, t_idf_x, typed_res, typ=None):
         if not (type(t_idf_x) is TypedIdf):
-            fail(SemErr('Typed_Idf expected as the first arg of Typed_Lambda_1'))
+            fail(SemErr("Typed_Idf expected as the first arg of Typed_Lambda_1"))
 
         if not (typ is None or type(typ) is Type2 and typ.s == builtin_Func):
-            fail(SemErr(f'{builtin_Func} or None expected as the typ arg of Typed_Lambda_1'))
+            fail(SemErr(f"{builtin_Func} or None expected as the typ arg of Typed_Lambda_1"))
 
         self.t_idf_x = t_idf_x
         self.typed_res = typed_res
         self.typ = typ if typ is not None else T_Func(t_idf_x.typ, typed_res.typ)
 
-    def __repr__(self, indent=''):
-        shift = indent + 4 * ' '
-        return (f'{indent}Typed_Lambda_1(\n'
-                + f'{self.t_idf_x.__repr__(shift)},\n'
-                + f'{self.typed_res.__repr__(shift)},\n'
-                + f'{self.typ.__repr__(shift)}'
-                + f'\n{indent})'
+    def __repr__(self, indent=""):
+        shift = indent + 4 * " "
+        return (f"{indent}Typed_Lambda_1(\n"
+                + f"{self.t_idf_x.__repr__(shift)},\n"
+                + f"{self.typed_res.__repr__(shift)},\n"
+                + f"{self.typ.__repr__(shift)}"
+                + f"\n{indent})"
                 )
 
     def copy_typified(self, new_typ):
@@ -162,7 +162,7 @@ def sem_rec(expr):
             new_typed_x = typed_x.copy_typified(new_typ_f.t1)
             return TypedCall1(new_typed_f, new_typed_x, new_typ_f.t2)
 
-        return fail(SemErr(f'typed_f should be a {builtin_Func}'))
+        return fail(SemErr(f"typed_f should be a {builtin_Func}"))
 
     if type_expr is ExprLambda1:
         t_idf_x = sem_rec(expr.expr_idf_arg)
@@ -174,7 +174,7 @@ def sem_rec(expr):
 
         return TypedLambda1(retyped_x, typed_res)
 
-    return fail(SemErr(f'expr has unexpected type {type_expr}'))
+    return fail(SemErr(f"expr has unexpected type {type_expr}"))
 
 
 def sem(expr):

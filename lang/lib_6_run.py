@@ -21,4 +21,4 @@ def unsafe_run_built(rio):
     elif type_rio is Pure:
         return rio.a
     else:
-        return fail(RunErr(f'Unexpected type "{type_rio}" "{rio}".'))
+        return fail(RunErr(f"""Unexpected type "{type_rio}" "{rio}"."""))

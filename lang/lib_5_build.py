@@ -58,8 +58,9 @@ class Flatmap:
         self.a_fb, self.fa = a_fb, fa
 
     def __repr__(self):
-        if not type(self.a_fb) is CallableShowableLambda1:
-            fail(BuildErr("Cannot show lambda"))
+        fail_if(not type(self.a_fb) is CallableShowableLambda1,
+            "Cannot show lambda",
+        )
         return f'Flatmap({self.a_fb}, {self.fa})'
 
     def runnable(self):
@@ -78,9 +79,10 @@ class Pure:
 
 
 def show_typed_lit(t_lit):
-    if t_lit.typ == T_Str:
-        return f"\"{t_lit.s}\""
-    return fail(BuildErr(f"Unexpected literal `{t_lit}`"))
+    return (f"\"{t_lit.s}\""
+            if t_lit.typ == T_Str else
+            fail(f"Unexpected literal `{t_lit}`")
+            )
 
 
 def show_typed_idf(t_idf, lamb_arg_stack):
