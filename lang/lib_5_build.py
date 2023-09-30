@@ -2,19 +2,6 @@ from lang.lib_4_sem import *
 from lang.lib_0_2_builtins import *
 
 
-class CallableShowableLambda1:
-    def __init__(self, f, s):
-        fail_if(not callable(f), "f should be callable")
-        fail_if(not type(s) is str, "s should be a string")
-        self.s, self.f = s, f
-
-    def __call__(self, arg):
-        return self.f(arg)
-
-    def __repr__(self):
-        return self.s
-
-
 class Input:
     def __repr__(self):
         return "Input()"
@@ -65,9 +52,8 @@ def show_pure():
 
 
 def show_typed_lit(t_lit):
-    return (f"\"{t_lit.s}\"" if t_lit.typ == T_Str else
-            fail(f"Unexpected literal `{t_lit}`")
-            )
+    fail_if(t_lit.typ != T_Str, f"Unexpected literal `{t_lit}`")
+    return f"\"{t_lit.s}\""
 
 
 def show_typed_idf(t_idf, lamb_arg_stack):
