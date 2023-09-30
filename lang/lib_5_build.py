@@ -15,38 +15,6 @@ class CallableShowableLambda1:
         return self.s
 
 
-class Input:
-    def __repr__(self):
-        return 'Input()'
-
-
-class Print:
-    def __init__(self, s):
-        self.s = s
-
-    def __repr__(self):
-        return f'Print("{self.s}")'
-
-
-class Flatmap:
-    def __init__(self, a_fb, fa):
-        fail_if(not type(a_fb) is CallableShowableLambda1,
-            "a_fb should be CallableShowableLambda1",
-        )
-        self.a_fb, self.fa = a_fb, fa
-
-    def __repr__(self):
-        return f'Flatmap({self.a_fb}, {self.fa})'
-
-
-class Pure:
-    def __init__(self, a):
-        self.a = a
-
-    def __repr__(self):
-        return f"Pure({self.a})"
-
-
 def show_typed_lit(t_lit):
     return (f"\"{t_lit.s}\"" if t_lit.typ == T_Str else
             fail(f"Unexpected literal `{t_lit}`")
