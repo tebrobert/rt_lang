@@ -45,20 +45,15 @@ class TypedCall1:
 
 class TypedLambda1:
     def __init__(self, t_idf_x, typed_res, typ=None):
-        fail_if(not (type(t_idf_x) is TypedIdf),
-            "Typed_Idf expected as the first arg of Typed_Lambda_1",
-        )
-
-        fail_if(not (
-                typ is None or type(typ) is Type2 and typ.s == builtin_Func
-        ),
-            f"{builtin_Func} or None expected as the typ arg of Typed_Lambda_1",
-        )
+        rt_assert(type(t_idf_x) is TypedIdf)
+        rt_assert(typ is None or type(typ) is Type2 and typ.s == builtin_Func)
 
         self.t_idf_x = t_idf_x
         self.typed_res = typed_res
-        self.typ = typ if typ is not None else T_Func(t_idf_x.typ,
-            typed_res.typ
+        self.typ = (
+            typ
+            if typ is not None else
+            T_Func(t_idf_x.typ, typed_res.typ)
         )
 
     def __repr__(self, indent=""):
@@ -69,9 +64,6 @@ class TypedLambda1:
                 + f"{self.typ.__repr__(shift)}"
                 + f"\n{indent})"
                 )
-
-    def copy_typified(self, new_typ):
-        return TypedLambda1(self.t_idf_x, self.typed_res, new_typ)
 
     def find_idf_type(self, s):
         return self.typed_res.find_idf_type(s)
@@ -102,7 +94,9 @@ def copy_typified(typ, new_typ):
         lazy_for_typed_call_1=(
             lambda: TypedCall1(typ.typed_f, typ.typed_x, new_typ)
         ),
-        lazy_for_typed_lambda_1=lambda: typ.copy_typified(new_typ),
+        lazy_for_typed_lambda_1=(
+            lambda: TypedLambda1(typ.t_idf_x, typ.typed_res, new_typ)
+        ),
     )(typ)
 
 
