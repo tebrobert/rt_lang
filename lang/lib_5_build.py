@@ -2,14 +2,6 @@ from lang.lib_4_sem import *
 from lang.lib_0_2_builtins import *
 
 
-class BuildErr(ValueError):
-    def __init__(self, msg):
-        self.msg = f"BuildErr: {msg}"
-
-    def __repr__(self):
-        return self.msg
-
-
 class CallableShowableLambda1:
     def __init__(self, f, s):
         if not callable(f):
@@ -96,7 +88,7 @@ def show_typed_idf(t_idf, lamb_arg_stack):
         return "(lambda a: Pure(a))"
     if t_idf.s in lamb_arg_stack:
         return t_idf.s
-    return fail(BuildErr(f"Unexpected identifier `{t_idf.s}`"))
+    return fail(f"Unexpected identifier `{t_idf.s}`")
 
 
 def show(typed, immutable_lamb_arg_stack=None):
@@ -114,7 +106,7 @@ def show(typed, immutable_lamb_arg_stack=None):
         t_lamb = typed
         s = t_lamb.t_idf_x.s
         return f"(lambda {s}: {show(t_lamb.typed_res, [s] + lamb_arg_stack)})"
-    fail(BuildErr(f"Unexpected typed expression {typed}"))
+    fail(f"Unexpected typed expression {typed}")
 
 
 def rt_compile(shown):
