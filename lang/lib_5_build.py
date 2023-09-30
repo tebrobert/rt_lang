@@ -4,8 +4,8 @@ from lang.lib_0_2_builtins import *
 
 class CallableShowableLambda1:
     def __init__(self, f, s):
-        fail_if(not callable(f), ValueError("f should be callable"))
-        fail_if(not type(s) is str, ValueError("s should be a string"))
+        fail_if(not callable(f), "f should be callable")
+        fail_if(not type(s) is str, "s should be a string")
         self.s, self.f = s, f
 
     def __call__(self, arg):
