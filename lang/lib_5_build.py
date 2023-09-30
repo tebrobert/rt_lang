@@ -47,6 +47,12 @@ class Pure:
         return f"Pure({self.a})"
 
 
+def show_typed_lit(t_lit):
+    return (f"\"{t_lit.s}\"" if t_lit.typ == T_Str else
+            fail(f"Unexpected literal `{t_lit}`")
+            )
+
+
 def show_typed_idf(t_idf, lamb_arg_stack):
     return (
         t_idf.s if t_idf.s in lamb_arg_stack else
@@ -59,12 +65,6 @@ def show_typed_idf(t_idf, lamb_arg_stack):
             lazy_for_pure=lambda: "(lambda a: Pure(a))",
         )(t_idf.s)
     )
-
-
-def show_typed_lit(t_lit):
-    return (f"\"{t_lit.s}\"" if t_lit.typ == T_Str else
-            fail(f"Unexpected literal `{t_lit}`")
-            )
 
 
 def show_typed_call_1(t_call, lamb_arg_stack):
