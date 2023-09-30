@@ -87,6 +87,24 @@ class TypedLambda1:
         return self.typed_res.find_idf_type(s)
 
 
+def match_typed(
+    lazy_for_typed_lit,
+    lazy_for_typed_idf,
+    lazy_for_typed_call_1,
+    lazy_for_typed_lambda_1,
+):
+    return lambda typed: ({
+        TypedLit: lazy_for_typed_lit,
+        TypedIdf: lazy_for_typed_idf,
+        TypedCall1: lazy_for_typed_call_1,
+        TypedLambda1: lazy_for_typed_lambda_1,
+    }
+    .get(
+        type(typed),
+        lambda: fail(f"Value {typed} {type(typed)} is not a typed expression")
+    ))()
+
+
 def sem_rec(expr):
     type_expr = type(expr)
 
