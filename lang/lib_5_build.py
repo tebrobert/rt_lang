@@ -81,15 +81,14 @@ def show_typed_lambda_1(t_lamb, lamb_arg_stack):
 
 
 def show(typed, lamb_arg_stack=[]):
-    if type(typed) is TypedLit:
-        return show_typed_lit(typed)
-    if type(typed) is TypedIdf:
-        return show_typed_idf(typed, lamb_arg_stack)
-    if type(typed) is TypedCall1:
-        return show_typed_call_1(typed, lamb_arg_stack)
-    if type(typed) is TypedLambda1:
-        return show_typed_lambda_1(typed, lamb_arg_stack)
-    fail(f"Unexpected typed expression {typed}")
+    return match_typed(
+        lazy_for_typed_lit=lambda: show_typed_lit(typed),
+        lazy_for_typed_idf=lambda: show_typed_idf(typed, lamb_arg_stack),
+        lazy_for_typed_call_1=lambda: show_typed_call_1(typed, lamb_arg_stack),
+        lazy_for_typed_lambda_1=lambda: show_typed_lambda_1(
+            typed, lamb_arg_stack
+        ),
+    )(typed)
 
 
 def rt_compile(shown):
