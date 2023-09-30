@@ -69,8 +69,7 @@ def show_typed_idf(t_idf, lamb_arg_stack):
     return fail(f"Unexpected identifier `{t_idf.s}`")
 
 
-def show(typed, immutable_lamb_arg_stack=None):
-    lamb_arg_stack = [] if immutable_lamb_arg_stack is None else immutable_lamb_arg_stack
+def show(typed, lamb_arg_stack=[]):
     if type(typed) is TypedLit:
         return show_typed_lit(typed)
     if type(typed) is TypedIdf:
