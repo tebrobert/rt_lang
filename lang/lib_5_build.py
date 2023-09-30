@@ -14,16 +14,10 @@ class CallableShowableLambda1:
     def __repr__(self):
         return self.s
 
-    def runnable(self):
-        return False
-
 
 class Input:
     def __repr__(self):
         return 'Input'
-
-    def runnable(self):
-        return True
 
 
 class Print:
@@ -33,16 +27,10 @@ class Print:
     def __repr__(self):
         return f'Print("{self.s}")'
 
-    def runnable(self):
-        return True
-
 
 class Flatmap:
     def __init__(self, a_fb, fa):
         fail_if(not callable(a_fb), "a_fb should be callable")
-        fail_if(not fa.runnable(),
-            f"fa should be runnable but it is {fa=}, also {a_fb=}"
-        )
         self.a_fb, self.fa = a_fb, fa
 
     def __repr__(self):
@@ -51,9 +39,6 @@ class Flatmap:
         )
         return f'Flatmap({self.a_fb}, {self.fa})'
 
-    def runnable(self):
-        return True
-
 
 class Pure:
     def __init__(self, a):
@@ -61,9 +46,6 @@ class Pure:
 
     def __repr__(self):
         return f"Pure({self.a})"
-
-    def runnable(self):
-        return True
 
 
 def show_typed_lit(t_lit):
