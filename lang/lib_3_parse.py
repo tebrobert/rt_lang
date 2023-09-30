@@ -98,7 +98,7 @@ def parse_call(tokens, expr_f, i):
 
 
 @tailrec
-def parse_any_of(tokens, i, parsers):
+def parse_first_of(tokens, i, parsers):
     fail_if(parsers == [], f'Can\'t parse Expr given {i} {tokens}')
     try:
         return parsers[0](tokens, i)
@@ -107,7 +107,7 @@ def parse_any_of(tokens, i, parsers):
 
 
 def parse_expr(tokens, i):
-    expr, j = parse_any_of(tokens, i, [
+    expr, j = parse_first_of(tokens, i, [
         try_parse_lambda_1,  # Higher priority
         try_parse_idf,
         try_parse_braced,
