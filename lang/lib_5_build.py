@@ -30,13 +30,12 @@ class Print:
 
 class Flatmap:
     def __init__(self, a_fb, fa):
-        fail_if(not callable(a_fb), "a_fb should be callable")
+        fail_if(not type(a_fb) is CallableShowableLambda1,
+            "a_fb should be CallableShowableLambda1",
+        )
         self.a_fb, self.fa = a_fb, fa
 
     def __repr__(self):
-        fail_if(not type(self.a_fb) is CallableShowableLambda1,
-            "Cannot show lambda",
-        )
         return f'Flatmap({self.a_fb}, {self.fa})'
 
 
