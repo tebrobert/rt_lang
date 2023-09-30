@@ -60,8 +60,8 @@ def show_flatmap():
 
 
 def show_pure():
-    s = "s"
-    return f"(lambda {s}: {Pure(s)})"
+    a = "a"
+    return f"(lambda {a}: {Pure(a)})"
 
 
 def show_typed_lit(t_lit):
