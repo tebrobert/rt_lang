@@ -2,14 +2,6 @@ from lang.lib_3_parse import *
 from lang.lib_0_2_builtins import *
 
 
-class SemErr(ValueError):
-    def __init__(self, msg):
-        self.msg = f"SemErr: {msg}"
-
-    def __repr__(self):
-        return self.msg
-
-
 class TypedLit:
     def __init__(self, s, typ):
         self.s, self.typ = s, typ
@@ -62,10 +54,10 @@ class TypedCall1:
 class TypedLambda1:
     def __init__(self, t_idf_x, typed_res, typ=None):
         if not (type(t_idf_x) is TypedIdf):
-            fail(SemErr("Typed_Idf expected as the first arg of Typed_Lambda_1"))
+            fail("Typed_Idf expected as the first arg of Typed_Lambda_1")
 
         if not (typ is None or type(typ) is Type2 and typ.s == builtin_Func):
-            fail(SemErr(f"{builtin_Func} or None expected as the typ arg of Typed_Lambda_1"))
+            fail(f"{builtin_Func} or None expected as the typ arg of Typed_Lambda_1")
 
         self.t_idf_x = t_idf_x
         self.typed_res = typed_res
@@ -147,30 +139,33 @@ def sem_rec(expr):
                     else:
                         if typ_sub_fx.s in f_x_synched_unks:
                             return fail(
-                                SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
+                                f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"
+                            )
 
                         return solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
 
                 if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Unknown0:
                     if typ_sub_x.s in f_x_synched_unks:
-                        return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
+                        return fail(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
                     return fail(
-                        SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
+                        f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
+                    )
 
                 if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Type1:
                     return solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
 
                 if type(typ_sub_fx) is Type2 and type(typ_sub_x) is Unknown0:
                     if typ_sub_x.s in f_x_synched_unks:
-                        return fail(SemErr(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"))
+                        return fail(f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
                     return fail(
-                        SemErr(f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"))
+                        f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
+                    )
 
                 if type(typ_sub_fx) is Type2 and type(typ_sub_x) is Type2:
                     return solve_rec(typ_sub_fx.t2, typ_sub_x.t2,
                                      solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks)))
 
-                return fail(SemErr(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}"))
+                return fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
 
             def concreted(typ_f, typ_x):
                 return solve(typ_f, typ_x)[0]
@@ -180,7 +175,7 @@ def sem_rec(expr):
             new_typed_x = typed_x.copy_typified(new_typ_f.t1)
             return TypedCall1(new_typed_f, new_typed_x, new_typ_f.t2)
 
-        return fail(SemErr(f"typed_f should be a {builtin_Func}"))
+        return fail(f"typed_f should be a {builtin_Func}")
 
     if type_expr is ExprLambda1:
         t_idf_x = sem_rec(expr.expr_idf_arg)
@@ -192,17 +187,18 @@ def sem_rec(expr):
 
         return TypedLambda1(retyped_x, typed_res)
 
-    return fail(SemErr(f"expr has unexpected type {type_expr}"))
+    return fail(f"expr has unexpected type {type_expr}")
 
 
 def sem(expr):
     typed = sem_rec(expr)
-    if not (type(typed.typ) is Type1 and typed.typ.s == builtin_RIO):
-        if type(typed.typ) is Unknown0:
-            unk = typed
-            return fail(SemErr(f"Unexpected identifier {unk.s}"))
-        return fail(SemErr(f"The code type should be {builtin_RIO}[A] but {typed.typ} found."))
-    return typed
+    return (
+        typed
+        if type(typed.typ) is Type1 and typed.typ.s == builtin_RIO else
+        fail(f"Unexpected identifier {typed.s}")
+        if type(typed.typ) is Unknown0 else
+        fail(f"The code type should be {builtin_RIO}[A] but {typed.typ} found.")
+    )
 
 
 """
