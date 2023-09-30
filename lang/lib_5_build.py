@@ -17,7 +17,7 @@ class CallableShowableLambda1:
 
 class Input:
     def __repr__(self):
-        return 'Input'
+        return 'Input()'
 
 
 class Print:
@@ -49,24 +49,23 @@ class Pure:
 
 
 def show_typed_lit(t_lit):
-    return (f"\"{t_lit.s}\""
-            if t_lit.typ == T_Str else
+    return (f"\"{t_lit.s}\"" if t_lit.typ == T_Str else
             fail(f"Unexpected literal `{t_lit}`")
             )
 
 
 def show_typed_idf(t_idf, lamb_arg_stack):
-    if t_idf.s == builtin_input:
-        return "Input()"
-    if t_idf.s == builtin_print:
-        return "(lambda s: Print(s))"
-    if t_idf.s == builtin_flatmap:
-        return "(lambda a_fb: lambda fa: Flatmap(a_fb, fa))"
-    if t_idf.s == builtin_pure:
-        return "(lambda a: Pure(a))"
-    if t_idf.s in lamb_arg_stack:
-        return t_idf.s
-    return fail(f"Unexpected identifier `{t_idf.s}`")
+    return (
+        t_idf.s if t_idf.s in lamb_arg_stack else
+        match_builtin_idf(
+            lazy_for_input=lambda: "Input()",
+            lazy_for_print=lambda: "(lambda s: Print(s))",
+            lazy_for_flatmap=(
+                lambda: "(lambda a_fb: lambda fa: Flatmap(a_fb, fa))"
+            ),
+            lazy_for_pure=lambda: "(lambda a: Pure(a))",
+        )(t_idf.s)
+    )
 
 
 def show_typed_call_1(t_call, lamb_arg_stack):
@@ -85,8 +84,8 @@ def show(typed, lamb_arg_stack=[]):
         lazy_for_typed_lit=lambda: show_typed_lit(typed),
         lazy_for_typed_idf=lambda: show_typed_idf(typed, lamb_arg_stack),
         lazy_for_typed_call_1=lambda: show_typed_call_1(typed, lamb_arg_stack),
-        lazy_for_typed_lambda_1=lambda: show_typed_lambda_1(
-            typed, lamb_arg_stack
+        lazy_for_typed_lambda_1=(
+            lambda: show_typed_lambda_1(typed, lamb_arg_stack)
         ),
     )(typed)
 
