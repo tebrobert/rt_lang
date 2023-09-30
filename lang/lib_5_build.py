@@ -69,20 +69,26 @@ def show_typed_idf(t_idf, lamb_arg_stack):
     return fail(f"Unexpected identifier `{t_idf.s}`")
 
 
+def show_typed_call_1(t_call, lamb_arg_stack):
+    shown_f = show(t_call.typed_f, lamb_arg_stack)
+    shown_x = show(t_call.typed_x, lamb_arg_stack)
+    return f"({shown_f})({shown_x})"
+
+
+def show_typed_lambda_1(t_lamb, lamb_arg_stack):
+    s = t_lamb.t_idf_x.s
+    return f"(lambda {s}: {show(t_lamb.typed_res, [s] + lamb_arg_stack)})"
+
+
 def show(typed, lamb_arg_stack=[]):
     if type(typed) is TypedLit:
         return show_typed_lit(typed)
     if type(typed) is TypedIdf:
         return show_typed_idf(typed, lamb_arg_stack)
     if type(typed) is TypedCall1:
-        t_call = typed
-        shown_f = show(t_call.typed_f, lamb_arg_stack)
-        shown_x = show(t_call.typed_x, lamb_arg_stack)
-        return f"({shown_f})({shown_x})"
+        return show_typed_call_1(typed, lamb_arg_stack)
     if type(typed) is TypedLambda1:
-        t_lamb = typed
-        s = t_lamb.t_idf_x.s
-        return f"(lambda {s}: {show(t_lamb.typed_res, [s] + lamb_arg_stack)})"
+        return show_typed_lambda_1(typed, lamb_arg_stack)
     fail(f"Unexpected typed expression {typed}")
 
 
