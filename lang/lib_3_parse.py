@@ -120,7 +120,7 @@ def parse_any_of(tokens, i, parsers):
 
 def parse_expr(tokens, i):
     expr, j = parse_any_of(tokens, i, [
-        try_parse_lambda_1,
+        try_parse_lambda_1, # Higher priority
         try_parse_idf,
         try_parse_braced,
         try_parse_lit_str,
