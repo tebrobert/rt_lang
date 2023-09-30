@@ -165,7 +165,7 @@ def sem_rec(expr):
         return fail(SemErr(f'typed_f should be a {builtin_Func}'))
 
     if type_expr is ExprLambda1:
-        t_idf_x = sem_rec(expr.eidf_x)
+        t_idf_x = sem_rec(expr.expr_idf_arg)
         typed_res = sem_rec(expr.expr_res)
 
         lookup_typ_x = typed_res.find_idf_type(t_idf_x.s)

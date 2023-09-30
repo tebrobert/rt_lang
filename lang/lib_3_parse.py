@@ -2,12 +2,8 @@ from lang.lib_2_lexx import *
 
 
 class ParseErr(ValueError):
-    def __init__(self, msg):
-        self.msg = f"ParseErr: {msg}"
-
-    def __repr__(self):
-        return self.msg
-
+    def __init__(self):
+        pass
 
 class ExprLitStr:
     def __init__(self, s):
@@ -43,34 +39,28 @@ class ExprLambda1:
             f'Expr_Idf expected as the first arg of Expr_Lambda_1',
         )
 
-        self.eidf_x, self.expr_res = expr_idf_arg, expr_res
+        self.expr_idf_arg, self.expr_res = expr_idf_arg, expr_res
 
     def __repr__(self, indent=''):
         return (f'{indent}Expr_Lambda_1(\n'
-                + f'{self.eidf_x.__repr__(indent + 4 * " ")},\n'
+                + f'{self.expr_idf_arg.__repr__(indent + 4 * " ")},\n'
                 + f'{self.expr_res.__repr__(indent + 4 * " ")}\n'
                 + f'{indent})'
                 )
 
 
 def try_parse_lit_str(tokens, i):
-    fail_if(type(tokens[i]) is not TokenLitStr,
-        ParseErr(f'Token_Lit_Str expected given {i} {tokens}'),
-    )
+    fail_if(type(tokens[i]) is not TokenLitStr, ParseErr())
     return ExprLitStr(tokens[i].s), i + 1
 
 
 def try_parse_idf(tokens, i):
-    fail_if(type(tokens[i]) is not TokenIdf,
-        ParseErr(f'Token_Idf expected given {i} {tokens}', )
-    )
+    fail_if(type(tokens[i]) is not TokenIdf, ParseErr())
     return ExprIdf(tokens[i].s), i + 1
 
 
 def try_parse_braced(tokens, i):
-    fail_if(type(tokens[i]) is not TokenParenOpen,
-        ParseErr(f'Token_Paren_Open: expected given {i} {tokens}'),
-    )
+    fail_if(type(tokens[i]) is not TokenParenOpen, ParseErr())
     expr, j = parse_expr(tokens, i + 1)
     fail_if(type(tokens[j]) is not TokenParenClose,
         f'Token_Paren_Open expected at {j} given {i} {tokens}',
@@ -80,33 +70,31 @@ def try_parse_braced(tokens, i):
 
 def try_parse_lambda_1(tokens, i):
     e_idf_x, j = try_parse_idf(tokens, i)
-    fail_if(type(tokens[j]) is not TokenEqGr,
-        ParseErr(f'Token_Eq_Gr expected at {j} given {i} {tokens}'),
-    )
+    fail_if(type(tokens[j]) is not TokenEqGr, ParseErr())
     expr_res, k = parse_expr(tokens, j + 1)
     return ExprLambda1(e_idf_x, expr_res), k
 
 
 @tailrec
 def parse_call(tokens, expr_f, i):
-    if type(tokens[i]) is not TokenParenOpen:
-        return fail(ParseErr(
-            f'Token_Paren_Open: expected, given {i} {tokens}'
-        ))
-    if type(tokens[i + 1]) is TokenParenClose:
-        return fail(ParseErr(
-            f'Remove deprecated empty parenthesis, given {i} {tokens}'
-        ))
+    fail_if(type(tokens[i]) is not TokenParenOpen,
+        f'Token_Paren_Open: expected, given {i} {tokens}',
+    )
+    fail_if(type(tokens[i + 1]) is TokenParenClose,
+        f'Remove deprecated empty parenthesis, given {i} {tokens}',
+    )
+
     expr_x, j = parse_expr(tokens, i + 1)
-    if type(tokens[j]) is not TokenParenClose:
-        return fail(ParseErr(
-            f'Token_Paren_Open expected at {j} given {i} {tokens}'
-        ))
+    fail_if(type(tokens[j]) is not TokenParenClose,
+        f'Token_Paren_Open expected at {j} given {i} {tokens}',
+    )
+
     k = j + 1
     expr_call_1 = ExprCall1(expr_f, expr_x)
-    if type(tokens[k]) is TokenParenOpen:
-        return rec(tokens, expr_call_1, k)
-    return expr_call_1, k
+    return (rec(tokens, expr_call_1, k)
+            if type(tokens[k]) is TokenParenOpen else
+            (expr_call_1, k)
+            )
 
 
 @tailrec
@@ -120,7 +108,7 @@ def parse_any_of(tokens, i, parsers):
 
 def parse_expr(tokens, i):
     expr, j = parse_any_of(tokens, i, [
-        try_parse_lambda_1, # Higher priority
+        try_parse_lambda_1,  # Higher priority
         try_parse_idf,
         try_parse_braced,
         try_parse_lit_str,
