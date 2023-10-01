@@ -175,46 +175,16 @@ def solve_type_2(
 def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     typ_f, typ_x, synched_unks = f_x_synched_unks
 
-    # return match_type(
-    #     lazy_for_type0=lambda: solve_type_0,
-    #     lazy_for_unknown0=lambda: solve_unknown_0,
-    #     lazy_for_type1=lambda: solve_type_1,
-    #     lazy_for_type2=lambda: solve_type_2,
-    # )(
-    #     typ_f, typ_x,
-    #     typ_sub_fx, typ_sub_x,
-    #     f_x_synched_unks, synched_unks,
-    # )
-
-    if type(typ_sub_fx) is Type0:
-        return solve_type_0(
-            typ_f, typ_x,
-            typ_sub_fx, typ_sub_x,
-            f_x_synched_unks, synched_unks,
-        )
-
-    if type(typ_sub_fx) is Unknown0:
-        return solve_unknown_0(
-            typ_f, typ_x,
-            typ_sub_fx, typ_sub_x,
-            f_x_synched_unks, synched_unks,
-        )
-
-    if type(typ_sub_fx) is Type1:
-        return solve_type_1(
-            typ_f, typ_x,
-            typ_sub_fx, typ_sub_x,
-            f_x_synched_unks, synched_unks,
-        )
-
-    if type(typ_sub_fx) is Type2:
-        return solve_type_2(
-            typ_f, typ_x,
-            typ_sub_fx, typ_sub_x,
-            f_x_synched_unks, synched_unks,
-        )
-
-    return fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+    return match_type(
+        lazy_for_type0=lambda: solve_type_0,
+        lazy_for_unknown0=lambda: solve_unknown_0,
+        lazy_for_type1=lambda: solve_type_1,
+        lazy_for_type2=lambda: solve_type_2,
+    )(typ_sub_fx)(
+        typ_f, typ_x,
+        typ_sub_fx, typ_sub_x,
+        f_x_synched_unks, synched_unks,
+    )
 
 
 def solve(typ_f, typ_x):
