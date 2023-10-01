@@ -159,6 +159,10 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
         f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
 
 
+def concreted(typ_f, typ_x):
+    return solve(typ_f, typ_x)[0]
+
+
 def solve(typ_f, typ_x):
     return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
 
@@ -181,9 +185,6 @@ def sem_rec(expr):
             if type(typed_x.typ) is Unknown0:
                 new_typed_x = copy_typified(typed_x, typed_f.typ.t1)
                 return TypedCall1(typed_f, new_typed_x, typed_f.typ.t2)
-
-            def concreted(typ_f, typ_x):
-                return solve(typ_f, typ_x)[0]
 
             new_typ_f = concreted(typed_f.typ, typed_x.typ)
             new_typed_f = copy_typified(typed_f, new_typ_f)
