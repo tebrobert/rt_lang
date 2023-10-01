@@ -192,7 +192,7 @@ def solve(typ_f, typ_x):
 
 
 def concreted(typ_f, typ_x):
-    return solve(typ_f, typ_x)[0]
+    return solve(typ_f, typ_x)[0] # 0 is unclear, should use a class
 
 
 def typify_x(typed_f, typed_x):
