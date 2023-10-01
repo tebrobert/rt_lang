@@ -1,5 +1,4 @@
-from utils.flattap import *
-from utils.rt_try import *
+from utils.flattap import flattap
 
 
 def fail(msg):
