@@ -51,12 +51,16 @@ class ExprLambda1:
 
 
 def try_parse_lit_str(tokens, i):
-    fail_if(type(tokens[i]) is not TokenLitStr, ParseErr())
+    fail_if(type(tokens[i]) is not TokenLitStr,
+        f"TokenLitStr expected at {i}, given {i} {tokens}",
+    )
     return ExprLitStr(tokens[i].s), i + 1
 
 
 def try_parse_idf(tokens, i):
-    fail_if(type(tokens[i]) is not TokenIdf, ParseErr())
+    fail_if(type(tokens[i]) is not TokenIdf,
+        f"TokenIdf expected at {i}, given {i} {tokens}",
+    )
     return ExprIdf(tokens[i].s), i + 1
 
 
@@ -105,10 +109,12 @@ def parse_call(tokens, expr_f, i):
 @tailrec
 def parse_first_of(tokens, i, parsers):
     fail_if(parsers == [], f"Can't parse Expr given {i} {tokens}.")
-    try:
-        return parsers[0](tokens, i)
-    except Exception:
-        return rec(tokens, i, parsers[1:])
+    either_result = rt_try(lambda: parsers[0](tokens, i))
+    return (
+        rec(tokens, i, parsers[1:])
+        if is_fail(either_result) else
+        either_result
+    )
 
 
 def parse_expr(tokens, i):

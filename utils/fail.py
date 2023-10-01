@@ -27,3 +27,14 @@ def rt_try_assert_equal(label, expected_str, lazy_actual):
     return flattap(lambda: rt_try(lazy_actual),
         rt_assert_equal(label, expected_str)
     )
+
+
+def rt_try(action):
+    try:
+        return action()
+    except Exception as e:
+        return e
+
+
+def is_fail(v):
+    return isinstance(v, Exception)
