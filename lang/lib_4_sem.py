@@ -167,21 +167,31 @@ def solve(typ_f, typ_x):
     return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
 
 
+def typify_x(typed_f, typed_x):
+    new_typed_x = copy_typified(typed_x, typed_f.typ.t1)
+    return TypedCall1(typed_f, new_typed_x, typed_f.typ.t2)
+
+
+def typify_f(typed_f, typed_x):
+    new_typ_f = concreted(typed_f.typ, typed_x.typ)
+    new_typed_f = copy_typified(typed_f, new_typ_f)
+    new_typed_x = copy_typified(typed_x, new_typ_f.t1)
+    return TypedCall1(new_typed_f, new_typed_x, new_typ_f.t2)
+
+
 def sem_expr_call_1(expr):
     typed_f = sem_rec(expr.expr_f)
     typed_x = sem_rec(expr.expr_x)
 
-    if type(typed_f.typ) is Type2 and typed_f.typ.s == builtin_Func:
-        if type(typed_x.typ) is Unknown0:
-            new_typed_x = copy_typified(typed_x, typed_f.typ.t1)
-            return TypedCall1(typed_f, new_typed_x, typed_f.typ.t2)
+    fail_if(not (type(typed_f.typ) is Type2 and typed_f.typ.s == builtin_Func),
+        f"typed_f should be a {builtin_Func}",
+    )
 
-        new_typ_f = concreted(typed_f.typ, typed_x.typ)
-        new_typed_f = copy_typified(typed_f, new_typ_f)
-        new_typed_x = copy_typified(typed_x, new_typ_f.t1)
-        return TypedCall1(new_typed_f, new_typed_x, new_typ_f.t2)
-
-    return fail(f"typed_f should be a {builtin_Func}")
+    return (
+        typify_x(typed_f, typed_x)
+        if type(typed_x.typ) is Unknown0 else
+        typify_f(typed_f, typed_x)
+    )
 
 
 def sem_expr_lambda_1(expr):
