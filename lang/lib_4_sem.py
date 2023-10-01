@@ -9,10 +9,6 @@ class TypedLit:
     def __repr__(self, indent=''):
         return f"""{indent}Typed_Lit("{self.s}", {self.typ})"""
 
-    def find_idf_type(self, _s):
-        return find_idf_type(self, _s)
-        return T_A
-
 
 class TypedIdf:
     def __init__(self, s, typ):
@@ -20,9 +16,6 @@ class TypedIdf:
 
     def __repr__(self, indent=''):
         return f"""{indent}Typed_Idf("{self.s}", {self.typ})"""
-
-    def find_idf_type(self, s):
-        return self.typ if self.s == s else T_A
 
 
 class TypedCall1:
@@ -37,11 +30,6 @@ class TypedCall1:
                 + f"{self.typ.__repr__(shift)}\n"
                 + f"{indent})"
                 )
-
-    def find_idf_type(self, s):
-        lookup_by_f = self.typed_f.find_idf_type(s)
-        return lookup_by_f if not type(
-            lookup_by_f) is Unknown0 else self.typed_x.find_idf_type(s)
 
 
 class TypedLambda1:
@@ -63,9 +51,6 @@ class TypedLambda1:
                 + f"{self.typ.__repr__(shift)}"
                 + f"\n{indent})"
                 )
-
-    def find_idf_type(self, s):
-        return self.typed_res.find_idf_type(s)
 
 
 def match_typed(
@@ -209,7 +194,7 @@ def sem_rec(expr):
         t_idf_x = sem_rec(expr.expr_idf_arg)
         typed_res = sem_rec(expr.expr_res)
 
-        lookup_typ_x = typed_res.find_idf_type(t_idf_x.s)
+        lookup_typ_x = find_idf_type(typed_res, t_idf_x.s)
 
         retyped_x = copy_typified(t_idf_x, lookup_typ_x)
 
