@@ -104,12 +104,14 @@ def find_idf_type(typed, s):
 def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     typ_f, typ_x, synched_unks = f_x_synched_unks
 
-    if type(typ_sub_fx) is Type0 and type(
-            typ_sub_x) is Type0 and typ_sub_fx.s == typ_sub_x.s:
-        return typ_f, typ_x, synched_unks
-
-    if type(typ_sub_fx) is Type0 and type(typ_sub_x) is Unknown0:
-        fail("Not implemented: solve_rec 1")
+    if type(typ_sub_fx) is Type0:
+        return (
+            (typ_f, typ_x, synched_unks)
+            if type(typ_sub_x) is Type0 and typ_sub_fx.s == typ_sub_x.s else
+            fail("Not implemented: solve_rec 1")
+            if type(typ_sub_x) is Unknown0 else
+            fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+        )
 
     if type(typ_sub_fx) is Unknown0 and type(typ_sub_x) is Type0:
         return solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
@@ -155,8 +157,7 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
             solve_rec(typ_sub_fx.t1, typ_sub_x.t1,
                 (typ_f, typ_x, synched_unks)))
 
-    return fail(
-        f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+    return fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
 
 
 def concreted(typ_f, typ_x):
