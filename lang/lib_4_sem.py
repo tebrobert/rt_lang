@@ -101,6 +101,68 @@ def find_idf_type(typed, s):
     )(typed)
 
 
+def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
+    typ_f, typ_x, synched_unks = f_x_synched_unks
+
+    if type(typ_sub_fx) is Type0 and type(
+            typ_sub_x) is Type0 and typ_sub_fx.s == typ_sub_x.s:
+        return typ_f, typ_x, synched_unks
+
+    if type(typ_sub_fx) is Type0 and type(typ_sub_x) is Unknown0:
+        fail("Not implemented: solve_rec 1")
+
+    if type(typ_sub_fx) is Unknown0 and type(typ_sub_x) is Type0:
+        return solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
+
+    if type(typ_sub_fx) is Unknown0:
+        if type(typ_sub_x) is Unknown0:
+            if typ_sub_fx.s == typ_sub_x.s:
+                return typ_f, typ_x, synched_unks.union(
+                    {typ_sub_fx.s})
+            else:
+                fail("Not implemented: solve_rec 4")
+        else:
+            if typ_sub_fx.s in f_x_synched_unks:
+                return fail(
+                    f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"
+                )
+
+            return solve(concrete(typ_f, typ_sub_fx, typ_sub_x),
+                typ_x)
+
+    if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Unknown0:
+        if typ_sub_x.s in f_x_synched_unks:
+            return fail(
+                f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
+        return fail(
+            f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
+        )
+
+    if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Type1:
+        return solve_rec(typ_sub_fx.t1, typ_sub_x.t1,
+            (typ_f, typ_x, synched_unks))
+
+    if type(typ_sub_fx) is Type2 and type(typ_sub_x) is Unknown0:
+        if typ_sub_x.s in f_x_synched_unks:
+            return fail(
+                f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
+        return fail(
+            f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
+        )
+
+    if type(typ_sub_fx) is Type2 and type(typ_sub_x) is Type2:
+        return solve_rec(typ_sub_fx.t2, typ_sub_x.t2,
+            solve_rec(typ_sub_fx.t1, typ_sub_x.t1,
+                (typ_f, typ_x, synched_unks)))
+
+    return fail(
+        f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+
+
+def solve(typ_f, typ_x):
+    return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
+
+
 def sem_rec(expr):
     type_expr = type(expr)
 
@@ -119,66 +181,6 @@ def sem_rec(expr):
             if type(typed_x.typ) is Unknown0:
                 new_typed_x = copy_typified(typed_x, typed_f.typ.t1)
                 return TypedCall1(typed_f, new_typed_x, typed_f.typ.t2)
-
-            def solve(typ_f, typ_x):
-                return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
-
-            def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
-                typ_f, typ_x, synched_unks = f_x_synched_unks
-
-                if type(typ_sub_fx) is Type0 and type(
-                        typ_sub_x) is Type0 and typ_sub_fx.s == typ_sub_x.s:
-                    return typ_f, typ_x, synched_unks
-
-                if type(typ_sub_fx) is Type0 and type(typ_sub_x) is Unknown0:
-                    fail("Not implemented: solve_rec 1")
-
-                if type(typ_sub_fx) is Unknown0 and type(typ_sub_x) is Type0:
-                    return solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
-
-                if type(typ_sub_fx) is Unknown0:
-                    if type(typ_sub_x) is Unknown0:
-                        if typ_sub_fx.s == typ_sub_x.s:
-                            return typ_f, typ_x, synched_unks.union(
-                                {typ_sub_fx.s})
-                        else:
-                            fail("Not implemented: solve_rec 4")
-                    else:
-                        if typ_sub_fx.s in f_x_synched_unks:
-                            return fail(
-                                f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"
-                            )
-
-                        return solve(concrete(typ_f, typ_sub_fx, typ_sub_x),
-                            typ_x)
-
-                if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Unknown0:
-                    if typ_sub_x.s in f_x_synched_unks:
-                        return fail(
-                            f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
-                    return fail(
-                        f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
-                    )
-
-                if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Type1:
-                    return solve_rec(typ_sub_fx.t1, typ_sub_x.t1,
-                        (typ_f, typ_x, synched_unks))
-
-                if type(typ_sub_fx) is Type2 and type(typ_sub_x) is Unknown0:
-                    if typ_sub_x.s in f_x_synched_unks:
-                        return fail(
-                            f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
-                    return fail(
-                        f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
-                    )
-
-                if type(typ_sub_fx) is Type2 and type(typ_sub_x) is Type2:
-                    return solve_rec(typ_sub_fx.t2, typ_sub_x.t2,
-                        solve_rec(typ_sub_fx.t1, typ_sub_x.t1,
-                            (typ_f, typ_x, synched_unks)))
-
-                return fail(
-                    f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
 
             def concreted(typ_f, typ_x):
                 return solve(typ_f, typ_x)[0]
