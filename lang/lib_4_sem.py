@@ -101,6 +101,28 @@ def find_idf_type(typed, s):
     )(typed)
 
 
+def solve_unknown_0(
+    typ_f, typ_x,
+    typ_sub_fx, typ_sub_x,
+    f_x_synched_unks, synched_unks,
+):
+    if type(typ_sub_x) is Type0:
+        return solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
+    if type(typ_sub_x) is Unknown0:
+        if typ_sub_fx.s == typ_sub_x.s:
+            return typ_f, typ_x, synched_unks.union(
+                {typ_sub_fx.s})
+        fail("Not implemented: solve_rec 4")
+    if typ_sub_fx.s in f_x_synched_unks:
+        return fail(
+            f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"
+        )
+
+    return solve(concrete(typ_f, typ_sub_fx, typ_sub_x),
+        typ_x
+    )
+
+
 def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     typ_f, typ_x, synched_unks = f_x_synched_unks
 
@@ -113,24 +135,12 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
             fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
         )
 
-    if type(typ_sub_fx) is Unknown0 and type(typ_sub_x) is Type0:
-        return solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
-
     if type(typ_sub_fx) is Unknown0:
-        if type(typ_sub_x) is Unknown0:
-            if typ_sub_fx.s == typ_sub_x.s:
-                return typ_f, typ_x, synched_unks.union(
-                    {typ_sub_fx.s})
-            else:
-                fail("Not implemented: solve_rec 4")
-        else:
-            if typ_sub_fx.s in f_x_synched_unks:
-                return fail(
-                    f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"
-                )
-
-            return solve(concrete(typ_f, typ_sub_fx, typ_sub_x),
-                typ_x)
+        return solve_unknown_0(
+            typ_f, typ_x,
+            typ_sub_fx, typ_sub_x,
+            f_x_synched_unks, synched_unks,
+        )
 
     if type(typ_sub_fx) is Type1 and type(typ_sub_x) is Unknown0:
         if typ_sub_x.s in f_x_synched_unks:
