@@ -61,17 +61,21 @@ def try_parse_idf(tokens, i):
 
 
 def try_parse_braced(tokens, i):
-    fail_if(type(tokens[i]) is not TokenParenOpen, ParseErr())
+    fail_if(type(tokens[i]) is not TokenParenOpen,
+        f"TokenParenOpen expected at {i}, given {i} {tokens}",
+    )
     expr, j = parse_expr(tokens, i + 1)
     fail_if(type(tokens[j]) is not TokenParenClose,
-        f"Token_Paren_Close expected at {j} given {i} {tokens}",
+        f"Token_Paren_Close expected at {j}, given {i} {tokens}",
     )
     return expr, j + 1
 
 
 def try_parse_lambda_1(tokens, i):
     e_idf_x, j = try_parse_idf(tokens, i)
-    fail_if(type(tokens[j]) is not TokenEqGr, ParseErr())
+    fail_if(type(tokens[j]) is not TokenEqGr,
+        f"TokenEqGr expected at {j}, given {i} {tokens}",
+    )
     expr_res, k = parse_expr(tokens, j + 1)
     return ExprLambda1(e_idf_x, expr_res), k
 
@@ -103,7 +107,7 @@ def parse_first_of(tokens, i, parsers):
     fail_if(parsers == [], f"Can't parse Expr given {i} {tokens}.")
     try:
         return parsers[0](tokens, i)
-    except ParseErr:
+    except Exception:
         return rec(tokens, i, parsers[1:])
 
 

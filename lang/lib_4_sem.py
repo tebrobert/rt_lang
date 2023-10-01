@@ -10,6 +10,7 @@ class TypedLit:
         return f"""{indent}Typed_Lit("{self.s}", {self.typ})"""
 
     def find_idf_type(self, _s):
+        return find_idf_type(self, _s)
         return T_A
 
 
@@ -47,14 +48,12 @@ class TypedLambda1:
     def __init__(self, t_idf_x, typed_res, typ=None):
         rt_assert(type(t_idf_x) is TypedIdf)
         rt_assert(typ is None or type(typ) is Type2 and typ.s == builtin_Func)
-
         self.t_idf_x = t_idf_x
         self.typed_res = typed_res
-        self.typ = (
-            typ
-            if typ is not None else
-            T_Func(t_idf_x.typ, typed_res.typ)
-        )
+        self.typ = (typ
+                    if typ is not None else
+                    T_Func(t_idf_x.typ, typed_res.typ)
+                    )
 
     def __repr__(self, indent=""):
         shift = indent + 4 * " "
@@ -87,17 +86,34 @@ def match_typed(
     ))()
 
 
-def copy_typified(typ, new_typ):
+def copy_typified(typed, new_typ):
     return match_typed(
-        lazy_for_typed_lit=lambda: typ,
-        lazy_for_typed_idf=lambda: TypedIdf(typ.s, new_typ),
+        lazy_for_typed_lit=lambda: typed,
+        lazy_for_typed_idf=lambda: TypedIdf(typed.s, new_typ),
         lazy_for_typed_call_1=(
-            lambda: TypedCall1(typ.typed_f, typ.typed_x, new_typ)
+            lambda: TypedCall1(typed.typed_f, typed.typed_x, new_typ)
         ),
         lazy_for_typed_lambda_1=(
-            lambda: TypedLambda1(typ.t_idf_x, typ.typed_res, new_typ)
+            lambda: TypedLambda1(typed.t_idf_x, typed.typed_res, new_typ)
         ),
-    )(typ)
+    )(typed)
+
+
+def find_idf_type_call_1(self, s):
+    lookup_by_f = find_idf_type(self.typed_f, s)
+    return (lookup_by_f
+            if not type(lookup_by_f) is Unknown0 else
+            find_idf_type(self.typed_x, s)
+            )
+
+
+def find_idf_type(typed, s):
+    return match_typed(
+        lazy_for_typed_lit=lambda: T_A,
+        lazy_for_typed_idf=lambda: typed.typ if typed.s == s else T_A,
+        lazy_for_typed_call_1=lambda: find_idf_type_call_1(typed, s),
+        lazy_for_typed_lambda_1=lambda: find_idf_type(typed.typed_res, s),
+    )(typed)
 
 
 def sem_rec(expr):

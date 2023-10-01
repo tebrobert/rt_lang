@@ -3,7 +3,7 @@ from utils.rt_try import *
 
 
 def fail(msg):
-    raise msg
+    raise Exception(msg)
 
 
 def fail_if(cond, msg):
@@ -17,7 +17,9 @@ def rt_assert(cond):
 
 def rt_assert_equal(label, expected_str):
     return lambda actual: (
-        fail_if(expected_str != str(actual), f"!={label}, got: {actual}")
+        fail_if(expected_str != str(actual),
+            f"!={label}, expected: `{expected_str}`, got: `{actual}`"
+        )
     )
 
 
