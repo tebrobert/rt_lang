@@ -140,17 +140,19 @@ def solve_type_1(
     typ_sub_fx, typ_sub_x,
     f_x_synched_unks, synched_unks,
 ):
-    if type(typ_sub_x) is Unknown0:
-        if typ_sub_x.s in f_x_synched_unks:
-            return fail(
-                f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
-        return fail(
-            f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
+    return (
+        (
+            fail(type_match_err_msg)
+            if typ_sub_x.s in f_x_synched_unks else
+            fail(
+                f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
+            )
         )
-    if type(typ_sub_x) is Type1:
-        return solve_rec(typ_sub_fx.t1, typ_sub_x.t1,
-            (typ_f, typ_x, synched_unks))
-    return fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+        if type(typ_sub_x) is Unknown0 else
+        solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
+        if type(typ_sub_x) is Type1 else
+        fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+    )
 
 
 def solve_type_2(
@@ -160,8 +162,7 @@ def solve_type_2(
 ):
     if type(typ_sub_x) is Unknown0:
         if typ_sub_x.s in f_x_synched_unks:
-            return fail(
-                f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]")
+            return fail(type_match_err_msg)
         return fail(
             f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
         )
