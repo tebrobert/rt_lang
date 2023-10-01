@@ -184,43 +184,33 @@ def sem_expr_call_1(expr):
     return fail(f"typed_f should be a {builtin_Func}")
 
 
+def sem_expr_lambda_1(expr):
+    t_idf_x = sem_rec(expr.expr_idf_arg)
+    typed_res = sem_rec(expr.expr_res)
+
+    lookup_typ_x = find_idf_type(typed_res, t_idf_x.s)
+
+    retyped_x = copy_typified(t_idf_x, lookup_typ_x)
+
+    return TypedLambda1(retyped_x, typed_res)
+
 
 def sem_rec(expr):
-    type_expr = type(expr)
-
-    if type_expr is ExprLitStr:
-        return TypedLit(expr.s, T_Str)
-
-    if type_expr is ExprIdf:
-        return TypedIdf(expr.s,
+    return match_expr(
+        lazy_for_lit_str=lambda: TypedLit(expr.s, T_Str),
+        lazy_for_idf=lambda: TypedIdf(expr.s,
             idf_to_type[expr.s] if expr.s in idf_to_type else T_A
-        )
-
-    if type_expr is ExprCall1:
-        return sem_expr_call_1(expr)
-
-    if type_expr is ExprLambda1:
-        t_idf_x = sem_rec(expr.expr_idf_arg)
-        typed_res = sem_rec(expr.expr_res)
-
-        lookup_typ_x = find_idf_type(typed_res, t_idf_x.s)
-
-        retyped_x = copy_typified(t_idf_x, lookup_typ_x)
-
-        return TypedLambda1(retyped_x, typed_res)
-
-    return fail(f"expr has unexpected type {type_expr}")
+        ),
+        lazy_for_call_1=lambda: sem_expr_call_1(expr),
+        lazy_for_lambda_1=lambda: sem_expr_lambda_1(expr),
+    )(expr)
 
 
 def sem(expr):
     typed = sem_rec(expr)
-    return (
-        typed
-        if type(typed.typ) is Type1 and typed.typ.s == builtin_RIO else
-        fail(f"Unexpected identifier {typed.s}")
-        if type(typed.typ) is Unknown0 else
-        fail(f"The code type should be {builtin_RIO}[A] but {typed.typ} found.")
-    )
+    fail_if(type(typed.typ) is not Type1 and typed.typ.s == builtin_RIO, "")
+    fail_if(type(typed.typ) is Unknown0, "")
+    return typed
 
 
 """

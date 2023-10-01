@@ -1,11 +1,6 @@
 from lang.lib_2_lexx import *
 
 
-class ParseErr(ValueError):
-    def __init__(self):
-        pass
-
-
 class ExprLitStr:
     def __init__(self, s):
         self.s = s
@@ -48,6 +43,24 @@ class ExprLambda1:
                 + f"""{self.expr_res.__repr__(indent + 4 * " ")}\n"""
                 + f"""{indent})"""
                 )
+
+
+def match_expr(
+    lazy_for_lit_str,
+    lazy_for_idf,
+    lazy_for_call_1,
+    lazy_for_lambda_1,
+):
+    return lambda typed: ({
+        ExprLitStr: lazy_for_lit_str,
+        ExprIdf: lazy_for_idf,
+        ExprCall1: lazy_for_call_1,
+        ExprLambda1: lazy_for_lambda_1,
+    }
+    .get(
+        type(typed),
+        lambda: fail(f"Value {typed} {type(typed)} is not an Expr.")
+    ))()
 
 
 def try_parse_lit_str(tokens, i):
