@@ -191,8 +191,8 @@ def typify_f(typed_f, typed_x):
 
 
 def sem_expr_call_1(expr):
-    typed_f = sem_rec(expr.expr_f)
-    typed_x = sem_rec(expr.expr_x)
+    typed_f = sem(expr.expr_f)
+    typed_x = sem(expr.expr_x)
 
     fail_if(not (type(typed_f.typ) is Type2 and typed_f.typ.s == builtin_Func),
         f"typed_f should be a {builtin_Func}",
@@ -206,8 +206,8 @@ def sem_expr_call_1(expr):
 
 
 def sem_expr_lambda_1(expr):
-    t_idf_x = sem_rec(expr.expr_idf_arg)
-    typed_res = sem_rec(expr.expr_res)
+    t_idf_x = sem(expr.expr_idf_arg)
+    typed_res = sem(expr.expr_res)
 
     lookup_typ_x = find_idf_type(typed_res, t_idf_x.s)
 
@@ -216,7 +216,7 @@ def sem_expr_lambda_1(expr):
     return TypedLambda1(retyped_x, typed_res)
 
 
-def sem_rec(expr):
+def sem(expr):
     return match_expr(
         lazy_for_lit_str=lambda: TypedLit(expr.s, T_Str),
         lazy_for_idf=lambda: TypedIdf(expr.s,
@@ -225,13 +225,6 @@ def sem_rec(expr):
         lazy_for_call_1=lambda: sem_expr_call_1(expr),
         lazy_for_lambda_1=lambda: sem_expr_lambda_1(expr),
     )(expr)
-
-
-def sem(expr):
-    typed = sem_rec(expr)
-    fail_if(type(typed.typ) is not Type1 and typed.typ.s == builtin_RIO, "")
-    fail_if(type(typed.typ) is Unknown0, "")
-    return typed
 
 
 """
