@@ -6,7 +6,7 @@ class TypedLit:
     def __init__(self, s, typ):
         self.s, self.typ = s, typ
 
-    def __repr__(self, indent=''):
+    def __repr__(self, indent=""):
         return f"""{indent}Typed_Lit("{self.s}", {self.typ})"""
 
 
@@ -14,7 +14,7 @@ class TypedIdf:
     def __init__(self, s, typ):
         self.s, self.typ = s, typ
 
-    def __repr__(self, indent=''):
+    def __repr__(self, indent=""):
         return f"""{indent}Typed_Idf("{self.s}", {self.typ})"""
 
 
