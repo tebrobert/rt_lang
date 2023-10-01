@@ -49,26 +49,6 @@ def match_brick(
     ))()
 
 
-def show_input():
-    return f"{BrickInput()}"
-
-
-def show_print():
-    s = "s"
-    return f"(lambda {s}: {BrickPrint(s)})"
-
-
-def show_flatmap():
-    a_fb = "a_fb"
-    fa = "fa"
-    return f"(lambda {a_fb}: lambda {fa}: {BrickFlatmap(a_fb, fa)})"
-
-
-def show_pure():
-    a = "a"
-    return f"(lambda {a}: {BrickPure(a)})"
-
-
 def show_typed_lit(t_lit):
     fail_if(t_lit.typ != T_Str, f"Unexpected literal `{t_lit}`")
     return f"\"{t_lit.s}\""
@@ -78,10 +58,13 @@ def show_typed_idf(t_idf, lamb_arg_stack):
     return (
         t_idf.s if t_idf.s in lamb_arg_stack else
         match_builtin_idf(
-            lazy_for_input=show_input,
-            lazy_for_print=show_print,
-            lazy_for_flatmap=show_flatmap,
-            lazy_for_pure=show_pure,
+            lazy_for_input=lambda: f"{BrickInput()}",
+            lazy_for_print=lambda: f"(lambda {_s}: {BrickPrint(_s)})",
+            lazy_for_flatmap=(
+                lambda: f"(lambda {_a_fb}: lambda {_fa}: "
+                        + f"{BrickFlatmap(_a_fb, _fa)})"
+            ),
+            lazy_for_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
         )(t_idf.s)
     )
 
@@ -110,3 +93,9 @@ def show(typed, lamb_arg_stack=[]):
 
 def rt_compile(shown):
     return eval(shown)
+
+
+_s = "s"
+_a_fb = "a_fb"
+_fa = "fa"
+_a = "a"
