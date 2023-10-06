@@ -1,8 +1,8 @@
 from utils.flattap import flattap
 
 
-def fail(msg):
-    raise Exception(msg)
+def fail(*msgs):
+    raise Exception(" ".join(msgs))
 
 
 def fail_if(cond, msg):

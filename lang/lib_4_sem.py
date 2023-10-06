@@ -102,8 +102,7 @@ def find_idf_type(typed, s):
 
 
 def solve_type_0(
-    typ_f, typ_x,
-    typ_sub_fx, typ_sub_x,
+    typ_f, typ_x, typ_sub_fx, typ_sub_x,
     _f_x_synched_unks, synched_unks,
 ):
     return (
@@ -116,8 +115,7 @@ def solve_type_0(
 
 
 def solve_unknown_0(
-    typ_f, typ_x,
-    typ_sub_fx, typ_sub_x,
+    typ_f, typ_x, typ_sub_fx, typ_sub_x,
     f_x_synched_unks, synched_unks,
 ):
     return (
@@ -136,8 +134,7 @@ def solve_unknown_0(
 
 
 def solve_type_1(
-    typ_f, typ_x,
-    typ_sub_fx, typ_sub_x,
+    typ_f, typ_x, typ_sub_fx, typ_sub_x,
     f_x_synched_unks, synched_unks,
 ):
     return (
@@ -145,32 +142,37 @@ def solve_type_1(
             fail(type_match_err_msg)
             if typ_sub_x.s in f_x_synched_unks else
             fail(
-                f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
+                f"Yet can't call `{typ_f}` with `{typ_x}`.",
+                f"Currently matching `{typ_sub_fx}` and `{typ_sub_x}`.",
             )
         )
         if type(typ_sub_x) is Unknown0 else
         solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
         if type(typ_sub_x) is Type1 else
-        fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+        fail(f"Can't match the types `{typ_sub_fx}` vs `{typ_sub_x}.`")
     )
 
 
 def solve_type_2(
-    typ_f, typ_x,
-    typ_sub_fx, typ_sub_x,
+    typ_f, typ_x, typ_sub_fx, typ_sub_x,
     f_x_synched_unks, synched_unks,
 ):
-    if type(typ_sub_x) is Unknown0:
-        if typ_sub_x.s in f_x_synched_unks:
-            return fail(type_match_err_msg)
-        return fail(
-            f"Yet can't call {typ_f} with {typ_x} currently matching {typ_sub_fx} and {typ_sub_x}"
+    return (
+        (
+            fail(type_match_err_msg)
+            if typ_sub_x.s in f_x_synched_unks else
+            fail(
+                f"Yet can't call `{typ_f}` with `{typ_x}`.",
+                f"Currently matching `{typ_sub_fx}` and `{typ_sub_x}`",
+            )
         )
-    if type(typ_sub_x) is Type2:
-        return solve_rec(typ_sub_fx.t2, typ_sub_x.t2,
-            solve_rec(typ_sub_fx.t1, typ_sub_x.t1,
-                (typ_f, typ_x, synched_unks)))
-    return fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+        if type(typ_sub_x) is Unknown0 else
+        solve_rec(typ_sub_fx.t2, typ_sub_x.t2,
+            solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
+        )
+        if type(typ_sub_x) is Type2 else
+        fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+    )
 
 
 def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
@@ -193,7 +195,7 @@ def solve(typ_f, typ_x):
 
 
 def concreted(typ_f, typ_x):
-    return solve(typ_f, typ_x)[0] # 0 is unclear, should use a class
+    return solve(typ_f, typ_x)[0]  # 0 is unclear, should use a class
 
 
 def typify_x(typed_f, typed_x):
@@ -213,7 +215,7 @@ def sem_expr_call_1(expr):
     typed_x = sem(expr.expr_x)
 
     fail_if(not (type(typed_f.typ) is Type2 and typed_f.typ.s == builtin_Func),
-        f"typed_f should be a {builtin_Func}",
+        f"typed_f should be a `{builtin_Func}`",
     )
 
     return (
