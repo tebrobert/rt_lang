@@ -31,7 +31,7 @@ Expr_Call_1(
                                                     Expr_Idf("+"),
                                                     Expr_Idf("name")
                                                 ),
-                                                Expr_Lit_Str("Welcome, ...")
+                                                Expr_Lit_Str("Welcome, ")
                                             )
                                         )
                                     )

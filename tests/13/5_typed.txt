@@ -35,7 +35,7 @@ Typed_Call_1(
                                                     Typed_Idf("name", Str),
                                                     Str => Str
                                                 ),
-                                                Typed_Lit("Welcome, ...", Str),
+                                                Typed_Lit("Welcome, ", Str),
                                                 Str
                                             ),
                                             RIO[Str]
