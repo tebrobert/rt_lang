@@ -17,14 +17,6 @@ class TokenIdf:
         return f"""TokenIdf("{self.s}")"""
 
 
-class TokenOperator:
-    def __init__(self, s):
-        self.s = s
-
-    def __repr__(self):
-        return f"""TokenOperator("{self.s}")"""
-
-
 class TokenParenOpen:
     def __repr__(self):
         return "TokenParenOpen()"
@@ -117,7 +109,7 @@ def lexx_operator(code_ext, tokens, token_idx_end):
     idx_operator_start = token_idx_end
     idx_operator_end = get_idx_operator_end_rec(code_ext, idx_operator_start)
     return (code_ext, idx_operator_end,
-    tokens + [TokenOperator(code_ext[idx_operator_start:idx_operator_end])],
+    tokens + [TokenIdf(code_ext[idx_operator_start:idx_operator_end])],
     )
 
 

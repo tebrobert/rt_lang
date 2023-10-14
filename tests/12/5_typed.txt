@@ -1,0 +1,57 @@
+Typed_Call_1(
+    Typed_Call_1(
+        Typed_Idf("flatmap", (Str => RIO[Unit]) => RIO[Str] => RIO[Unit]),
+        Typed_Lambda_1(
+            Typed_Idf("greeting", Str),
+            Typed_Call_1(
+                Typed_Call_1(
+                    Typed_Idf("flatmap", (A => RIO[Unit]) => RIO[A] => RIO[Unit]),
+                    Typed_Lambda_1(
+                        Typed_Idf("_", A),
+                        Typed_Call_1(
+                            Typed_Call_1(
+                                Typed_Idf("flatmap", (Str => RIO[Unit]) => RIO[Str] => RIO[Unit]),
+                                Typed_Lambda_1(
+                                    Typed_Idf("name", Str),
+                                    Typed_Call_1(
+                                        Typed_Idf("print", Str => RIO[Unit]),
+                                        Typed_Call_1(
+                                            Typed_Call_1(
+                                                Typed_Idf("+", Str => Str => Str),
+                                                Typed_Idf("name", Str),
+                                                Str => Str
+                                            ),
+                                            Typed_Lit("Welcome, ", Str),
+                                            Str
+                                        ),
+                                        RIO[Unit]
+                                    ),
+                                    Str => RIO[Unit]
+                                ),
+                                RIO[Str] => RIO[Unit]
+                            ),
+                            Typed_Idf("input", RIO[Str]),
+                            RIO[Unit]
+                        ),
+                        A => RIO[Unit]
+                    ),
+                    RIO[Unit] => RIO[Unit]
+                ),
+                Typed_Call_1(
+                    Typed_Idf("print", Str => RIO[Unit]),
+                    Typed_Idf("greeting", Str),
+                    RIO[Unit]
+                ),
+                RIO[Unit]
+            ),
+            Str => RIO[Unit]
+        ),
+        RIO[Str] => RIO[Unit]
+    ),
+    Typed_Call_1(
+        Typed_Idf("pure", Str => RIO[Str]),
+        Typed_Lit("Hey! What is your name?", Str),
+        RIO[Str]
+    ),
+    RIO[Unit]
+)

@@ -65,6 +65,10 @@ def show_typed_idf(t_idf, lamb_arg_stack):
                         + f"{BrickFlatmap(_a_fb, _fa)})"
             ),
             lazy_for_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
+            lazy_for_plus=(
+                lambda: f"(lambda {_right}: lambda {_left}: "
+                        + f"{_left} + {_right})"
+            )
         )(t_idf.s)
     )
 
@@ -99,3 +103,5 @@ _s = "s"
 _a_fb = "a_fb"
 _fa = "fa"
 _a = "a"
+_right = "right"
+_left = "left"

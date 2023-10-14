@@ -1,0 +1,1 @@
+flatmap(greeting   => flatmap(_ => flatmap(name  => flatmap(result   => print(result))( pure( +(name)("Welcome, ..."))))( input))(print(greeting)))( pure( "Hey! What is your name?"))

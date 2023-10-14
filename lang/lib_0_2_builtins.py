@@ -26,5 +26,6 @@ idf_to_type = {
         T_Func(T_A, T_RIO(T_B)),
         T_Func(T_RIO(T_A), T_RIO(T_B))
     ),
-    builtin_pure: T_Func(T_A, T_RIO(T_A))
+    builtin_pure: T_Func(T_A, T_RIO(T_A)),
+    builtin_plus: T_Func(T_Str, T_Func(T_Str, T_Str)),
 }
