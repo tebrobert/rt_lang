@@ -83,7 +83,7 @@ def try_parse_braced(tokens, i):
     )
     expr, j = parse_expr(tokens, i + 1)
     fail_if(type(tokens[j]) is not TokenParenClose,
-        f"Token_Paren_Close expected at {j}, given {i} {tokens}",
+        f"TokenParenClose expected at {j}, given {i} {tokens}",
     )
     return expr, j + 1
 
@@ -100,7 +100,7 @@ def try_parse_lambda_1(tokens, i):
 @tailrec
 def parse_call(tokens, expr_f, i):
     fail_if(type(tokens[i]) is not TokenParenOpen,
-        f"Token_Paren_Open: expected, given {i} {tokens}",
+        f"TokenParenOpen: expected, given {i} {tokens}",
     )
     fail_if(type(tokens[i + 1]) is TokenParenClose,
         f"Remove deprecated empty parenthesis, given {i} {tokens}",
@@ -108,7 +108,7 @@ def parse_call(tokens, expr_f, i):
 
     expr_x, j = parse_expr(tokens, i + 1)
     fail_if(type(tokens[j]) is not TokenParenClose,
-        f"Token_Paren_Open expected at {j} given {i} {tokens}",
+        f"TokenParenOpen expected at {j} given {i} {tokens}",
     )
 
     k = j + 1

@@ -6,7 +6,7 @@ class TokenLitStr:
         self.s = s
 
     def __repr__(self):
-        return f"""Token_Lit_Str("{self.s}")"""
+        return f"""TokenLitStr("{self.s}")"""
 
 
 class TokenIdf:
@@ -14,22 +14,22 @@ class TokenIdf:
         self.s = s
 
     def __repr__(self):
-        return f"""Token_Idf("{self.s}")"""
+        return f"""TokenIdf("{self.s}")"""
 
 
 class TokenParenOpen:
     def __repr__(self):
-        return "Token_Paren_Open()"
+        return "TokenParenOpen()"
 
 
 class TokenParenClose:
     def __repr__(self):
-        return "Token_Paren_Close()"
+        return "TokenParenClose()"
 
 
 class TokenEqGr:
     def __repr__(self):
-        return "Token_Eq_Gr()"
+        return "TokenEqGr()"
 
 
 def is_initial_idf_char(char):
