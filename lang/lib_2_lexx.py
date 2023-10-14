@@ -17,6 +17,14 @@ class TokenIdf:
         return f"""TokenIdf("{self.s}")"""
 
 
+class TokenOperator:
+    def __init__(self, s):
+        self.s = s
+
+    def __repr__(self):
+        return f"""TokenOperator("{self.s}")"""
+
+
 class TokenParenOpen:
     def __repr__(self):
         return "TokenParenOpen()"
@@ -45,6 +53,10 @@ def is_non_initial_idf_char(char):
             )
 
 
+def is_operator_char(char):
+    return char in ["+", "-", "*", "/", "%", ">", "<", "=", "!"]
+
+
 def fail_bad_eq_seq(code_ext, token_idx_end):
     fail(f"""Unexpected sequence "={code_ext[token_idx_end + 1]}".""")
 
@@ -66,6 +78,15 @@ def get_idx_idf_end_rec(code_ext, idf_current_idx):
     return (rec(code_ext, idf_current_idx + 1)
             if is_non_initial_idf_char(current_idf_char)
             else idf_current_idx
+            )
+
+
+@tailrec
+def get_idx_operator_end_rec(code_ext, operator_current_idx):
+    current_operator_char = code_ext[operator_current_idx]
+    return (rec(code_ext, operator_current_idx + 1)
+            if is_operator_char(current_operator_char)
+            else operator_current_idx
             )
 
 
@@ -92,6 +113,14 @@ def lexx_string(code_ext, tokens, token_idx_end):
     )
 
 
+def lexx_operator(code_ext, tokens, token_idx_end):
+    idx_operator_start = token_idx_end
+    idx_operator_end = get_idx_operator_end_rec(code_ext, idx_operator_start)
+    return (code_ext, idx_operator_end,
+    tokens + [TokenOperator(code_ext[idx_operator_start:idx_operator_end])],
+    )
+
+
 @tailrec
 def lexx_rec(code_ext, token_idx_end, tokens):
     current_char = code_ext[token_idx_end]
@@ -103,11 +132,13 @@ def lexx_rec(code_ext, token_idx_end, tokens):
             rec(code_ext, token_idx_end + 1, tokens + [TokenParenClose()])
             if current_char == ")" else
             rec(*lexx_eq_gr(code_ext, tokens, token_idx_end))
-            if current_char == "=" else
+            if current_char == "=" else  # other than `=>` sequences exist
             rec(code_ext, token_idx_end + 1, tokens)
             if current_char == " " else
             rec(*lexx_string(code_ext, tokens, token_idx_end))
             if current_char == "\"" else
+            rec(*lexx_operator(code_ext, tokens, token_idx_end))
+            if is_operator_char(current_char) else
             fail(f"""Unexpected current_char "{current_char}".""")
             )
 
