@@ -140,6 +140,7 @@ def parse_first_of(ext_tokens, current_idx, parsers):
 
 
 def parse_expr(ext_tokens, current_idx):
+    # atomic expression
     parsed_expr, next_idx = parse_first_of(ext_tokens, current_idx, [
         parse_lambda_1,
         parse_idf,
