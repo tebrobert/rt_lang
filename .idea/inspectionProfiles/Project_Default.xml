@@ -75,7 +75,7 @@
     <inspection_tool class="PyProtectedMemberInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
     <inspection_tool class="PyProtocolInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
     <inspection_tool class="PyRedeclarationInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
-    <inspection_tool class="PyRedundantParenthesesInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
+    <inspection_tool class="PyRedundantParenthesesInspection" enabled="false" level="WARNING" enabled_by_default="false" editorAttributes="WARNING_ATTRIBUTES" />
     <inspection_tool class="PyRelativeImportInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
     <inspection_tool class="PyReturnFromInitInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
     <inspection_tool class="PySetFunctionToLiteralInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
