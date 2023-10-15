@@ -148,7 +148,7 @@ def lexx_first_of(code_ext, current_idx, tokens, lexxers):
 
 
 @tailrec
-def lexx_base_rec(code_ext, current_idx, tokens):
+def lexx_rec(code_ext, current_idx, tokens):
     current_char = code_ext[current_idx]
     return (
         tokens if current_char == end_of_code else
@@ -167,7 +167,7 @@ def lexx_base_rec(code_ext, current_idx, tokens):
 
 
 def lexx(code):
-    return lexx_base_rec(code + end_of_code, 0, [])
+    return lexx_rec(code + end_of_code, 0, [])
 
 
 end_of_code = "\0"
