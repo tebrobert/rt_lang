@@ -32,6 +32,11 @@ class TokenEqGr:
         return "TokenEqGr()"
 
 
+class TokenDot:
+    def __repr__(self):
+        return "TokenDot()"
+
+
 def is_initial_idf_char(char):
     return (char == "_"
             or "a" <= char <= "z"
@@ -82,22 +87,37 @@ def get_idx_operator_end_rec(code_ext, operator_current_idx):
             )
 
 
-def lexx_idf(code_ext, tokens, token_idx_end):
-    idx_idf_start = token_idx_end
+def lexx_idf(code_ext, current_idx, tokens):
+    rt_assert(is_initial_idf_char(code_ext[current_idx]))
+    idx_idf_start = current_idx
     idx_idf_end = get_idx_idf_end_rec(code_ext, idx_idf_start + 1)
     return (code_ext, idx_idf_end,
     tokens + [TokenIdf(code_ext[idx_idf_start:idx_idf_end])]
     )
 
 
-def lexx_eq_gr(code_ext, tokens, token_idx_end):
-    return ((code_ext, token_idx_end + 2, tokens + [TokenEqGr()])
-            if code_ext[token_idx_end + 1] == ">"
-            else fail_bad_eq_seq(code_ext, token_idx_end)
-            )
+def lexx_paren_open(code_ext, current_idx, tokens):
+    rt_assert(code_ext[current_idx] == "(")
+    return (code_ext, current_idx + 1, tokens + [TokenParenOpen()])
 
 
-def lexx_string(code_ext, tokens, token_idx_end):
+def lexx_paren_close(code_ext, current_idx, tokens):
+    rt_assert(code_ext[current_idx] == ")")
+    return (code_ext, current_idx + 1, tokens + [TokenParenClose()])
+
+
+def lexx_eq_gr(code_ext, current_idx, tokens):
+    rt_assert(code_ext[current_idx:].startswith("=>"))
+    return (code_ext, current_idx + 2, tokens + [TokenEqGr()])
+
+
+def lexx_dot(code_ext, current_idx, tokens):
+    rt_assert(code_ext[current_idx] == ".")
+    return (code_ext, current_idx + 1, tokens + [TokenDot()])
+
+
+def lexx_string(code_ext, token_idx_end, tokens):
+    rt_assert(code_ext[token_idx_end] == "\"")
     idx_string_start = token_idx_end + 1
     idx_string_end = get_idx_string_end_rec(code_ext, idx_string_start)
     return (code_ext, idx_string_end + 1,
@@ -105,7 +125,8 @@ def lexx_string(code_ext, tokens, token_idx_end):
     )
 
 
-def lexx_operator(code_ext, tokens, token_idx_end):
+def lexx_operator(code_ext, token_idx_end, tokens):
+    rt_assert(is_operator_char(code_ext[token_idx_end]))
     idx_operator_start = token_idx_end
     idx_operator_end = get_idx_operator_end_rec(code_ext, idx_operator_start)
     return (code_ext, idx_operator_end,
@@ -114,29 +135,42 @@ def lexx_operator(code_ext, tokens, token_idx_end):
 
 
 @tailrec
+def lexx_first_of(code_ext, current_idx, tokens, lexxers):
+    fail_if(lexxers == [],
+        f"Can't lexx. Given `{current_idx}` `{code_ext}`."
+    )
+    either_result = rt_try(lambda: lexxers[0](code_ext, current_idx, tokens))
+    return (
+        rec(code_ext, current_idx, tokens, lexxers[1:])
+        if is_fail(either_result) else
+        either_result
+    )
+
+
+@tailrec
 def lexx_rec(code_ext, current_idx, tokens):
+    return lexx_first_of(code_ext, current_idx, tokens, [
+            lexx_idf,
+            lexx_paren_open,
+            lexx_paren_close,
+            lexx_eq_gr,
+            lexx_string,
+            lexx_operator,
+        ])
+
+
+@tailrec
+def lexx_base_rec(code_ext, current_idx, tokens):
     current_char = code_ext[current_idx]
     return (tokens if current_char == end_of_code else
-            rec(*lexx_idf(code_ext, tokens, current_idx))
-            if is_initial_idf_char(current_char) else
-            rec(code_ext, current_idx + 1, tokens + [TokenParenOpen()])
-            if current_char == "(" else
-            rec(code_ext, current_idx + 1, tokens + [TokenParenClose()])
-            if current_char == ")" else
-            rec(*lexx_eq_gr(code_ext, tokens, current_idx))
-            if current_char == "=" else  # other than `=>` sequences exist
             rec(code_ext, current_idx + 1, tokens)
             if current_char == " " else
-            rec(*lexx_string(code_ext, tokens, current_idx))
-            if current_char == "\"" else
-            rec(*lexx_operator(code_ext, tokens, current_idx))
-            if is_operator_char(current_char) else
-            fail(f"""Unexpected current_char "{current_char}".""")
+            rec(*lexx_rec(code_ext, current_idx, tokens))
             )
 
 
 def lexx(code):
-    return lexx_rec(code + end_of_code, 0, [])
+    return lexx_base_rec(code + end_of_code, 0, [])
 
 
 end_of_code = "\0"

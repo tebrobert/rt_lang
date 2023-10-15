@@ -1,4 +1,5 @@
 from utils.flattap import flattap
+import traceback
 
 
 def fail(*msgs):
@@ -12,6 +13,10 @@ def fail_if(cond, *msg):
 
 def rt_assert(cond):
     fail_if(not cond, "Assertion error.")
+
+
+def not_implemented():
+    fail("Not implemented.")
 
 
 def rt_assert_equal(label, expected_str):
@@ -31,8 +36,8 @@ def rt_try_assert_equal(label, expected_str, lazy_actual):
 def rt_try(action):
     try:
         return action()
-    except Exception as e:
-        return e
+    except Exception:
+        return Exception(traceback.format_exc())
 
 
 def is_fail(v):
