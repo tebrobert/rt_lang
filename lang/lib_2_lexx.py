@@ -114,22 +114,22 @@ def lexx_operator(code_ext, tokens, token_idx_end):
 
 
 @tailrec
-def lexx_rec(code_ext, token_idx_end, tokens):
-    current_char = code_ext[token_idx_end]
+def lexx_rec(code_ext, current_idx, tokens):
+    current_char = code_ext[current_idx]
     return (tokens if current_char == end_of_code else
-            rec(*lexx_idf(code_ext, tokens, token_idx_end))
+            rec(*lexx_idf(code_ext, tokens, current_idx))
             if is_initial_idf_char(current_char) else
-            rec(code_ext, token_idx_end + 1, tokens + [TokenParenOpen()])
+            rec(code_ext, current_idx + 1, tokens + [TokenParenOpen()])
             if current_char == "(" else
-            rec(code_ext, token_idx_end + 1, tokens + [TokenParenClose()])
+            rec(code_ext, current_idx + 1, tokens + [TokenParenClose()])
             if current_char == ")" else
-            rec(*lexx_eq_gr(code_ext, tokens, token_idx_end))
+            rec(*lexx_eq_gr(code_ext, tokens, current_idx))
             if current_char == "=" else  # other than `=>` sequences exist
-            rec(code_ext, token_idx_end + 1, tokens)
+            rec(code_ext, current_idx + 1, tokens)
             if current_char == " " else
-            rec(*lexx_string(code_ext, tokens, token_idx_end))
+            rec(*lexx_string(code_ext, tokens, current_idx))
             if current_char == "\"" else
-            rec(*lexx_operator(code_ext, tokens, token_idx_end))
+            rec(*lexx_operator(code_ext, tokens, current_idx))
             if is_operator_char(current_char) else
             fail(f"""Unexpected current_char "{current_char}".""")
             )
