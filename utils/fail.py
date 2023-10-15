@@ -5,9 +5,9 @@ def fail(*msgs):
     raise Exception(" ".join(msgs))
 
 
-def fail_if(cond, msg):
+def fail_if(cond, *msg):
     if cond:
-        fail(msg)
+        fail(*msg)
 
 
 def rt_assert(cond):

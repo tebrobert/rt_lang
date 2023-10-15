@@ -63,93 +63,102 @@ def match_expr(
     ))()
 
 
-def parse_lit_str(ext_tokens, i):
-    fail_if(type(ext_tokens[i]) is not TokenLitStr,
-        f"TokenLitStr expected at {i}, given {i} {ext_tokens}",
+def parse_lit_str(ext_tokens, current_idx):
+    fail_if(type(ext_tokens[current_idx]) is not TokenLitStr,
+        f"TokenLitStr expected at {current_idx}.",
+        f"Given {current_idx} {ext_tokens}",
     )
-    return ExprLitStr(ext_tokens[i].s), i + 1
+    return ExprLitStr(ext_tokens[current_idx].s), current_idx + 1
 
 
-def parse_idf(ext_tokens, i):
-    fail_if(type(ext_tokens[i]) is not TokenIdf,
-        f"TokenIdf expected at {i}, given {i} {ext_tokens}",
+def parse_idf(ext_tokens, current_idx):
+    fail_if(type(ext_tokens[current_idx]) is not TokenIdf,
+        f"TokenIdf expected at {current_idx}.",
+        f"Given {current_idx} {ext_tokens}",
     )
-    return ExprIdf(ext_tokens[i].s), i + 1
+    return ExprIdf(ext_tokens[current_idx].s), current_idx + 1
 
 
-def parse_braced(ext_tokens, i):
-    fail_if(type(ext_tokens[i]) is not TokenParenOpen,
-        f"TokenParenOpen expected at {i}, given {i} {ext_tokens}",
+def parse_braced(ext_tokens, current_idx):
+    fail_if(type(ext_tokens[current_idx]) is not TokenParenOpen,
+        f"TokenParenOpen expected at {current_idx}.",
+        f"Given {current_idx} {ext_tokens}",
     )
-    expr, j = parse_expr(ext_tokens, i + 1)
-    fail_if(type(ext_tokens[j]) is not TokenParenClose,
-        f"TokenParenClose expected at {j}, given {i} {ext_tokens}",
+    expr, paren_close_idx = parse_expr(ext_tokens, current_idx + 1)
+    fail_if(type(ext_tokens[paren_close_idx]) is not TokenParenClose,
+        f"TokenParenClose expected at {paren_close_idx}.",
+        f"Given {current_idx} {ext_tokens}",
     )
-    return expr, j + 1
+    return expr, paren_close_idx + 1
 
 
-def parse_lambda_1(ext_tokens, i):
-    e_idf_x, j = parse_idf(ext_tokens, i)
-    fail_if(type(ext_tokens[j]) is not TokenEqGr,
-        f"TokenEqGr expected at {j}, given {i} {ext_tokens}",
+def parse_lambda_1(ext_tokens, current_idx):
+    e_idf_x, eq_gr_idx = parse_idf(ext_tokens, current_idx)
+    fail_if(type(ext_tokens[eq_gr_idx]) is not TokenEqGr,
+        f"TokenEqGr expected at {eq_gr_idx}.",
+        f"Given {current_idx} {ext_tokens}",
     )
-    expr_res, k = parse_expr(ext_tokens, j + 1)
-    return ExprLambda1(e_idf_x, expr_res), k
+    expr_res, next_idx = parse_expr(ext_tokens, eq_gr_idx + 1)
+    return ExprLambda1(e_idf_x, expr_res), next_idx
 
 
 @tailrec
-def parse_call(ext_tokens, expr_f, i):
-    fail_if(type(ext_tokens[i]) is not TokenParenOpen,
-        f"TokenParenOpen: expected, given {i} {ext_tokens}",
+def parse_call(ext_tokens, expr_f, current_idx):
+    fail_if(type(ext_tokens[current_idx]) is not TokenParenOpen,
+        f"TokenParenOpen: expected. Given `{current_idx}` `{ext_tokens}`",
     )
-    fail_if(type(ext_tokens[i + 1]) is TokenParenClose,
-        f"Remove deprecated empty parenthesis, given {i} {ext_tokens}",
-    )
-
-    expr_x, j = parse_expr(ext_tokens, i + 1)
-    fail_if(type(ext_tokens[j]) is not TokenParenClose,
-        f"TokenParenOpen expected at {j} given {i} {ext_tokens}",
+    fail_if(type(ext_tokens[current_idx + 1]) is TokenParenClose,
+        f"Remove deprecated empty parenthesis.",
+        f"Given `{current_idx}` `{ext_tokens}`",
     )
 
-    k = j + 1
+    expr_x, paren_close_idx = parse_expr(ext_tokens, current_idx + 1)
+    fail_if(type(ext_tokens[paren_close_idx]) is not TokenParenClose,
+        f"TokenParenOpen expected at `{paren_close_idx}`.",
+        f"Given {current_idx} {ext_tokens}",
+    )
+
+    next_idx = paren_close_idx + 1
     expr_call_1 = ExprCall1(expr_f, expr_x)
-    return (rec(ext_tokens, expr_call_1, k)
-            if type(ext_tokens[k]) is TokenParenOpen else
-            (expr_call_1, k)
+    return (rec(ext_tokens, expr_call_1, next_idx)
+            if type(ext_tokens[next_idx]) is TokenParenOpen else
+            (expr_call_1, next_idx)
             )
 
 
 @tailrec
-def parse_first_of(ext_tokens, i, parsers):
-    fail_if(parsers == [], f"Can't parse Expr given {i} {ext_tokens}.")
-    either_result = rt_try(lambda: parsers[0](ext_tokens, i))
+def parse_first_of(ext_tokens, current_idx, parsers):
+    fail_if(parsers == [],
+        f"Can't parse Expr given {current_idx} {ext_tokens}."
+    )
+    either_result = rt_try(lambda: parsers[0](ext_tokens, current_idx))
     return (
-        rec(ext_tokens, i, parsers[1:])
+        rec(ext_tokens, current_idx, parsers[1:])
         if is_fail(either_result) else
         either_result
     )
 
 
-def parse_expr(ext_tokens, i):
-    expr, j = parse_first_of(ext_tokens, i, [
+def parse_expr(ext_tokens, current_idx):
+    expr, next_idx = parse_first_of(ext_tokens, current_idx, [
         parse_lambda_1,
         parse_idf,
         parse_braced,
         parse_lit_str,
     ])
-    return (parse_call(ext_tokens, expr, j)
-            if type(ext_tokens[j]) is TokenParenOpen else
-            (expr, j)
+    return (parse_call(ext_tokens, expr, next_idx)
+            if type(ext_tokens[next_idx]) is TokenParenOpen else
+            (expr, next_idx)
             )
 
 
 def parse(tokens):
     end_of_tokens = "\0"
     ext_tokens = tokens + [end_of_tokens]
-    expr, i = parse_expr(ext_tokens, 0)
+    expr, current_idx = parse_expr(ext_tokens, 0)
 
-    fail_if(ext_tokens[i] != end_of_tokens,
-        f"Unexpected token at {i} given {tokens}",
+    fail_if(ext_tokens[current_idx] != end_of_tokens,
+        f"Unexpected token at {current_idx} given {tokens}",
     )
 
     return expr
