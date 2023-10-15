@@ -1,3 +1,6 @@
+rename flatmap to >>=
+implement map
+
 Overloadings
 
 implement better error locating
