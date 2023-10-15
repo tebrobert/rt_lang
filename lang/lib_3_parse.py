@@ -119,10 +119,10 @@ def parse_call(ext_tokens, expr_f, current_idx):
     )
 
     next_idx = paren_close_idx + 1
-    expr_call_1 = ExprCall1(expr_f, expr_x)
-    return (rec(ext_tokens, expr_call_1, next_idx)
+    parsed_expr = ExprCall1(expr_f, expr_x)
+    return (rec(ext_tokens, parsed_expr, next_idx)
             if type(ext_tokens[next_idx]) is TokenParenOpen else
-            (expr_call_1, next_idx)
+            (parsed_expr, next_idx)
             )
 
 
@@ -140,15 +140,15 @@ def parse_first_of(ext_tokens, current_idx, parsers):
 
 
 def parse_expr(ext_tokens, current_idx):
-    expr, next_idx = parse_first_of(ext_tokens, current_idx, [
+    parsed_expr, next_idx = parse_first_of(ext_tokens, current_idx, [
         parse_lambda_1,
         parse_idf,
         parse_braced,
         parse_lit_str,
     ])
-    return (parse_call(ext_tokens, expr, next_idx)
+    return (parse_call(ext_tokens, parsed_expr, next_idx)
             if type(ext_tokens[next_idx]) is TokenParenOpen else
-            (expr, next_idx)
+            (parsed_expr, next_idx)
             )
 
 
