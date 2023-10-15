@@ -1,15 +1,11 @@
 greeting = "Hey! What is your name?"
 print(greeting)
 name <- input
-print(+(name)("Welcome, "))
 print("Welcome, ".+(name))
 print("Welcome, " + name)
 
 
 
-1. Operator Literal: the only one, +
+1. The method syntax
 
-2. the function + : Str => Str => Str, accepts right operand first
-
-3. the method syntax
-
+2. The operator syntax - plan how it should work
