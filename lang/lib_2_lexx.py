@@ -148,25 +148,22 @@ def lexx_first_of(code_ext, current_idx, tokens, lexxers):
 
 
 @tailrec
-def lexx_rec(code_ext, current_idx, tokens):
-    return lexx_first_of(code_ext, current_idx, tokens, [
+def lexx_base_rec(code_ext, current_idx, tokens):
+    current_char = code_ext[current_idx]
+    return (
+        tokens if current_char == end_of_code else
+        rec(code_ext, current_idx + 1, tokens)
+        if current_char == " " else
+        rec(*lexx_first_of(code_ext, current_idx, tokens, [
             lexx_idf,
             lexx_paren_open,
             lexx_paren_close,
             lexx_eq_gr,
             lexx_string,
             lexx_operator,
-        ])
-
-
-@tailrec
-def lexx_base_rec(code_ext, current_idx, tokens):
-    current_char = code_ext[current_idx]
-    return (tokens if current_char == end_of_code else
-            rec(code_ext, current_idx + 1, tokens)
-            if current_char == " " else
-            rec(*lexx_rec(code_ext, current_idx, tokens))
-            )
+            lexx_dot,
+        ]))
+    )
 
 
 def lexx(code):
