@@ -115,8 +115,17 @@ def parse_lambda_1(ext_tokens, current_idx):
     return ExprLambda1(e_idf_x, expr_res), next_idx
 
 
+def parse_atomic_expr(ext_tokens, current_idx):
+    return parse_first_of(ext_tokens, current_idx, [
+        parse_lambda_1,
+        parse_idf,
+        parse_braced,
+        parse_lit_str,
+    ])
+
+
 @tailrec
-def parse_call(ext_tokens, expr_f, current_idx):
+def continue_parsing_call(ext_tokens, expr_f, current_idx):
     fail_if(type(ext_tokens[current_idx]) is not TokenParenOpen,
         f"TokenParenOpen: expected. Given `{current_idx}` `{ext_tokens}`",
     )
@@ -139,22 +148,9 @@ def parse_call(ext_tokens, expr_f, current_idx):
             )
 
 
-def parse_atomic_expr(ext_tokens, current_idx):
-    return parse_first_of(ext_tokens, current_idx, [
-        parse_lambda_1,
-        parse_idf,
-        parse_braced,
-        parse_lit_str,
-    ])
-
-
-def continue_parsing_call():
-    not_implemented()
-
-
 def parse_full_expr(ext_tokens, current_idx):
     parsed_expr, next_idx = parse_atomic_expr(ext_tokens, current_idx)
-    return (parse_call(ext_tokens, parsed_expr, next_idx)
+    return (continue_parsing_call(ext_tokens, parsed_expr, next_idx)
             if type(ext_tokens[next_idx]) is TokenParenOpen else
             (parsed_expr, next_idx)
             )
