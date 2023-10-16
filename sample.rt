@@ -1,5 +1,4 @@
-greeting = "Hey! What is your name?"
-print(greeting)
+print("What is your name?")
 name <- input
-print("Welcome, ...")
-print(name)
+greeting = "Hi, ".+(name).+(", and welcome!")
+print(greeting)
