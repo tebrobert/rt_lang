@@ -148,6 +148,10 @@ def parse_atomic_expr(ext_tokens, current_idx):
     ])
 
 
+def continue_parsing_call():
+    not_implemented()
+
+
 def parse_full_expr(ext_tokens, current_idx):
     parsed_expr, next_idx = parse_atomic_expr(ext_tokens, current_idx)
     return (parse_call(ext_tokens, parsed_expr, next_idx)
