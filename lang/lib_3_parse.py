@@ -63,6 +63,19 @@ def match_expr(
     ))()
 
 
+@tailrec
+def parse_first_of(ext_tokens, current_idx, parsers):
+    fail_if(parsers == [],
+        f"Can't parse Expr given {current_idx} {ext_tokens}."
+    )
+    either_result = rt_try(lambda: parsers[0](ext_tokens, current_idx))
+    return (
+        rec(ext_tokens, current_idx, parsers[1:])
+        if is_fail(either_result) else
+        either_result
+    )
+
+
 def parse_lit_str(ext_tokens, current_idx):
     fail_if(type(ext_tokens[current_idx]) is not TokenLitStr,
         f"TokenLitStr expected at {current_idx}.",
@@ -84,7 +97,7 @@ def parse_braced(ext_tokens, current_idx):
         f"TokenParenOpen expected at {current_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
-    expr, paren_close_idx = parse_expr(ext_tokens, current_idx + 1)
+    expr, paren_close_idx = parse_full_expr(ext_tokens, current_idx + 1)
     fail_if(type(ext_tokens[paren_close_idx]) is not TokenParenClose,
         f"TokenParenClose expected at {paren_close_idx}.",
         f"Given {current_idx} {ext_tokens}",
@@ -98,7 +111,7 @@ def parse_lambda_1(ext_tokens, current_idx):
         f"TokenEqGr expected at {eq_gr_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
-    expr_res, next_idx = parse_expr(ext_tokens, eq_gr_idx + 1)
+    expr_res, next_idx = parse_full_expr(ext_tokens, eq_gr_idx + 1)
     return ExprLambda1(e_idf_x, expr_res), next_idx
 
 
@@ -112,7 +125,7 @@ def parse_call(ext_tokens, expr_f, current_idx):
         f"Given `{current_idx}` `{ext_tokens}`",
     )
 
-    expr_x, paren_close_idx = parse_expr(ext_tokens, current_idx + 1)
+    expr_x, paren_close_idx = parse_full_expr(ext_tokens, current_idx + 1)
     fail_if(type(ext_tokens[paren_close_idx]) is not TokenParenClose,
         f"TokenParenOpen expected at `{paren_close_idx}`.",
         f"Given {current_idx} {ext_tokens}",
@@ -126,20 +139,7 @@ def parse_call(ext_tokens, expr_f, current_idx):
             )
 
 
-@tailrec
-def parse_first_of(ext_tokens, current_idx, parsers):
-    fail_if(parsers == [],
-        f"Can't parse Expr given {current_idx} {ext_tokens}."
-    )
-    either_result = rt_try(lambda: parsers[0](ext_tokens, current_idx))
-    return (
-        rec(ext_tokens, current_idx, parsers[1:])
-        if is_fail(either_result) else
-        either_result
-    )
-
-
-def parse_expr(ext_tokens, current_idx):
+def parse_full_expr(ext_tokens, current_idx):
     # atomic expression
     parsed_expr, next_idx = parse_first_of(ext_tokens, current_idx, [
         parse_lambda_1,
@@ -156,7 +156,7 @@ def parse_expr(ext_tokens, current_idx):
 def parse(tokens):
     end_of_tokens = "\0"
     ext_tokens = tokens + [end_of_tokens]
-    expr, current_idx = parse_expr(ext_tokens, 0)
+    expr, current_idx = parse_full_expr(ext_tokens, 0)
 
     fail_if(ext_tokens[current_idx] != end_of_tokens,
         f"Unexpected token at {current_idx} given {tokens}",

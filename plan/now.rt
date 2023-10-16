@@ -7,5 +7,6 @@ print("Welcome, " + name)
 
 
 1. The method syntax
+a(0)(0).b(0)(0).b(0)(0)
 
 2. The operator syntax - plan how it should work
