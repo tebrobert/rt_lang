@@ -8,6 +8,9 @@ class ExprLitStr:
     def __repr__(self, indent=''):
         return f"""{indent}Expr_Lit_Str("{self.s}")"""
 
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
 
 class ExprIdf:
     def __init__(self, s):
@@ -15,6 +18,9 @@ class ExprIdf:
 
     def __repr__(self, indent=''):
         return f"""{indent}Expr_Idf("{self.s}")"""
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
 
 
 class ExprCall1:
@@ -27,6 +33,9 @@ class ExprCall1:
                 + f"""{self.expr_x.__repr__(indent + 4 * " ")}\n"""
                 + f"""{indent})"""
                 )
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
 
 
 class ExprLambda1:
@@ -43,6 +52,9 @@ class ExprLambda1:
                 + f"""{self.expr_res.__repr__(indent + 4 * " ")}\n"""
                 + f"""{indent})"""
                 )
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
 
 
 def match_expr(
