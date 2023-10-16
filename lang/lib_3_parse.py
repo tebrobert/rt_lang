@@ -125,31 +125,26 @@ def parse_atomic_expr(ext_tokens, current_idx):
 
 
 @tailrec
-def continue_parsing_call(ext_tokens, expr_f, current_idx):
-    if type(ext_tokens[current_idx]) is not TokenParenOpen:
-        return (expr_f, current_idx)  # ...
+def continue_parsing_call_rec(ext_tokens, expr_f, current_idx):
+    def continue_parsing_call_forced():
+        parsed_braced_expr, post_braced_idx = parse_braced(
+            ext_tokens, current_idx
+        )
+        parsed_expr = ExprCall1(expr_f, parsed_braced_expr)
+        return rec(ext_tokens, parsed_expr, post_braced_idx)
 
-    fail_if(type(ext_tokens[current_idx + 1]) is TokenParenClose,
-        f"Remove deprecated empty parenthesis.",
-        f"Given `{current_idx}` `{ext_tokens}`",
+    return (
+        continue_parsing_call_forced()
+        if type(ext_tokens[current_idx]) is TokenParenOpen else
+        (expr_f, current_idx)
     )
-
-    expr_x, paren_close_idx = parse_full_expr(ext_tokens, current_idx + 1)
-    fail_if(type(ext_tokens[paren_close_idx]) is not TokenParenClose,
-        f"TokenParenOpen expected at `{paren_close_idx}`.",
-        f"Given {current_idx} {ext_tokens}",
-    )
-
-    next_idx = paren_close_idx + 1
-    parsed_expr = ExprCall1(expr_f, expr_x)
-    return rec(ext_tokens, parsed_expr, next_idx)
 
 
 def parse_call_expr(ext_tokens, current_idx):
     parsed_atomic_expr, post_atomic_idx = parse_atomic_expr(
         ext_tokens, current_idx
     )
-    return continue_parsing_call(
+    return continue_parsing_call_rec(
         ext_tokens, parsed_atomic_expr, post_atomic_idx
     )
 
