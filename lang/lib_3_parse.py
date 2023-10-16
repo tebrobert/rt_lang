@@ -148,12 +148,25 @@ def continue_parsing_call(ext_tokens, expr_f, current_idx):
             )
 
 
+def parse_call_expr(ext_tokens, current_idx):
+    parsed_atomic_expr, post_atomic_idx = parse_atomic_expr(
+        ext_tokens, current_idx
+    )
+    return (
+        continue_parsing_call(ext_tokens, parsed_atomic_expr, post_atomic_idx)
+        if type(ext_tokens[post_atomic_idx]) is TokenParenOpen else
+        (parsed_atomic_expr, post_atomic_idx)
+    )
+
+
+@tailrec
+def continue_parsing_dotting(ext_tokens, expr_f, current_idx):
+    not_implemented()
+
+
 def parse_full_expr(ext_tokens, current_idx):
-    parsed_expr, next_idx = parse_atomic_expr(ext_tokens, current_idx)
-    return (continue_parsing_call(ext_tokens, parsed_expr, next_idx)
-            if type(ext_tokens[next_idx]) is TokenParenOpen else
-            (parsed_expr, next_idx)
-            )
+    parsed_call_expr, post_call_idx = parse_call_expr(ext_tokens, current_idx)
+    return parsed_call_expr, post_call_idx
 
 
 def parse(tokens):
