@@ -139,14 +139,17 @@ def parse_call(ext_tokens, expr_f, current_idx):
             )
 
 
-def parse_full_expr(ext_tokens, current_idx):
-    # atomic expression
-    parsed_expr, next_idx = parse_first_of(ext_tokens, current_idx, [
+def parse_atomic_expr(ext_tokens, current_idx):
+    return parse_first_of(ext_tokens, current_idx, [
         parse_lambda_1,
         parse_idf,
         parse_braced,
         parse_lit_str,
     ])
+
+
+def parse_full_expr(ext_tokens, current_idx):
+    parsed_expr, next_idx = parse_atomic_expr(ext_tokens, current_idx)
     return (parse_call(ext_tokens, parsed_expr, next_idx)
             if type(ext_tokens[next_idx]) is TokenParenOpen else
             (parsed_expr, next_idx)
