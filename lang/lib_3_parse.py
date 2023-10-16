@@ -127,7 +127,7 @@ def parse_atomic_expr(ext_tokens, current_idx):
 @tailrec
 def continue_parsing_call(ext_tokens, expr_f, current_idx):
     if type(ext_tokens[current_idx]) is not TokenParenOpen:
-        return (expr_f, current_idx) # ...
+        return (expr_f, current_idx)  # ...
 
     fail_if(type(ext_tokens[current_idx + 1]) is TokenParenClose,
         f"Remove deprecated empty parenthesis.",
@@ -142,10 +142,7 @@ def continue_parsing_call(ext_tokens, expr_f, current_idx):
 
     next_idx = paren_close_idx + 1
     parsed_expr = ExprCall1(expr_f, expr_x)
-    return (rec(ext_tokens, parsed_expr, next_idx)
-            if type(ext_tokens[next_idx]) is TokenParenOpen else
-            (parsed_expr, next_idx)
-            )
+    return rec(ext_tokens, parsed_expr, next_idx)
 
 
 def parse_call_expr(ext_tokens, current_idx):
