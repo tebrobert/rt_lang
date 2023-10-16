@@ -8,6 +8,9 @@ class TokenLitStr:
     def __repr__(self):
         return f"""TokenLitStr("{self.s}")"""
 
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
 
 class TokenIdf:
     def __init__(self, s):
@@ -16,25 +19,40 @@ class TokenIdf:
     def __repr__(self):
         return f"""TokenIdf("{self.s}")"""
 
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
 
 class TokenParenOpen:
     def __repr__(self):
         return "TokenParenOpen()"
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
 
 
 class TokenParenClose:
     def __repr__(self):
         return "TokenParenClose()"
 
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
 
 class TokenEqGr:
     def __repr__(self):
         return "TokenEqGr()"
 
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
 
 class TokenDot:
     def __repr__(self):
         return "TokenDot()"
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
 
 
 def is_initial_idf_char(char):
