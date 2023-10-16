@@ -92,7 +92,7 @@ def parse_idf(ext_tokens, current_idx):
     return ExprIdf(ext_tokens[current_idx].s), current_idx + 1
 
 
-def parse_braced(ext_tokens, current_idx):
+def parse_braced_full_expr(ext_tokens, current_idx):
     fail_if(type(ext_tokens[current_idx]) is not TokenParenOpen,
         f"TokenParenOpen expected at {current_idx}.",
         f"Given {current_idx} {ext_tokens}",
@@ -119,7 +119,7 @@ def parse_atomic_expr(ext_tokens, current_idx):
     return parse_first_of(ext_tokens, current_idx, [
         parse_lambda_1,
         parse_idf,
-        parse_braced,
+        parse_braced_full_expr,
         parse_lit_str,
     ])
 
@@ -127,7 +127,7 @@ def parse_atomic_expr(ext_tokens, current_idx):
 @tailrec
 def continue_parsing_call_rec(ext_tokens, expr_f, current_idx):
     def continue_parsing_call_forced():
-        parsed_braced_expr, post_braced_idx = parse_braced(
+        parsed_braced_expr, post_braced_idx = parse_braced_full_expr(
             ext_tokens, current_idx
         )
         parsed_expr = ExprCall1(expr_f, parsed_braced_expr)
@@ -150,13 +150,26 @@ def parse_call_expr(ext_tokens, current_idx):
 
 
 @tailrec
-def continue_parsing_dotting(ext_tokens, expr_f, current_idx):
-    not_implemented()
+def continue_parsing_dotting_rec(ext_tokens, expr_acceptor, current_idx):
+    def continue_parsing_dotting_forced():
+        parsed_expr_method, post_braced_idx = parse_call_expr(
+            ext_tokens, current_idx + 1
+        )
+        parsed_expr = ExprCall1(parsed_expr_method, expr_acceptor)
+        return rec(ext_tokens, parsed_expr, post_braced_idx)
+
+    return (
+        continue_parsing_dotting_forced()
+        if type(ext_tokens[current_idx]) is TokenDot else
+        (expr_acceptor, current_idx)
+    )
 
 
 def parse_full_expr(ext_tokens, current_idx):
     parsed_call_expr, post_call_idx = parse_call_expr(ext_tokens, current_idx)
-    return parsed_call_expr, post_call_idx
+    return continue_parsing_dotting_rec(
+        ext_tokens, parsed_call_expr, post_call_idx
+    )
 
 
 def parse(tokens):
