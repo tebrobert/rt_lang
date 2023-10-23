@@ -5,8 +5,16 @@ print("Welcome, ".+(name))
 print("Welcome, " + name)
 
 
+####################
+Plan: better matching - params
+Plan: refact sem (typify)
+Plan: add _L _R to type params on both sides before synchronizing
+- The operator syntax - plan how it should work
 
-1. The method syntax
-a(0)(0).b(0)(0).b(0)(0)
+Plan: flatmap to >>=
 
-2. The operator syntax - plan how it should work
+Plan: better tests
+
+Plan: eliminate desugaring - all parse
+
+
