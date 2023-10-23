@@ -10,8 +10,6 @@ Plan: refact sem (typify)
 Plan: add _L _R to type params on both sides before synchronizing
 - The operator syntax - plan how it should work
 
-Plan: flatmap to >>=
-
 Plan: better tests
 
 Plan: eliminate desugaring - all parse
