@@ -5,13 +5,13 @@ print("Welcome, " + name)
 
 
 ####################
+Plan: better tests
+- Plan: eliminate desugaring - all parse
+
 Plan: better matching - params
 Plan: refact sem (typify)
-Plan: add _L _R to type params on both sides before synchronizing
+Plan: ? add _L _R to type params on both sides before synchronizing
 - The operator syntax - plan how it should work
 
-Plan: better tests
-
-Plan: eliminate desugaring - all parse
 
 
