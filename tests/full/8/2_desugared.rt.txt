@@ -1,1 +1,1 @@
-flatmap(s  => flatmap(_ => print(s))(print(s)))( input)
+>>=(s  => >>=(_ => print(s))(print(s)))( input)

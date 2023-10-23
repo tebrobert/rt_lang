@@ -1,11 +1,11 @@
 Typed_Call_1(
     Typed_Call_1(
-        Typed_Idf("flatmap", (Str => RIO[Unit]) => RIO[Str] => RIO[Unit]),
+        Typed_Idf(">>=", (Str => RIO[Unit]) => RIO[Str] => RIO[Unit]),
         Typed_Lambda_1(
             Typed_Idf("s", Str),
             Typed_Call_1(
                 Typed_Call_1(
-                    Typed_Idf("flatmap", (A => RIO[Unit]) => RIO[A] => RIO[Unit]),
+                    Typed_Idf(">>=", (A => RIO[Unit]) => RIO[A] => RIO[Unit]),
                     Typed_Lambda_1(
                         Typed_Idf("u", A),
                         Typed_Call_1(

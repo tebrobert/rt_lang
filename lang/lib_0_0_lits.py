@@ -30,6 +30,6 @@ builtin_Func = "Func"
 
 builtin_input = "input"
 builtin_print = "print"
-builtin_flatmap = "flatmap"
+builtin_flatmap = ">>="
 builtin_pure = "pure"
 builtin_plus = "+"

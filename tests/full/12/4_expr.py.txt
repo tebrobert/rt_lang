@@ -1,16 +1,16 @@
 Expr_Call_1(
     Expr_Call_1(
-        Expr_Idf("flatmap"),
+        Expr_Idf(">>="),
         Expr_Lambda_1(
             Expr_Idf("greeting"),
             Expr_Call_1(
                 Expr_Call_1(
-                    Expr_Idf("flatmap"),
+                    Expr_Idf(">>="),
                     Expr_Lambda_1(
                         Expr_Idf("_"),
                         Expr_Call_1(
                             Expr_Call_1(
-                                Expr_Idf("flatmap"),
+                                Expr_Idf(">>="),
                                 Expr_Lambda_1(
                                     Expr_Idf("name"),
                                     Expr_Call_1(

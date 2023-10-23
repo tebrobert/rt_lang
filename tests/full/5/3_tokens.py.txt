@@ -1,1 +1,1 @@
-[TokenIdf("flatmap"), TokenParenOpen(), TokenIdf("s"), TokenEqGr(), TokenIdf("print"), TokenParenOpen(), TokenIdf("s"), TokenParenClose(), TokenParenClose(), TokenParenOpen(), TokenIdf("input"), TokenParenClose()]
+[TokenIdf(">>="), TokenParenOpen(), TokenIdf("s"), TokenEqGr(), TokenIdf("print"), TokenParenOpen(), TokenIdf("s"), TokenParenClose(), TokenParenClose(), TokenParenOpen(), TokenIdf("input"), TokenParenClose()]

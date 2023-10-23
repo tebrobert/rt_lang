@@ -1,3 +1,4 @@
+from lang.lib_0_0_lits import *
 from utils.fail import *
 from utils.tailrec import *
 
@@ -32,7 +33,7 @@ def flatmapize(arrow_split_init_lines, flapmapized):
     def force_flatmapize():
         arg, monad = arrow_split_init_lines[-1]
         return rec(arrow_split_init_lines[:-1],
-            f"flatmap({arg} => {flapmapized})({monad})"
+            f"{builtin_flatmap}({arg} => {flapmapized})({monad})"
         )
 
     return flapmapized if arrow_split_init_lines == [] else force_flatmapize()
