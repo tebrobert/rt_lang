@@ -107,7 +107,7 @@ argParser = (
     .add("--test", action="store_true")
 )
 
-path_tests = "tests/"
+path_tests = "tests/full/"
 
 if __name__ == "__main__":
     main()
