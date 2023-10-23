@@ -19,9 +19,9 @@ def asserted_desugar(read_result, code):
     )
 
 
-def asserted_lexx(read_result, desugared):
+def asserted_tokenize(read_result, desugared):
     return rt_try_assert_equal("tokens",
-        read_result("3_tokens.py.txt"), lambda: lexx(desugared)
+        read_result("3_tokens.py.txt"), lambda: tokenize(desugared)
     )
 
 
@@ -56,7 +56,7 @@ def run_tests():
         code = read_current_test_file("1_code.rt.txt")
         try:
             desugared = asserted_desugar(read_current_test_file, code)
-            tokens = asserted_lexx(read_current_test_file, desugared)
+            tokens = asserted_tokenize(read_current_test_file, desugared)
             expr = asserted_parse(read_current_test_file, tokens)
             typed = asserted_sem(read_current_test_file, expr)
             asserted_show(read_current_test_file, typed)
@@ -81,7 +81,7 @@ def unsafe_run_code(code, dev):
     print_if(dev)(code)
     try:
         desugared = run(desugar, code, "2_DESUGARED")
-        tokens = run(lexx, desugared, "3_TOKENS")
+        tokens = run(tokenize, desugared, "3_TOKENS")
         expr = run(parse, tokens, "4_EXPR")
         typed = run(sem, expr, "5_TYPED")
         shown = run(show, typed, "6_SHOWN")

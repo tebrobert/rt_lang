@@ -184,7 +184,7 @@ def lexx_rec(code_ext, current_idx, tokens):
     )
 
 
-def lexx(code):
+def tokenize(code):
     return lexx_rec(code + end_of_code, 0, [])
 
 

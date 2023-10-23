@@ -1,4 +1,4 @@
-from lang.lib_2_lexx import *
+from lang.lib_2_tokenize import *
 
 
 class ExprLitStr:
