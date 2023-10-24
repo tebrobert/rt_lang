@@ -2,18 +2,18 @@ from utils.fail import *
 
 
 def match_builtin_idf(
-    lazy_for_input,
-    lazy_for_print,
-    lazy_for_flatmap,
-    lazy_for_pure,
-    lazy_for_plus,
+    case_input,
+    case_print,
+    case_flatmap,
+    case_pure,
+    case_plus,
 ):
     return lambda idf: ({
-        builtin_input: lazy_for_input,
-        builtin_print: lazy_for_print,
-        builtin_flatmap: lazy_for_flatmap,
-        builtin_pure: lazy_for_pure,
-        builtin_plus: lazy_for_plus,
+        builtin_input: case_input,
+        builtin_print: case_print,
+        builtin_flatmap: case_flatmap,
+        builtin_pure: case_pure,
+        builtin_plus: case_plus,
     }
     .get(
         idf,

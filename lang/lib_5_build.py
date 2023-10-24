@@ -58,14 +58,14 @@ def show_typed_idf(t_idf, lamb_arg_stack):
     return (
         t_idf.s if t_idf.s in lamb_arg_stack else
         match_builtin_idf(
-            lazy_for_input=lambda: f"{BrickInput()}",
-            lazy_for_print=lambda: f"(lambda {_s}: {BrickPrint(_s)})",
-            lazy_for_flatmap=(
+            case_input=lambda: f"{BrickInput()}",
+            case_print=lambda: f"(lambda {_s}: {BrickPrint(_s)})",
+            case_flatmap=(
                 lambda: f"(lambda {_a_fb}: lambda {_fa}: "
                         + f"{BrickFlatmap(_a_fb, _fa)})"
             ),
-            lazy_for_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
-            lazy_for_plus=(
+            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
+            case_plus=(
                 lambda: f"(lambda {_right}: lambda {_left}: "
                         + f"{_left} + {_right})"
             )
