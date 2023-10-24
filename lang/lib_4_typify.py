@@ -250,9 +250,7 @@ def typify_lambda_1(expr_idf_arg, expr_res):
 def typify(expr):
     return match_expr(
         case_lit_str=lambda s: TypifiedLit(s, T_Str),
-        case_idf=lambda s: TypifiedIdf(s,
-            idf_to_type[s] if s in idf_to_type else T_A
-        ),
+        case_idf=lambda s: TypifiedIdf(s, idf_to_type.get(s, T_A)),
         case_call_1=lambda expr_f, expr_x: typify_call_1(expr_f, expr_x),
         case_lambda_1=lambda expr_idf_arg, expr_res: typify_lambda_1(
             expr_idf_arg, expr_res
