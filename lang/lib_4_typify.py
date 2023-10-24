@@ -2,7 +2,7 @@ from lang.lib_3_parse import *
 from lang.lib_0_2_builtins import *
 
 
-class TypedLit:
+class TypifiedLit:
     def __init__(self, s, typ):
         self.s, self.typ = s, typ
 
@@ -10,7 +10,7 @@ class TypedLit:
         return f"""{indent}Typed_Lit("{self.s}", {self.typ})"""
 
 
-class TypedIdf:
+class TypifiedIdf:
     def __init__(self, s, typ):
         self.s, self.typ = s, typ
 
@@ -18,7 +18,7 @@ class TypedIdf:
         return f"""{indent}Typed_Idf("{self.s}", {self.typ})"""
 
 
-class TypedCall1:
+class TypifiedCall1:
     def __init__(self, typed_f, typed_x, typ):
         self.typed_f, self.typed_x, self.typ = typed_f, typed_x, typ
 
@@ -32,9 +32,9 @@ class TypedCall1:
                 )
 
 
-class TypedLambda1:
+class TypifiedLambda1:
     def __init__(self, t_idf_x, typed_res, typ=None):
-        rt_assert(type(t_idf_x) is TypedIdf)
+        rt_assert(type(t_idf_x) is TypifiedIdf)
         rt_assert(typ is None or type(typ) is Type2 and typ.s == builtin_Func)
         self.t_idf_x = t_idf_x
         self.typed_res = typed_res
@@ -53,60 +53,63 @@ class TypedLambda1:
                 )
 
 
-def match_typed(
+def match_typified(
     case_lit,
     case_idf,
     case_call_1,
     case_lambda_1,
 ):
-    return lambda typed: ({
-        TypedLit: lambda: case_lit(typed.s, typed.typ),
-        TypedIdf: lambda: case_idf(typed.s, typed.typ),
-        TypedCall1: lambda: case_call_1(
-            typed.typed_f, typed.typed_x, typed.typ
-        ),
-        TypedLambda1: lambda: case_lambda_1(
-            typed.t_idf_x, typed.typed_res, typed.typ
-        ),
-    }
-    .get(
-        type(typed),
-        lambda: fail(f"Value {typed} {type(typed)} is not a typed expression")
-    ))()
+    return lambda typified: (
+        {
+            TypifiedLit: lambda: case_lit(typified.s, typified.typ),
+            TypifiedIdf: lambda: case_idf(typified.s, typified.typ),
+            TypifiedCall1: lambda: case_call_1(
+                typified.typed_f, typified.typed_x, typified.typ
+            ),
+            TypifiedLambda1: lambda: case_lambda_1(
+                typified.t_idf_x, typified.typed_res, typified.typ
+            ),
+        }
+        .get(
+            type(typified),
+            lambda: fail(
+                f"Value {typified} {type(typified)} is not a typed expression")
+        )
+    )()
 
 
-def copy_typified(typed, new_typ):
-    return match_typed(
-        case_lit=lambda s, typ: TypedLit(s, typ),
-        case_idf=lambda s, _typ: TypedIdf(s, new_typ),
-        case_call_1=lambda typed_f, typed_x, _typ: TypedCall1(
+def update_type(typified, new_typ):
+    return match_typified(
+        case_lit=lambda s, typ: TypifiedLit(s, typ),
+        case_idf=lambda s, _typ: TypifiedIdf(s, new_typ),
+        case_call_1=lambda typed_f, typed_x, _typ: TypifiedCall1(
             typed_f, typed_x, new_typ
         ),
-        case_lambda_1=lambda t_idf_x, typed_res, _typ: TypedLambda1(
+        case_lambda_1=lambda t_idf_x, typed_res, _typ: TypifiedLambda1(
             t_idf_x, typed_res, new_typ
         ),
-    )(typed)
+    )(typified)
 
 
-def find_idf_type_call_1(typed_f, typed_x, s):
-    lookup_by_f = find_idf_type(typed_f, s)
+def find_idf_typ_call_1(typified_f, typified_x, s_to_lookup):
+    lookup_by_f = find_idf_typ(typified_f, s_to_lookup)
     return (lookup_by_f
             if not type(lookup_by_f) is Unknown0 else
-            find_idf_type(typed_x, s)
+            find_idf_typ(typified_x, s_to_lookup)
             )
 
 
-def find_idf_type(typed, s_to_lookup):
-    return match_typed(
+def find_idf_typ(typified, s_to_lookup):
+    return match_typified(
         case_lit=lambda _s, _typ: T_A,
         case_idf=lambda s, typ: typ if s == s_to_lookup else T_A,
-        case_call_1=lambda typed_f, typed_x, _typ: find_idf_type_call_1(
+        case_call_1=lambda typed_f, typed_x, _typ: find_idf_typ_call_1(
             typed_f, typed_x, s_to_lookup
         ),
-        case_lambda_1=lambda _t_idf_x, typed_res, _typ: find_idf_type(
+        case_lambda_1=lambda _t_idf_x, typed_res, _typ: find_idf_typ(
             typed_res, s_to_lookup
         ),
-    )(typed)
+    )(typified)
 
 
 def solve_type_0(
@@ -198,56 +201,56 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     )
 
 
-def solve(typ_f, typ_x):
+def solve(typ_f, typ_x): # what it returns?
     return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
 
 
-def concreted(typ_f, typ_x):
+def concreted(typ_f, typ_x): # what it returns?
     return solve(typ_f, typ_x)[0]  # 0 is unclear, should use a class
 
 
-def typify_x(typed_f, typed_x):
-    new_typed_x = copy_typified(typed_x, typed_f.typ.t1)
-    return TypedCall1(typed_f, new_typed_x, typed_f.typ.t2)
+def typify_x(typified_f, typified_x):
+    new_typified_x = update_type(typified_x, typified_f.typ.t1)
+    return TypifiedCall1(typified_f, new_typified_x, typified_f.typ.t2)
 
 
-def typify_f(typed_f, typed_x):
-    new_typ_f = concreted(typed_f.typ, typed_x.typ)
-    new_typed_f = copy_typified(typed_f, new_typ_f)
-    new_typed_x = copy_typified(typed_x, new_typ_f.t1)
-    return TypedCall1(new_typed_f, new_typed_x, new_typ_f.t2)
+def typify_f(typified_f, typified_x):
+    new_typ_f = concreted(typified_f.typ, typified_x.typ)
+    new_typified_f = update_type(typified_f, new_typ_f)
+    new_typified_x = update_type(typified_x, new_typ_f.t1)
+    return TypifiedCall1(new_typified_f, new_typified_x, new_typ_f.t2)
 
 
 def typify_call_1(expr_f, expr_x):
-    typed_f = typify(expr_f)
-    typed_x = typify(expr_x)
+    typified_f = typify(expr_f)
+    typified_x = typify(expr_x)
 
-    fail_if(not (type(typed_f.typ) is Type2 and typed_f.typ.s == builtin_Func),
-        f"typed_f should be a `{builtin_Func}`",
+    fail_if(not (type(typified_f.typ) is Type2 and typified_f.typ.s == builtin_Func),
+        f"typified_f should be a `{builtin_Func}`",
     )
 
     return (
-        typify_x(typed_f, typed_x)
-        if type(typed_x.typ) is Unknown0 else
-        typify_f(typed_f, typed_x)
+        typify_x(typified_f, typified_x)
+        if type(typified_x.typ) is Unknown0 else
+        typify_f(typified_f, typified_x)
     )
 
 
 def typify_lambda_1(expr_idf_arg, expr_res):
     t_idf_x = typify(expr_idf_arg)
-    typed_res = typify(expr_res)
+    typified_res = typify(expr_res)
 
-    lookup_typ_x = find_idf_type(typed_res, t_idf_x.s)
+    found_typ_x = find_idf_typ(typified_res, t_idf_x.s)
 
-    retyped_x = copy_typified(t_idf_x, lookup_typ_x)
+    retypified_x = update_type(t_idf_x, found_typ_x)
 
-    return TypedLambda1(retyped_x, typed_res)
+    return TypifiedLambda1(retypified_x, typified_res)
 
 
 def typify(expr):
     return match_expr(
-        case_lit_str=lambda s: TypedLit(s, T_Str),
-        case_idf=lambda s: TypedIdf(s,
+        case_lit_str=lambda s: TypifiedLit(s, T_Str),
+        case_idf=lambda s: TypifiedIdf(s,
             idf_to_type[s] if s in idf_to_type else T_A
         ),
         case_call_1=lambda expr_f, expr_x: typify_call_1(expr_f, expr_x),

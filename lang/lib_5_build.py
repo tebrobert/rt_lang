@@ -50,7 +50,7 @@ def match_brick(
 
 
 def show_typed_lit(s, typ):
-    fail_if(typ != T_Str, f"Unexpected literal `{TypedLit(s, typ)}`")
+    fail_if(typ != T_Str, f"Unexpected literal `{TypifiedLit(s, typ)}`")
     return f"\"{s}\""
 
 
@@ -85,7 +85,7 @@ def show_typed_lambda_1(t_idf_x, typed_res, lamb_arg_stack):
 
 
 def build(typed, lamb_arg_stack=[]):
-    return match_typed(
+    return match_typified(
         case_lit=lambda s, typ: show_typed_lit(s, typ),
         case_idf=lambda s, _typ: show_typed_idf(s, lamb_arg_stack),
         case_call_1=lambda typed_f, typed_x, _typ: show_typed_call_1(
