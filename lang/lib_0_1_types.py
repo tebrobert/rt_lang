@@ -2,34 +2,34 @@ from lang.lib_0_0_lits import *
 from utils.fail import *
 
 
-class Type0:
+class Typ0:
     def __init__(self, s):
         self.s = s
 
     def __eq__(self, that):
-        return type(that) == Type0 and that.s == self.s
+        return type(that) == Typ0 and that.s == self.s
 
     def __repr__(self, indent=""):
         return f"{indent}{self.s}"
 
 
-class Unknown0:
+class TypUnknown0:
     def __init__(self, s):
         self.s = s
 
     def __eq__(self, that):
-        return type(that) == Unknown0 and that.s == self.s
+        return type(that) == TypUnknown0 and that.s == self.s
 
     def __repr__(self, indent=""):
         return f"{indent}{self.s}"
 
 
-class Type1:
+class Typ1:
     def __init__(self, s, t1):
         self.s, self.t1 = s, t1
 
     def __eq__(self, that):
-        return (type(that) == Type1
+        return (type(that) == Typ1
                 and (that.s, that.t1) == (self.s, self.t1)
                 )
 
@@ -37,12 +37,12 @@ class Type1:
         return f"{indent}{self.s}[{self.t1}]"
 
 
-class Type2:
+class Typ2:
     def __init__(self, s, t1, t2):
         self.s, self.t1, self.t2 = s, t1, t2
 
     def __eq__(self, that):
-        return (type(that) == Type2
+        return (type(that) == Typ2
                 and (that.s, that.t1, that.t2) == (self.s, self.t1, self.t2)
                 )
 
@@ -63,10 +63,10 @@ def unsafe_match_type(
     lazy_for_type2,
 ):
     return lambda typ: ({
-        Type0: lazy_for_type0,
-        Unknown0: lazy_for_unknown0,
-        Type1: lazy_for_type1,
-        Type2: lazy_for_type2,
+        Typ0: lazy_for_type0,
+        TypUnknown0: lazy_for_unknown0,
+        Typ1: lazy_for_type1,
+        Typ2: lazy_for_type2,
     }
     .get(
         type(typ),
@@ -74,30 +74,30 @@ def unsafe_match_type(
     ))()
 
 
-def match_type(
-    case_type0,
+def match_typ(
+    case_typ0,
     case_unknown0,
-    case_type1,
-    case_type2,
+    case_typ1,
+    case_typ2,
 ):
     return lambda typ: ({
-        Type0: lambda: case_type0(typ.s),
-        Unknown0: lambda: case_unknown0(typ.s),
-        Type1: lambda: case_type1(typ.s, typ.t1),
-        Type2: lambda: case_type2(typ.s, typ.t1, typ.t2),
+        Typ0: lambda: case_typ0(typ.s),
+        TypUnknown0: lambda: case_unknown0(typ.s),
+        Typ1: lambda: case_typ1(typ.s, typ.t1),
+        Typ2: lambda: case_typ2(typ.s, typ.t1, typ.t2),
     }
     .get(
         type(typ),
-        lambda: fail(f"Value {typ} {type(typ)} is not a type")
+        lambda: fail(f"Value {typ} {type(typ)} is not a typ.")
     ))()
 
 
 def concrete(typ, typ_from, typ_to):
-    return match_type(
+    return match_typ(
         case_unknown0=lambda _s: typ_to if typ == typ_from else typ,
-        case_type0=lambda _s: typ,
-        case_type1=lambda s, t1: Type1(s, concrete(t1, typ_from, typ_to)),
-        case_type2=lambda s, t1, t2: Type2(s,
+        case_typ0=lambda _s: typ,
+        case_typ1=lambda s, t1: Typ1(s, concrete(t1, typ_from, typ_to)),
+        case_typ2=lambda s, t1, t2: Typ2(s,
             concrete(t1, typ_from, typ_to),
             concrete(t2, typ_from, typ_to)
         ),

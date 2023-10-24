@@ -1,14 +1,14 @@
 from lang.lib_0_1_types import *
 
-T_Int = Type0(builtin_Int)
-T_Str = Type0(builtin_Str)
-T_Unit = Type0(builtin_Unit)
-T_List = lambda t1: Type1(builtin_List, t1)
-T_RIO = lambda t1: Type1(builtin_RIO, t1)
-T_Func = lambda t1, t2: Type2(builtin_Func, t1, t2)
+T_Int = Typ0(builtin_Int)
+T_Str = Typ0(builtin_Str)
+T_Unit = Typ0(builtin_Unit)
+T_List = lambda t1: Typ1(builtin_List, t1)
+T_RIO = lambda t1: Typ1(builtin_RIO, t1)
+T_Func = lambda t1, t2: Typ2(builtin_Func, t1, t2)
 
-T_A = Unknown0("A")
-T_B = Unknown0("B")
+T_A = TypUnknown0("A")
+T_B = TypUnknown0("B")
 
 types = {
     builtin_Int: T_Int,

@@ -35,7 +35,7 @@ class TypifiedCall1:
 class TypifiedLambda1:
     def __init__(self, t_idf_x, typed_res, typ=None):
         rt_assert(type(t_idf_x) is TypifiedIdf)
-        rt_assert(typ is None or type(typ) is Type2 and typ.s == builtin_Func)
+        rt_assert(typ is None or type(typ) is Typ2 and typ.s == builtin_Func)
         self.t_idf_x = t_idf_x
         self.typed_res = typed_res
         self.typ = (typ
@@ -94,7 +94,7 @@ def update_type(typified, new_typ):
 def find_idf_typ_call_1(typified_f, typified_x, s_to_lookup):
     lookup_by_f = find_idf_typ(typified_f, s_to_lookup)
     return (lookup_by_f
-            if not type(lookup_by_f) is Unknown0 else
+            if not type(lookup_by_f) is TypUnknown0 else
             find_idf_typ(typified_x, s_to_lookup)
             )
 
@@ -118,9 +118,9 @@ def solve_type_0(
 ):
     return (
         (typ_f, typ_x, synched_unks)
-        if type(typ_sub_x) is Type0 and typ_sub_fx.s == typ_sub_x.s else
+        if type(typ_sub_x) is Typ0 and typ_sub_fx.s == typ_sub_x.s else
         fail("Not implemented: solve_rec 1")
-        if type(typ_sub_x) is Unknown0 else
+        if type(typ_sub_x) is TypUnknown0 else
         fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
     )
 
@@ -131,13 +131,13 @@ def solve_unknown_0(
 ):
     return (
         solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
-        if type(typ_sub_x) is Type0 else
+        if type(typ_sub_x) is Typ0 else
         (
             (typ_f, typ_x, synched_unks.union({typ_sub_fx.s}))
             if typ_sub_fx.s == typ_sub_x.s else
             fail("Not implemented: solve_rec 4")
         )
-        if type(typ_sub_x) is Unknown0 else
+        if type(typ_sub_x) is TypUnknown0 else
         fail(type_match_err_msg)
         if typ_sub_fx.s in f_x_synched_unks else
         solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
@@ -157,9 +157,9 @@ def solve_type_1(
                 f"Currently matching `{typ_sub_fx}` and `{typ_sub_x}`.",
             )
         )
-        if type(typ_sub_x) is Unknown0 else
+        if type(typ_sub_x) is TypUnknown0 else
         solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
-        if type(typ_sub_x) is Type1 else
+        if type(typ_sub_x) is Typ1 else
         fail(f"Can't match the types `{typ_sub_fx}` vs `{typ_sub_x}.`")
     )
 
@@ -177,11 +177,11 @@ def solve_type_2(
                 f"Currently matching `{typ_sub_fx}` and `{typ_sub_x}`",
             )
         )
-        if type(typ_sub_x) is Unknown0 else
+        if type(typ_sub_x) is TypUnknown0 else
         solve_rec(typ_sub_fx.t2, typ_sub_x.t2,
             solve_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x, synched_unks))
         )
-        if type(typ_sub_x) is Type2 else
+        if type(typ_sub_x) is Typ2 else
         fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
     )
 
@@ -189,11 +189,11 @@ def solve_type_2(
 def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     typ_f, typ_x, synched_unks = f_x_synched_unks
 
-    return match_type(
-        case_type0=lambda _s: solve_type_0,
+    return match_typ(
+        case_typ0=lambda _s: solve_type_0,
         case_unknown0=lambda _s: solve_unknown_0,
-        case_type1=lambda _s, _t1: solve_type_1,
-        case_type2=lambda _s, _t1, _t2: solve_type_2,
+        case_typ1=lambda _s, _t1: solve_type_1,
+        case_typ2=lambda _s, _t1, _t2: solve_type_2,
     )(typ_sub_fx)(
         typ_f, typ_x,
         typ_sub_fx, typ_sub_x,
@@ -225,13 +225,13 @@ def typify_call_1(expr_f, expr_x):
     typified_f = typify(expr_f)
     typified_x = typify(expr_x)
 
-    fail_if(not (type(typified_f.typ) is Type2 and typified_f.typ.s == builtin_Func),
+    fail_if(not (type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func),
         f"typified_f should be a `{builtin_Func}`",
     )
 
     return (
         typify_x(typified_f, typified_x)
-        if type(typified_x.typ) is Unknown0 else
+        if type(typified_x.typ) is TypUnknown0 else
         typify_f(typified_f, typified_x)
     )
 
