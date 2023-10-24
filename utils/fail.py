@@ -15,8 +15,8 @@ def rt_assert(cond):
     fail_if(not cond, "Assertion error.")
 
 
-def not_implemented():
-    fail("Not implemented.")
+def wip():
+    fail("The feature was not implemented. Work in progress...")
 
 
 def rt_assert_equal(label, expected_str):
@@ -36,7 +36,7 @@ def rt_try_assert_equal(label, expected_str, lazy_actual):
 def rt_try(action):
     try:
         return action()
-    except Exception:
+    except:
         return Exception(traceback.format_exc())
 
 

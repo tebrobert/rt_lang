@@ -74,17 +74,17 @@ def show_typed_idf(s, lamb_arg_stack):
 
 
 def show_typed_call_1(typed_f, typed_x, lamb_arg_stack):
-    shown_f = show(typed_f, lamb_arg_stack)
-    shown_x = show(typed_x, lamb_arg_stack)
+    shown_f = build(typed_f, lamb_arg_stack)
+    shown_x = build(typed_x, lamb_arg_stack)
     return f"({shown_f})({shown_x})"
 
 
 def show_typed_lambda_1(t_idf_x, typed_res, lamb_arg_stack):
     s = t_idf_x.s
-    return f"(lambda {s}: {show(typed_res, [s] + lamb_arg_stack)})"
+    return f"(lambda {s}: {build(typed_res, [s] + lamb_arg_stack)})"
 
 
-def show(typed, lamb_arg_stack=[]):
+def build(typed, lamb_arg_stack=[]):
     return match_typed(
         case_lit=lambda s, typ: show_typed_lit(s, typ),
         case_idf=lambda s, _typ: show_typed_idf(s, lamb_arg_stack),
@@ -95,6 +95,10 @@ def show(typed, lamb_arg_stack=[]):
             t_idf_x, typed_res, lamb_arg_stack
         ),
     )(typed)
+
+
+def full_build(code):
+    return build(sem(parse(tokenize(desugar(code)))))
 
 
 def rt_compile(shown):

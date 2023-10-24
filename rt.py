@@ -1,5 +1,6 @@
 from os import listdir
 from lang.lib_6_run import *
+from tests.custom import *
 from utils.arg_parser import *
 from utils.print_if import *
 from utils.read_file import *
@@ -38,19 +39,19 @@ def asserted_sem(read_result, expr):
 
 
 def asserted_show(read_result, typed):
-    shown = rt_try(lambda: show(typed))
+    shown = rt_try(lambda: build(typed))
     rt_assert_equal("shown", read_result("6_shown.py.txt"))(shown)
 
 
 def read_test_file(current_element):
     def read_current_test_file(file_name):
-        return read_file(f"{path_tests}{current_element}/{file_name}")
+        return read_file(f"{path_tests_full}{current_element}/{file_name}")
 
     return read_current_test_file
 
 
 def run_tests():
-    for current_element in sorted(listdir(path_tests), key=int):
+    for current_element in sorted(listdir(path_tests_full), key=int):
         print(current_element, end=": ")
         read_current_test_file = read_test_file(current_element)
         code = read_current_test_file("1_code.rt.txt")
@@ -63,6 +64,8 @@ def run_tests():
             print("PASSED")
         except AssertionError as e:
             print(f"FAILED: {e}")
+
+    run_custom_tests()
 
 
 def get_runner(dev):
@@ -84,7 +87,7 @@ def unsafe_run_code(code, dev):
         tokens = run(tokenize, desugared, "3_TOKENS")
         expr = run(parse, tokens, "4_EXPR")
         typed = run(sem, expr, "5_TYPED")
-        shown = run(show, typed, "6_SHOWN")
+        shown = run(build, typed, "6_SHOWN")
         run(unsafe_run_built, rt_compile(shown), "7_RUNNING",
             show_res=False
         )
@@ -107,7 +110,7 @@ argParser = (
     .add("--test", action="store_true")
 )
 
-path_tests = "tests/full/"
+path_tests_full = "tests/full/"
 
 if __name__ == "__main__":
     main()
