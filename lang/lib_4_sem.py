@@ -54,16 +54,20 @@ class TypedLambda1:
 
 
 def match_typed(
-    lazy_for_typed_lit,
-    lazy_for_typed_idf,
-    lazy_for_typed_call_1,
-    lazy_for_typed_lambda_1,
+    case_lit,
+    case_idf,
+    case_call_1,
+    case_lambda_1,
 ):
     return lambda typed: ({
-        TypedLit: lazy_for_typed_lit,
-        TypedIdf: lazy_for_typed_idf,
-        TypedCall1: lazy_for_typed_call_1,
-        TypedLambda1: lazy_for_typed_lambda_1,
+        TypedLit: lambda: case_lit(typed.s, typed.typ),
+        TypedIdf: lambda: case_idf(typed.s, typed.typ),
+        TypedCall1: lambda: case_call_1(
+            typed.typed_f, typed.typed_x, typed.typ
+        ),
+        TypedLambda1: lambda: case_lambda_1(
+            typed.t_idf_x, typed.typed_res, typed.typ
+        ),
     }
     .get(
         type(typed),
@@ -73,31 +77,35 @@ def match_typed(
 
 def copy_typified(typed, new_typ):
     return match_typed(
-        lazy_for_typed_lit=lambda: typed,
-        lazy_for_typed_idf=lambda: TypedIdf(typed.s, new_typ),
-        lazy_for_typed_call_1=(
-            lambda: TypedCall1(typed.typed_f, typed.typed_x, new_typ)
+        case_lit=lambda s, typ: TypedLit(s, typ),
+        case_idf=lambda s, _typ: TypedIdf(s, new_typ),
+        case_call_1=lambda typed_f, typed_x, _typ: TypedCall1(
+            typed_f, typed_x, new_typ
         ),
-        lazy_for_typed_lambda_1=(
-            lambda: TypedLambda1(typed.t_idf_x, typed.typed_res, new_typ)
+        case_lambda_1=lambda t_idf_x, typed_res, _typ: TypedLambda1(
+            t_idf_x, typed_res, new_typ
         ),
     )(typed)
 
 
-def find_idf_type_call_1(self, s):
-    lookup_by_f = find_idf_type(self.typed_f, s)
+def find_idf_type_call_1(typed_f, typed_x, s):
+    lookup_by_f = find_idf_type(typed_f, s)
     return (lookup_by_f
             if not type(lookup_by_f) is Unknown0 else
-            find_idf_type(self.typed_x, s)
+            find_idf_type(typed_x, s)
             )
 
 
-def find_idf_type(typed, s):
+def find_idf_type(typed, s_to_lookup):
     return match_typed(
-        lazy_for_typed_lit=lambda: T_A,
-        lazy_for_typed_idf=lambda: typed.typ if typed.s == s else T_A,
-        lazy_for_typed_call_1=lambda: find_idf_type_call_1(typed, s),
-        lazy_for_typed_lambda_1=lambda: find_idf_type(typed.typed_res, s),
+        case_lit=lambda _s, _typ: T_A,
+        case_idf=lambda s, typ: typ if s == s_to_lookup else T_A,
+        case_call_1=lambda typed_f, typed_x, _typ: find_idf_type_call_1(
+            typed_f, typed_x, s_to_lookup
+        ),
+        case_lambda_1=lambda _t_idf_x, typed_res, _typ: find_idf_type(
+            typed_res, s_to_lookup
+        ),
     )(typed)
 
 

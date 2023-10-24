@@ -49,14 +49,14 @@ def match_brick(
     ))()
 
 
-def show_typed_lit(t_lit):
-    fail_if(t_lit.typ != T_Str, f"Unexpected literal `{t_lit}`")
-    return f"\"{t_lit.s}\""
+def show_typed_lit(s, typ):
+    fail_if(typ != T_Str, f"Unexpected literal `{TypedLit(s, typ)}`")
+    return f"\"{s}\""
 
 
-def show_typed_idf(t_idf, lamb_arg_stack):
+def show_typed_idf(s, lamb_arg_stack):
     return (
-        t_idf.s if t_idf.s in lamb_arg_stack else
+        s if s in lamb_arg_stack else
         match_builtin_idf(
             case_input=lambda: f"{BrickInput()}",
             case_print=lambda: f"(lambda {_s}: {BrickPrint(_s)})",
@@ -69,28 +69,30 @@ def show_typed_idf(t_idf, lamb_arg_stack):
                 lambda: f"(lambda {_right}: lambda {_left}: "
                         + f"{_left} + {_right})"
             )
-        )(t_idf.s)
+        )(s)
     )
 
 
-def show_typed_call_1(t_call, lamb_arg_stack):
-    shown_f = show(t_call.typed_f, lamb_arg_stack)
-    shown_x = show(t_call.typed_x, lamb_arg_stack)
+def show_typed_call_1(typed_f, typed_x, lamb_arg_stack):
+    shown_f = show(typed_f, lamb_arg_stack)
+    shown_x = show(typed_x, lamb_arg_stack)
     return f"({shown_f})({shown_x})"
 
 
-def show_typed_lambda_1(t_lamb, lamb_arg_stack):
-    s = t_lamb.t_idf_x.s
-    return f"(lambda {s}: {show(t_lamb.typed_res, [s] + lamb_arg_stack)})"
+def show_typed_lambda_1(t_idf_x, typed_res, lamb_arg_stack):
+    s = t_idf_x.s
+    return f"(lambda {s}: {show(typed_res, [s] + lamb_arg_stack)})"
 
 
 def show(typed, lamb_arg_stack=[]):
     return match_typed(
-        lazy_for_typed_lit=lambda: show_typed_lit(typed),
-        lazy_for_typed_idf=lambda: show_typed_idf(typed, lamb_arg_stack),
-        lazy_for_typed_call_1=lambda: show_typed_call_1(typed, lamb_arg_stack),
-        lazy_for_typed_lambda_1=(
-            lambda: show_typed_lambda_1(typed, lamb_arg_stack)
+        case_lit=lambda s, typ: show_typed_lit(s, typ),
+        case_idf=lambda s, _typ: show_typed_idf(s, lamb_arg_stack),
+        case_call_1=lambda typed_f, typed_x, _typ: show_typed_call_1(
+            typed_f, typed_x, lamb_arg_stack
+        ),
+        case_lambda_1=lambda t_idf_x, typed_res, _typ: show_typed_lambda_1(
+            t_idf_x, typed_res, lamb_arg_stack
         ),
     )(typed)
 
