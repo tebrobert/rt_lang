@@ -1,4 +1,5 @@
 from lang.lib_1_desugar import *
+from utils.list_match import *
 
 
 class TokenLitStr:
@@ -153,16 +154,23 @@ def lexx_operator(code_ext, token_idx_end, tokens):
 
 
 @tailrec
-def lexx_first_of(code_ext, current_idx, tokens, lexxers):
-    fail_if(lexxers == [],
-        f"Can't lexx. Given `{current_idx}` `{code_ext}`."
-    )
-    either_result = rt_try(lambda: lexxers[0](code_ext, current_idx, tokens))
-    return (
-        rec(code_ext, current_idx, tokens, lexxers[1:])
-        if is_fail(either_result) else
-        either_result
-    )
+def tokenize_first_of(code_ext, current_idx, tokens, tokenizers):
+    def try_next_tokenizer(current_tokenizer, rest_tokenizers):
+        either_result = rt_try(
+            lambda: current_tokenizer(code_ext, current_idx, tokens)
+        )
+        return (
+            rec(code_ext, current_idx, tokens, rest_tokenizers)
+            if is_fail(either_result) else
+            either_result
+        )
+
+    return match_list(
+        case_empty=lambda: fail(
+            f"Can't lexx. Given `{current_idx}` `{code_ext}`."
+        ),
+        case_nonempty=lambda head, tail: try_next_tokenizer(head, tail),
+    )(tokenizers)
 
 
 @tailrec
@@ -172,7 +180,7 @@ def lexx_rec(code_ext, current_idx, tokens):
         tokens if current_char == end_of_code else
         rec(code_ext, current_idx + 1, tokens)
         if current_char == " " else
-        rec(*lexx_first_of(code_ext, current_idx, tokens, [
+        rec(*tokenize_first_of(code_ext, current_idx, tokens, [
             lexx_idf,
             lexx_paren_open,
             lexx_paren_close,

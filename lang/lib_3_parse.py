@@ -89,7 +89,7 @@ def parse_first_of(ext_tokens, current_idx, parsers):
         case_empty=lambda: fail(
             f"Can't parse Expr given {current_idx} {ext_tokens}."
         ),
-        case_nonempty=lambda head, tail: try_next_parser(head, tail)
+        case_nonempty=lambda head, tail: try_next_parser(head, tail),
     )(parsers)
 
 
