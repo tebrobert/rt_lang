@@ -179,8 +179,8 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     typ_f, typ_x, synched_unks = f_x_synched_unks
 
     return match_type(
-        case_type0=lambda: solve_type_0,
-        case_unknown0=lambda: solve_unknown_0,
+        case_type0=lambda _s: solve_type_0,
+        case_unknown0=lambda _s: solve_unknown_0,
         case_type1=lambda _s, _t1: solve_type_1,
         case_type2=lambda _s, _t1, _t2: solve_type_2,
     )(typ_sub_fx)(

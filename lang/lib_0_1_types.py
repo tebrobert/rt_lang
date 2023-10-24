@@ -81,8 +81,8 @@ def match_type(
     case_type2,
 ):
     return lambda typ: ({
-        Type0: case_type0,
-        Unknown0: case_unknown0,
+        Type0: lambda: case_type0(typ.s),
+        Unknown0: lambda: case_unknown0(typ.s),
         Type1: lambda: case_type1(typ.s, typ.t1),
         Type2: lambda: case_type2(typ.s, typ.t1, typ.t2),
     }
@@ -94,8 +94,8 @@ def match_type(
 
 def concrete(typ, typ_from, typ_to):
     return match_type(
-        case_unknown0=lambda: typ_to if typ == typ_from else typ,
-        case_type0=lambda: typ,
+        case_unknown0=lambda _s: typ_to if typ == typ_from else typ,
+        case_type0=lambda _s: typ,
         case_type1=lambda s, t1: Type1(s, concrete(t1, typ_from, typ_to)),
         case_type2=lambda s, t1, t2: Type2(s,
             concrete(t1, typ_from, typ_to),
