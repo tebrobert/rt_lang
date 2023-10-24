@@ -58,16 +58,16 @@ class ExprLambda1:
 
 
 def match_expr(
-    lazy_for_lit_str,
-    lazy_for_idf,
-    lazy_for_call_1,
-    lazy_for_lambda_1,
+    case_lit_str,
+    case_idf,
+    case_call_1,
+    case_lambda_1,
 ):
     return lambda typed: ({
-        ExprLitStr: lazy_for_lit_str,
-        ExprIdf: lazy_for_idf,
-        ExprCall1: lazy_for_call_1,
-        ExprLambda1: lazy_for_lambda_1,
+        ExprLitStr: lambda: case_lit_str(typed.s),
+        ExprIdf: lambda: case_idf(typed.s),
+        ExprCall1: lambda: case_call_1(typed.expr_f, typed.expr_x),
+        ExprLambda1: lambda: case_lambda_1(typed.expr_idf_arg, typed.expr_res),
     }
     .get(
         type(typed),

@@ -210,9 +210,9 @@ def typify_f(typed_f, typed_x):
     return TypedCall1(new_typed_f, new_typed_x, new_typ_f.t2)
 
 
-def sem_expr_call_1(expr):
-    typed_f = sem(expr.expr_f)
-    typed_x = sem(expr.expr_x)
+def sem_expr_call_1(expr_f, expr_x):
+    typed_f = sem(expr_f)
+    typed_x = sem(expr_x)
 
     fail_if(not (type(typed_f.typ) is Type2 and typed_f.typ.s == builtin_Func),
         f"typed_f should be a `{builtin_Func}`",
@@ -225,9 +225,9 @@ def sem_expr_call_1(expr):
     )
 
 
-def sem_expr_lambda_1(expr):
-    t_idf_x = sem(expr.expr_idf_arg)
-    typed_res = sem(expr.expr_res)
+def sem_expr_lambda_1(expr_idf_arg, expr_res):
+    t_idf_x = sem(expr_idf_arg)
+    typed_res = sem(expr_res)
 
     lookup_typ_x = find_idf_type(typed_res, t_idf_x.s)
 
@@ -238,12 +238,14 @@ def sem_expr_lambda_1(expr):
 
 def sem(expr):
     return match_expr(
-        lazy_for_lit_str=lambda: TypedLit(expr.s, T_Str),
-        lazy_for_idf=lambda: TypedIdf(expr.s,
-            idf_to_type[expr.s] if expr.s in idf_to_type else T_A
+        case_lit_str=lambda s: TypedLit(s, T_Str),
+        case_idf=lambda s: TypedIdf(s,
+            idf_to_type[s] if s in idf_to_type else T_A
         ),
-        lazy_for_call_1=lambda: sem_expr_call_1(expr),
-        lazy_for_lambda_1=lambda: sem_expr_lambda_1(expr),
+        case_call_1=lambda expr_f, expr_x: sem_expr_call_1(expr_f, expr_x),
+        case_lambda_1=lambda expr_idf_arg, expr_res: sem_expr_lambda_1(
+            expr_idf_arg, expr_res
+        ),
     )(expr)
 
 
