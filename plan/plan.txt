@@ -37,9 +37,6 @@ def +(y: has[str])(x: has[str]): Str
 # anonymous structs
 # "has" - anonymous trait
 
-x.f()       ~ f(x)
-xs.map(str) ~ map(str)(xs) #~  xs map str
-5.-(1)      ~ -(1)(5)       ~  5 - 1
 
 
 
@@ -90,7 +87,7 @@ impl Multiply[Int, Float]:
 
 #2
 [][0]   # None              # the operator always returns Option[A]
-myOption.getOrDie
+myOption.getOrDie("")
 
 #3
 [][0]   # doesn't compile
