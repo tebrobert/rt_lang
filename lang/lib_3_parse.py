@@ -85,6 +85,7 @@ def parse_first_of(ext_tokens, current_idx, parsers):
             if is_fail(either_result) else
             either_result
         )
+
     return match_list(
         case_empty=lambda: fail(
             f"Can't parse Expr given {current_idx} {ext_tokens}."
@@ -199,3 +200,7 @@ def parse(tokens):
     )
 
     return expr
+
+
+def full_parse(code):
+    return parse(full_tokenize(code))

@@ -257,6 +257,10 @@ def sem(expr):
     )(expr)
 
 
+def full_sem(code):
+    return sem(full_parse(code))
+
+
 type_match_err_msg = (
     f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"
 )

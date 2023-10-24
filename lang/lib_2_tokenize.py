@@ -174,7 +174,7 @@ def tokenize_first_of(code_ext, current_idx, tokens, tokenizers):
 
 
 @tailrec
-def lexx_rec(code_ext, current_idx, tokens):
+def tokenize_rec(code_ext, current_idx, tokens):
     current_char = code_ext[current_idx]
     return (
         tokens if current_char == end_of_code else
@@ -193,7 +193,11 @@ def lexx_rec(code_ext, current_idx, tokens):
 
 
 def tokenize(code):
-    return lexx_rec(code + end_of_code, 0, [])
+    return tokenize_rec(code + end_of_code, 0, [])
+
+
+def full_tokenize(sugared_code):
+    return tokenize(desugar(sugared_code))
 
 
 end_of_code = "\0"
