@@ -16,6 +16,10 @@ def method_syntax_2():
     )
 
 
+def test_assign():
+    full_build("""msg = "hi"\nprint(msg)""")
+
+
 def test_assign_lambdas_1():
     full_build("""f1 <- pure(+("1"))\nprint("0".f1)""")
 
@@ -25,6 +29,7 @@ def test_assign_lambdas_2():
 
 
 custom_tests = [
+    test_assign,
     method_syntax_1,
     method_syntax_2,
     test_assign_lambdas_1,
