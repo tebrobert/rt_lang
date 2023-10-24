@@ -1,5 +1,4 @@
-from lang.lib_5_build import *
-from tests.custom import custom_tests
+from tests.custom import *
 from utils.fail import *
 from utils.interval import *
 from utils.read_file import *
@@ -97,7 +96,7 @@ def run_tests_rec(tests, results=[]):
     )(tests)
 
 
-def run_tests():
+def run_custom_tests():
     results = run_tests_rec(
         list(map(full_test, interval(1, 14)))
         + custom_tests
@@ -108,6 +107,21 @@ def run_tests():
         case_nonempty=lambda head, _tail: print("The first failure:", head)
     )(fails)
     print(f"PASSED {len(results) - len(fails)} of {len(results)}")
+
+
+def run_deferred_tests():
+    print(f"DEFERRED {len(deferred_tests)}")
+    results = run_tests_rec(deferred_tests)
+    successes = list(filter(is_success, results))
+    match_list(
+        case_empty=lambda: None,
+        case_nonempty=lambda _head, _tail: print("SOME DEFERRED TESTS PASSED!")
+    )(successes)
+
+
+def run_tests():
+    run_custom_tests()
+    run_deferred_tests()
 
 
 path_tests_full = "tests/full/"

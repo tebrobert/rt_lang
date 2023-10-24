@@ -1,4 +1,4 @@
-from lang.lib_4_sem import *
+from lang.lib_4_typify import *
 from lang.lib_0_2_builtins import *
 
 

@@ -43,7 +43,7 @@ def rt_try_assert_equal(label, expected_str, lazy_actual):
 def rt_try(action):
     try:
         return action()
-    #except RtError as rt_error:
+    # except RtError as rt_error:
     #    return rt_error
     except:
         return Exception(traceback.format_exc())
@@ -52,3 +52,7 @@ def rt_try(action):
 
 def is_fail(v):
     return isinstance(v, Exception)
+
+
+def is_success(v):
+    return not is_fail(v)

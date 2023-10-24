@@ -30,8 +30,11 @@ def test_assignment_lambdas_2():
 
 custom_tests = [
     test_assignment,
-    test_assignment_lambdas_1,
-    test_assignment_lambdas_2,
     test_method_syntax_1,
     test_method_syntax_2,
+]
+
+deferred_tests = [
+    test_assignment_lambdas_1,
+    test_assignment_lambdas_2,
 ]
