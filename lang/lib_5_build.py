@@ -98,7 +98,7 @@ def build(typed, lamb_arg_stack=[]):
 
 
 def full_build(code):
-    return build(sem(full_parse(code)))
+    return build(typify(full_parse(code)))
 
 
 def rt_compile(shown):

@@ -54,7 +54,7 @@ def test_typified(current_test_dir_reader):
     #parsed = eval(read_parsed(current_test_dir_reader))
     code = read_code(current_test_dir_reader)
     parsed = full_parse(code)
-    actual_typified = sem(parsed)
+    actual_typified = typify(parsed)
     expected_typified = read_typified(current_test_dir_reader)
     return rt_assert_equal("typify", actual_typified)(expected_typified)
 
@@ -62,7 +62,7 @@ def test_typified(current_test_dir_reader):
 def test_built(current_test_dir_reader):
     #typified = read_typified(current_test_dir_reader)
     code = read_code(current_test_dir_reader)
-    typified = full_sem(code)
+    typified = full_typify(code)
     actual_built = build(typified)
     expected_built = read_built(current_test_dir_reader)
     return rt_assert_equal("build", actual_built)(expected_built)

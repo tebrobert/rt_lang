@@ -31,7 +31,7 @@ def unsafe_run_code(code, dev):
         desugared = run(desugar, code, "2_DESUGARED")
         tokens = run(tokenize, desugared, "3_TOKENS")
         expr = run(parse, tokens, "4_EXPR")
-        typed = run(sem, expr, "5_TYPED")
+        typed = run(typify, expr, "5_TYPED")
         shown = run(build, typed, "6_SHOWN")
         run(unsafe_run_built, rt_compile(shown), "7_RUNNING",
             show_res=False

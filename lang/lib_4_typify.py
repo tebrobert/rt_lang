@@ -218,9 +218,9 @@ def typify_f(typed_f, typed_x):
     return TypedCall1(new_typed_f, new_typed_x, new_typ_f.t2)
 
 
-def sem_expr_call_1(expr_f, expr_x):
-    typed_f = sem(expr_f)
-    typed_x = sem(expr_x)
+def typify_call_1(expr_f, expr_x):
+    typed_f = typify(expr_f)
+    typed_x = typify(expr_x)
 
     fail_if(not (type(typed_f.typ) is Type2 and typed_f.typ.s == builtin_Func),
         f"typed_f should be a `{builtin_Func}`",
@@ -233,9 +233,9 @@ def sem_expr_call_1(expr_f, expr_x):
     )
 
 
-def sem_expr_lambda_1(expr_idf_arg, expr_res):
-    t_idf_x = sem(expr_idf_arg)
-    typed_res = sem(expr_res)
+def typify_lambda_1(expr_idf_arg, expr_res):
+    t_idf_x = typify(expr_idf_arg)
+    typed_res = typify(expr_res)
 
     lookup_typ_x = find_idf_type(typed_res, t_idf_x.s)
 
@@ -244,21 +244,21 @@ def sem_expr_lambda_1(expr_idf_arg, expr_res):
     return TypedLambda1(retyped_x, typed_res)
 
 
-def sem(expr):
+def typify(expr):
     return match_expr(
         case_lit_str=lambda s: TypedLit(s, T_Str),
         case_idf=lambda s: TypedIdf(s,
             idf_to_type[s] if s in idf_to_type else T_A
         ),
-        case_call_1=lambda expr_f, expr_x: sem_expr_call_1(expr_f, expr_x),
-        case_lambda_1=lambda expr_idf_arg, expr_res: sem_expr_lambda_1(
+        case_call_1=lambda expr_f, expr_x: typify_call_1(expr_f, expr_x),
+        case_lambda_1=lambda expr_idf_arg, expr_res: typify_lambda_1(
             expr_idf_arg, expr_res
         ),
     )(expr)
 
 
-def full_sem(code):
-    return sem(full_parse(code))
+def full_typify(code):
+    return typify(full_parse(code))
 
 
 type_match_err_msg = (
