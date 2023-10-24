@@ -112,7 +112,7 @@ def find_idf_typ(typified, s_to_lookup):
     )(typified)
 
 
-def solve_type_0(
+def solve_typ_0(
     typ_f, typ_x, typ_sub_fx, typ_sub_x,
     _f_x_synched_unks, synched_unks,
 ):
@@ -144,7 +144,7 @@ def solve_unknown_0(
     )
 
 
-def solve_type_1(
+def solve_typ_1(
     typ_f, typ_x, typ_sub_fx, typ_sub_x,
     f_x_synched_unks, synched_unks,
 ):
@@ -164,7 +164,7 @@ def solve_type_1(
     )
 
 
-def solve_type_2(
+def solve_typ_2(
     typ_f, typ_x, typ_sub_fx, typ_sub_x,
     f_x_synched_unks, synched_unks,
 ):
@@ -190,10 +190,10 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     typ_f, typ_x, synched_unks = f_x_synched_unks
 
     return match_typ(
-        case_typ0=lambda _s: solve_type_0,
+        case_typ0=lambda _s: solve_typ_0,
         case_unknown0=lambda _s: solve_unknown_0,
-        case_typ1=lambda _s, _t1: solve_type_1,
-        case_typ2=lambda _s, _t1, _t2: solve_type_2,
+        case_typ1=lambda _s, _t1: solve_typ_1,
+        case_typ2=lambda _s, _t1, _t2: solve_typ_2,
     )(typ_sub_fx)(
         typ_f, typ_x,
         typ_sub_fx, typ_sub_x,
