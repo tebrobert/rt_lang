@@ -5,8 +5,7 @@ print("Welcome, " + name)
 
 
 ####################
-Plan: better tests
-- Plan: eliminate desugaring - all parse
+Plan: eliminate desugaring - all parse
 
 Plan: refact sem (typify)
 Plan: ? add _L _R to type params on both sides before synchronizing
