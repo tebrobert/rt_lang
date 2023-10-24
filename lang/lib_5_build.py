@@ -32,20 +32,20 @@ class BrickPure:
 
 
 def match_brick(
-    lazy_for_input,
-    lazy_for_print,
-    lazy_for_flatmap,
-    lazy_for_pure,
+    case_input,
+    case_print,
+    case_flatmap,
+    case_pure,
 ):
-    return lambda typed: ({
-        BrickInput: lazy_for_input,
-        BrickPrint: lazy_for_print,
-        BrickFlatmap: lazy_for_flatmap,
-        BrickPure: lazy_for_pure,
+    return lambda brick: ({
+        BrickInput: case_input,
+        BrickPrint: lambda: case_print(brick.s),
+        BrickFlatmap: lambda: case_flatmap(brick.a_fb, brick.fa),
+        BrickPure: lambda: case_pure(brick.a),
     }
     .get(
-        type(typed),
-        lambda: fail(f"Value {typed} {type(typed)} is not a Brick")
+        type(brick),
+        lambda: fail(f"Value {brick} {type(brick)} is not a Brick")
     ))()
 
 
