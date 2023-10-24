@@ -179,10 +179,10 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     typ_f, typ_x, synched_unks = f_x_synched_unks
 
     return match_type(
-        lazy_for_type0=lambda: solve_type_0,
-        lazy_for_unknown0=lambda: solve_unknown_0,
-        lazy_for_type1=lambda: solve_type_1,
-        lazy_for_type2=lambda: solve_type_2,
+        case_type0=lambda: solve_type_0,
+        case_unknown0=lambda: solve_unknown_0,
+        case_type1=lambda _s, _t1: solve_type_1,
+        case_type2=lambda _s, _t1, _t2: solve_type_2,
     )(typ_sub_fx)(
         typ_f, typ_x,
         typ_sub_fx, typ_sub_x,

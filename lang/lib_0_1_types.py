@@ -56,7 +56,7 @@ class Type2:
         )
 
 
-def match_type(
+def unsafe_match_type(
     lazy_for_type0,
     lazy_for_unknown0,
     lazy_for_type1,
@@ -74,13 +74,31 @@ def match_type(
     ))()
 
 
+def match_type(
+    case_type0,
+    case_unknown0,
+    case_type1,
+    case_type2,
+):
+    return lambda typ: ({
+        Type0: case_type0,
+        Unknown0: case_unknown0,
+        Type1: lambda: case_type1(typ.s, typ.t1),
+        Type2: lambda: case_type2(typ.s, typ.t1, typ.t2),
+    }
+    .get(
+        type(typ),
+        lambda: fail(f"Value {typ} {type(typ)} is not a type")
+    ))()
+
+
 def concrete(typ, typ_from, typ_to):
     return match_type(
-        lazy_for_unknown0=lambda: typ_to if typ == typ_from else typ,
-        lazy_for_type0=lambda: typ,
-        lazy_for_type1=lambda: Type1(typ.s, concrete(typ.t1, typ_from, typ_to)),
-        lazy_for_type2=lambda: Type2(typ.s,
-            concrete(typ.t1, typ_from, typ_to),
-            concrete(typ.t2, typ_from, typ_to)
+        case_unknown0=lambda: typ_to if typ == typ_from else typ,
+        case_type0=lambda: typ,
+        case_type1=lambda s, t1: Type1(s, concrete(t1, typ_from, typ_to)),
+        case_type2=lambda s, t1, t2: Type2(s,
+            concrete(t1, typ_from, typ_to),
+            concrete(t2, typ_from, typ_to)
         ),
     )(typ)
