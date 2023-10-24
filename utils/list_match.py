@@ -1,8 +1,6 @@
-def list_match(lazy_for_empty, lazy_for_nonempty):
-    def list_matcher(list):
-        return (lazy_for_empty()
-                if list == [] else
-                lazy_for_nonempty(list[0], list[1:])
-                )
-
-    return list_matcher
+def match_list(case_empty, case_nonempty):
+    return lambda vals: (
+        case_empty()
+        if vals == [] else
+        case_nonempty(vals[0], vals[1:])
+    )

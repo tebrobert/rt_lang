@@ -1,4 +1,5 @@
 from lang.lib_2_tokenize import *
+from utils.list_match import *
 
 
 class ExprLitStr:
@@ -77,15 +78,19 @@ def match_expr(
 
 @tailrec
 def parse_first_of(ext_tokens, current_idx, parsers):
-    fail_if(parsers == [],
-        f"Can't parse Expr given {current_idx} {ext_tokens}."
-    )
-    either_result = rt_try(lambda: parsers[0](ext_tokens, current_idx))
-    return (
-        rec(ext_tokens, current_idx, parsers[1:])
-        if is_fail(either_result) else
-        either_result
-    )
+    def try_next_parser(current_parser, rest_parsers):
+        either_result = rt_try(lambda: current_parser(ext_tokens, current_idx))
+        return (
+            rec(ext_tokens, current_idx, rest_parsers)
+            if is_fail(either_result) else
+            either_result
+        )
+    return match_list(
+        case_empty=lambda: fail(
+            f"Can't parse Expr given {current_idx} {ext_tokens}."
+        ),
+        case_nonempty=lambda head, tail: try_next_parser(head, tail)
+    )(parsers)
 
 
 def parse_lit_str(ext_tokens, current_idx):
