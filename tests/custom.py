@@ -13,11 +13,8 @@ def test_assignment():
     full_build("""msg = "hi"\nprint(msg)""")
 
 
-def test_assignment_lambdas_1():
+def test_assignment_lambdas():
     full_build("""f1 <- pure(+("1"))\nprint("0".f1)""")
-
-
-def test_assignment_lambdas_2():
     full_build("""f1 = x => x.+("1")\nprint("0".f1)""")
 
 
@@ -44,6 +41,5 @@ custom_tests = [
 ]
 
 deferred_tests = [
-    test_assignment_lambdas_1,
-    test_assignment_lambdas_2,
+    test_assignment_lambdas,
 ]
