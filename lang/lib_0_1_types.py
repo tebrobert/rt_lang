@@ -92,13 +92,13 @@ def match_typ(
     ))()
 
 
-def concrete(typ, typ_from, typ_to):
+def update_typ(typ, typ_from, typ_to):
     return match_typ(
         case_unknown0=lambda _s: typ_to if typ == typ_from else typ,
         case_typ0=lambda _s: typ,
-        case_typ1=lambda s, t1: Typ1(s, concrete(t1, typ_from, typ_to)),
+        case_typ1=lambda s, t1: Typ1(s, update_typ(t1, typ_from, typ_to)),
         case_typ2=lambda s, t1, t2: Typ2(s,
-            concrete(t1, typ_from, typ_to),
-            concrete(t2, typ_from, typ_to)
+            update_typ(t1, typ_from, typ_to),
+            update_typ(t2, typ_from, typ_to)
         ),
     )(typ)

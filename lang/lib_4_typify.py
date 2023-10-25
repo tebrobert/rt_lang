@@ -78,7 +78,7 @@ def match_typified(
     )()
 
 
-def update_type(typified, new_typ):
+def replace_typ(typified, new_typ):
     return match_typified(
         case_lit=lambda s, typ: TypifiedLit(s, typ),
         case_idf=lambda s, _typ: TypifiedIdf(s, new_typ),
@@ -130,7 +130,7 @@ def solve_unknown_0(
     f_x_synched_unks, synched_unks,
 ):
     return (
-        solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
+        solve(update_typ(typ_f, typ_sub_fx, typ_sub_x), typ_x)
         if type(typ_sub_x) is Typ0 else
         (
             (typ_f, typ_x, synched_unks.union({typ_sub_fx.s}))
@@ -140,7 +140,7 @@ def solve_unknown_0(
         if type(typ_sub_x) is TypUnknown0 else
         fail(type_match_err_msg)
         if typ_sub_fx.s in f_x_synched_unks else
-        solve(concrete(typ_f, typ_sub_fx, typ_sub_x), typ_x)
+        solve(update_typ(typ_f, typ_sub_fx, typ_sub_x), typ_x)
     )
 
 
@@ -210,14 +210,14 @@ def concreted(typ_f, typ_x): # what it returns?
 
 
 def typify_x(typified_f, typified_x):
-    new_typified_x = update_type(typified_x, typified_f.typ.t1)
+    new_typified_x = replace_typ(typified_x, typified_f.typ.t1)
     return TypifiedCall1(typified_f, new_typified_x, typified_f.typ.t2)
 
 
 def typify_f(typified_f, typified_x):
     new_typ_f = concreted(typified_f.typ, typified_x.typ)
-    new_typified_f = update_type(typified_f, new_typ_f)
-    new_typified_x = update_type(typified_x, new_typ_f.t1)
+    new_typified_f = replace_typ(typified_f, new_typ_f)
+    new_typified_x = replace_typ(typified_x, new_typ_f.t1)
     return TypifiedCall1(new_typified_f, new_typified_x, new_typ_f.t2)
 
 
@@ -242,7 +242,7 @@ def typify_lambda_1(expr_idf_arg, expr_res):
 
     found_typ_x = find_idf_typ(typified_res, t_idf_x.s)
 
-    retypified_x = update_type(t_idf_x, found_typ_x)
+    retypified_x = replace_typ(t_idf_x, found_typ_x)
 
     return TypifiedLambda1(retypified_x, typified_res)
 
