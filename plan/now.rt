@@ -16,20 +16,20 @@ Plan: eliminate desugaring - all parse
     a B c d e => (a B c) d e
     a b c D e => a b (c D e)
 
-    x = - - a ( - - b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n # all tokens
+    x = - - a ( - - b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n # ALL TOKENS
     x = - - a ( - -b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
-    x = - - a ( --b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
+    x = - - a ( --b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n # INNER parsed unary
     x = - - a (--b) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
     x = - - a (--b) (c) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
-    x = - - a (--b) (c) + d ( +e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
+    x = - - a (--b) (c) + d ( +e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n # INNER parsed unary
     x = - - a (--b) (c) + d (+e) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
     x = - - a (--b) (c) + d (+e) (f) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
     x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j ( k ) ) . l ( m ) . n
     x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j (k) ) . l ( m ) . n
-    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j(k) ) . l ( m ) . n
-    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i.j(k) ) . l ( m ) . n
+    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j(k) ) . l ( m ) . n # INNER parsed calls
+    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i.j(k) ) . l ( m ) . n # INNER parsed dots
     x = - - a (--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l ( m ) . n
-    x = - - a (--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n # all expr, parsed braced
+    x = - - a (--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n # ALL EXPR, parsed braced
     x = - - a(--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n
     x = - - a(--b)(c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n
     x = - - a(--b)(c) + d(+e) (f) * g (h) (i.j(k)) . l (m) . n
