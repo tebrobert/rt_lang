@@ -3,14 +3,18 @@ from utils.fail import *
 from utils.tailrec import *
 
 
-def has_eq(line):
-    return (line.count("=") > sum([
+def count_eq(line):
+    return line.count("=") - sum([
         line.count("=>"),
         line.count("=="),
         line.count("!="),
         line.count(">="),
         line.count("<="),
-    ]))
+    ])
+
+
+def has_eq(line):
+    return count_eq(line) > 0
 
 
 def arrow_split(line):
@@ -45,7 +49,7 @@ def de_eq(lines, de_eq_lines=[]):
         idx = line.index("=")
         left = line[:idx]
         right = line[idx + 1:]
-        fail_if("=" in right,
+        fail_if(count_eq(right) > 1,
             "Can't have more than one `=` in a line."
         )
         return f"{left} <- pure({right})"
