@@ -23,9 +23,9 @@ def wip():
     fail("The feature was not implemented. Work in progress...")
 
 
-def rt_assert_equal(label, actual, expected):
+def rt_assert_equal(actual, expected):
     fail_if(str(expected) != str(actual),
-        f"!={label}, expected: `{expected}`, got: `{actual}`"
+        f"!=, expected: `{expected}`, got: `{actual}`"
     )
     return actual
 
