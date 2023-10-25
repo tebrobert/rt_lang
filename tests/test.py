@@ -33,21 +33,21 @@ def test_desugar(current_test_dir_reader):
     code = read_code(current_test_dir_reader)
     actual_desugared = desugar(code)
     expected_desugared = read_desugared(current_test_dir_reader)
-    return rt_assert_equal("desugar", actual_desugared)(expected_desugared)
+    return rt_assert_equal("desugar", actual_desugared, expected_desugared)
 
 
 def test_tokenize(current_test_dir_reader):
     desugared = read_desugared(current_test_dir_reader)
     actual_tokenized = tokenize(desugared)
     expected_tokenized = read_tokenized(current_test_dir_reader)
-    return rt_assert_equal("tokenize", actual_tokenized)(expected_tokenized)
+    return rt_assert_equal("tokenize", actual_tokenized, expected_tokenized)
 
 
 def test_parse(current_test_dir_reader):
     tokenized = eval(read_tokenized(current_test_dir_reader))
     actual_parsed = parse(tokenized)
     expected_parsed = read_parsed(current_test_dir_reader)
-    return rt_assert_equal("parse", actual_parsed)(expected_parsed)
+    return rt_assert_equal("parse", actual_parsed, expected_parsed)
 
 
 def test_typified(current_test_dir_reader):
@@ -56,7 +56,7 @@ def test_typified(current_test_dir_reader):
     parsed = full_parse(code)
     actual_typified = typify(parsed)
     expected_typified = read_typified(current_test_dir_reader)
-    return rt_assert_equal("typify", actual_typified)(expected_typified)
+    return rt_assert_equal("typify", actual_typified, expected_typified)
 
 
 def test_built(current_test_dir_reader):
@@ -65,7 +65,7 @@ def test_built(current_test_dir_reader):
     typified = full_typify(code)
     actual_built = build(typified)
     expected_built = read_built(current_test_dir_reader)
-    return rt_assert_equal("build", actual_built)(expected_built)
+    return rt_assert_equal("build", actual_built, expected_built)
 
 
 def get_current_test_dir_reader(test_number):

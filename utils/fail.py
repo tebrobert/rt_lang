@@ -1,4 +1,3 @@
-from utils.flattap import flattap
 import traceback
 
 
@@ -24,20 +23,11 @@ def wip():
     fail("The feature was not implemented. Work in progress...")
 
 
-def rt_assert_equal(label, actual):
-    def f(expected):
-        fail_if(str(expected) != str(actual),
-            f"!={label}, expected: `{expected}`, got: `{actual}`"
-        )
-        return actual
-
-    return f
-
-
-def rt_try_assert_equal(label, expected_str, lazy_actual):
-    return flattap(lambda: rt_try(lazy_actual),
-        rt_assert_equal(label, expected_str)
+def rt_assert_equal(label, actual, expected):
+    fail_if(str(expected) != str(actual),
+        f"!={label}, expected: `{expected}`, got: `{actual}`"
     )
+    return actual
 
 
 def rt_try(action):
