@@ -2,6 +2,13 @@ from lang.lib_5_build import *
 from utils.fail import *
 
 
+def test_sync_typs():
+    rt_assert_equal(
+        concreted(T_Func(T_A, T_Unit), T_Str),
+        T_Func(T_Str, T_Unit)
+    )
+
+
 def test_assignment():
     full_build("""msg = "hi"\nprint(msg)""")
 
@@ -29,6 +36,8 @@ def test_method_syntax_2():
 
 
 custom_tests = [
+    test_sync_typs,
+
     test_assignment,
     test_method_syntax_1,
     test_method_syntax_2,
