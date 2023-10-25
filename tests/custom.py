@@ -26,6 +26,7 @@ def test_assignment_lambdas_1():
 
 def test_assignment_lambdas_2():
     full_build("""f1 = x => x.+("1")\nprint("0".f1)""")
+    full_build("""f1 = +("1")\nprint("0".f1)""")
 
 
 def test_method_syntax():
