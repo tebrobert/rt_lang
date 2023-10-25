@@ -24,7 +24,7 @@ Plan: eliminate desugaring - all parse
     x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j(k) ) . l ( m ) . n # INNER parsed calls
     x = - - a (--b) (c) + d (+e) (f) * g (h) ( i.j(k) ) . l ( m ) . n # INNER parsed dots
     x = - - a (--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l ( m ) . n
-    x = - - a (--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n # ALL EXPR, parsed braced
+    x = - - a (--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n # not ALL EXPR, parsed braced
     x = - - a(--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n
     x = - - a(--b)(c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n
     x = - - a(--b)(c) + d(+e) (f) * g (h) (i.j(k)) . l (m) . n
