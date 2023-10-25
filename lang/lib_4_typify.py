@@ -91,23 +91,23 @@ def replace_typ(typified, new_typ):
     )(typified)
 
 
-def find_idf_typ_call_1(typified_f, typified_x, s_to_lookup):
-    lookup_by_f = find_idf_typ(typified_f, s_to_lookup)
+def find_idf_typ_call_1(typified_f, typified_x, s_to_find):
+    lookup_by_f = find_idf_typ(typified_f, s_to_find)
     return (lookup_by_f
             if not type(lookup_by_f) is TypUnknown0 else
-            find_idf_typ(typified_x, s_to_lookup)
+            find_idf_typ(typified_x, s_to_find)
             )
 
 
-def find_idf_typ(typified, s_to_lookup):
+def find_idf_typ(typified, s_to_find):
     return match_typified(
         case_lit=lambda _s, _typ: T_A,
-        case_idf=lambda s, typ: typ if s == s_to_lookup else T_A,
+        case_idf=lambda s, typ: typ if s == s_to_find else T_A,
         case_call_1=lambda typed_f, typed_x, _typ: find_idf_typ_call_1(
-            typed_f, typed_x, s_to_lookup
+            typed_f, typed_x, s_to_find
         ),
         case_lambda_1=lambda _t_idf_x, typed_res, _typ: find_idf_typ(
-            typed_res, s_to_lookup
+            typed_res, s_to_find
         ),
     )(typified)
 
