@@ -9,6 +9,13 @@ def test_sync_typs():
     )
 
 
+def test_sync_typs_with_unknown_f_type():
+    rt_assert_equal(
+        concreted(T_A, T_Str),
+        T_Func(T_Str, T_A)
+    )
+
+
 def test_assignment():
     full_build("""msg = "hi"\nprint(msg)""")
 
@@ -38,4 +45,5 @@ custom_tests = [
 
 deferred_tests = [
     test_assignment_lambdas,
+    test_sync_typs_with_unknown_f_type,
 ]
