@@ -33,7 +33,7 @@ Plan: eliminate desugaring - all parse
     x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)) . l (m) . n
     x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)) . l(m) . n # parsed calls
     x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m) . n
-    x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m).n # parsed dots
+    x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m).n # ALL EXPR, parsed dots
     x = - -a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m).n
     x = --a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m).n # parsed unary
     x = --a(--b)(c) + d(+e)(f)*g(h)(i.j(k)).l(m).n # parsed high
@@ -52,4 +52,4 @@ Plan: eliminate desugaring - all parse
     l==r, l!=r              # ? ->
     l and r                 # ->
     l or r                  # ->
-    l = r                   # ? <-
+    l = r, l <- r           # ? <-
