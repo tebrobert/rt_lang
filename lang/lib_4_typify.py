@@ -238,12 +238,12 @@ def typify_call_1(expr_f, expr_x):
 
 
 def typify_lambda_1(expr_idf_arg, expr_res):
-    t_idf_x = typify(expr_idf_arg)
+    typified_idf_x = typify(expr_idf_arg)
     typified_res = typify(expr_res)
 
-    found_typ_x = find_idf_typ(typified_res, t_idf_x.s)
+    found_typ_x = find_idf_typ(typified_res, typified_idf_x.s)
 
-    retypified_x = replace_typ(t_idf_x, found_typ_x)
+    retypified_x = replace_typ(typified_idf_x, found_typ_x)
 
     return TypifiedLambda1(retypified_x, typified_res)
 
