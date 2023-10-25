@@ -16,6 +16,36 @@ Plan: eliminate desugaring - all parse
     a B c d e => (a B c) d e
     a b c D e => a b (c D e)
 
+    x = - - a ( - - b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n # all tokens
+    x = - - a ( - -b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
+    x = - - a ( --b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
+    x = - - a (--b) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
+    x = - - a (--b) (c) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
+    x = - - a (--b) (c) + d ( +e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
+    x = - - a (--b) (c) + d (+e) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
+    x = - - a (--b) (c) + d (+e) (f) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
+    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j ( k ) ) . l ( m ) . n
+    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j (k) ) . l ( m ) . n
+    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j(k) ) . l ( m ) . n
+    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i.j(k) ) . l ( m ) . n
+    x = - - a (--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l ( m ) . n
+    x = - - a (--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n # all expr, parsed braced
+    x = - - a(--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n
+    x = - - a(--b)(c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n
+    x = - - a(--b)(c) + d(+e) (f) * g (h) (i.j(k)) . l (m) . n
+    x = - - a(--b)(c) + d(+e)(f) * g (h) (i.j(k)) . l (m) . n
+    x = - - a(--b)(c) + d(+e)(f) * g(h) (i.j(k)) . l (m) . n
+    x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)) . l (m) . n
+    x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)) . l(m) . n # parsed calls
+    x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m) . n
+    x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m).n # parsed dots
+    x = - -a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m).n
+    x = --a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m).n # parsed unary
+    x = --a(--b)(c) + d(+e)(f)*g(h)(i.j(k)).l(m).n # parsed high
+    x = --a(--b)(c)+d(+e)(f)*g(h)(i.j(k)).l(m).n # parsed low
+    x=--a(--b)(c)+d(+e)(f)*g(h)(i.j(k)).l(m).n # parsed assignment
+
+
     Precedence:
     f(x)                    # ->
     l.r                     # ->
