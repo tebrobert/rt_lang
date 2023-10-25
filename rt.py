@@ -1,6 +1,7 @@
 from lang.lib_6_run import *
 from tests.test import *
 from utils.arg_parser import *
+from utils.flattap import *
 from utils.print_if import *
 from utils.read_file import *
 

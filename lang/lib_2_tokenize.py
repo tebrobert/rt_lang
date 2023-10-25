@@ -70,7 +70,7 @@ def is_non_initial_idf_char(char):
 
 
 def is_operator_char(char):
-    return char in ["+", "-", "*", "/", "%", ">", "<", "=", "!"]
+    return char in ["+", "-", "*", "/", "%", ">", "<", "=", "!", "~"]
 
 
 def fail_bad_eq_seq(code_ext, token_idx_end):
@@ -167,7 +167,8 @@ def tokenize_first_of(code_ext, current_idx, tokens, tokenizers):
 
     return match_list(
         case_empty=lambda: fail(
-            f"Can't lexx. Given `{current_idx}` `{code_ext}`."
+            f"Can't tokenize.",
+            "Given `{current_idx}` `{code_ext}`.",
         ),
         case_nonempty=lambda head, tail: try_next_tokenizer(head, tail),
     )(tokenizers)
