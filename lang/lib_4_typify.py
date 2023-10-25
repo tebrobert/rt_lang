@@ -201,20 +201,21 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     )
 
 
-def solve(typ_f, typ_x): # what it returns?
+def solve(typ_f, typ_x):
     return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
 
 
-def concreted(typ_f, typ_x): # what it returns?
-    return solve(typ_f, typ_x)[0]  # 0 is unclear, should use a class
+def concreted(typ_f, typ_x):
+    new_typ_f, _new_typ_x, _synched_unks = solve(typ_f, typ_x)
+    return new_typ_f
 
 
-def typify_x(typified_f, typified_x):
+def continue_typifying_call_1_with_unknown_x(typified_f, typified_x):
     new_typified_x = replace_typ(typified_x, typified_f.typ.t1)
     return TypifiedCall1(typified_f, new_typified_x, typified_f.typ.t2)
 
 
-def typify_f(typified_f, typified_x):
+def continue_typifying_call_1(typified_f, typified_x):
     new_typ_f = concreted(typified_f.typ, typified_x.typ)
     new_typified_f = replace_typ(typified_f, new_typ_f)
     new_typified_x = replace_typ(typified_x, new_typ_f.t1)
@@ -230,9 +231,9 @@ def typify_call_1(expr_f, expr_x):
     )
 
     return (
-        typify_x(typified_f, typified_x)
+        continue_typifying_call_1_with_unknown_x(typified_f, typified_x)
         if type(typified_x.typ) is TypUnknown0 else
-        typify_f(typified_f, typified_x)
+        continue_typifying_call_1(typified_f, typified_x)
     )
 
 
