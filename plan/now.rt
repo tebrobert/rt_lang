@@ -11,5 +11,20 @@ Plan: eliminate desugaring - all parse
 #Plan: ? add _FX _X to type params on both sides before synchronizing
 - The operator syntax - plan how it should work
 
+    a b c => b(c)(a)
 
+    a B c d e => d(e)(B(c)(a)       # 1 * 2 + 3 => +(3)(*(2)(1)
+    a b c D e => b(D(e)(c)(a)       # 1 + 2 * 3 => +(*(3)(2)(1)
 
+    Precedence:
+    f(x)                    # ->
+    l.r                     # ->
+    +v, -v                  # <-
+    not v                   # <-
+    l*r, l/r, l%r           # ->
+    l+r, l-r                # ->
+    l<r, l<=r, l>r, l>=r    # ? ->
+    l==r, l!=r              # ? ->
+    l and r                 # ->
+    l or r                  # ->
+    l = r                   # ? <-
