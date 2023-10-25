@@ -201,7 +201,7 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     )
 
 
-def solve(typ_f, typ_x):
+def solve(typ_f, typ_x): # may have sync conflicts
     fail_not_a_func = lambda: fail(
         f"typ_f `{typ_f}` should be a `{builtin_Func}`"
     )
