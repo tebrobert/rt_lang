@@ -17,16 +17,16 @@ def test_sync_typs_with_unknown_f_type():
 
 
 def test_assignment():
-    full_build("""msg = "hi"\nprint(msg)""")
+    full_build_py("""msg = "hi"\nprint(msg)""")
 
 
 def test_assignment_lambdas_1():
-    full_build("""f1 <- pure(+("1"))\nprint("0".f1)""")
+    full_build_py("""f1 <- pure(+("1"))\nprint("0".f1)""")
 
 
 def test_assignment_lambdas_2():
-    full_build("""f1 = x => x.+("1")\nprint("0".f1)""")
-    full_build("""f1 = +("1")\nprint("0".f1)""")
+    full_build_py("""f1 = x => x.+("1")\nprint("0".f1)""")
+    full_build_py("""f1 = +("1")\nprint("0".f1)""")
 
 
 def test_method_syntax():
@@ -40,6 +40,10 @@ def test_method_syntax():
     )
 
 
+def test_operator_naming():
+    eval(full_build_str_py("""<<<~~~>>> = "Hello"\nprint(<<<~~~>>>)"""))
+
+
 custom_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
@@ -50,4 +54,5 @@ custom_tests = [
 ]
 
 deferred_tests = [
+    test_operator_naming,
 ]

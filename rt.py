@@ -33,8 +33,8 @@ def unsafe_run_code(code, dev):
         tokens = run(tokenize, desugared, "3_TOKENS")
         expr = run(parse, tokens, "4_EXPR")
         typed = run(typify, expr, "5_TYPED")
-        shown = run(build, typed, "6_SHOWN")
-        run(unsafe_run_built, rt_compile(shown), "7_RUNNING",
+        shown = run(build_str_py, typed, "6_SHOWN")
+        run(unsafe_run_built, build_py(shown), "7_RUNNING",
             show_res=False
         )
     except Exception as e:
