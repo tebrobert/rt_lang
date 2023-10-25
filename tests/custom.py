@@ -41,13 +41,12 @@ def test_method_syntax():
 
 custom_tests = [
     test_sync_typs,
-
+    test_sync_typs_with_unknown_f_type,
     test_assignment,
+    test_assignment_lambdas_1,
     test_method_syntax,
 ]
 
 deferred_tests = [
-    test_assignment_lambdas_1,
     test_assignment_lambdas_2,
-    test_sync_typs_with_unknown_f_type,
 ]

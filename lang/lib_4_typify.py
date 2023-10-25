@@ -202,7 +202,16 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
 
 
 def solve(typ_f, typ_x):
-    return solve_rec(typ_f.t1, typ_x, (typ_f, typ_x, set()))
+    fail_not_a_func = lambda: fail(
+        f"typ_f `{typ_f}` should be a `{builtin_Func}`"
+    )
+
+    return match_typ(
+        case_typ0=lambda _s: fail_not_a_func(),
+        case_unknown0=lambda _s: (T_Func(typ_x, T_A), typ_x, set()),
+        case_typ1=lambda _s, _t1: fail_not_a_func(),
+        case_typ2=lambda _s, t1, _t2: solve_rec(t1, typ_x, (typ_f, typ_x, set())),
+    )(typ_f)
 
 
 def concreted(typ_f, typ_x):
@@ -226,7 +235,9 @@ def typify_call_1(expr_f, expr_x):
     typified_f = typify(expr_f)
     typified_x = typify(expr_x)
 
-    rt_assert(type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func,
+    rt_assert(
+        type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func
+        or type(typified_f.typ) is TypUnknown0,
         f"typified_f should be a `{builtin_Func}`",
     )
 
