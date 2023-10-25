@@ -226,7 +226,7 @@ def typify_call_1(expr_f, expr_x):
     typified_f = typify(expr_f)
     typified_x = typify(expr_x)
 
-    fail_if(not (type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func),
+    rt_assert(type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func,
         f"typified_f should be a `{builtin_Func}`",
     )
 

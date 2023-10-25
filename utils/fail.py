@@ -15,8 +15,8 @@ def fail_if(cond, *msg):
         fail(*msg)
 
 
-def rt_assert(cond):
-    fail_if(not cond, "Assertion error.")
+def rt_assert(cond, msg="Assertion error."):
+    fail_if(not cond, msg)
 
 
 def wip():
@@ -24,8 +24,8 @@ def wip():
 
 
 def rt_assert_equal(actual, expected):
-    fail_if(str(expected) != str(actual),
-        f"!=, expected: `{expected}`, got: `{actual}`"
+    rt_assert(str(expected) == str(actual),
+        f"`{actual}` should be equal to  `{expected}`.",
     )
     return actual
 
