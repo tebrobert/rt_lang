@@ -131,7 +131,7 @@ def test_lines_reversed():
 def test_parse2():
     current_test_dir_reader = get_current_test_dir_reader(7)
     code = read_code(current_test_dir_reader)
-    print(full_parse2(code))
+    full_build_py(code)
 
 
 custom_tests = [

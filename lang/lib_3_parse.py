@@ -272,4 +272,8 @@ def full_parse2(code):
     return parse2(full_tokenize2(code))
 
 
+# parse = parse1
+# full_parse = full_parse1
+
+
 end_of_tokens = "\0"
