@@ -65,6 +65,13 @@ def test_built(current_test_dir_reader):
     typified = full_typify(code)
     actual_built = build_str_py(typified)
     expected_built = read_built(current_test_dir_reader)
+    if str(actual_built) != str(expected_built):
+        print()
+        print(code)
+        print()
+        print(expected_built)
+        print()
+        print(actual_built)
     return rt_assert_equal(actual_built, expected_built)
 
 

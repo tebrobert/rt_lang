@@ -73,7 +73,7 @@ def to_latin_idf(idf_s):
 
 def show_typed_idf(s, lamb_arg_stack):
     return (
-        s if s in lamb_arg_stack else
+        to_latin_idf(s) if s in lamb_arg_stack else
         match_builtin_idf(
             case_input=lambda: f"{BrickInput()}",
             case_print=lambda: f"(lambda {_s}: {BrickPrint(_s)})",
@@ -98,7 +98,8 @@ def show_typed_call_1(typed_f, typed_x, lamb_arg_stack):
 
 def show_typed_lambda_1(t_idf_x, typed_res, lamb_arg_stack):
     s = t_idf_x.s
-    return f"(lambda {s}: {build_str_py(typed_res, [s] + lamb_arg_stack)})"
+    built = build_str_py(typed_res, [s] + lamb_arg_stack)
+    return f"(lambda {to_latin_idf(s)}: {built})"
 
 
 def build_str_py(typed, lamb_arg_stack=[]):
@@ -126,9 +127,9 @@ def full_build_py(code):
     return build_py(full_build_str_py(code))
 
 
-_s = "s"
-_a_fb = "a_fb"
-_fa = "fa"
-_a = "a"
-_right = "right"
-_left = "left"
+_s = to_latin_idf("s")
+_a_fb = to_latin_idf("a_fb")
+_fa = to_latin_idf("fa")
+_a = to_latin_idf("a")
+_right = to_latin_idf("right")
+_left = to_latin_idf("left")

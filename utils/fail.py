@@ -25,7 +25,7 @@ def wip():
 
 def rt_assert_equal(actual, expected):
     rt_assert(str(expected) == str(actual),
-        f"`{actual}` should be equal to  `{expected}`.",
+        f"Actual: `{actual}`, expected: `{expected}`.",
     )
     return actual
 
