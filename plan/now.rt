@@ -5,10 +5,9 @@ print("Welcome, " + name)
 
 
 ####################
-Plan: eliminate desugaring - all parse
-
 #Plan: refact sem (typify)
 #Plan: ? add _FX _X to type params on both sides before synchronizing
+
 - The operator syntax - plan how it should work
 
     x = - - a ( - - b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n # ALL TOKENS
@@ -52,4 +51,5 @@ Plan: eliminate desugaring - all parse
     l==r, l!=r              # ? ->
     l and r                 # ->
     l or r                  # ->
+
     l = r, l <- r           # ? <-
