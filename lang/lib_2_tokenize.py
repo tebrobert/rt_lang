@@ -40,6 +40,22 @@ class TokenParenClose:
         return f"{self}" == f"{that}"
 
 
+class TokenLessMinus:
+    def __repr__(self):
+        return "TokenLessMinus()"
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
+
+class TokenEndl:
+    def __repr__(self):
+        return "TokenEndl()"
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
+
 class TokenEqGr:
     def __repr__(self):
         return "TokenEqGr()"
@@ -130,6 +146,16 @@ def lexx_eq_gr(code_ext, current_idx, tokens):
     return (code_ext, current_idx + 2, tokens + [TokenEqGr()])
 
 
+def lexx_less_minus(code_ext, current_idx, tokens):
+    rt_assert(code_ext[current_idx:].startswith("<-"))
+    return (code_ext, current_idx + 2, tokens + [TokenLessMinus()])
+
+
+def lexx_endl(code_ext, current_idx, tokens):
+    rt_assert(code_ext[current_idx:].startswith("\n"))
+    return (code_ext, current_idx + 1, tokens + [TokenEndl()])
+
+
 def lexx_dot(code_ext, current_idx, tokens):
     rt_assert(code_ext[current_idx] == ".")
     return (code_ext, current_idx + 1, tokens + [TokenDot()])
@@ -168,7 +194,7 @@ def tokenize_first_of(code_ext, current_idx, tokens, tokenizers):
     return match_list(
         case_empty=lambda: fail(
             f"Can't tokenize.",
-            "Given `{current_idx}` `{code_ext}`.",
+            f"Given `{current_idx}` `{code_ext}`.",
         ),
         case_nonempty=lambda head, tail: try_next_tokenizer(head, tail),
     )(tokenizers)
@@ -186,6 +212,8 @@ def tokenize_rec(code_ext, current_idx, tokens):
             lexx_paren_open,
             lexx_paren_close,
             lexx_eq_gr,
+            lexx_less_minus,
+            lexx_endl,
             lexx_string,
             lexx_operator,
             lexx_dot,
@@ -199,6 +227,10 @@ def tokenize(code):
 
 def full_tokenize(sugared_code):
     return tokenize(desugar(sugared_code))
+
+
+def full_tokenize2(sugared_code):
+    return tokenize(sugared_code)
 
 
 end_of_code = "\0"
