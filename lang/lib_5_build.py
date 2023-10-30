@@ -55,10 +55,19 @@ def show_typed_lit(s, typ):
 
 
 @tailrec
-def to_latin_idf(idf_s, acc="rtlang_"):
+def operator_to_latin_idf(idf_s, acc):
     return match_list(
         case_empty=lambda: acc,
-        case_nonempty=lambda head, tail: wip,
+        case_nonempty=lambda head, tail: rec(tail, acc + char_to_latin[head]),
+    )(idf_s)
+
+
+@tailrec
+def to_latin_idf(idf_s):
+    return (
+        ("identifier_" + idf_s)
+        if all(map(lambda char: char not in char_to_latin.keys(), idf_s)) else
+        operator_to_latin_idf(idf_s, acc="operator_")
     )
 
 
