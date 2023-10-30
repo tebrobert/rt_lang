@@ -246,4 +246,6 @@ char_to_latin = {
     "=": "equal_",
     "!": "exclamation_",
     "~": "tilda_",
+    "|": "or_",
+    "&": "and_",
 }
