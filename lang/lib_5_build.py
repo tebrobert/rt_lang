@@ -54,6 +54,14 @@ def show_typed_lit(s, typ):
     return f"\"{s}\""
 
 
+@tailrec
+def to_latin_idf(idf_s, acc="rtlang_"):
+    return match_list(
+        case_empty=lambda: acc,
+        case_nonempty=lambda head, tail: wip,
+    )
+
+
 def show_typed_idf(s, lamb_arg_stack):
     return (
         s if s in lamb_arg_stack else

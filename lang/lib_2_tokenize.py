@@ -86,7 +86,7 @@ def is_non_initial_idf_char(char):
 
 
 def is_operator_char(char):
-    return char in ["+", "-", "*", "/", "%", ">", "<", "=", "!", "~"]
+    return char in char_to_latin.keys()
 
 
 def fail_bad_eq_seq(code_ext, token_idx_end):
@@ -234,3 +234,16 @@ def full_tokenize2(sugared_code):
 
 
 end_of_code = "\0"
+
+char_to_latin = {
+    "+": "plus_",
+    "-": "minus_",
+    "*": "star_",
+    "/": "slash_",
+    "%": "percent_",
+    ">": "greater_",
+    "<": "less_",
+    "=": "equal_",
+    "!": "exclamation_",
+    "~": "tilda_",
+}
