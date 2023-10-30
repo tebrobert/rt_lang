@@ -44,6 +44,10 @@ def test_operator_naming():
     eval(full_build_str_py("""<<<~~~>>> = "Hello"\nprint(<<<~~~>>>)"""))
 
 
+def test_flatmap_input():
+    full_typify("""a = print("b").>>=(_ => input)\na""")
+
+
 custom_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
@@ -55,4 +59,5 @@ custom_tests = [
 
 deferred_tests = [
     test_operator_naming,
+    test_flatmap_input,
 ]
