@@ -128,10 +128,22 @@ def test_lines_reversed():
     rt_assert_equal(actual_lines_reversed, expected_lines_reversed)
 
 
-def test_parse2():
+def test_parse2_1():
     current_test_dir_reader = get_current_test_dir_reader(7)
     code = read_code(current_test_dir_reader)
-    full_build_py(code)
+    full_parse2(code)
+
+
+def test_parse2_2():
+    current_test_dir_reader = get_current_test_dir_reader(2)
+    code = read_code(current_test_dir_reader)
+    tokens = full_tokenize2(code)
+    ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
+    actual_lines_reversed = get_lines_reversed(ext_tokens_reversed)
+    print(code)
+    print(tokens)
+    print(actual_lines_reversed)
+    full_parse2(code)
 
 
 custom_tests = [
@@ -148,7 +160,8 @@ custom_tests = [
     test_operator_naming_1,
     test_operator_naming_2,
     test_lines_reversed,
-    test_parse2,
+    test_parse2_1,
+    test_parse2_2,
 ]
 
 deferred_tests = [

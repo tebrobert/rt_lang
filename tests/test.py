@@ -37,13 +37,13 @@ def test_typified(current_test_dir_reader):
     return rt_assert_equal(actual_typified, expected_typified)
 
 
-def test_built(current_test_dir_reader):
+def test_built(current_test_dir_reader, test_number):
     #typified = read_typified(current_test_dir_reader)
     code = read_code(current_test_dir_reader)
     typified = full_typify(code)
     actual_built = build_str_py(typified)
     expected_built = read_built(current_test_dir_reader)
-    return rt_assert_equal(actual_built, expected_built)
+    return rt_assert_equal(actual_built, expected_built, test_number)
 
 
 def full_test(test_number):
@@ -53,7 +53,7 @@ def full_test(test_number):
         test_tokenize(current_test_dir_reader)
         test_parse(current_test_dir_reader)
         test_typified(current_test_dir_reader)
-        test_built(current_test_dir_reader)
+        test_built(current_test_dir_reader, test_number)
 
     return lazy_full_test
 

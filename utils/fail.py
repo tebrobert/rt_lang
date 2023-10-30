@@ -23,9 +23,10 @@ def wip():
     fail("The feature was not implemented. Work in progress...")
 
 
-def rt_assert_equal(actual, expected):
+def rt_assert_equal(actual, expected, label=""):
     rt_assert(str(expected) == str(actual),
-        f"Actual: `{actual}`, expected: `{expected}`.",
+        f"Not equal `{label}`: " +
+        f"actual - `{actual}`, expected - `{expected}`.",
     )
     return actual
 

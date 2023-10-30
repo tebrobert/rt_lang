@@ -77,18 +77,19 @@ def match_expr(
 
 
 @tailrec
-def get_first_success(parsers, *parser_args):
+def get_first_success(parsers, *parser_args, fails=[]):
     def try_next_parser(current_parser, rest_parsers):
         either_result = rt_try(lambda: current_parser(*parser_args))
         return (
-            rec(rest_parsers, *parser_args)
+            rec(rest_parsers, *parser_args, fails=fails+[either_result])
             if is_fail(either_result) else
             either_result
         )
 
     return match_list(
         case_empty=lambda: fail(
-            f"Can't parse Expr given `{parser_args}`."
+            f"Can't parse Expr given `{parser_args}`.",
+            #f"Fails - `{fails}`.",
         ),
         case_nonempty=lambda head, tail: try_next_parser(head, tail),
     )(parsers)
@@ -203,7 +204,19 @@ def parse_line_with_less_minus(current_line, next_lines_expr):
 
 
 def parse_line_with_equals(current_line, next_lines_expr):
-    wip()
+    idf = rt_assert_type(current_line[0], TokenIdf)
+    rt_assert_type(current_line[1], TokenEq)
+    right_expr = parse1(current_line[2:])
+    return ExprCall1(
+        ExprCall1(
+            ExprIdf(builtin_flatmap),
+            ExprLambda1(ExprIdf(idf.s), next_lines_expr),
+        ),
+        ExprCall1(
+            ExprIdf(builtin_pure),
+            right_expr,
+        ),
+    )
 
 
 def parse_line(current_line, next_lines_expr):
