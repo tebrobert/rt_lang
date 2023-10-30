@@ -232,7 +232,6 @@ def parse_full_expr2(lines_reversed, acc_expr):
 
 
 def parse1(tokens):
-    end_of_tokens = "\0"
     ext_tokens = tokens + [end_of_tokens]
     expr, current_idx = parse_full_expr1(ext_tokens, 0)
 
