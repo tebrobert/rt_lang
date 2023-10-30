@@ -20,7 +20,7 @@ from utils.tailrec import *
 
 def test_parse(current_test_dir_reader):
     tokenized = eval(read_tokenized(current_test_dir_reader))
-    actual_parsed = parse2(tokenized)
+    actual_parsed = parse(tokenized)
     expected_parsed = read_parsed(current_test_dir_reader)
     return rt_assert_equal(actual_parsed, expected_parsed)
 

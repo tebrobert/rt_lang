@@ -268,7 +268,7 @@ def get_lines_reversed(ext_tokens_reversed, acc_lines=[], acc_current_line=[]):
     )(ext_tokens_reversed)
 
 
-def parse2(tokens):
+def parse(tokens):
     ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
     lines_reversed = get_lines_reversed(ext_tokens_reversed)
     nonempty_lines_reversed = list(filter(len, lines_reversed))
@@ -279,7 +279,7 @@ def parse2(tokens):
 
 
 def full_parse(code):
-    return parse2(full_tokenize2(code))
+    return parse(full_tokenize2(code))
 
 
 end_of_tokens = "\0"
