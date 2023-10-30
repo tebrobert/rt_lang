@@ -81,7 +81,7 @@ def get_first_success(parsers, *parser_args, fails=[]):
     def try_next_parser(current_parser, rest_parsers):
         either_result = rt_try(lambda: current_parser(*parser_args))
         return (
-            rec(rest_parsers, *parser_args, fails=fails+[either_result])
+            rec(rest_parsers, *parser_args, fails=fails + [either_result])
             if is_fail(either_result) else
             either_result
         )
@@ -89,7 +89,7 @@ def get_first_success(parsers, *parser_args, fails=[]):
     return match_list(
         case_empty=lambda: fail(
             f"Can't parse Expr given `{parser_args}`.",
-            #f"Fails - `{fails}`.",
+            # f"Fails - `{fails}`.",
         ),
         case_nonempty=lambda head, tail: try_next_parser(head, tail),
     )(parsers)
@@ -190,6 +190,7 @@ def parse_full_expr1(ext_tokens, current_idx):
         ext_tokens, parsed_call_expr, post_call_idx
     )
 
+
 def parse_line_with_less_minus(current_line, next_lines_expr):
     idf = rt_assert_type(current_line[0], TokenIdf)
     rt_assert_type(current_line[1], TokenLessMinus)
@@ -219,7 +220,7 @@ def parse_line_with_equals(current_line, next_lines_expr):
     )
 
 
-def parse_line(current_line, next_lines_expr):
+def parse_effectful_line(current_line, next_lines_expr):
     right_expr = parse1(current_line)
     return ExprCall1(
         ExprCall1(
@@ -230,15 +231,21 @@ def parse_line(current_line, next_lines_expr):
     )
 
 
+def parse_empty_line(current_line, next_lines_expr):
+    rt_assert_equal(current_line, [])
+    return next_lines_expr
+
+
 @tailrec
 def parse_full_expr2(lines_reversed, acc_expr):
     return match_list(
         case_empty=lambda: acc_expr,
         case_nonempty=lambda head, tail: rec(
             tail, get_first_success([
+                parse_empty_line,
                 parse_line_with_less_minus,
                 parse_line_with_equals,
-                parse_line,
+                parse_effectful_line,
             ], head, acc_expr)
         ),
     )(lines_reversed)
