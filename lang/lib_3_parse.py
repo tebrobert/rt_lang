@@ -191,16 +191,10 @@ def parse_full_expr1(ext_tokens, current_idx):
 
 
 def parse_full_expr2(ext_tokens, current_idx):
-    # parsed_call_expr, post_call_idx = parse_call_expr(ext_tokens, current_idx)
-    # return continue_parsing_dotting_rec(
-    #     ext_tokens, parsed_call_expr, post_call_idx
-    # )
-    wip()
-    parse_first_of(ext_tokens, current_idx, [
+    return parse_first_of(ext_tokens, current_idx, [
         parse_line_with_less_minus,
         parse_line_with_equals,
-        parse_braced_full_expr,
-        parse_lit_str,
+        parse_line,
     ])
 
 
@@ -216,16 +210,22 @@ def parse1(tokens):
     return expr
 
 
+@tailrec
+def get_lines_reversed(ext_tokens_reversed, acc_lines=[], acc_current_line=[]):
+    return match_list(
+        case_empty=lambda: acc_lines,
+        case_nonempty=lambda head, tail: (
+            rec(tail, acc_lines + [acc_current_line], [])
+            if head == TokenEndl() else
+            rec(tail, acc_lines, [head] + acc_current_line)
+        ),
+    )(ext_tokens_reversed)
+
+
 def parse2(tokens):
-    end_of_tokens = "\0"
-    ext_tokens = tokens + [end_of_tokens]
-    expr, current_idx = parse_full_expr2(ext_tokens, 0)
-
-    fail_if(ext_tokens[current_idx] != end_of_tokens,
-        f"Unexpected token at {current_idx} given {tokens}",
-    )
-
-    return expr
+    ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
+    lines_reversed = get_lines_reversed(ext_tokens_reversed)
+    return parse_full_expr2(lines_reversed)
 
 
 def full_parse1(code):
@@ -234,3 +234,6 @@ def full_parse1(code):
 
 def full_parse2(code):
     return parse2(full_tokenize2(code))
+
+
+end_of_tokens = "\0"

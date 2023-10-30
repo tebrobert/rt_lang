@@ -5,30 +5,6 @@ from utils.read_file import *
 from utils.tailrec import *
 
 
-def read_code(current_test_dir_reader):
-    return current_test_dir_reader("1_code.rt.txt")
-
-
-def read_desugared(current_test_dir_reader):
-    return current_test_dir_reader("2_desugared.rt.txt")
-
-
-def read_tokenized(current_test_dir_reader):
-    return current_test_dir_reader("3_tokens.py.txt")
-
-
-def read_parsed(current_test_dir_reader):
-    return current_test_dir_reader("4_expr.py.txt")
-
-
-def read_typified(current_test_dir_reader):
-    return current_test_dir_reader("5_typed.txt")
-
-
-def read_built(current_test_dir_reader):
-    return current_test_dir_reader("6_shown.py.txt")
-
-
 def test_desugar(current_test_dir_reader):
     code = read_code(current_test_dir_reader)
     actual_desugared = desugar(code)
@@ -66,12 +42,6 @@ def test_built(current_test_dir_reader):
     actual_built = build_str_py(typified)
     expected_built = read_built(current_test_dir_reader)
     return rt_assert_equal(actual_built, expected_built)
-
-
-def get_current_test_dir_reader(test_number):
-    return lambda file_name: read_file(
-        f"{path_tests_full}{test_number}/{file_name}",
-    )
 
 
 def full_test(test_number):
@@ -123,5 +93,3 @@ def run_tests():
     run_custom_tests()
     run_deferred_tests()
 
-
-path_tests_full = "tests/full/"

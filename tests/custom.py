@@ -1,5 +1,36 @@
 from lang.lib_5_build import *
 from utils.fail import *
+from utils.read_file import *
+
+
+def get_current_test_dir_reader(test_number):
+    return lambda file_name: read_file(
+        f"{path_tests_full}{test_number}/{file_name}",
+    )
+
+
+def read_code(current_test_dir_reader):
+    return current_test_dir_reader("1_code.rt.txt")
+
+
+def read_desugared(current_test_dir_reader):
+    return current_test_dir_reader("2_desugared.rt.txt")
+
+
+def read_tokenized(current_test_dir_reader):
+    return current_test_dir_reader("3_tokens.py.txt")
+
+
+def read_parsed(current_test_dir_reader):
+    return current_test_dir_reader("4_expr.py.txt")
+
+
+def read_typified(current_test_dir_reader):
+    return current_test_dir_reader("5_typed.txt")
+
+
+def read_built(current_test_dir_reader):
+    return current_test_dir_reader("6_shown.py.txt")
 
 
 def test_sync_typs():
@@ -52,9 +83,9 @@ def test_operator_naming_1():
 
 def test_operator_naming_2():
     full_build_py(
-        """|||+++||| = "Hi!"\n"""+
-        """print(|||+++|||)\n"""+
-        """~~~ = name => "Welcome, ".+(name).+("!")\n"""+
+        """|||+++||| = "Hi!"\n""" +
+        """print(|||+++|||)\n""" +
+        """~~~ = name => "Welcome, ".+(name).+("!")\n""" +
         """print("Joe".~~~)"""
     )
 
@@ -74,6 +105,32 @@ def test_flatmap_input_2():
     )
 
 
+def test_lines_reversed():
+    current_test_dir_reader = get_current_test_dir_reader(11)
+    code = read_code(current_test_dir_reader)
+    tokens = full_tokenize2(code)
+    ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
+    actual_lines_reversed = get_lines_reversed(ext_tokens_reversed)
+
+    expected_lines_reversed = [
+        [
+            TokenIdf("print"), TokenParenOpen(), TokenIdf("name"),
+            TokenParenClose(),
+        ],
+        [
+            TokenIdf("print"), TokenParenOpen(), TokenLitStr("Welcome, ..."),
+            TokenParenClose(),
+        ],
+        [TokenIdf("name"), TokenLessMinus(), TokenIdf("input")],
+        [
+            TokenIdf("print"), TokenParenOpen(), TokenIdf("greeting"),
+            TokenParenClose()], [TokenIdf("greeting"), TokenEq(),
+            TokenLitStr("Hey! What is your name?"),
+        ]
+    ]
+    rt_assert_equal(actual_lines_reversed, expected_lines_reversed)
+
+
 custom_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
@@ -87,7 +144,10 @@ custom_tests = [
     test_flatmap_input_2,
     test_operator_naming_1,
     test_operator_naming_2,
+    test_lines_reversed,
 ]
 
 deferred_tests = [
 ]
+
+path_tests_full = "tests/full/"
