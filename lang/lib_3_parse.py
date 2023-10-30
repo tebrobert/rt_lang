@@ -278,7 +278,7 @@ def parse2(tokens):
     )(nonempty_lines_reversed)
 
 
-def full_parse2(code):
+def full_parse(code):
     return parse2(full_tokenize2(code))
 
 

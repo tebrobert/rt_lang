@@ -297,7 +297,7 @@ def typify(expr):
 
 
 def full_typify(code):
-    return typify(full_parse2(code))
+    return typify(full_parse(code))
 
 
 type_match_err_msg = (
