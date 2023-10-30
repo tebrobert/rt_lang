@@ -77,18 +77,18 @@ def match_expr(
 
 
 @tailrec
-def parse_first_of(ext_tokens, current_idx, parsers):
+def get_first_success(parsers, *parser_args):
     def try_next_parser(current_parser, rest_parsers):
-        either_result = rt_try(lambda: current_parser(ext_tokens, current_idx))
+        either_result = rt_try(lambda: current_parser(*parser_args))
         return (
-            rec(ext_tokens, current_idx, rest_parsers)
+            rec(rest_parsers, *parser_args)
             if is_fail(either_result) else
             either_result
         )
 
     return match_list(
         case_empty=lambda: fail(
-            f"Can't parse Expr given {current_idx} {ext_tokens}."
+            f"Can't parse Expr given `{parser_args}`."
         ),
         case_nonempty=lambda head, tail: try_next_parser(head, tail),
     )(parsers)
@@ -134,12 +134,12 @@ def parse_lambda_1(ext_tokens, current_idx):
 
 
 def parse_atomic_expr(ext_tokens, current_idx):
-    return parse_first_of(ext_tokens, current_idx, [
+    return get_first_success([
         parse_lambda_1,
         parse_idf,
         parse_braced_full_expr,
         parse_lit_str,
-    ])
+    ], ext_tokens, current_idx)
 
 
 @tailrec
@@ -189,13 +189,46 @@ def parse_full_expr1(ext_tokens, current_idx):
         ext_tokens, parsed_call_expr, post_call_idx
     )
 
+def parse_line_with_less_minus(current_line, next_lines_expr):
+    idf = rt_assert_type(current_line[0], TokenIdf)
+    rt_assert_type(current_line[1], TokenLessMinus)
+    right_expr = parse1(current_line[2:])
+    return ExprCall1(
+        ExprCall1(
+            ExprIdf(builtin_flatmap),
+            ExprLambda1(ExprIdf(idf.s), next_lines_expr),
+        ),
+        right_expr,
+    )
 
-def parse_full_expr2(ext_tokens, current_idx):
-    return parse_first_of(ext_tokens, current_idx, [
-        parse_line_with_less_minus,
-        parse_line_with_equals,
-        parse_line,
-    ])
+
+def parse_line_with_equals(current_line, next_lines_expr):
+    wip()
+
+
+def parse_line(current_line, next_lines_expr):
+    right_expr = parse1(current_line)
+    return ExprCall1(
+        ExprCall1(
+            ExprIdf(builtin_flatmap),
+            ExprLambda1(ExprIdf("_"), next_lines_expr),
+        ),
+        right_expr,
+    )
+
+
+@tailrec
+def parse_full_expr2(lines_reversed, acc_expr):
+    return match_list(
+        case_empty=lambda: acc_expr,
+        case_nonempty=lambda head, tail: rec(
+            tail, get_first_success([
+                parse_line_with_less_minus,
+                parse_line_with_equals,
+                parse_line,
+            ], head, acc_expr)
+        ),
+    )(lines_reversed)
 
 
 def parse1(tokens):
@@ -225,7 +258,10 @@ def get_lines_reversed(ext_tokens_reversed, acc_lines=[], acc_current_line=[]):
 def parse2(tokens):
     ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
     lines_reversed = get_lines_reversed(ext_tokens_reversed)
-    return parse_full_expr2(lines_reversed)
+    return match_list(
+        case_empty=lambda: fail("Yet empty file is unsupported."),
+        case_nonempty=lambda head, tail: parse_full_expr2(tail, parse1(head)),
+    )(lines_reversed)
 
 
 def full_parse1(code):

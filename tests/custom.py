@@ -128,6 +128,12 @@ def test_lines_reversed():
     rt_assert_equal(actual_lines_reversed, expected_lines_reversed)
 
 
+def test_parse2():
+    current_test_dir_reader = get_current_test_dir_reader(7)
+    code = read_code(current_test_dir_reader)
+    print(full_parse2(code))
+
+
 custom_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
@@ -142,6 +148,7 @@ custom_tests = [
     test_operator_naming_1,
     test_operator_naming_2,
     test_lines_reversed,
+    test_parse2,
 ]
 
 deferred_tests = [

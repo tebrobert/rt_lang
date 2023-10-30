@@ -30,6 +30,11 @@ def rt_assert_equal(actual, expected):
     return actual
 
 
+def rt_assert_type(value, expected_type):
+    rt_assert_equal(type(value), expected_type)
+    return value
+
+
 def rt_try(action):
     try:
         return action()
