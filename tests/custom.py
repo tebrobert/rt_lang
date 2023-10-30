@@ -46,8 +46,17 @@ def test_method_syntax_2():
     )
 
 
-def test_operator_naming():
+def test_operator_naming_1():
     full_build_py("""<<<~~~>>> = "Hello"\nprint(<<<~~~>>>)""")
+
+
+def test_operator_naming_2():
+    full_build_py(
+        """|||+++||| = "Hi!"\n"""+
+        """print(|||+++|||)\n"""+
+        """~~~ = name => "Welcome, ".+(name).+("!")\n"""+
+        """print("Joe".~~~)"""
+    )
 
 
 def test_flatmap_input_1():
@@ -76,7 +85,8 @@ custom_tests = [
     test_method_syntax_2,
     test_flatmap_input_1,
     test_flatmap_input_2,
-    test_operator_naming,
+    test_operator_naming_1,
+    test_operator_naming_2,
 ]
 
 deferred_tests = [
