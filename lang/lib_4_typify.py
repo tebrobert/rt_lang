@@ -93,12 +93,25 @@ def replace_typ(typified, new_typ):
     )(typified)
 
 
-def find_all_unknowns(typified):
+def get_unknowns_fot_typ(typ):
+    return match_typ(
+        case_typ0=lambda _s: set(),
+        case_unknown0=lambda s: set(s),
+        case_typ1=lambda _s, t1: get_unknowns_fot_typ(t1),
+        case_typ2=lambda _s, t1, t2: (
+                get_unknowns_fot_typ(t1) + get_unknowns_fot_typ(t2)
+        ),
+    )(typ)
+
+
+def get_unknowns_for_typified(typified):
     return match_typified(
-        case_lit=lambda _s, _typ: set(),
-        case_idf=lambda _s, _typ: wip(),
-        case_call_1=lambda _typed_f, _typed_x, _typ: wip(),
-        case_lambda_1=lambda _typified_idf_x, _typified_res, _typ: wip(),
+        case_lit=lambda _s, typ: get_unknowns_fot_typ(typ),
+        case_idf=lambda _s, typ: get_unknowns_fot_typ(typ),
+        case_call_1=lambda _typed_f, _typed_x, typ: get_unknowns_fot_typ(typ),
+        case_lambda_1=lambda _typified_idf_x, _typified_res, typ: (
+            get_unknowns_fot_typ(typ)
+        ),
     )(typified)
 
 
