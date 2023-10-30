@@ -231,18 +231,12 @@ def parse_effectful_line(current_line, next_lines_expr):
     )
 
 
-def parse_empty_line(current_line, next_lines_expr):
-    rt_assert_equal(current_line, [])
-    return next_lines_expr
-
-
 @tailrec
 def parse_full_expr2(lines_reversed, acc_expr):
     return match_list(
         case_empty=lambda: acc_expr,
         case_nonempty=lambda head, tail: rec(
             tail, get_first_success([
-                parse_empty_line,
                 parse_line_with_less_minus,
                 parse_line_with_equals,
                 parse_effectful_line,
@@ -265,7 +259,7 @@ def parse1(tokens):
 @tailrec
 def get_lines_reversed(ext_tokens_reversed, acc_lines=[], acc_current_line=[]):
     return match_list(
-        case_empty=lambda: acc_lines,
+        case_empty=lambda: acc_lines + [acc_current_line],
         case_nonempty=lambda head, tail: (
             rec(tail, acc_lines + [acc_current_line], [])
             if head == TokenEndl() else
@@ -277,10 +271,11 @@ def get_lines_reversed(ext_tokens_reversed, acc_lines=[], acc_current_line=[]):
 def parse2(tokens):
     ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
     lines_reversed = get_lines_reversed(ext_tokens_reversed)
+    nonempty_lines_reversed = list(filter(len, lines_reversed))
     return match_list(
         case_empty=lambda: fail("Yet empty file is unsupported."),
         case_nonempty=lambda head, tail: parse_full_expr2(tail, parse1(head)),
-    )(lines_reversed)
+    )(nonempty_lines_reversed)
 
 
 def full_parse1(code):

@@ -110,7 +110,8 @@ def test_lines_reversed():
     code = read_code(current_test_dir_reader)
     tokens = full_tokenize2(code)
     ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
-    actual_lines_reversed = get_lines_reversed(ext_tokens_reversed)
+    raw_lines_reversed = get_lines_reversed(ext_tokens_reversed)
+    actual_lines_reversed = list(filter(len, raw_lines_reversed))
 
     expected_lines_reversed = [
         [TokenIdf("print"), TokenParenOpen(), TokenIdf("name"),
@@ -137,12 +138,6 @@ def test_parse2_1():
 def test_parse2_2():
     current_test_dir_reader = get_current_test_dir_reader(2)
     code = read_code(current_test_dir_reader)
-    tokens = full_tokenize2(code)
-    ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
-    actual_lines_reversed = get_lines_reversed(ext_tokens_reversed)
-    print(code)
-    print(tokens)
-    print(actual_lines_reversed)
     full_parse2(code)
 
 
