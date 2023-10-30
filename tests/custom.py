@@ -113,17 +113,14 @@ def test_lines_reversed():
     actual_lines_reversed = get_lines_reversed(ext_tokens_reversed)
 
     expected_lines_reversed = [
-        [
-            TokenIdf("print"), TokenParenOpen(), TokenIdf("name"),
+        [TokenIdf("print"), TokenParenOpen(), TokenIdf("name"),
             TokenParenClose(),
         ],
-        [
-            TokenIdf("print"), TokenParenOpen(), TokenLitStr("Welcome, ..."),
+        [TokenIdf("print"), TokenParenOpen(), TokenLitStr("Welcome, ..."),
             TokenParenClose(),
         ],
         [TokenIdf("name"), TokenLessMinus(), TokenIdf("input")],
-        [
-            TokenIdf("print"), TokenParenOpen(), TokenIdf("greeting"),
+        [TokenIdf("print"), TokenParenOpen(), TokenIdf("greeting"),
             TokenParenClose()], [TokenIdf("greeting"), TokenEq(),
             TokenLitStr("Hey! What is your name?"),
         ]
