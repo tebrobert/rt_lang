@@ -1,24 +1,21 @@
 from tests.custom import *
 from utils.fail import *
 from utils.interval import *
-from utils.read_file import *
 from utils.tailrec import *
 
 
-def test_desugar(current_test_dir_reader):
-    return
-    code = read_code(current_test_dir_reader)
-    actual_desugared = desugar(code)
-    expected_desugared = read_desugared(current_test_dir_reader)
-    return rt_assert_equal(actual_desugared, expected_desugared)
+# def test_desugar(current_test_dir_reader):
+#     code = read_code(current_test_dir_reader)
+#     actual_desugared = desugar(code)
+#     expected_desugared = read_desugared(current_test_dir_reader)
+#     return rt_assert_equal(actual_desugared, expected_desugared)
 
 
-def test_tokenize(current_test_dir_reader):
-    return
-    desugared = read_desugared(current_test_dir_reader)
-    actual_tokenized = tokenize(desugared)
-    expected_tokenized = read_tokenized(current_test_dir_reader)
-    return rt_assert_equal(actual_tokenized, expected_tokenized)
+# def test_tokenize(current_test_dir_reader):
+#     desugared = read_desugared(current_test_dir_reader)
+#     actual_tokenized = tokenize(desugared)
+#     expected_tokenized = read_tokenized(current_test_dir_reader)
+#     return rt_assert_equal(actual_tokenized, expected_tokenized)
 
 
 def test_parse(current_test_dir_reader):
@@ -49,8 +46,8 @@ def test_built(current_test_dir_reader, test_number):
 def full_test(test_number):
     def lazy_full_test():
         current_test_dir_reader = get_current_test_dir_reader(test_number)
-        test_desugar(current_test_dir_reader)
-        test_tokenize(current_test_dir_reader)
+        #test_desugar(current_test_dir_reader)
+        #test_tokenize(current_test_dir_reader)
         test_parse(current_test_dir_reader)
         test_typified(current_test_dir_reader)
         test_built(current_test_dir_reader, test_number)
