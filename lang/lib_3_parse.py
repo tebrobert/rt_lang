@@ -274,7 +274,9 @@ def parse(tokens):
     nonempty_lines_reversed = list(filter(len, lines_reversed))
     return match_list(
         case_empty=lambda: fail("Yet empty file is unsupported."),
-        case_nonempty=lambda head, tail: parse_full_expr2(tail, parse_single_expr(head)),
+        case_nonempty=lambda head, tail: parse_full_expr2(
+            tail, parse_single_expr(head)
+        ),
     )(nonempty_lines_reversed)
 
 
