@@ -31,7 +31,7 @@ def test_parse(current_test_dir_reader):
 def test_typified(current_test_dir_reader):
     #parsed = eval(read_parsed(current_test_dir_reader))
     code = read_code(current_test_dir_reader)
-    parsed = full_parse1(code)
+    parsed = full_parse2(code)
     actual_typified = typify(parsed)
     expected_typified = read_typified(current_test_dir_reader)
     return rt_assert_equal(actual_typified, expected_typified)
