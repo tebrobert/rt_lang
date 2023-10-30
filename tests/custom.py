@@ -46,7 +46,7 @@ def test_method_syntax_2():
     )
 
 
-def deferred_test_operator_naming():
+def test_operator_naming():
     full_build_py("""<<<~~~>>> = "Hello"\nprint(<<<~~~>>>)""")
 
 
@@ -76,8 +76,8 @@ custom_tests = [
     test_method_syntax_2,
     test_flatmap_input_1,
     test_flatmap_input_2,
+    test_operator_naming,
 ]
 
 deferred_tests = [
-    deferred_test_operator_naming,
 ]
