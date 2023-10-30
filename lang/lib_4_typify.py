@@ -33,21 +33,21 @@ class TypifiedCall1:
 
 
 class TypifiedLambda1:
-    def __init__(self, t_idf_x, typed_res, typ=None):
-        rt_assert(type(t_idf_x) is TypifiedIdf)
+    def __init__(self, typified_idf_x, typified_res, typ=None):
+        rt_assert(type(typified_idf_x) is TypifiedIdf)
         rt_assert(typ is None or type(typ) is Typ2 and typ.s == builtin_Func)
-        self.t_idf_x = t_idf_x
-        self.typed_res = typed_res
+        self.typified_idf_x = typified_idf_x
+        self.typified_res = typified_res
         self.typ = (typ
                     if typ is not None else
-                    T_Func(t_idf_x.typ, typed_res.typ)
+                    T_Func(typified_idf_x.typ, typified_res.typ)
                     )
 
     def __repr__(self, indent=""):
         shift = indent + 4 * " "
         return (f"{indent}Typed_Lambda_1(\n"
-                + f"{self.t_idf_x.__repr__(shift)},\n"
-                + f"{self.typed_res.__repr__(shift)},\n"
+                + f"{self.typified_idf_x.__repr__(shift)},\n"
+                + f"{self.typified_res.__repr__(shift)},\n"
                 + f"{self.typ.__repr__(shift)}"
                 + f"\n{indent})"
                 )
@@ -67,7 +67,7 @@ def match_typified(
                 typified.typed_f, typified.typed_x, typified.typ
             ),
             TypifiedLambda1: lambda: case_lambda_1(
-                typified.t_idf_x, typified.typed_res, typified.typ
+                typified.typified_idf_x, typified.typified_res, typified.typ
             ),
         }
         .get(
@@ -85,9 +85,20 @@ def replace_typ(typified, new_typ):
         case_call_1=lambda typed_f, typed_x, _typ: TypifiedCall1(
             typed_f, typed_x, new_typ
         ),
-        case_lambda_1=lambda t_idf_x, typed_res, _typ: TypifiedLambda1(
-            t_idf_x, typed_res, new_typ
+        case_lambda_1=(
+            lambda typified_idf_x, typified_res, _typ: TypifiedLambda1(
+                typified_idf_x, typified_res, new_typ
+            )
         ),
+    )(typified)
+
+
+def find_all_unknowns(typified):
+    return match_typified(
+        case_lit=lambda _s, _typ: set(),
+        case_idf=lambda _s, _typ: wip(),
+        case_call_1=lambda _typed_f, _typed_x, _typ: wip(),
+        case_lambda_1=lambda _typified_idf_x, _typified_res, _typ: wip(),
     )(typified)
 
 
@@ -201,7 +212,7 @@ def solve_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     )
 
 
-def solve(typ_f, typ_x): # may have sync conflicts
+def solve(typ_f, typ_x):  # may have sync conflicts
     fail_not_a_func = lambda: fail(
         f"typ_f `{typ_f}` should be a `{builtin_Func}`"
     )
@@ -210,7 +221,8 @@ def solve(typ_f, typ_x): # may have sync conflicts
         case_typ0=lambda _s: fail_not_a_func(),
         case_unknown0=lambda _s: (T_Func(typ_x, T_A), typ_x, set()),
         case_typ1=lambda _s, _t1: fail_not_a_func(),
-        case_typ2=lambda _s, t1, _t2: solve_rec(t1, typ_x, (typ_f, typ_x, set())),
+        case_typ2=lambda _s, t1, _t2: solve_rec(t1, typ_x,
+            (typ_f, typ_x, set())),
     )(typ_f)
 
 
