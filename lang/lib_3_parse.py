@@ -24,6 +24,20 @@ class ExprIdf:
         return f"{self}" == f"{that}"
 
 
+class ExprBraced:
+    def __init__(self, expr):
+        self.expr = expr
+
+    def __repr__(self, indent=''):
+        return (f"{indent}ExprBraced(\n"
+                + f"""{self.expr.__repr__(indent + 4 * " ")}\n"""
+                + f"""{indent})"""
+                )
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
+
 class ExprCall1:
     def __init__(self, expr_f, expr_x):
         self.expr_f, self.expr_x = expr_f, expr_x
@@ -116,7 +130,7 @@ def parse_braced_full_expr(ext_tokens, current_idx):
         f"TokenParenOpen expected at {current_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
-    expr, paren_close_idx = parse_full_expr(ext_tokens, current_idx + 1)
+    expr, paren_close_idx = parse_full_expr1(ext_tokens, current_idx + 1)
     fail_if(type(ext_tokens[paren_close_idx]) is not TokenParenClose,
         f"TokenParenClose expected at {paren_close_idx}.",
         f"Given {current_idx} {ext_tokens}",
@@ -130,7 +144,7 @@ def parse_lambda_1(ext_tokens, current_idx):
         f"TokenEqGr expected at {eq_gr_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
-    expr_res, next_idx = parse_full_expr(ext_tokens, eq_gr_idx + 1)
+    expr_res, next_idx = parse_full_expr1(ext_tokens, eq_gr_idx + 1)
     return ExprLambda1(e_idf_x, expr_res), next_idx
 
 
@@ -184,11 +198,32 @@ def continue_parsing_dotting_rec(ext_tokens, expr_acceptor, current_idx):
     )
 
 
-def parse_full_expr(ext_tokens, current_idx):
+def parse_full_expr1(ext_tokens, current_idx):
     parsed_call_expr, post_call_idx = parse_call_expr(ext_tokens, current_idx)
     return continue_parsing_dotting_rec(
         ext_tokens, parsed_call_expr, post_call_idx
     )
+
+
+@tailrec
+def parse_full_expr_rec2(ext_tokens_and_exprs, parsers):
+    def extract():
+        rt_assert_equal(len(ext_tokens_and_exprs), 1)
+        rt_assert(type(ext_tokens_and_exprs[0]) in [ExprCall1, ExprIdf])
+        return ext_tokens_and_exprs[0]
+    match_list(
+        case_empty=lambda: extract(),
+        case_nonempty=lambda head, tail: rec(head(ext_tokens_and_exprs), tail)
+    )(parsers)
+
+
+def parse_full_expr2(ext_tokens):
+    parse_full_expr_rec2(ext_tokens, [
+        preparse_braced,
+        preparse_call,
+        preparse_dot,
+        preparse_plus_minus,
+    ])
 
 
 def parse_line_with_less_minus(current_line, next_lines_expr):
@@ -232,7 +267,7 @@ def parse_effectful_line(current_line, next_lines_expr):
 
 
 @tailrec
-def parse_full_expr2(lines_reversed, acc_expr):
+def parse_previous_lines(lines_reversed, acc_expr):
     return match_list(
         case_empty=lambda: acc_expr,
         case_nonempty=lambda head, tail: rec(
@@ -247,7 +282,7 @@ def parse_full_expr2(lines_reversed, acc_expr):
 
 def parse_single_expr(tokens):
     ext_tokens = tokens + [end_of_tokens]
-    expr, current_idx = parse_full_expr(ext_tokens, 0)
+    expr, current_idx = parse_full_expr1(ext_tokens, 0)
 
     fail_if(ext_tokens[current_idx] != end_of_tokens,
         f"Unexpected token at {current_idx} given {tokens}",
@@ -274,7 +309,7 @@ def parse(tokens):
     nonempty_lines_reversed = list(filter(len, lines_reversed))
     return match_list(
         case_empty=lambda: fail("Yet empty file is unsupported."),
-        case_nonempty=lambda head, tail: parse_full_expr2(
+        case_nonempty=lambda head, tail: parse_previous_lines(
             tail, parse_single_expr(head)
         ),
     )(nonempty_lines_reversed)
