@@ -190,7 +190,7 @@ def parse_full_expr(ext_tokens, current_idx):
     )
 
 
-def parse(tokens):
+def parse1(tokens):
     end_of_tokens = "\0"
     ext_tokens = tokens + [end_of_tokens]
     expr, current_idx = parse_full_expr(ext_tokens, 0)
@@ -202,9 +202,21 @@ def parse(tokens):
     return expr
 
 
-def full_parse(code):
-    return parse(full_tokenize(code))
+def parse2(tokens):
+    end_of_tokens = "\0"
+    ext_tokens = tokens + [end_of_tokens]
+    expr, current_idx = parse_full_expr(ext_tokens, 0)
+
+    fail_if(ext_tokens[current_idx] != end_of_tokens,
+        f"Unexpected token at {current_idx} given {tokens}",
+    )
+
+    return expr
+
+
+def full_parse1(code):
+    return parse1(full_tokenize1(code))
 
 
 def full_parse2(code):
-    return parse(full_tokenize2(code))
+    return parse2(full_tokenize2(code))

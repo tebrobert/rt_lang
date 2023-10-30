@@ -34,15 +34,15 @@ def test_assignment_lambdas_3():
 
 def test_method_syntax_1():
     rt_assert(
-        full_parse("a.+(b).+(c).+(d)") ==
-        full_parse("+(d)(+(c)(+(b)(a)))")
+        full_parse1("a.+(b).+(c).+(d)") ==
+        full_parse1("+(d)(+(c)(+(b)(a)))")
     )
 
 
 def test_method_syntax_2():
     rt_assert(
-        full_parse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)") ==
-        full_parse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))")
+        full_parse1("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)") ==
+        full_parse1("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))")
     )
 
 

@@ -225,7 +225,7 @@ def tokenize(code):
     return tokenize_rec(code + end_of_code, 0, [])
 
 
-def full_tokenize(sugared_code):
+def full_tokenize1(sugared_code):
     return tokenize(desugar(sugared_code))
 
 
