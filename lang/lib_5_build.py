@@ -98,7 +98,7 @@ def build_str_py(typed, lamb_arg_stack=[]):
 
 
 def full_build_str_py(code):
-    return build_str_py(typify(full_parse(code)))
+    return build_str_py(full_typify(code))
 
 
 def build_py(str_py):
