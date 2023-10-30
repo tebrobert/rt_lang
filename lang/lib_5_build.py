@@ -101,8 +101,8 @@ def full_build_str_py(code):
     return build_str_py(typify(full_parse(code)))
 
 
-def build_py(shown):
-    return eval(shown)
+def build_py(str_py):
+    return eval(str_py)
 
 
 def full_build_py(code):
