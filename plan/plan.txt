@@ -15,7 +15,7 @@ Defer:
 Unary plus, minus
 implement operator syntax
 --implement functions
-Typeplasses
+Typeclasses
 ...
 
 
