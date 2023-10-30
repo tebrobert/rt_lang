@@ -44,7 +44,7 @@ def deferred_test_operator_naming():
     eval(full_build_str_py("""<<<~~~>>> = "Hello"\nprint(<<<~~~>>>)"""))
 
 
-def deferred_test_flatmap_input():
+def test_flatmap_input():
     full_typify("""p = print("b")\np""")
 
 
@@ -55,9 +55,9 @@ custom_tests = [
     test_assignment_lambdas_1,
     test_assignment_lambdas_2,
     test_method_syntax,
+    test_flatmap_input,
 ]
 
 deferred_tests = [
     deferred_test_operator_naming,
-    deferred_test_flatmap_input,
 ]
