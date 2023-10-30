@@ -48,6 +48,14 @@ class TokenLessMinus:
         return f"{self}" == f"{that}"
 
 
+class TokenEq:
+    def __repr__(self):
+        return "TokenEq()"
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
+
 class TokenEndl:
     def __repr__(self):
         return "TokenEndl()"
@@ -151,6 +159,11 @@ def lexx_less_minus(code_ext, current_idx, tokens):
     return (code_ext, current_idx + 2, tokens + [TokenLessMinus()])
 
 
+def lexx_eq(code_ext, current_idx, tokens):
+    rt_assert(code_ext[current_idx:].startswith("="))
+    return (code_ext, current_idx + 1, tokens + [TokenEq()])
+
+
 def lexx_endl(code_ext, current_idx, tokens):
     rt_assert(code_ext[current_idx:].startswith("\n"))
     return (code_ext, current_idx + 1, tokens + [TokenEndl()])
@@ -212,6 +225,7 @@ def tokenize_rec(code_ext, current_idx, tokens):
             lexx_paren_open,
             lexx_paren_close,
             lexx_eq_gr,
+            lexx_eq,
             lexx_less_minus,
             lexx_endl,
             lexx_string,

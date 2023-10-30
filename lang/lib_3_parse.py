@@ -115,7 +115,7 @@ def parse_braced_full_expr(ext_tokens, current_idx):
         f"TokenParenOpen expected at {current_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
-    expr, paren_close_idx = parse_full_expr(ext_tokens, current_idx + 1)
+    expr, paren_close_idx = parse_full_expr1(ext_tokens, current_idx + 1)
     fail_if(type(ext_tokens[paren_close_idx]) is not TokenParenClose,
         f"TokenParenClose expected at {paren_close_idx}.",
         f"Given {current_idx} {ext_tokens}",
@@ -129,7 +129,7 @@ def parse_lambda_1(ext_tokens, current_idx):
         f"TokenEqGr expected at {eq_gr_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
-    expr_res, next_idx = parse_full_expr(ext_tokens, eq_gr_idx + 1)
+    expr_res, next_idx = parse_full_expr1(ext_tokens, eq_gr_idx + 1)
     return ExprLambda1(e_idf_x, expr_res), next_idx
 
 
@@ -183,17 +183,31 @@ def continue_parsing_dotting_rec(ext_tokens, expr_acceptor, current_idx):
     )
 
 
-def parse_full_expr(ext_tokens, current_idx):
+def parse_full_expr1(ext_tokens, current_idx):
     parsed_call_expr, post_call_idx = parse_call_expr(ext_tokens, current_idx)
     return continue_parsing_dotting_rec(
         ext_tokens, parsed_call_expr, post_call_idx
     )
 
 
+def parse_full_expr2(ext_tokens, current_idx):
+    # parsed_call_expr, post_call_idx = parse_call_expr(ext_tokens, current_idx)
+    # return continue_parsing_dotting_rec(
+    #     ext_tokens, parsed_call_expr, post_call_idx
+    # )
+    wip()
+    parse_first_of(ext_tokens, current_idx, [
+        parse_line_with_less_minus,
+        parse_line_with_equals,
+        parse_braced_full_expr,
+        parse_lit_str,
+    ])
+
+
 def parse1(tokens):
     end_of_tokens = "\0"
     ext_tokens = tokens + [end_of_tokens]
-    expr, current_idx = parse_full_expr(ext_tokens, 0)
+    expr, current_idx = parse_full_expr1(ext_tokens, 0)
 
     fail_if(ext_tokens[current_idx] != end_of_tokens,
         f"Unexpected token at {current_idx} given {tokens}",
@@ -205,7 +219,7 @@ def parse1(tokens):
 def parse2(tokens):
     end_of_tokens = "\0"
     ext_tokens = tokens + [end_of_tokens]
-    expr, current_idx = parse_full_expr(ext_tokens, 0)
+    expr, current_idx = parse_full_expr2(ext_tokens, 0)
 
     fail_if(ext_tokens[current_idx] != end_of_tokens,
         f"Unexpected token at {current_idx} given {tokens}",
