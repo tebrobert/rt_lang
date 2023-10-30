@@ -26,14 +26,20 @@ def test_assignment_lambdas_1():
 
 def test_assignment_lambdas_2():
     full_build_py("""f1 = x => x.+("1")\nprint("0".f1)""")
+
+
+def test_assignment_lambdas_3():
     full_build_py("""f1 = +("1")\nprint("0".f1)""")
 
 
-def test_method_syntax():
+def test_method_syntax_1():
     rt_assert(
         full_parse("a.+(b).+(c).+(d)") ==
         full_parse("+(d)(+(c)(+(b)(a)))")
     )
+
+
+def test_method_syntax_2():
     rt_assert(
         full_parse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)") ==
         full_parse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))")
@@ -41,11 +47,22 @@ def test_method_syntax():
 
 
 def deferred_test_operator_naming():
-    eval(full_build_str_py("""<<<~~~>>> = "Hello"\nprint(<<<~~~>>>)"""))
+    full_build_py("""<<<~~~>>> = "Hello"\nprint(<<<~~~>>>)""")
 
 
-def test_flatmap_input():
-    full_typify("""p = print("b")\np""")
+def test_flatmap_input_1():
+    full_build_py(
+        """p = print("b")\n""" +
+        """p"""
+    )
+
+
+def test_flatmap_input_2():
+    full_build_py(
+        """doAskName = print("What your name?").>>=(_ => input)\n""" +
+        """doGreet = name => "Hi, ".+(name).+("!").print\n""" +
+        """doAskName.>>=(doGreet)\n"""
+    )
 
 
 custom_tests = [
@@ -54,8 +71,11 @@ custom_tests = [
     test_assignment,
     test_assignment_lambdas_1,
     test_assignment_lambdas_2,
-    test_method_syntax,
-    test_flatmap_input,
+    test_assignment_lambdas_3,
+    test_method_syntax_1,
+    test_method_syntax_2,
+    test_flatmap_input_1,
+    test_flatmap_input_2,
 ]
 
 deferred_tests = [
