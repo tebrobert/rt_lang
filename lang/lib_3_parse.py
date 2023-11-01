@@ -206,19 +206,53 @@ def parse_full_expr1(ext_tokens, current_idx):
 
 
 @tailrec
-def parse_full_expr_rec2(ext_tokens_and_exprs, parsers):
+def continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
+    unclosed_parens_count,
+):
+    return match_list(
+        case_empty=lambda: fail("`)` expected."),
+        case_nonempty=lambda head, tail: (
+            (
+                rec(tail, acc, acc_braced + [head], unclosed_parens_count - 1)
+                if unclosed_parens_count > 1 else
+                (tail, acc + [parse_full_expr2(acc_braced)])
+            )
+            if head == TokenParenClose() else
+            rec(tail, acc, acc_braced + [head], unclosed_parens_count + 1)
+            if head == TokenParenOpen() else
+            rec(tail, acc, acc_braced + [head], unclosed_parens_count)
+        )
+    )(ext_tokens_and_exprs)
+
+
+@tailrec
+def preparse_braced(ext_tokens_and_exprs, acc):
+    return match_list(
+        case_empty=lambda: acc,
+        case_nonempty=lambda head, tail: (
+            rec(*continue_preparse_braced(tail, acc, [], 1))
+            if head == TokenParenOpen() else
+            rec(tail, acc + [head])
+        )
+    )(ext_tokens_and_exprs)
+
+
+@tailrec
+def parse_full_expr_rec(ext_tokens_and_exprs, parsers):
     def extract():
         rt_assert_equal(len(ext_tokens_and_exprs), 1)
-        rt_assert(type(ext_tokens_and_exprs[0]) in [ExprCall1, ExprIdf])
+        rt_assert(type(ext_tokens_and_exprs[0]) in [
+            ExprIdf, ExprCall1, ExprBraced
+        ])
         return ext_tokens_and_exprs[0]
-    match_list(
+    return match_list(
         case_empty=lambda: extract(),
         case_nonempty=lambda head, tail: rec(head(ext_tokens_and_exprs), tail)
     )(parsers)
 
 
 def parse_full_expr2(ext_tokens):
-    parse_full_expr_rec2(ext_tokens, [
+    return parse_full_expr_rec(ext_tokens, [
         preparse_braced,
         preparse_call,
         preparse_dot,
