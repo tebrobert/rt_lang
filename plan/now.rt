@@ -5,7 +5,11 @@ print("Welcome, " + name)
 
 
 ####################
+- omg, remove endOfCode and endOfTokens
 - The operator syntax - plan how it should work
+
+    preparse_braced: [a ( b . c ) d] -> [a (c(b)) d]
+    preparse_unary: [- - a - b - c] -> [--a - b - c]
 
     x = - - a ( - - b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n # ALL TOKENS
     x = - - a ( - -b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
