@@ -129,13 +129,13 @@ def test_lines_reversed():
     rt_assert_equal(actual_lines_reversed, expected_lines_reversed)
 
 
-def test_parse2_1():
+def test_parse_sugared_1():
     current_test_dir_reader = get_current_test_dir_reader(7)
     code = read_code(current_test_dir_reader)
     full_parse(code)
 
 
-def test_parse2_2():
+def test_parse_sugared_2():
     current_test_dir_reader = get_current_test_dir_reader(2)
     code = read_code(current_test_dir_reader)
     full_parse(code)
@@ -155,8 +155,8 @@ custom_tests = [
     test_operator_naming_1,
     test_operator_naming_2,
     test_lines_reversed,
-    test_parse2_1,
-    test_parse2_2,
+    test_parse_sugared_1,
+    test_parse_sugared_2,
 ]
 
 deferred_tests = [
