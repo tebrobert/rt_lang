@@ -215,7 +215,7 @@ def continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
             (
                 rec(tail, acc, acc_braced + [head], unclosed_parens_count - 1)
                 if unclosed_parens_count > 1 else
-                (tail, acc + [parse_full_expr2(acc_braced)])
+                (tail, acc + [ExprBraced(parse_full_expr2(acc_braced))])
             )
             if head == TokenParenClose() else
             rec(tail, acc, acc_braced + [head], unclosed_parens_count + 1)
