@@ -131,7 +131,7 @@ def parse_braced_full_expr(ext_tokens, current_idx):
         f"TokenParenOpen expected at {current_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
-    expr, paren_close_idx = parse_full_expr1(ext_tokens, current_idx + 1)
+    expr, paren_close_idx = parse_full_expr(ext_tokens, current_idx + 1)
     fail_if(type(ext_tokens[paren_close_idx]) is not TokenParenClose,
         f"TokenParenClose expected at {paren_close_idx}.",
         f"Given {current_idx} {ext_tokens}",
@@ -145,7 +145,7 @@ def parse_lambda_1(ext_tokens, current_idx):
         f"TokenEqGr expected at {eq_gr_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
-    expr_res, next_idx = parse_full_expr1(ext_tokens, eq_gr_idx + 1)
+    expr_res, next_idx = parse_full_expr(ext_tokens, eq_gr_idx + 1)
     return ExprLambda1(e_idf_x, expr_res), next_idx
 
 
@@ -199,7 +199,7 @@ def continue_parsing_dotting_rec(ext_tokens, expr_acceptor, current_idx):
     )
 
 
-def parse_full_expr1(ext_tokens, current_idx):
+def parse_full_expr(ext_tokens, current_idx):
     parsed_call_expr, post_call_idx = parse_call_expr(ext_tokens, current_idx)
     return continue_parsing_dotting_rec(
         ext_tokens, parsed_call_expr, post_call_idx
@@ -207,7 +207,7 @@ def parse_full_expr1(ext_tokens, current_idx):
 
 
 @tailrec
-def continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
+def new_continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
     unclosed_parens_count,
 ):
     return match_list(
@@ -216,7 +216,7 @@ def continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
             (
                 rec(tail, acc, acc_braced + [head], unclosed_parens_count - 1)
                 if unclosed_parens_count > 1 else
-                (tail, acc + [ExprBraced(parse_full_expr2(acc_braced))])
+                (tail, acc + [ExprBraced(new_parse_full_expr(acc_braced))])
             )
             if head == TokenParenClose() else
             rec(tail, acc, acc_braced + [head], unclosed_parens_count + 1)
@@ -227,23 +227,23 @@ def continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
 
 
 @tailrec
-def preparse_braced_rec(ext_tokens_and_exprs, acc):
+def new_preparse_braced_rec(ext_tokens_and_exprs, acc):
     return match_list(
         case_empty=lambda: acc,
         case_nonempty=lambda head, tail: (
-            rec(*continue_preparse_braced(tail, acc, [], 1))
+            rec(*new_continue_preparse_braced(tail, acc, [], 1))
             if head == TokenParenOpen() else
             rec(tail, acc + [head])
         )
     )(ext_tokens_and_exprs)
 
 
-def preparse_braced(ext_tokens_and_exprs):
-    return preparse_braced_rec(ext_tokens_and_exprs, [])
+def new_preparse_braced(ext_tokens_and_exprs):
+    return new_preparse_braced_rec(ext_tokens_and_exprs, [])
 
 
 @tailrec
-def parse_full_expr_rec(ext_tokens_and_exprs, parsers):
+def new_parse_full_expr_rec(ext_tokens_and_exprs, parsers):
     def extract():
         rt_assert_equal(len(ext_tokens_and_exprs), 1)
         rt_assert(type(ext_tokens_and_exprs[0]) in [
@@ -256,9 +256,9 @@ def parse_full_expr_rec(ext_tokens_and_exprs, parsers):
     )(parsers)
 
 
-def parse_full_expr2(ext_tokens):
-    return parse_full_expr_rec(ext_tokens, [
-        preparse_braced,
+def new_parse_full_expr(ext_tokens):
+    return new_parse_full_expr_rec(ext_tokens, [
+        new_preparse_braced,
         #preparse_call,
         #preparse_dot,
         #preparse_plus_minus,
@@ -322,7 +322,7 @@ def parse_previous_lines(lines_reversed, acc_expr):
 
 def parse_single_expr(tokens):
     ext_tokens = tokens + [end_of_tokens]
-    expr, current_idx = parse_full_expr1(ext_tokens, 0)
+    expr, current_idx = parse_full_expr(ext_tokens, 0)
 
     fail_if(ext_tokens[current_idx] != end_of_tokens,
         f"Unexpected token at {current_idx} given {tokens}",

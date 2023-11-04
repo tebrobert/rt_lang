@@ -142,10 +142,10 @@ def test_parse_sugared_2():
 
 
 def test_preparse_braced():
-    rt_assert_equal(preparse_braced([]), [])
-    rt_assert_equal(preparse_braced([TokenDot()]), [TokenDot()])
-    rt_assert_equal(preparse_braced([TokenDot(), TokenEqGr()]), [TokenDot(), TokenEqGr()])
-    preparse_braced([TokenParenOpen(), TokenIdf("+"), TokenParenClose()])
+    rt_assert_equal(new_preparse_braced([]), [])
+    rt_assert_equal(new_preparse_braced([TokenDot()]), [TokenDot()])
+    rt_assert_equal(new_preparse_braced([TokenDot(), TokenEqGr()]), [TokenDot(), TokenEqGr()])
+    new_preparse_braced([TokenParenOpen(), TokenIdf("+"), TokenParenClose()])
 
 
 custom_tests = [
