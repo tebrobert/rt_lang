@@ -81,6 +81,15 @@ class TokenDot:
         return f"{self}" == f"{that}"
 
 
+def match_token(
+
+):
+    def matcher(token):
+        wip()
+
+    return matcher
+
+
 def is_initial_idf_char(char):
     return (char == "_"
             or "a" <= char <= "z"

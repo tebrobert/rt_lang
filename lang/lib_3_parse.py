@@ -118,6 +118,23 @@ def parse_lit_str(ext_tokens, current_idx):
     return ExprLitStr(ext_tokens[current_idx].s), current_idx + 1
 
 
+def new_parse_lit_str(tokens):
+    return match_list(
+        case_empty=lambda: fail(
+            "Can't parse string literal from empty tokens.",
+        ),
+        case_nonempty=lambda head, tail: (
+            match_token
+        ),
+    )(tokens)
+
+    fail_if(type(ext_tokens[current_idx]) is not TokenLitStr,
+        f"TokenLitStr expected at {current_idx}.",
+        f"Given {current_idx} {ext_tokens}",
+    )
+    return ExprLitStr(ext_tokens[current_idx].s), current_idx + 1
+
+
 def parse_idf(ext_tokens, current_idx):
     fail_if(type(ext_tokens[current_idx]) is not TokenIdf,
         f"TokenIdf expected at {current_idx}.",
@@ -158,6 +175,15 @@ def parse_atomic_expr(ext_tokens, current_idx):
     ], ext_tokens, current_idx)
 
 
+def new_parse_atomic_expr(tokens):
+    return get_first_success([
+        new_parse_lambda_1,
+        new_parse_idf,
+        new_parse_braced_full_expr,
+        new_parse_lit_str,
+    ], tokens)
+
+
 @tailrec
 def continue_parsing_call_rec(ext_tokens, expr_f, current_idx):
     def continue_parsing_call_forced():
@@ -183,6 +209,15 @@ def parse_call_expr(ext_tokens, current_idx):
     )
 
 
+def new_parse_call_expr(tokens):
+    parsed_atomic_expr, rest_tokens = new_parse_atomic_expr(
+        tokens
+    )
+    return new_continue_parsing_call_rec(
+        parsed_atomic_expr, rest_tokens
+    )
+
+
 @tailrec
 def continue_parsing_dotting_rec(ext_tokens, expr_acceptor, current_idx):
     def continue_parsing_dotting_forced():
@@ -203,6 +238,13 @@ def parse_full_expr(ext_tokens, current_idx):
     parsed_call_expr, post_call_idx = parse_call_expr(ext_tokens, current_idx)
     return continue_parsing_dotting_rec(
         ext_tokens, parsed_call_expr, post_call_idx
+    )
+
+
+def new_parse_full_expr(tokens):
+    parsed_call_expr, rest_tokens = new_parse_call_expr(tokens)
+    return new_continue_parsing_dotting_rec(
+        parsed_call_expr, rest_tokens
     )
 
 
@@ -328,6 +370,14 @@ def parse_single_expr(tokens):
         f"Unexpected token at {current_idx} given {tokens}",
     )
 
+    return expr
+
+
+def new_parse_single_expr(tokens):
+    expr, rest_tokens = new_parse_full_expr(tokens)
+    fail_if(rest_tokens == [],
+        f"Unexpected rest_tokens `{rest_tokens}`. Given `{tokens}`.",
+    )
     return expr
 
 
