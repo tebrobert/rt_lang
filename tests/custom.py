@@ -141,6 +141,13 @@ def test_parse_sugared_2():
     full_parse(code)
 
 
+def test_preparse_braced():
+    rt_assert_equal(preparse_braced([]), [])
+    rt_assert_equal(preparse_braced([TokenDot()]), [TokenDot()])
+    rt_assert_equal(preparse_braced([TokenDot(), TokenEqGr()]), [TokenDot(), TokenEqGr()])
+    preparse_braced([TokenParenOpen(), TokenIdf("+"), TokenParenClose()])
+
+
 custom_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
@@ -160,6 +167,7 @@ custom_tests = [
 ]
 
 deferred_tests = [
+    test_preparse_braced,
 ]
 
 path_tests_full = "tests/full/"

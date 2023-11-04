@@ -226,7 +226,7 @@ def continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
 
 
 @tailrec
-def preparse_braced(ext_tokens_and_exprs, acc):
+def preparse_braced_rec(ext_tokens_and_exprs, acc):
     return match_list(
         case_empty=lambda: acc,
         case_nonempty=lambda head, tail: (
@@ -235,6 +235,10 @@ def preparse_braced(ext_tokens_and_exprs, acc):
             rec(tail, acc + [head])
         )
     )(ext_tokens_and_exprs)
+
+
+def preparse_braced(ext_tokens_and_exprs):
+    return preparse_braced_rec(ext_tokens_and_exprs, [])
 
 
 @tailrec
@@ -254,9 +258,10 @@ def parse_full_expr_rec(ext_tokens_and_exprs, parsers):
 def parse_full_expr2(ext_tokens):
     return parse_full_expr_rec(ext_tokens, [
         preparse_braced,
-        preparse_call,
-        preparse_dot,
-        preparse_plus_minus,
+        #preparse_call,
+        #preparse_dot,
+        #preparse_plus_minus,
+        parse_single_expr,
     ])
 
 
