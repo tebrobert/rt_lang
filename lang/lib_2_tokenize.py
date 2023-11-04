@@ -221,18 +221,7 @@ def tokenize_rec(code_ext, current_idx, tokens):
         tokens if current_char == end_of_code else
         rec(code_ext, current_idx + 1, tokens)
         if current_char == " " else
-        rec(*tokenize_first_of(code_ext, current_idx, tokens, [
-            lexx_idf,
-            lexx_paren_open,
-            lexx_paren_close,
-            lexx_eq_gr,
-            lexx_eq,
-            lexx_less_minus,
-            lexx_endl,
-            lexx_string,
-            lexx_operator,
-            lexx_dot,
-        ]))
+        rec(*tokenize_first_of(code_ext, current_idx, tokens, all_tokenizers))
     )
 
 
@@ -260,3 +249,16 @@ char_to_latin = {
     "|": "or_",
     "&": "and_",
 }
+
+all_tokenizers = [
+    lexx_idf,
+    lexx_paren_open,
+    lexx_paren_close,
+    lexx_eq_gr,
+    lexx_eq,
+    lexx_less_minus,
+    lexx_endl,
+    lexx_string,
+    lexx_operator,
+    lexx_dot,
+]
