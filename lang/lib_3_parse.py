@@ -332,7 +332,7 @@ def parse_single_expr(tokens):
 
 
 @tailrec
-def get_lines_reversed(ext_tokens_reversed, acc_lines=[], acc_current_line=[]):
+def get_lines_reversed(tokens_reversed, acc_lines=[], acc_current_line=[]):
     return match_list(
         case_empty=lambda: acc_lines + [acc_current_line],
         case_nonempty=lambda head, tail: (
@@ -340,12 +340,12 @@ def get_lines_reversed(ext_tokens_reversed, acc_lines=[], acc_current_line=[]):
             if head == TokenEndl() else
             rec(tail, acc_lines, [head] + acc_current_line)
         ),
-    )(ext_tokens_reversed)
+    )(tokens_reversed)
 
 
 def parse(tokens):
-    ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
-    lines_reversed = get_lines_reversed(ext_tokens_reversed)
+    tokens_reversed = list(reversed(tokens))
+    lines_reversed = get_lines_reversed(tokens_reversed)
     nonempty_lines_reversed = list(filter(len, lines_reversed))
     return match_list(
         case_empty=lambda: fail("Yet empty file is unsupported."),
