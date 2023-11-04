@@ -356,7 +356,7 @@ def parse(tokens):
 
 
 def full_parse(code):
-    return parse(full_tokenize2(code))
+    return parse(full_tokenize(code))
 
 
 end_of_tokens = "\0"

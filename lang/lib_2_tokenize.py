@@ -240,7 +240,7 @@ def tokenize(code):
     return tokenize_rec(code + end_of_code, 0, [])
 
 
-def full_tokenize2(sugared_code):
+def full_tokenize(sugared_code):
     return tokenize(sugared_code)
 
 

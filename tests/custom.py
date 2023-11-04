@@ -108,7 +108,7 @@ def test_flatmap_input_2():
 def test_lines_reversed():
     current_test_dir_reader = get_current_test_dir_reader(11)
     code = read_code(current_test_dir_reader)
-    tokens = full_tokenize2(code)
+    tokens = full_tokenize(code)
     ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
     raw_lines_reversed = get_lines_reversed(ext_tokens_reversed)
     actual_lines_reversed = list(filter(len, raw_lines_reversed))
