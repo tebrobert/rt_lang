@@ -1,5 +1,6 @@
-from lang.lib_1_desugar import *
+from utils.fail import *
 from utils.list_match import *
+from utils.tailrec import *
 
 
 class TokenLitStr:
@@ -237,10 +238,6 @@ def tokenize_rec(code_ext, current_idx, tokens):
 
 def tokenize(code):
     return tokenize_rec(code + end_of_code, 0, [])
-
-
-def full_tokenize1(sugared_code):
-    return tokenize(desugar(sugared_code))
 
 
 def full_tokenize2(sugared_code):
