@@ -42,7 +42,9 @@ def _match_list_2o(case_at_least_2, otherwise):
         case_at_least_1=lambda head1, tail1: (
             _match_list_01(
                 case_empty=otherwise,
-                case_at_least_1=lambda head2, tail2: case_at_least_2(head1, head2, tail2),
+                case_at_least_1=lambda head2, tail2: case_at_least_2(
+                    head1, head2, tail2
+                ),
             )(tail1)
         )
     )
