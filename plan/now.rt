@@ -56,4 +56,8 @@ print("Welcome, " + name)
     l = r, l <- r           # ? <-
 
 
+f(x)
+a +(x)
+
+
 #Plan: ? add _FX _X to type params on both sides before synchronizing

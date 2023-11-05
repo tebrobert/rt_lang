@@ -249,38 +249,12 @@ def continue_parsing_call_rec(ext_tokens, expr_f, current_idx):
     )
 
 
-@tailrec
-def new_continue_parsing_call_rec(rest_tokens, expr_f):
-
-    def continue_parsing_call_forced():
-        parsed_braced_expr, post_braced_idx = parse_braced_full_expr(
-            ext_tokens, current_idx
-        )
-        parsed_expr = ExprCall1(expr_f, parsed_braced_expr)
-        return rec(ext_tokens, parsed_expr, post_braced_idx)
-
-    return (
-        continue_parsing_call_forced()
-        if type(ext_tokens[current_idx]) is TokenParenOpen else
-        (expr_f, current_idx)
-    )
-
-
 def parse_call_expr(ext_tokens, current_idx):
     parsed_atomic_expr, post_atomic_idx = parse_atomic_expr(
         ext_tokens, current_idx
     )
     return continue_parsing_call_rec(
         ext_tokens, parsed_atomic_expr, post_atomic_idx
-    )
-
-
-def new_parse_call_expr(tokens):
-    parsed_atomic_expr, rest_tokens = new_parse_atomic_expr(
-        tokens
-    )
-    return new_continue_parsing_call_rec(
-        rest_tokens, parsed_atomic_expr,
     )
 
 
@@ -304,13 +278,6 @@ def parse_full_expr(ext_tokens, current_idx):
     parsed_call_expr, post_call_idx = parse_call_expr(ext_tokens, current_idx)
     return continue_parsing_dotting_rec(
         ext_tokens, parsed_call_expr, post_call_idx
-    )
-
-
-def new_parse_full_expr(tokens):
-    parsed_call_expr, rest_tokens = new_parse_call_expr(tokens)
-    return new_continue_parsing_dotting_rec(
-        parsed_call_expr, rest_tokens
     )
 
 
@@ -351,6 +318,17 @@ def new_preparse_braced(ext_tokens_and_exprs):
 
 
 @tailrec
+def new_preparse_call(tokens_and_exprs, acc_rest):
+    return match_list(
+        case_empty=lambda: acc_rest,
+        case_at_least_1=lambda head0, tail: wip(),
+        case_at_least_2=lambda head0, head1, tail: (
+            wip()
+        ),
+    )(tokens_and_exprs)
+
+
+@tailrec
 def new_parse_full_expr_rec(ext_tokens_and_exprs, parsers):
     def extract():
         rt_assert_equal(len(ext_tokens_and_exprs), 1)
@@ -367,7 +345,7 @@ def new_parse_full_expr_rec(ext_tokens_and_exprs, parsers):
 def new_parse_full_expr(ext_tokens):
     return new_parse_full_expr_rec(ext_tokens, [
         new_preparse_braced,
-        #preparse_call,
+        preparse_call,
         #preparse_dot,
         #preparse_plus_minus,
         parse_single_expr,
