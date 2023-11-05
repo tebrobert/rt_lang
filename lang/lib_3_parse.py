@@ -124,15 +124,14 @@ def new_parse_lit_str(tokens):
             "Can't parse string literal from empty tokens.",
         ),
         case_at_least_1=lambda head, tail: (
-            match_token
+            match_token(
+                case_lit_str=lambda s: (ExprLitStr(s), tail),
+                otherwise=lambda: fail(
+                    f"String literal expected, got `{head}`."
+                ),
+            )(head)
         ),
     )(tokens)
-
-    fail_if(type(ext_tokens[current_idx]) is not TokenLitStr,
-        f"TokenLitStr expected at {current_idx}.",
-        f"Given {current_idx} {ext_tokens}",
-    )
-    return ExprLitStr(ext_tokens[current_idx].s), current_idx + 1
 
 
 def parse_idf(ext_tokens, current_idx):
@@ -143,9 +142,25 @@ def parse_idf(ext_tokens, current_idx):
     return ExprIdf(ext_tokens[current_idx].s), current_idx + 1
 
 
+def new_parse_idf(tokens):
+    return match_list(
+        case_empty=lambda: fail(
+            "Can't parse string literal from empty tokens.",
+        ),
+        case_at_least_1=lambda head, tail: (
+            match_token(
+                case_idf=lambda s: (ExprIdf(s), tail),
+                otherwise=lambda: fail(
+                    f"Identifier expected, got `{head}`."
+                ),
+            )(head)
+        ),
+    )(tokens)
+
+
 def parse_braced_full_expr(ext_tokens, current_idx):
     fail_if(type(ext_tokens[current_idx]) is not TokenParenOpen,
-        f"TokenParenOpen expected at {current_idx}.",
+        f"TokenParenOpen exptokensected at {current_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
     expr, paren_close_idx = parse_full_expr(ext_tokens, current_idx + 1)
@@ -156,6 +171,31 @@ def parse_braced_full_expr(ext_tokens, current_idx):
     return expr, paren_close_idx + 1
 
 
+def new_parse_paren_open(tokens):
+    head, tail = rt_assert_at_least_1(tokens)
+    rt_assert_type(head, TokenParenOpen)
+    return tail
+
+
+def new_parse_paren_close(tokens):
+    head, tail = rt_assert_at_least_1(tokens)
+    rt_assert_type(head, TokenParenClose)
+    return tail
+
+
+def new_parse_braced_full_expr(tokens):
+    tokens_without_parsed_paren_open = new_parse_paren_open(tokens)
+    expr, tokens_without_parsed_full_expr = new_parse_full_expr(
+        tokens_without_parsed_paren_open
+    )
+    tokens_without_parsed_paren_close = new_parse_paren_open(
+        tokens_without_parsed_full_expr
+    )
+    rt_assert_equal(tokens_without_parsed_paren_close, [])
+    return ExprBraced(expr)
+
+
+
 def parse_lambda_1(ext_tokens, current_idx):
     e_idf_x, eq_gr_idx = parse_idf(ext_tokens, current_idx)
     fail_if(type(ext_tokens[eq_gr_idx]) is not TokenEqGr,
@@ -164,6 +204,15 @@ def parse_lambda_1(ext_tokens, current_idx):
     )
     expr_res, next_idx = parse_full_expr(ext_tokens, eq_gr_idx + 1)
     return ExprLambda1(e_idf_x, expr_res), next_idx
+
+
+def new_parse_lambda_1(tokens):
+    head0, head1, tail = rt_assert_at_least_2(tokens)
+    x_idf_s = rt_assert_token_idf(head0)
+    rt_assert_type(head1, TokenEqGr)
+    res_expr, rest = new_parse_full_expr(tail)
+    rt_assert_equal(rest, [])
+    return ExprLambda1(ExprIdf(x_idf_s), res_expr)
 
 
 def parse_atomic_expr(ext_tokens, current_idx):
@@ -200,6 +249,23 @@ def continue_parsing_call_rec(ext_tokens, expr_f, current_idx):
     )
 
 
+@tailrec
+def new_continue_parsing_call_rec(rest_tokens, expr_f):
+
+    def continue_parsing_call_forced():
+        parsed_braced_expr, post_braced_idx = parse_braced_full_expr(
+            ext_tokens, current_idx
+        )
+        parsed_expr = ExprCall1(expr_f, parsed_braced_expr)
+        return rec(ext_tokens, parsed_expr, post_braced_idx)
+
+    return (
+        continue_parsing_call_forced()
+        if type(ext_tokens[current_idx]) is TokenParenOpen else
+        (expr_f, current_idx)
+    )
+
+
 def parse_call_expr(ext_tokens, current_idx):
     parsed_atomic_expr, post_atomic_idx = parse_atomic_expr(
         ext_tokens, current_idx
@@ -214,7 +280,7 @@ def new_parse_call_expr(tokens):
         tokens
     )
     return new_continue_parsing_call_rec(
-        parsed_atomic_expr, rest_tokens
+        rest_tokens, parsed_atomic_expr,
     )
 
 

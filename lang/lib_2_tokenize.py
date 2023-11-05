@@ -82,12 +82,48 @@ class TokenDot:
 
 
 def match_token(
-
+    case_lit_str=None,
+    case_idf=None,
+    case_paren_open=None,
+    case_paren_close=None,
+    case_less_minus=None,
+    case_eq=None,
+    case_endl=None,
+    case_eq_gr=None,
+    case_dot=None,
+    otherwise=None,
 ):
-    def matcher(token):
-        wip()
+    def matcher(val):
+        case = ({
+            TokenLitStr: lambda: case_lit_str(val.s),
+            TokenIdf: lambda: case_idf(val.s),
+            TokenParenOpen: lambda: case_paren_open(),
+            TokenParenClose: lambda: case_paren_close(),
+            TokenLessMinus: lambda: case_less_minus(),
+            TokenEq: lambda: case_eq(),
+            TokenEndl: lambda: case_endl(),
+            TokenEqGr: lambda: case_eq_gr(),
+            TokenDot: lambda: case_dot(),
+        }
+        .get(
+            type(val),
+            lambda: fail(f"Value {val} {type(val)} is not a Token.")
+        ))
+
+        return (
+            case if case else
+            otherwise if otherwise else
+            fail(f"Unspecified case for `{val}` of type `{type(val)}`.")
+         )()
 
     return matcher
+
+
+def rt_assert_token_idf(val):
+    return match_token(
+        case_idf=lambda s: s,
+        otherwise=lambda: fail(),
+    )(val)
 
 
 def is_initial_idf_char(char):

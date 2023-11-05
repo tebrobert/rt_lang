@@ -48,3 +48,19 @@ def _match_list_2o(case_at_least_2, otherwise):
             )(tail1)
         )
     )
+
+
+def rt_assert_at_least_1(vals, *msg):
+    return _match_list_01(
+        case_empty=fail(*msg),
+        case_at_least_1=lambda head, tail: (head, tail),
+    )(vals)
+
+
+def rt_assert_at_least_2(vals, *msg):
+    return _match_list_2o(
+        case_at_least_2=lambda head0, head1, tail: (
+            head0, head1, tail,
+        ),
+        otherwise=fail(*msg),
+    )(vals)
