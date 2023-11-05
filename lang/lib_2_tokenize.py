@@ -219,7 +219,7 @@ def tokenize_first_of(code_ext, current_idx, tokens, tokenizers):
             f"Can't tokenize.",
             f"Given `{current_idx}` `{code_ext}`.",
         ),
-        case_nonempty=lambda head, tail: try_next_tokenizer(head, tail),
+        case_at_least_1=lambda head, tail: try_next_tokenizer(head, tail),
     )(tokenizers)
 
 

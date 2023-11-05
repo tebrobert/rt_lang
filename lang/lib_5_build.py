@@ -58,7 +58,7 @@ def show_typed_lit(s, typ):
 def operator_to_latin_idf(idf_s, acc):
     return match_list(
         case_empty=lambda: acc,
-        case_nonempty=lambda head, tail: rec(tail, acc + char_to_latin[head]),
+        case_at_least_1=lambda head, tail: rec(tail, acc + char_to_latin[head]),
     )(idf_s)
 
 

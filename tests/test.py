@@ -59,7 +59,7 @@ def full_test(test_number):
 def run_tests_rec(tests, results=[]):
     return match_list(
         case_empty=lambda: results,
-        case_nonempty=lambda current_test, rest_tests: rec(
+        case_at_least_1=lambda current_test, rest_tests: rec(
             rest_tests, results + [rt_try(current_test)]
         )
     )(tests)
@@ -73,7 +73,7 @@ def run_custom_tests():
     fails = list(filter(is_fail, results))
     match_list(
         case_empty=lambda: None,
-        case_nonempty=lambda head, _tail: print("The first failure:", head)
+        case_at_least_1=lambda head, _tail: print("The first failure:", head)
     )(fails)
     print(f"PASSED {len(results) - len(fails)} of {len(results)}")
 
@@ -84,7 +84,7 @@ def run_deferred_tests():
     successes = list(filter(is_success, results))
     match_list(
         case_empty=lambda: None,
-        case_nonempty=lambda _head, _tail: print("SOME DEFERRED TESTS PASSED!")
+        case_at_least_1=lambda _head, _tail: print("SOME DEFERRED TESTS PASSED!")
     )(successes)
 
 

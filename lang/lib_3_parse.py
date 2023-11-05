@@ -106,7 +106,7 @@ def get_first_success(parsers, *parser_args, fails=[]):
             f"Can't parse Expr given `{parser_args}`.",
             # f"Fails - `{fails}`.",
         ),
-        case_nonempty=lambda head, tail: try_next_parser(head, tail),
+        case_at_least_1=lambda head, tail: try_next_parser(head, tail),
     )(parsers)
 
 
@@ -123,7 +123,7 @@ def new_parse_lit_str(tokens):
         case_empty=lambda: fail(
             "Can't parse string literal from empty tokens.",
         ),
-        case_nonempty=lambda head, tail: (
+        case_at_least_1=lambda head, tail: (
             match_token
         ),
     )(tokens)
@@ -254,7 +254,7 @@ def new_continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
 ):
     return match_list(
         case_empty=lambda: fail("`)` expected."),
-        case_nonempty=lambda head, tail: (
+        case_at_least_1=lambda head, tail: (
             (
                 rec(tail, acc, acc_braced + [head], unclosed_parens_count - 1)
                 if unclosed_parens_count > 1 else
@@ -272,7 +272,7 @@ def new_continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
 def new_preparse_braced_rec(ext_tokens_and_exprs, acc):
     return match_list(
         case_empty=lambda: acc,
-        case_nonempty=lambda head, tail: (
+        case_at_least_1=lambda head, tail: (
             rec(*new_continue_preparse_braced(tail, acc, [], 1))
             if head == TokenParenOpen() else
             rec(tail, acc + [head])
@@ -294,7 +294,7 @@ def new_parse_full_expr_rec(ext_tokens_and_exprs, parsers):
         return ext_tokens_and_exprs[0]
     return match_list(
         case_empty=lambda: extract(),
-        case_nonempty=lambda head, tail: rec(head(ext_tokens_and_exprs), tail)
+        case_at_least_1=lambda head, tail: rec(head(ext_tokens_and_exprs), tail)
     )(parsers)
 
 
@@ -352,7 +352,7 @@ def parse_effectful_line(current_line, next_lines_expr):
 def parse_previous_lines(lines_reversed, acc_expr):
     return match_list(
         case_empty=lambda: acc_expr,
-        case_nonempty=lambda head, tail: rec(
+        case_at_least_1=lambda head, tail: rec(
             tail, get_first_success([
                 parse_line_with_less_minus,
                 parse_line_with_equals,
@@ -385,7 +385,7 @@ def new_parse_single_expr(tokens):
 def get_lines_reversed(tokens_reversed, acc_lines=[], acc_current_line=[]):
     return match_list(
         case_empty=lambda: acc_lines + [acc_current_line],
-        case_nonempty=lambda head, tail: (
+        case_at_least_1=lambda head, tail: (
             rec(tail, acc_lines + [acc_current_line], [])
             if head == TokenEndl() else
             rec(tail, acc_lines, [head] + acc_current_line)
@@ -399,7 +399,7 @@ def parse(tokens):
     nonempty_lines_reversed = list(filter(len, lines_reversed))
     return match_list(
         case_empty=lambda: fail("Yet empty file is unsupported."),
-        case_nonempty=lambda head, tail: parse_previous_lines(
+        case_at_least_1=lambda head, tail: parse_previous_lines(
             tail, parse_single_expr(head)
         ),
     )(nonempty_lines_reversed)
