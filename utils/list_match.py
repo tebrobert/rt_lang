@@ -5,26 +5,31 @@ def match_list(
     case_empty=None,
     case_at_least_1=None,
     case_at_least_2=None,
+    case_at_least_3=None,
     otherwise=None,
 ):
-    params = (case_empty, case_at_least_1, case_at_least_2, otherwise)
+    params = (case_empty, case_at_least_1, case_at_least_2, case_at_least_3,
+        otherwise,
+    )
     return {
-        (True, True, False, False): lambda: _match_list_01(
+        (True, True, False, False, False): lambda: _match_list_01(
             case_empty=case_empty,
             case_at_least_1=case_at_least_1,
         ),
-        (True, True, True, False): lambda: wip(),
-        (True, False, False, True): lambda: wip(),
-        (True, False, False, True): lambda: wip(),
-        (False, True, False, True): lambda: wip(),
-        (False, True, True, True): lambda: wip(),
-        (False, False, True, True): lambda: lambda: _match_list_2o(
+        (False, False, True, False, True): lambda: lambda: _match_list_2o(
             case_at_least_2=case_at_least_2,
             otherwise=otherwise,
         ),
+        (True, True, True, True, False): lambda:
+            _match_list_0123(
+                case_empty=case_empty,
+                case_at_least_1=case_at_least_1,
+                case_at_least_2=case_at_least_2,
+                case_at_least_3=case_at_least_3,
+            ),
     }.get(
         tuple(map(bool, params)),
-        lambda: fail("Wrong parameters."),
+        lambda: fail("Wrong or not implemented parameters."),
     )()
 
 
@@ -47,6 +52,23 @@ def _match_list_2o(case_at_least_2, otherwise):
                 ),
             )(tail1)
         )
+    )
+
+
+def _match_list_0123(case_empty, case_at_least_1, case_at_least_2,
+    case_at_least_3,
+):
+    return _match_list_01(
+        case_empty=lambda: case_empty(),
+        case_at_least_1=lambda head0, tail0: _match_list_01(
+            case_empty=lambda: case_at_least_1(head0, []),
+            case_at_least_1=lambda head1, tail1: _match_list_01(
+                case_empty=lambda: case_at_least_2(head0, head1, []),
+                case_at_least_1=lambda head2, tail2: case_at_least_3(
+                    head0, head1, head2, tail2,
+                ),
+            )(tail1),
+        )(tail0),
     )
 
 
