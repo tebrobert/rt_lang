@@ -73,6 +73,15 @@ class ExprLambda1:
         return f"{self}" == f"{that}"
 
 
+def is_expr(val):
+    return type(val) in [
+        ExprLitStr,
+        ExprIdf,
+        ExprCall1,
+        ExprLambda1,
+        ExprBraced,
+    ]
+
 def match_expr(
     case_lit_str,
     case_idf,
@@ -320,11 +329,16 @@ def new_preparse_braced(ext_tokens_and_exprs):
 @tailrec
 def new_preparse_call(tokens_and_exprs, acc_rest):
     return match_list(
-        case_empty=lambda: acc_rest,
-        case_at_least_1=lambda head0, tail: wip(),
-        case_at_least_2=lambda head0, head1, tail: (
+        case_at_least_3=lambda head0, head1, head2, tail2: (
             wip()
         ),
+        case_at_least_2=lambda head0, head1, _tail: (
+            wip()
+            if is_expr(head0) and type(head1) is ExprBraced else
+            wip()
+        ),
+        case_at_least_1=lambda head0, _tail: acc_rest + [head0],
+        case_empty=lambda: acc_rest,
     )(tokens_and_exprs)
 
 
