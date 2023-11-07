@@ -345,7 +345,7 @@ def new_parse_full_expr_rec(ext_tokens_and_exprs, parsers):
 def new_parse_full_expr(ext_tokens):
     return new_parse_full_expr_rec(ext_tokens, [
         new_preparse_braced,
-        preparse_call,
+        new_preparse_call,
         #preparse_dot,
         #preparse_plus_minus,
         parse_single_expr,
