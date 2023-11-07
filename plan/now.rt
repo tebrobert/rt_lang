@@ -58,6 +58,17 @@ print("Welcome, " + name)
 
 f(x)
 a +(x)
+- - (index) (nums)
+
+LIT         IDF (expr)  -> operator
+IDF         IDF (expr)  -> operator
+=>          IDF (expr)  -> call
+.           IDF (expr)  -> call
+(expr)      IDF (expr)  -> operator
+EXPR_CALL   IDF (expr)  -> operator
+EXPR_LAMBDA IDF (expr)  -> operator
+            IDF (expr)  -> call
+
 
 
 #Plan: ? add _FX _X to type params on both sides before synchronizing
