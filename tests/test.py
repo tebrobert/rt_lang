@@ -67,7 +67,7 @@ def run_tests_rec(tests, results=[]):
 
 def run_custom_tests():
     results = run_tests_rec([]
-        #+ list(map(full_test, interval(1, 14)))
+        + list(map(full_test, interval(1, 14)))
         + custom_tests
     )
     fails = list(filter(is_fail, results))
