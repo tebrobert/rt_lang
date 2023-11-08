@@ -172,7 +172,7 @@ def parse_braced_full_expr(ext_tokens, current_idx):
         f"TokenParenOpen exptokensected at {current_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
-    expr, paren_close_idx = parse_full_expr(ext_tokens, current_idx + 1)
+    expr, paren_close_idx = old_parse_full_expr(ext_tokens, current_idx + 1)
     fail_if(type(ext_tokens[paren_close_idx]) is not TokenParenClose,
         f"TokenParenClose expected at {paren_close_idx}.",
         f"Given {current_idx} {ext_tokens}",
@@ -211,7 +211,7 @@ def parse_lambda_1(ext_tokens, current_idx):
         f"TokenEqGr expected at {eq_gr_idx}.",
         f"Given {current_idx} {ext_tokens}",
     )
-    expr_res, next_idx = parse_full_expr(ext_tokens, eq_gr_idx + 1)
+    expr_res, next_idx = old_parse_full_expr(ext_tokens, eq_gr_idx + 1)
     return ExprLambda1(e_idf_x, expr_res), next_idx
 
 
@@ -243,7 +243,7 @@ def new_parse_atomic_expr(tokens):
 
 
 @tailrec
-def continue_parsing_call_rec(ext_tokens, expr_f, current_idx):
+def old_continue_parsing_call_rec(ext_tokens, expr_f, current_idx):
     def continue_parsing_call_forced():
         parsed_braced_expr, post_braced_idx = parse_braced_full_expr(
             ext_tokens, current_idx
@@ -258,19 +258,19 @@ def continue_parsing_call_rec(ext_tokens, expr_f, current_idx):
     )
 
 
-def parse_call_expr(ext_tokens, current_idx):
+def old_parse_call_expr(ext_tokens, current_idx):
     parsed_atomic_expr, post_atomic_idx = parse_atomic_expr(
         ext_tokens, current_idx
     )
-    return continue_parsing_call_rec(
+    return old_continue_parsing_call_rec(
         ext_tokens, parsed_atomic_expr, post_atomic_idx
     )
 
 
 @tailrec
-def continue_parsing_dotting_rec(ext_tokens, expr_acceptor, current_idx):
+def old_continue_parsing_dotting_rec(ext_tokens, expr_acceptor, current_idx):
     def continue_parsing_dotting_forced():
-        parsed_expr_method, post_braced_idx = parse_call_expr(
+        parsed_expr_method, post_braced_idx = old_parse_call_expr(
             ext_tokens, current_idx + 1
         )
         parsed_expr = ExprCall1(parsed_expr_method, expr_acceptor)
@@ -283,9 +283,9 @@ def continue_parsing_dotting_rec(ext_tokens, expr_acceptor, current_idx):
     )
 
 
-def parse_full_expr(ext_tokens, current_idx):
-    parsed_call_expr, post_call_idx = parse_call_expr(ext_tokens, current_idx)
-    return continue_parsing_dotting_rec(
+def old_parse_full_expr(ext_tokens, current_idx):
+    parsed_call_expr, post_call_idx = old_parse_call_expr(ext_tokens, current_idx)
+    return old_continue_parsing_dotting_rec(
         ext_tokens, parsed_call_expr, post_call_idx
     )
 
@@ -330,12 +330,22 @@ def new_preparse_braced(ext_tokens_and_exprs):
 def new_preparse_call(tokens_and_exprs, acc_rest):
     return match_list(
         case_at_least_3=lambda head0, head1, head2, tail2: (
-            wip()
+            rec([head1, head2] + tokens_and_exprs, acc_rest + [head0])
+            if type(head2) is not ExprBraced else
+            (
+                rec([head2] + tail2, acc_rest + [head0, head1])
+                if is_expr(head0) else
+                rec([head0, ExprCall1(head1, head2)] + tail2, acc_rest)
+            )
+            if type(head1) in ExprIdf else
+            rec([head0, ExprCall1(head1, head2)] + tail2, acc_rest)
+            if is_expr(type(head1)) else
+            rec([head1, head2] + tokens_and_exprs, acc_rest + [head0])
         ),
-        case_at_least_2=lambda head0, head1, _tail: (
-            wip()
+        case_at_least_2=lambda head0, head1, tail1: (
+            rec([ExprCall1(head0, head1)] + tail1, acc_rest)
             if is_expr(head0) and type(head1) is ExprBraced else
-            wip()
+            rec([head1] + tail1, acc_rest + [head0])
         ),
         case_at_least_1=lambda head0, _tail: acc_rest + [head0],
         case_empty=lambda: acc_rest,
@@ -356,20 +366,20 @@ def new_parse_full_expr_rec(ext_tokens_and_exprs, parsers):
     )(parsers)
 
 
-def new_parse_full_expr(ext_tokens):
-    return new_parse_full_expr_rec(ext_tokens, [
+def new_parse_full_expr(tokens):
+    return new_parse_full_expr_rec(tokens, [
         new_preparse_braced,
         new_preparse_call,
         #preparse_dot,
         #preparse_plus_minus,
-        parse_single_expr,
+        #parse_single_expr,
     ])
 
 
 def parse_line_with_less_minus(current_line, next_lines_expr):
     idf = rt_assert_type(current_line[0], TokenIdf)
     rt_assert_type(current_line[1], TokenLessMinus)
-    right_expr = parse_single_expr(current_line[2:])
+    right_expr = old_parse_single_expr(current_line[2:])
     return ExprCall1(
         ExprCall1(
             ExprIdf(builtin_flatmap),
@@ -382,7 +392,7 @@ def parse_line_with_less_minus(current_line, next_lines_expr):
 def parse_line_with_equals(current_line, next_lines_expr):
     idf = rt_assert_type(current_line[0], TokenIdf)
     rt_assert_type(current_line[1], TokenEq)
-    right_expr = parse_single_expr(current_line[2:])
+    right_expr = old_parse_single_expr(current_line[2:])
     return ExprCall1(
         ExprCall1(
             ExprIdf(builtin_flatmap),
@@ -396,7 +406,7 @@ def parse_line_with_equals(current_line, next_lines_expr):
 
 
 def parse_effectful_line(current_line, next_lines_expr):
-    right_expr = parse_single_expr(current_line)
+    right_expr = old_parse_single_expr(current_line)
     return ExprCall1(
         ExprCall1(
             ExprIdf(builtin_flatmap),
@@ -420,9 +430,9 @@ def parse_previous_lines(lines_reversed, acc_expr):
     )(lines_reversed)
 
 
-def parse_single_expr(tokens):
+def old_parse_single_expr(tokens):
     ext_tokens = tokens + [end_of_tokens]
-    expr, current_idx = parse_full_expr(ext_tokens, 0)
+    expr, current_idx = old_parse_full_expr(ext_tokens, 0)
 
     fail_if(ext_tokens[current_idx] != end_of_tokens,
         f"Unexpected token at {current_idx} given {tokens}",
@@ -458,7 +468,7 @@ def parse(tokens):
     return match_list(
         case_empty=lambda: fail("Yet empty file is unsupported."),
         case_at_least_1=lambda head, tail: parse_previous_lines(
-            tail, parse_single_expr(head)
+            tail, old_parse_single_expr(head)
         ),
     )(nonempty_lines_reversed)
 
