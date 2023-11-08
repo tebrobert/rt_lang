@@ -344,14 +344,16 @@ def new_preparse_braced(tokens_and_exprs, acc=[]):
 def new_preparse_call(tokens_and_exprs, acc_rest=[]):
     return match_list(
         case_at_least_3=lambda head0, head1, head2, tail2: (
-            rec([head1, head2] + tokens_and_exprs, acc_rest + [head0])
+            rec([ExprCall1(head0, head1), head2] + tail2, acc_rest)
+            if is_expr(head0) and type(head1) is ExprBraced else
+            rec([head1, head2] + tail2, acc_rest + [head0])
             if type(head2) is not ExprBraced else
             (
                 rec([head2] + tail2, acc_rest + [head0, head1])
                 if is_expr(head0) else
                 rec([head0, ExprCall1(head1, head2)] + tail2, acc_rest)
             )
-            if type(head1) in ExprIdf else
+            if type(head1) is ExprIdf else
             rec([head0, ExprCall1(head1, head2)] + tail2, acc_rest)
             if is_expr(type(head1)) else
             rec([head1, head2] + tokens_and_exprs, acc_rest + [head0])
@@ -363,6 +365,22 @@ def new_preparse_call(tokens_and_exprs, acc_rest=[]):
         ),
         case_at_least_1=lambda head0, _tail: acc_rest + [head0],
         case_empty=lambda: acc_rest,
+    )(tokens_and_exprs)
+
+
+def new_preparse_dot(tokens_and_exprs, acc=[]):
+    print("new_preparse_dot", tokens_and_exprs, acc)
+    return match_list(
+        case_at_least_3=lambda head0, head1, head2, tail2: (
+            rec([ExprCall1(head2, head0)] + tail2, acc)
+            if is_expr(head0) and type(head1) is TokenDot and is_expr(
+                head2
+            ) else
+            rec([head1, head2] + tail2, acc + [head0])
+        ),
+        case_at_least_2=lambda head0, head1, _tail1: acc + [head0, head1],
+        case_at_least_1=lambda head0, _tail0: acc + [head0],
+        case_empty=lambda: acc,
     )(tokens_and_exprs)
 
 
@@ -379,17 +397,13 @@ def new_parse_full_expr(tokens):
         new_preparse_idf_lit,
         new_preparse_braced,
         new_preparse_call,
-        # preparse_dot,
+        new_preparse_dot,
         # preparse_plus_minus,
-        # old_parse_single_expr,
     ])
     head_preparsed, tail_preparsed = rt_assert_at_least_1(preparsed)
     rt_assert_empty(tail_preparsed)
     rt_assert(is_expr(head_preparsed))
     return head_preparsed
-
-
-
 
 
 def parse_line_with_less_minus(current_line, next_lines_expr):

@@ -90,5 +90,5 @@ def run_deferred_tests():
 
 def run_tests():
     run_custom_tests()
-    #run_deferred_tests()
+    run_deferred_tests()
 

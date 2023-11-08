@@ -74,7 +74,10 @@ def _match_list_0123(case_empty, case_at_least_1, case_at_least_2,
 
 def rt_assert_empty(vals, *msg):
     return _match_list_01(
-        case_at_least_1=lambda _head, _tail: fail(*msg),
+        case_at_least_1=lambda _head, _tail: fail(
+            f"The list is not empty, `{vals}`.",
+            *msg,
+        ),
         case_empty=lambda: None,
     )(vals)
 
