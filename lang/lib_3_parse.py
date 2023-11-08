@@ -14,6 +14,17 @@ class ExprLitStr:
         return f"{self}" == f"{that}"
 
 
+class ExprLitBint:
+    def __init__(self, i):
+        self.i = i
+
+    def __repr__(self, indent=""):
+        return f"""{indent}ExprLitBint({self.i})"""
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
+
 class ExprIdf:
     def __init__(self, s):
         self.s = s
@@ -77,6 +88,7 @@ class ExprLambda1:
 def is_expr(val):
     return type(val) in [
         ExprLitStr,
+        ExprLitBint,
         ExprIdf,
         ExprCall1,
         ExprLambda1,
@@ -86,6 +98,7 @@ def is_expr(val):
 
 def match_expr(
     case_lit_str,
+    case_lit_bint,
     case_idf,
     case_call_1,
     case_lambda_1,
@@ -93,6 +106,7 @@ def match_expr(
 ):
     return lambda expr: ({
         ExprLitStr: lambda: case_lit_str(expr.s),
+        ExprLitBint: lambda: case_lit_bint(expr.i),
         ExprIdf: lambda: case_idf(expr.s),
         ExprCall1: lambda: case_call_1(expr.expr_f, expr.expr_x),
         ExprLambda1: lambda: case_lambda_1(expr.expr_idf_arg, expr.expr_res),
@@ -131,86 +145,13 @@ def apply_all(funcs, args):
     )(funcs)
 
 
-def parse_lit_str(tokens):
-    return match_list(
-        case_empty=lambda: fail(
-            "Can't parse string literal from empty tokens.",
-        ),
-        case_at_least_1=lambda head, tail: (
-            match_token(
-                case_lit_str=lambda s: (ExprLitStr(s), tail),
-                otherwise=lambda: fail(
-                    f"String literal expected, got `{head}`."
-                ),
-            )(head)
-        ),
-    )(tokens)
-
-
-def parse_idf(tokens):
-    return match_list(
-        case_empty=lambda: fail(
-            "Can't parse string literal from empty tokens.",
-        ),
-        case_at_least_1=lambda head, tail: (
-            match_token(
-                case_idf=lambda s: (ExprIdf(s), tail),
-                otherwise=lambda: fail(
-                    f"Identifier expected, got `{head}`."
-                ),
-            )(head)
-        ),
-    )(tokens)
-
-
-def parse_paren_open(tokens):
-    head, tail = rt_assert_at_least_1(tokens)
-    rt_assert_type(head, TokenParenOpen)
-    return tail
-
-
-def parse_paren_close(tokens):
-    head, tail = rt_assert_at_least_1(tokens)
-    rt_assert_type(head, TokenParenClose)
-    return tail
-
-
-def parse_braced_full_expr(tokens):
-    tokens_without_parsed_paren_open = parse_paren_open(tokens)
-    expr, tokens_without_parsed_full_expr = parse_full_expr(
-        tokens_without_parsed_paren_open
-    )
-    tokens_without_parsed_paren_close = parse_paren_open(
-        tokens_without_parsed_full_expr
-    )
-    rt_assert_equal(tokens_without_parsed_paren_close, [])
-    return ExprBraced(expr)
-
-
-def parse_lambda_1(tokens):
-    head0, head1, tail = rt_assert_at_least_2(tokens)
-    x_idf_s = rt_assert_token_idf(head0)
-    rt_assert_type(head1, TokenEqGr)
-    res_expr, rest = parse_full_expr(tail)
-    rt_assert_equal(rest, [])
-    return ExprLambda1(ExprIdf(x_idf_s), res_expr)
-
-
-def parse_atomic_expr(tokens):
-    return get_first_success([
-        parse_lambda_1,
-        parse_idf,
-        parse_braced_full_expr,
-        parse_lit_str,
-    ], tokens)
-
-
 @tailrec
 def preparse_idf_lit(tokens_and_exprs, acc=[]):
     return match_list(
         case_at_least_1=lambda head, tail: rec(tail, acc + [
             head if is_expr(head) else match_token(
                 case_lit_str=lambda s: ExprLitStr(s),
+                case_lit_bint=lambda i: ExprLitBint(i),
                 case_idf=lambda s: ExprIdf(s),
                 otherwise=lambda: head,
             )(head)
@@ -255,6 +196,7 @@ def preparse_braced(tokens_and_exprs, acc=[]):
 def debrace_expr(expr):
     return match_expr(
         case_lit_str=lambda _s: expr,
+        case_lit_bint=lambda _i: expr,
         case_idf=lambda _s: expr,
         case_call_1=lambda f, x: ExprCall1(
             debrace_expr(f),
@@ -449,7 +391,7 @@ def parse(tokens):
 
 
 def full_parse(code):
-    return parse(full_tokenize(code))
+    return parse(tokenize(code))
 
 
 end_of_tokens = "\0"

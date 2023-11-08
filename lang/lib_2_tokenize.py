@@ -14,6 +14,17 @@ class TokenLitStr:
         return f"{self}" == f"{that}"
 
 
+class TokenLitBint:
+    def __init__(self, i):
+        self.i = i
+
+    def __repr__(self):
+        return f"""TokenLitBint({self.i})"""
+
+    def __eq__(self, that):
+        return f"{self}" == f"{that}"
+
+
 class TokenIdf:
     def __init__(self, s):
         self.s = s
@@ -83,6 +94,7 @@ class TokenDot:
 
 def match_token(
     case_lit_str=None,
+    case_lit_bint=None,
     case_idf=None,
     case_paren_open=None,
     case_paren_close=None,
@@ -103,6 +115,7 @@ def match_token(
 
         return ({
             TokenLitStr: lambda: call_or_otherwise(case_lit_str, val.s),
+            TokenLitBint: lambda: call_or_otherwise(case_lit_bint, val.i),
             TokenIdf: lambda: call_or_otherwise(case_idf, val.s),
             TokenParenOpen: lambda: call_or_otherwise(case_paren_open),
             TokenParenClose: lambda: call_or_otherwise(case_paren_close),
@@ -138,6 +151,10 @@ def is_non_initial_idf_char(char):
     return (is_initial_idf_char(char)
             or "0" <= char <= "9"
             )
+
+
+def is_digit(char):
+    return "0" <= char <= "9"
 
 
 def is_operator_char(char):
@@ -183,6 +200,24 @@ def lexx_idf(code_ext, current_idx, tokens):
     idx_idf_end = get_idx_idf_end_rec(code_ext, idx_idf_start + 1)
     return (code_ext, idx_idf_end,
     tokens + [TokenIdf(code_ext[idx_idf_start:idx_idf_end])]
+    )
+
+
+@tailrec
+def get_idx_integer_end_rec(code_ext, idf_current_idx):
+    current_idf_char = code_ext[idf_current_idx]
+    return (rec(code_ext, idf_current_idx + 1)
+            if is_digit(current_idf_char)
+            else idf_current_idx
+            )
+
+
+def lexx_integer(code_ext, current_idx, tokens):
+    rt_assert(is_digit(code_ext[current_idx]))
+    idx_idf_start = current_idx
+    idx_idf_end = get_idx_integer_end_rec(code_ext, idx_idf_start + 1)
+    return (code_ext, idx_idf_end,
+    tokens + [TokenLitBint(code_ext[idx_idf_start:idx_idf_end])]
     )
 
 
@@ -275,10 +310,6 @@ def tokenize(code):
     return tokenize_rec(code + end_of_code, 0, [])
 
 
-def full_tokenize(sugared_code):
-    return tokenize(sugared_code)
-
-
 end_of_code = "\0"
 
 char_to_latin = {
@@ -298,6 +329,7 @@ char_to_latin = {
 
 all_tokenizers = [
     lexx_idf,
+    lexx_integer,
     lexx_paren_open,
     lexx_paren_close,
     lexx_eq_gr,

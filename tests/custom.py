@@ -112,7 +112,7 @@ def test_flatmap_input_2():
 def test_lines_reversed():
     current_test_dir_reader = get_current_test_dir_reader(11)
     code = read_code(current_test_dir_reader)
-    tokens = full_tokenize(code)
+    tokens = tokenize(code)
     ext_tokens_reversed = list(reversed([TokenEndl()] + tokens))
     raw_lines_reversed = get_lines_reversed(ext_tokens_reversed)
     actual_lines_reversed = list(filter(len, raw_lines_reversed))
@@ -206,10 +206,12 @@ def test_parse_with_preparse_4():
         TokenParenClose(), TokenParenOpen(), TokenLitStr("y"),
         TokenParenClose()]
     parse(tokens)
-    return
     full_parse("""f("y")""")
-    return
     full_parse("""print(+("y")("x"))""")
+
+
+def test_integers():
+    full_parse("""\n1\n""")
 
 
 custom_tests = [
@@ -239,6 +241,7 @@ custom_tests = [
     test_assignment_lambdas_1,
     test_assignment_lambdas_2,
     test_assignment_lambdas_3,
+    test_integers,
 ]
 
 deferred_tests = [
