@@ -62,14 +62,10 @@ f(x)
 a +(x)
 - - (index) (nums)
 
-=>          EXPR  (expr)  -> CALL
-.           EXPR  (expr)  -> CALL
-LIT         IDF ; (expr)  -> skip operator
-IDF         IDF ; (expr)  -> skip operator
-(expr)      IDF ; (expr)  -> skip operator
-EXPR_CALL   IDF ; (expr)  -> skip operator
-EXPR_LAMBDA IDF ; (expr)  -> skip operator
-            EXPR  (expr)  -> CALL
+EXPR    (expr)      ...  -> CALL
+...   ; ...notIdf   ...  -> skip
+EXPR    IDF       ; ...  -> skip operator
+...   ; IDF         ...  -> skip
 
 
 

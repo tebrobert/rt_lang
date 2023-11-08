@@ -146,14 +146,14 @@ def test_parse_sugared_2():
 
 
 def test_preparse_braced_1():
-    rt_assert_equal(new_preparse_braced([]), [])
-    rt_assert_equal(new_preparse_braced([TokenDot()]), [TokenDot()])
-    rt_assert_equal(new_preparse_braced([TokenDot(), TokenEqGr()]),
+    rt_assert_equal(preparse_braced([]), [])
+    rt_assert_equal(preparse_braced([TokenDot()]), [TokenDot()])
+    rt_assert_equal(preparse_braced([TokenDot(), TokenEqGr()]),
         [TokenDot(), TokenEqGr()])
 
 
 def test_preparse_braced_2():
-    new_preparse_braced([TokenParenOpen(), TokenIdf("+"), TokenParenClose()])
+    preparse_braced([TokenParenOpen(), TokenIdf("+"), TokenParenClose()])
 
 
 def test_rt_assert_at_least_1():
@@ -186,7 +186,7 @@ def test_new_preparse_call():
         ExprBraced(ExprLitStr("x")),
         ExprBraced(ExprLitStr("y")),
     ]
-    new_preparse_call(exprs)
+    preparse_call(exprs)
 
 
 def test_parse_with_preparse():
