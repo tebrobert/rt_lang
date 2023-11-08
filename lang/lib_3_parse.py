@@ -343,7 +343,7 @@ def preparse_lambda(tokens_and_exprs):
 def preparse_plus_minus(tokens_and_exprs, acc=[]):
     return match_list(
         case_at_least_3=lambda head0, head1, head2, tail2: (
-            rec(ExprCall1(ExprCall1(head1, head2), head0), acc)
+            rec([ExprCall1(ExprCall1(head1, head2), head0)] + tail2, acc)
             if is_expr(head0) and head1 in [ExprIdf("+"), ExprIdf("-")
             ] and is_expr(head2) else
             rec([head1, head2] + tail2, acc + [head0])
