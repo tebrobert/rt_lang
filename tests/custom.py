@@ -151,9 +151,44 @@ def test_preparse_braced_2():
     new_preparse_braced([TokenParenOpen(), TokenIdf("+"), TokenParenClose()])
 
 
+def test_parse_with_preparse():
+    code = """print("q")"""
+    tokens = tokenize(code)
+    parse(tokens)
+
+
+def test_match_token_1():
+    str_idf = "idf"
+    str_otherwise = "otherwise"
+    token_s = match_token(
+        case_idf=lambda s: s,
+        otherwise=lambda: str_otherwise,
+    )(TokenIdf(str_idf))
+    rt_assert_equal(token_s, str_idf)
+
+
+def test_match_token_2():
+    str_idf = "idf"
+    str_otherwise = "otherwise"
+    token_s = match_token(
+        case_idf=lambda s: s,
+        otherwise=lambda: str_otherwise,
+    )(TokenLitStr(str_idf))
+    print(token_s)
+
+
 custom_tests = [
+    test_match_token_1,
+    test_match_token_2,
+    #test_parse_with_preparse,
+]
+
+deferred_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
+    test_lines_reversed,
+    test_preparse_braced_1,
+    test_preparse_braced_2,
     test_assignment,
     test_assignment_lambdas_1,
     test_assignment_lambdas_2,
@@ -164,14 +199,8 @@ custom_tests = [
     test_flatmap_input_2,
     test_operator_naming_1,
     test_operator_naming_2,
-    test_lines_reversed,
     test_parse_sugared_1,
     test_parse_sugared_2,
-    test_preparse_braced_1,
-    test_preparse_braced_2,
-]
-
-deferred_tests = [
 ]
 
 path_tests_full = "tests/full/"

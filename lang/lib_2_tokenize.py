@@ -94,27 +94,28 @@ def match_token(
     otherwise=None,
 ):
     def matcher(val):
-        case = ({
-            TokenLitStr: lambda: case_lit_str(val.s),
-            TokenIdf: lambda: case_idf(val.s),
-            TokenParenOpen: lambda: case_paren_open(),
-            TokenParenClose: lambda: case_paren_close(),
-            TokenLessMinus: lambda: case_less_minus(),
-            TokenEq: lambda: case_eq(),
-            TokenEndl: lambda: case_endl(),
-            TokenEqGr: lambda: case_eq_gr(),
-            TokenDot: lambda: case_dot(),
+        def call_or_otherwise(func, *args):
+            return (
+                func(*args) if func else
+                otherwise() if otherwise else
+                fail(f"Unspecified case for `{val}` of type `{type(val)}`.")
+            )
+
+        return ({
+            TokenLitStr: lambda: call_or_otherwise(case_lit_str, val.s),
+            TokenIdf: lambda: call_or_otherwise(case_idf, val.s),
+            TokenParenOpen: lambda: call_or_otherwise(case_paren_open),
+            TokenParenClose: lambda: call_or_otherwise(case_paren_close),
+            TokenLessMinus: lambda: call_or_otherwise(case_less_minus),
+            TokenEq: lambda: call_or_otherwise(case_eq),
+            TokenEndl: lambda: call_or_otherwise(case_endl),
+            TokenEqGr: lambda: call_or_otherwise(case_eq_gr),
+            TokenDot: lambda: call_or_otherwise(case_dot),
         }
         .get(
             type(val),
             lambda: fail(f"Value {val} {type(val)} is not a Token.")
-        ))
-
-        return (
-            case if case else
-            otherwise if otherwise else
-            fail(f"Unspecified case for `{val}` of type `{type(val)}`.")
-         )()
+        ))()
 
     return matcher
 

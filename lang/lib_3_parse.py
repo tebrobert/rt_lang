@@ -194,7 +194,7 @@ def new_parse_paren_close(tokens):
 
 def new_parse_braced_full_expr(tokens):
     tokens_without_parsed_paren_open = new_parse_paren_open(tokens)
-    expr, tokens_without_parsed_full_expr = new_parse_full_expr(
+    expr, tokens_without_parsed_full_expr = new_preparse_all(
         tokens_without_parsed_paren_open
     )
     tokens_without_parsed_paren_close = new_parse_paren_open(
@@ -219,7 +219,7 @@ def new_parse_lambda_1(tokens):
     head0, head1, tail = rt_assert_at_least_2(tokens)
     x_idf_s = rt_assert_token_idf(head0)
     rt_assert_type(head1, TokenEqGr)
-    res_expr, rest = new_parse_full_expr(tail)
+    res_expr, rest = new_preparse_all(tail)
     rt_assert_equal(rest, [])
     return ExprLambda1(ExprIdf(x_idf_s), res_expr)
 
@@ -292,6 +292,7 @@ def old_parse_full_expr(ext_tokens, current_idx):
 
 @tailrec
 def new_preparse_idf_lit(tokens_and_exprs, acc=[]):
+    print("new_preparse_idf_lit", tokens_and_exprs)
     return match_list(
         case_at_least_1=lambda head, tail: rec(tail, acc + [match_token(
             case_lit_str=lambda s: ExprLitStr(s),
@@ -312,7 +313,7 @@ def new_continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
             (
                 rec(tail, acc, acc_braced + [head], unclosed_parens_count - 1)
                 if unclosed_parens_count > 1 else
-                (tail, acc + [ExprBraced(new_parse_full_expr(acc_braced))])
+                (tail, acc + [ExprBraced(new_preparse_all(acc_braced))])
             )
             if head == TokenParenClose() else
             rec(tail, acc, acc_braced + [head], unclosed_parens_count + 1)
@@ -361,21 +362,22 @@ def new_preparse_call(tokens_and_exprs, acc_rest=[]):
 
 
 @tailrec
-def new_parse_full_expr_rec(ext_tokens_and_exprs, parsers):
+def new_preparse(ext_tokens_and_exprs, preparsers):
     def extract():
         rt_assert_equal(len(ext_tokens_and_exprs), 1)
         rt_assert(type(ext_tokens_and_exprs[0]) in [
             ExprIdf, ExprCall1, ExprBraced
         ])
         return ext_tokens_and_exprs[0]
+
     return match_list(
         case_empty=lambda: extract(),
         case_at_least_1=lambda head, tail: rec(head(ext_tokens_and_exprs), tail)
-    )(parsers)
+    )(preparsers)
 
 
-def new_parse_full_expr(tokens):
-    return new_parse_full_expr_rec(tokens, [
+def new_preparse_all(tokens):
+    return new_preparse(tokens, [
         new_preparse_idf_lit,
         new_preparse_braced,
         new_preparse_call,
@@ -451,11 +453,9 @@ def old_parse_single_expr(tokens):
 
 
 def new_parse_single_expr(tokens):
-    expr, rest_tokens = new_parse_full_expr(tokens)
-    fail_if(rest_tokens == [],
-        f"Unexpected rest_tokens `{rest_tokens}`. Given `{tokens}`.",
-    )
-    return expr
+    preparsed = new_preparse_all(tokens)
+    first_expr, rest_exprs = rt_assert_at_least_1(preparsed)
+    return first_expr, rest_exprs
 
 
 @tailrec
@@ -470,6 +470,14 @@ def get_lines_reversed(tokens_reversed, acc_lines=[], acc_current_line=[]):
     )(tokens_reversed)
 
 
+def new_parse_full_expr(tokens):
+    preparsed = new_preparse_all(tokens)
+    return preparsed
+    first_expr, rest_exprs = new_preparse_all(tokens)
+    rt_assert_empty(rest_exprs)
+    return first_expr
+
+
 def parse(tokens):
     tokens_reversed = list(reversed(tokens))
     lines_reversed = get_lines_reversed(tokens_reversed)
@@ -477,7 +485,7 @@ def parse(tokens):
     return match_list(
         case_empty=lambda: fail("Yet empty file is unsupported."),
         case_at_least_1=lambda head, tail: parse_previous_lines(
-            tail, old_parse_single_expr(head)
+            tail, new_parse_full_expr(head)
         ),
     )(nonempty_lines_reversed)
 

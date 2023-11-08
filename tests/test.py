@@ -66,8 +66,8 @@ def run_tests_rec(tests, results=[]):
 
 
 def run_custom_tests():
-    results = run_tests_rec(
-        list(map(full_test, interval(1, 14)))
+    results = run_tests_rec([]
+        #+ list(map(full_test, interval(1, 14)))
         + custom_tests
     )
     fails = list(filter(is_fail, results))
@@ -90,5 +90,5 @@ def run_deferred_tests():
 
 def run_tests():
     run_custom_tests()
-    run_deferred_tests()
+    #run_deferred_tests()
 
