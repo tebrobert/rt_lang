@@ -375,16 +375,10 @@ def new_preparse_call(tokens_and_exprs, acc_rest=[]):
             rec([ExprCall1(head0, head1), head2] + tail2, acc_rest)
             if is_expr(head0) and type(head1) is ExprBraced else
             rec([head1, head2] + tail2, acc_rest + [head0])
-            if type(head2) is not ExprBraced else
-            (
-                rec([head2] + tail2, acc_rest + [head0, head1])
-                if is_expr(head0) else
-                rec([head0, ExprCall1(head1, head2)] + tail2, acc_rest)
-            )
-            if type(head1) is ExprIdf else
-            rec([head0, ExprCall1(head1, head2)] + tail2, acc_rest)
-            if is_expr(type(head1)) else
-            rec([head1, head2] + tokens_and_exprs, acc_rest + [head0])
+            if type(head1) is not ExprIdf else
+            rec([head2] + tail2, acc_rest + [head0, head1])
+            if is_expr(head0) else
+            rec([head1, head2] + tail2, acc_rest + [head0])
         ),
         case_at_least_2=lambda head0, head1, tail1: (
             rec([ExprCall1(head0, head1)] + tail1, acc_rest)

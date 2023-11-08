@@ -75,9 +75,6 @@ def test_method_syntax_2():
 
 
 def test_method_syntax_3():
-    #full_parse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))")
-    full_parse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)")
-    return
     rt_assert(
         full_parse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)") ==
         full_parse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))")
@@ -216,6 +213,8 @@ custom_tests = [
     test_sync_typs_with_unknown_f_type,
     test_lines_reversed,
     test_method_syntax_1,
+    test_method_syntax_2,
+    test_method_syntax_3,
     test_preparse_braced_1,
     test_preparse_braced_2,
     test_match_token_1,
@@ -230,9 +229,7 @@ custom_tests = [
     test_parse_with_preparse_3,
     test_new_preparse_call,
     test_parse_with_preparse_4,
-    test_method_syntax_2,
-]*0 + [
-    test_method_syntax_3,
+]*1 + [
 ]
 
 deferred_tests = [
