@@ -291,6 +291,18 @@ def old_parse_full_expr(ext_tokens, current_idx):
 
 
 @tailrec
+def new_preparse_idf_lit(tokens_and_exprs, acc=[]):
+    return match_list(
+        case_at_least_1=lambda head, tail: rec(tail, acc + [match_token(
+            case_lit_str=lambda s: ExprLitStr(s),
+            case_idf=lambda s: ExprIdf(s),
+            otherwise=lambda: head,
+        )(head)]),
+        case_empty=lambda: acc,
+    )(tokens_and_exprs)
+
+
+@tailrec
 def new_continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
     unclosed_parens_count,
 ):
@@ -311,7 +323,7 @@ def new_continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
 
 
 @tailrec
-def new_preparse_braced_rec(ext_tokens_and_exprs, acc):
+def new_preparse_braced(ext_tokens_and_exprs, acc=[]):
     return match_list(
         case_empty=lambda: acc,
         case_at_least_1=lambda head, tail: (
@@ -322,12 +334,8 @@ def new_preparse_braced_rec(ext_tokens_and_exprs, acc):
     )(ext_tokens_and_exprs)
 
 
-def new_preparse_braced(ext_tokens_and_exprs):
-    return new_preparse_braced_rec(ext_tokens_and_exprs, [])
-
-
 @tailrec
-def new_preparse_call(tokens_and_exprs, acc_rest):
+def new_preparse_call(tokens_and_exprs, acc_rest=[]):
     return match_list(
         case_at_least_3=lambda head0, head1, head2, tail2: (
             rec([head1, head2] + tokens_and_exprs, acc_rest + [head0])
@@ -368,11 +376,12 @@ def new_parse_full_expr_rec(ext_tokens_and_exprs, parsers):
 
 def new_parse_full_expr(tokens):
     return new_parse_full_expr_rec(tokens, [
+        new_preparse_idf_lit,
         new_preparse_braced,
         new_preparse_call,
         #preparse_dot,
         #preparse_plus_minus,
-        #parse_single_expr,
+        #old_parse_single_expr,
     ])
 
 

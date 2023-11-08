@@ -141,10 +141,13 @@ def test_parse_sugared_2():
     full_parse(code)
 
 
-def test_preparse_braced():
+def test_preparse_braced_1():
     rt_assert_equal(new_preparse_braced([]), [])
     rt_assert_equal(new_preparse_braced([TokenDot()]), [TokenDot()])
     rt_assert_equal(new_preparse_braced([TokenDot(), TokenEqGr()]), [TokenDot(), TokenEqGr()])
+
+
+def test_preparse_braced_2():
     new_preparse_braced([TokenParenOpen(), TokenIdf("+"), TokenParenClose()])
 
 
@@ -164,10 +167,11 @@ custom_tests = [
     test_lines_reversed,
     test_parse_sugared_1,
     test_parse_sugared_2,
+    test_preparse_braced_1,
+    test_preparse_braced_2,
 ]
 
 deferred_tests = [
-    test_preparse_braced,
 ]
 
 path_tests_full = "tests/full/"
