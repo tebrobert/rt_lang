@@ -229,16 +229,16 @@ custom_tests = [
     test_parse_with_preparse_3,
     test_new_preparse_call,
     test_parse_with_preparse_4,
-]*1 + [
+    test_flatmap_input_2,
+    test_operator_naming_2,
+]*0 + [
+    test_parse_sugared_2,
 ]
 
 deferred_tests = [
     test_assignment_lambdas_1,
     test_assignment_lambdas_2,
     test_assignment_lambdas_3,
-    test_flatmap_input_2,
-    test_operator_naming_2,
-    test_parse_sugared_2,
 ]*0 + [
 ]*0
 

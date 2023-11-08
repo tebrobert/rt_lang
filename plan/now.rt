@@ -42,8 +42,8 @@ print("Welcome, " + name)
 
 
     Precedence:
-    f(x)                    # ->
-    l.r                     # ->
+    f(x)                    # ->    done
+    l.r                     # ->    done
     +v, -v                  # <-
     not v                   # <-
     l*r, l/r, l%r           # ->
@@ -53,7 +53,9 @@ print("Welcome, " + name)
     l and r                 # ->
     l or r                  # ->
 
-    l = r, l <- r           # ? <-
+    x => y => z             # <-    NEEDED!
+
+    l = r, l <- r           # ? <-  done
 
 
 f(x)
