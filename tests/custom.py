@@ -68,15 +68,16 @@ def test_method_syntax_1():
 
 
 def test_method_syntax_2():
-    full_parse("a.+(b).+(c).+(d)")
-    return
-    rt_assert(
-        full_parse("a.+(b).+(c).+(d)") ==
-        full_parse("+(d)(+(c)(+(b)(a)))")
+    rt_assert_equal(
+        full_parse("a.+(b).+(c).+(d)"),
+        full_parse("+(d)(+(c)(+(b)(a)))"),
     )
 
 
 def test_method_syntax_3():
+    #full_parse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))")
+    full_parse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)")
+    return
     rt_assert(
         full_parse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)") ==
         full_parse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))")
@@ -229,8 +230,9 @@ custom_tests = [
     test_parse_with_preparse_3,
     test_new_preparse_call,
     test_parse_with_preparse_4,
-]*0 + [
     test_method_syntax_2,
+]*0 + [
+    test_method_syntax_3,
 ]
 
 deferred_tests = [
@@ -241,7 +243,6 @@ deferred_tests = [
     test_operator_naming_2,
     test_parse_sugared_2,
 ]*0 + [
-    test_method_syntax_3,
 ]*0
 
 path_tests_full = "tests/full/"

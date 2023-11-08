@@ -41,6 +41,7 @@ class ExprBraced:
 
 class ExprCall1:
     def __init__(self, expr_f, expr_x):
+        rt_assert(is_expr(expr_x))
         self.expr_f, self.expr_x = expr_f, expr_x
 
     def __repr__(self, indent=''):
@@ -340,6 +341,33 @@ def new_preparse_braced(tokens_and_exprs, acc=[]):
     )(tokens_and_exprs)
 
 
+def new_debrace_expr(expr):
+    return match_expr(
+        case_lit_str=lambda _s: expr,
+        case_idf=lambda _s: expr,
+        case_call_1=lambda f, x: ExprCall1(
+            new_debrace_expr(f),
+            new_debrace_expr(x),
+        ),
+        case_lambda_1=lambda arg, res: ExprLambda1(
+            new_debrace_expr(arg),
+            new_debrace_expr(res),
+        ),
+        case_braced=lambda inner_expr: new_debrace_expr(inner_expr),
+    )(expr)
+
+
+@tailrec
+def new_preparse_debrace(tokens, acc=[]):
+    return match_list(
+        case_at_least_1=lambda head, tail: (
+            rec(tail, acc + [new_debrace_expr(head)])
+            if is_expr(head) else
+            rec(tail, acc + [head])
+        ),
+        case_empty=lambda: acc,
+    )(tokens)
+
 @tailrec
 def new_preparse_call(tokens_and_exprs, acc_rest=[]):
     return match_list(
@@ -368,8 +396,8 @@ def new_preparse_call(tokens_and_exprs, acc_rest=[]):
     )(tokens_and_exprs)
 
 
+@tailrec
 def new_preparse_dot(tokens_and_exprs, acc=[]):
-    print("new_preparse_dot", tokens_and_exprs, acc)
     return match_list(
         case_at_least_3=lambda head0, head1, head2, tail2: (
             rec([ExprCall1(head2, head0)] + tail2, acc)
@@ -397,6 +425,7 @@ def new_parse_full_expr(tokens):
         new_preparse_idf_lit,
         new_preparse_braced,
         new_preparse_call,
+        new_preparse_debrace,
         new_preparse_dot,
         # preparse_plus_minus,
     ])
