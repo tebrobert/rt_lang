@@ -293,6 +293,7 @@ def typify(expr):
         case_lambda_1=lambda expr_idf_arg, expr_res: typify_lambda_1(
             expr_idf_arg, expr_res
         ),
+        case_braced=lambda inner_expr: typify(inner_expr),
     )(expr)
 
 

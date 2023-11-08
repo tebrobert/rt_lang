@@ -82,21 +82,24 @@ def is_expr(val):
         ExprBraced,
     ]
 
+
 def match_expr(
     case_lit_str,
     case_idf,
     case_call_1,
     case_lambda_1,
+    case_braced,
 ):
-    return lambda typed: ({
-        ExprLitStr: lambda: case_lit_str(typed.s),
-        ExprIdf: lambda: case_idf(typed.s),
-        ExprCall1: lambda: case_call_1(typed.expr_f, typed.expr_x),
-        ExprLambda1: lambda: case_lambda_1(typed.expr_idf_arg, typed.expr_res),
+    return lambda expr: ({
+        ExprLitStr: lambda: case_lit_str(expr.s),
+        ExprIdf: lambda: case_idf(expr.s),
+        ExprCall1: lambda: case_call_1(expr.expr_f, expr.expr_x),
+        ExprLambda1: lambda: case_lambda_1(expr.expr_idf_arg, expr.expr_res),
+        ExprBraced: lambda: case_braced(expr.expr)
     }
     .get(
-        type(typed),
-        lambda: fail(f"Value {typed} {type(typed)} is not an Expr.")
+        type(expr),
+        lambda: fail(f"Value {expr} {type(expr)} is not an Expr.")
     ))()
 
 
@@ -194,7 +197,7 @@ def new_parse_paren_close(tokens):
 
 def new_parse_braced_full_expr(tokens):
     tokens_without_parsed_paren_open = new_parse_paren_open(tokens)
-    expr, tokens_without_parsed_full_expr = new_preparse_all(
+    expr, tokens_without_parsed_full_expr = new_parse_full_expr(
         tokens_without_parsed_paren_open
     )
     tokens_without_parsed_paren_close = new_parse_paren_open(
@@ -202,7 +205,6 @@ def new_parse_braced_full_expr(tokens):
     )
     rt_assert_equal(tokens_without_parsed_paren_close, [])
     return ExprBraced(expr)
-
 
 
 def parse_lambda_1(ext_tokens, current_idx):
@@ -219,7 +221,7 @@ def new_parse_lambda_1(tokens):
     head0, head1, tail = rt_assert_at_least_2(tokens)
     x_idf_s = rt_assert_token_idf(head0)
     rt_assert_type(head1, TokenEqGr)
-    res_expr, rest = new_preparse_all(tail)
+    res_expr, rest = new_parse_full_expr(tail)
     rt_assert_equal(rest, [])
     return ExprLambda1(ExprIdf(x_idf_s), res_expr)
 
@@ -284,7 +286,8 @@ def old_continue_parsing_dotting_rec(ext_tokens, expr_acceptor, current_idx):
 
 
 def old_parse_full_expr(ext_tokens, current_idx):
-    parsed_call_expr, post_call_idx = old_parse_call_expr(ext_tokens, current_idx)
+    parsed_call_expr, post_call_idx = old_parse_call_expr(ext_tokens,
+        current_idx)
     return old_continue_parsing_dotting_rec(
         ext_tokens, parsed_call_expr, post_call_idx
     )
@@ -292,19 +295,21 @@ def old_parse_full_expr(ext_tokens, current_idx):
 
 @tailrec
 def new_preparse_idf_lit(tokens_and_exprs, acc=[]):
-    print("new_preparse_idf_lit", tokens_and_exprs)
     return match_list(
-        case_at_least_1=lambda head, tail: rec(tail, acc + [match_token(
-            case_lit_str=lambda s: ExprLitStr(s),
-            case_idf=lambda s: ExprIdf(s),
-            otherwise=lambda: head,
-        )(head)]),
+        case_at_least_1=lambda head, tail: rec(tail, acc + [
+            head if is_expr(head) else match_token(
+                case_lit_str=lambda s: ExprLitStr(s),
+                case_idf=lambda s: ExprIdf(s),
+                otherwise=lambda: head,
+            )(head)
+        ]),
         case_empty=lambda: acc,
     )(tokens_and_exprs)
 
 
 @tailrec
-def new_continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
+def new_continue_preparse_braced(
+    ext_tokens_and_exprs, acc, acc_braced,
     unclosed_parens_count,
 ):
     return match_list(
@@ -313,7 +318,7 @@ def new_continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
             (
                 rec(tail, acc, acc_braced + [head], unclosed_parens_count - 1)
                 if unclosed_parens_count > 1 else
-                (tail, acc + [ExprBraced(new_preparse_all(acc_braced))])
+                (tail, acc + [ExprBraced(new_parse_full_expr(acc_braced))])
             )
             if head == TokenParenClose() else
             rec(tail, acc, acc_braced + [head], unclosed_parens_count + 1)
@@ -324,7 +329,7 @@ def new_continue_preparse_braced(ext_tokens_and_exprs, acc, acc_braced,
 
 
 @tailrec
-def new_preparse_braced(ext_tokens_and_exprs, acc=[]):
+def new_preparse_braced(tokens_and_exprs, acc=[]):
     return match_list(
         case_empty=lambda: acc,
         case_at_least_1=lambda head, tail: (
@@ -332,7 +337,7 @@ def new_preparse_braced(ext_tokens_and_exprs, acc=[]):
             if head == TokenParenOpen() else
             rec(tail, acc + [head])
         )
-    )(ext_tokens_and_exprs)
+    )(tokens_and_exprs)
 
 
 @tailrec
@@ -362,29 +367,29 @@ def new_preparse_call(tokens_and_exprs, acc_rest=[]):
 
 
 @tailrec
-def new_preparse(ext_tokens_and_exprs, preparsers):
-    def extract():
-        rt_assert_equal(len(ext_tokens_and_exprs), 1)
-        rt_assert(type(ext_tokens_and_exprs[0]) in [
-            ExprIdf, ExprCall1, ExprBraced
-        ])
-        return ext_tokens_and_exprs[0]
-
+def new_preparse(tokens_and_exprs, preparsers):
     return match_list(
-        case_empty=lambda: extract(),
-        case_at_least_1=lambda head, tail: rec(head(ext_tokens_and_exprs), tail)
+        case_empty=lambda: tokens_and_exprs,
+        case_at_least_1=lambda head, tail: rec(head(tokens_and_exprs), tail)
     )(preparsers)
 
 
-def new_preparse_all(tokens):
-    return new_preparse(tokens, [
+def new_parse_full_expr(tokens):
+    preparsed = new_preparse(tokens, [
         new_preparse_idf_lit,
         new_preparse_braced,
         new_preparse_call,
-        #preparse_dot,
-        #preparse_plus_minus,
-        #old_parse_single_expr,
+        # preparse_dot,
+        # preparse_plus_minus,
+        # old_parse_single_expr,
     ])
+    head_preparsed, tail_preparsed = rt_assert_at_least_1(preparsed)
+    rt_assert_empty(tail_preparsed)
+    rt_assert(is_expr(head_preparsed))
+    return head_preparsed
+
+
+
 
 
 def parse_line_with_less_minus(current_line, next_lines_expr):
@@ -453,7 +458,7 @@ def old_parse_single_expr(tokens):
 
 
 def new_parse_single_expr(tokens):
-    preparsed = new_preparse_all(tokens)
+    preparsed = new_parse_full_expr(tokens)
     first_expr, rest_exprs = rt_assert_at_least_1(preparsed)
     return first_expr, rest_exprs
 
@@ -468,14 +473,6 @@ def get_lines_reversed(tokens_reversed, acc_lines=[], acc_current_line=[]):
             rec(tail, acc_lines, [head] + acc_current_line)
         ),
     )(tokens_reversed)
-
-
-def new_parse_full_expr(tokens):
-    preparsed = new_preparse_all(tokens)
-    return preparsed
-    first_expr, rest_exprs = new_preparse_all(tokens)
-    rt_assert_empty(rest_exprs)
-    return first_expr
 
 
 def parse(tokens):

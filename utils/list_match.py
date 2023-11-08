@@ -74,15 +74,15 @@ def _match_list_0123(case_empty, case_at_least_1, case_at_least_2,
 
 def rt_assert_empty(vals, *msg):
     return _match_list_01(
-        case_empty=lambda: None,
         case_at_least_1=lambda _head, _tail: fail(*msg),
+        case_empty=lambda: None,
     )(vals)
 
 
 def rt_assert_at_least_1(vals, *msg):
     return _match_list_01(
-        case_empty=fail(*msg),
         case_at_least_1=lambda head, tail: (head, tail),
+        case_empty=lambda: fail(*msg),
     )(vals)
 
 

@@ -151,10 +151,8 @@ def test_preparse_braced_2():
     new_preparse_braced([TokenParenOpen(), TokenIdf("+"), TokenParenClose()])
 
 
-def test_parse_with_preparse():
-    code = """print("q")"""
-    tokens = tokenize(code)
-    parse(tokens)
+def test_rt_assert_at_least_1():
+    rt_assert_at_least_1([None])
 
 
 def test_match_token_1():
@@ -177,18 +175,33 @@ def test_match_token_2():
     print(token_s)
 
 
-custom_tests = [
-    test_match_token_1,
-    test_match_token_2,
-    #test_parse_with_preparse,
-]
+def test_parse_with_preparse():
+    full_parse("""print("q")""")
 
-deferred_tests = [
+
+def test_parse_with_preparse_2():
+    full_typify("""x <- input\nprint(x)""")
+
+
+def test_parse_with_preparse_3():
+    full_build_py("""f = print("x")\nf""")
+
+
+custom_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
     test_lines_reversed,
     test_preparse_braced_1,
     test_preparse_braced_2,
+    test_match_token_1,
+    test_match_token_2,
+    test_rt_assert_at_least_1,
+    test_parse_with_preparse,
+    test_parse_with_preparse_2,
+    test_parse_with_preparse_3,
+]
+
+deferred_tests = [
     test_assignment,
     test_assignment_lambdas_1,
     test_assignment_lambdas_2,
