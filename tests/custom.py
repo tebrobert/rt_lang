@@ -148,7 +148,8 @@ def test_parse_sugared_2():
 def test_preparse_braced_1():
     rt_assert_equal(new_preparse_braced([]), [])
     rt_assert_equal(new_preparse_braced([TokenDot()]), [TokenDot()])
-    rt_assert_equal(new_preparse_braced([TokenDot(), TokenEqGr()]), [TokenDot(), TokenEqGr()])
+    rt_assert_equal(new_preparse_braced([TokenDot(), TokenEqGr()]),
+        [TokenDot(), TokenEqGr()])
 
 
 def test_preparse_braced_2():
@@ -178,6 +179,7 @@ def test_match_token_2():
     )(TokenLitStr(str_idf))
     rt_assert_equal(token_s, str_otherwise)
 
+
 def test_new_preparse_call():
     exprs = [
         ExprIdf("f"),
@@ -200,7 +202,9 @@ def test_parse_with_preparse_3():
 
 
 def test_parse_with_preparse_4():
-    tokens = [TokenIdf("f"), TokenParenOpen(), TokenLitStr("x"), TokenParenClose(), TokenParenOpen(), TokenLitStr("y"), TokenParenClose()]
+    tokens = [TokenIdf("f"), TokenParenOpen(), TokenLitStr("x"),
+        TokenParenClose(), TokenParenOpen(), TokenLitStr("y"),
+        TokenParenClose()]
     parse(tokens)
     return
     full_parse("""f("y")""")
@@ -231,15 +235,13 @@ custom_tests = [
     test_parse_with_preparse_4,
     test_flatmap_input_2,
     test_operator_naming_2,
-]*0 + [
     test_parse_sugared_2,
-]
-
-deferred_tests = [
     test_assignment_lambdas_1,
     test_assignment_lambdas_2,
     test_assignment_lambdas_3,
-]*0 + [
-]*0
+]
+
+deferred_tests = [
+]
 
 path_tests_full = "tests/full/"

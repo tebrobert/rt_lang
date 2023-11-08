@@ -358,7 +358,7 @@ def new_debrace_expr(expr):
 
 
 @tailrec
-def new_preparse_debrace(tokens, acc=[]):
+def new_preparse_debrace(tokens_and_exprs, acc=[]):
     return match_list(
         case_at_least_1=lambda head, tail: (
             rec(tail, acc + [new_debrace_expr(head)])
@@ -366,27 +366,27 @@ def new_preparse_debrace(tokens, acc=[]):
             rec(tail, acc + [head])
         ),
         case_empty=lambda: acc,
-    )(tokens)
+    )(tokens_and_exprs)
 
 @tailrec
-def new_preparse_call(tokens_and_exprs, acc_rest=[]):
+def new_preparse_call(tokens_and_exprs, acc=[]):
     return match_list(
         case_at_least_3=lambda head0, head1, head2, tail2: (
-            rec([ExprCall1(head0, head1), head2] + tail2, acc_rest)
+            rec([ExprCall1(head0, head1), head2] + tail2, acc)
             if is_expr(head0) and type(head1) is ExprBraced else
-            rec([head1, head2] + tail2, acc_rest + [head0])
+            rec([head1, head2] + tail2, acc + [head0])
             if type(head1) is not ExprIdf else
-            rec([head2] + tail2, acc_rest + [head0, head1])
+            rec([head2] + tail2, acc + [head0, head1])
             if is_expr(head0) else
-            rec([head1, head2] + tail2, acc_rest + [head0])
+            rec([head1, head2] + tail2, acc + [head0])
         ),
         case_at_least_2=lambda head0, head1, tail1: (
-            rec([ExprCall1(head0, head1)] + tail1, acc_rest)
+            rec([ExprCall1(head0, head1)] + tail1, acc)
             if is_expr(head0) and type(head1) is ExprBraced else
-            rec([head1] + tail1, acc_rest + [head0])
+            rec([head1] + tail1, acc + [head0])
         ),
-        case_at_least_1=lambda head0, _tail: acc_rest + [head0],
-        case_empty=lambda: acc_rest,
+        case_at_least_1=lambda head0, _tail: acc + [head0],
+        case_empty=lambda: acc,
     )(tokens_and_exprs)
 
 
@@ -407,6 +407,27 @@ def new_preparse_dot(tokens_and_exprs, acc=[]):
 
 
 @tailrec
+def new_preparse_lambda_reversed_rec(reversed_tokens_and_exprs, acc=[]):
+    return match_list(
+        case_at_least_3=lambda head0, head1, head2, tail2: (
+            rec([ExprLambda1(head2, head0)] + tail2, acc)
+            if is_expr(head0) and type(head1) is TokenEqGr and is_expr(
+                head2
+            ) else
+            rec([head1, head2] + tail2, acc + [head0])
+        ),
+        case_at_least_2=lambda head0, head1, _tail1: acc + [head0, head1],
+        case_at_least_1=lambda head0, _tail0: acc + [head0],
+        case_empty=lambda: acc,
+    )(reversed_tokens_and_exprs)
+
+
+def new_preparse_lambda(tokens_and_exprs):
+    return list(reversed(new_preparse_lambda_reversed_rec(list(reversed(
+        tokens_and_exprs
+    )))))
+
+@tailrec
 def new_preparse(tokens_and_exprs, preparsers):
     return match_list(
         case_empty=lambda: tokens_and_exprs,
@@ -422,6 +443,7 @@ def new_parse_full_expr(tokens):
         new_preparse_debrace,
         new_preparse_dot,
         # preparse_plus_minus,
+        new_preparse_lambda,
     ])
     head_preparsed, tail_preparsed = rt_assert_at_least_1(preparsed)
     rt_assert_empty(tail_preparsed)
