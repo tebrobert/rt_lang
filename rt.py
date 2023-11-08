@@ -29,8 +29,8 @@ def unsafe_run_code(code, dev):
     print_if(dev)("1_CODE")
     print_if(dev)(code)
     try:
-        desugared = run(desugar, code, "2_DESUGARED")
-        tokens = run(tokenize, desugared, "3_TOKENS")
+        # desugared = run(desugar, code, "2_DESUGARED") # 231108
+        tokens = run(tokenize, code, "3_TOKENS")
         expr = run(parse, tokens, "4_EXPR")
         typed = run(typify, expr, "5_TYPED")
         shown = run(build_str_py, typed, "6_SHOWN")
