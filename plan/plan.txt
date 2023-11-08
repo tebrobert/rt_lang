@@ -1,6 +1,9 @@
-implement map
+implement integers
+implement booleans
 
-Overloadings
+implement tuples
+    implement functions
+        implement overloadings
 
 implement better error locating
 
@@ -9,12 +12,10 @@ implement flags:
 	build
 	run (default)
 
-
+implement map
 
 Defer:
 Unary plus, minus
-implement operator syntax
---implement functions
 Typeclasses
 ...
 
@@ -75,8 +76,6 @@ impl Multiply[Int, Float]:
 
 # String - Arr[Char], Vec20[Char] ?
 # 1. Plus functions
-# 2. Function overloading
-# 3. Operators
 
 
 
@@ -120,15 +119,4 @@ xs[i]   # somehow requires the fact 0 <= i < xs.len     # seems too hard to impl
 # raise error
 # None
 # doesn't compile
-
-
-
-
-
-
-
-
-
-
-
 

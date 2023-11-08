@@ -1,45 +1,5 @@
-greeting = "Hey! What is your name?"
-print(greeting)
-name <- input
-print("Welcome, " + name)
-
-
-####################
-- omg, remove endOfCode and endOfTokens
-- The operator syntax - plan how it should work
-
-    preparse_braced: [a ( b . c ) d] -> [a (c(b)) d]
-    preparse_unary: [- - a - b - c] -> [--a - b - c]
-
-    x = - - a ( - - b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n # ALL TOKENS
-    x = - - a ( - -b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
-    x = - - a ( --b ) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n # INNER parsed unary
-    x = - - a (--b) ( c ) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
-    x = - - a (--b) (c) + d ( + e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
-    x = - - a (--b) (c) + d ( +e ) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n # INNER parsed unary
-    x = - - a (--b) (c) + d (+e) ( f ) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
-    x = - - a (--b) (c) + d (+e) (f) * g ( h ) ( i . j ( k ) ) . l ( m ) . n
-    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j ( k ) ) . l ( m ) . n
-    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j (k) ) . l ( m ) . n
-    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i . j(k) ) . l ( m ) . n # INNER parsed calls
-    x = - - a (--b) (c) + d (+e) (f) * g (h) ( i.j(k) ) . l ( m ) . n # INNER parsed dots
-    x = - - a (--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l ( m ) . n
-    x = - - a (--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n # not ALL EXPR, parsed braced
-    x = - - a(--b) (c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n
-    x = - - a(--b)(c) + d (+e) (f) * g (h) (i.j(k)) . l (m) . n
-    x = - - a(--b)(c) + d(+e) (f) * g (h) (i.j(k)) . l (m) . n
-    x = - - a(--b)(c) + d(+e)(f) * g (h) (i.j(k)) . l (m) . n
-    x = - - a(--b)(c) + d(+e)(f) * g(h) (i.j(k)) . l (m) . n
-    x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)) . l (m) . n
-    x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)) . l(m) . n # parsed calls
-    x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m) . n
-    x = - - a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m).n # ALL EXPR, parsed dots
-    x = - -a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m).n
-    x = --a(--b)(c) + d(+e)(f) * g(h)(i.j(k)).l(m).n # parsed unary
-    x = --a(--b)(c) + d(+e)(f)*g(h)(i.j(k)).l(m).n # parsed high
-    x = --a(--b)(c)+d(+e)(f)*g(h)(i.j(k)).l(m).n # parsed low
-    x=--a(--b)(c)+d(+e)(f)*g(h)(i.j(k)).l(m).n # parsed assignment
-
+# ? remove endOfCode
+# ? add _FX _X to type params on both sides before synchronizing
 
     Precedence:
     f(x)                    # ->    done
@@ -57,16 +17,3 @@ print("Welcome, " + name)
 
     l = r, l <- r           # ? <-  done
 
-
-f(x)
-a +(x)
-- - (index) (nums)
-
-EXPR    (expr)      ...  -> CALL
-...   ; ...notIdf   ...  -> skip
-EXPR    IDF       ; ...  -> skip operator
-...   ; IDF         ...  -> skip
-
-
-
-#Plan: ? add _FX _X to type params on both sides before synchronizing
