@@ -172,15 +172,15 @@ def test_match_token_2():
         case_idf=lambda s: s,
         otherwise=lambda: str_otherwise,
     )(TokenLitStr(str_idf))
-    print(token_s)
+    rt_assert_equal(token_s, str_otherwise)
 
 
 def test_parse_with_preparse():
-    full_parse("""print("q")""")
+    full_build_py("""print("q")""")
 
 
 def test_parse_with_preparse_2():
-    full_typify("""x <- input\nprint(x)""")
+    full_build_py("""x <- input\nprint(x)""")
 
 
 def test_parse_with_preparse_3():
@@ -199,20 +199,20 @@ custom_tests = [
     test_parse_with_preparse,
     test_parse_with_preparse_2,
     test_parse_with_preparse_3,
+    test_assignment,
+    test_flatmap_input_1,
+    test_operator_naming_1,
+    test_parse_sugared_1,
 ]
 
 deferred_tests = [
-    test_assignment,
     test_assignment_lambdas_1,
     test_assignment_lambdas_2,
     test_assignment_lambdas_3,
     test_method_syntax_1,
     test_method_syntax_2,
-    test_flatmap_input_1,
     test_flatmap_input_2,
-    test_operator_naming_1,
     test_operator_naming_2,
-    test_parse_sugared_1,
     test_parse_sugared_2,
 ]
 
