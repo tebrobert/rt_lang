@@ -338,6 +338,22 @@ def preparse_lambda(tokens_and_exprs):
         tokens_and_exprs
     )))))
 
+
+@tailrec
+def preparse_plus_minus(tokens_and_exprs, acc=[]):
+    return match_list(
+        case_at_least_3=lambda head0, head1, head2, tail2: (
+            rec(ExprCall1(ExprCall1(head1, head2), head0), acc)
+            if is_expr(head0) and head1 in [ExprIdf("+"), ExprIdf("-")
+            ] and is_expr(head2) else
+            rec([head1, head2] + tail2, acc + [head0])
+        ),
+        case_at_least_2=lambda head0, head1, _tail: acc + [head0, head1],
+        case_at_least_1=lambda head0, _tail: acc + [head0],
+        case_empty=lambda: acc,
+    )(tokens_and_exprs)
+
+
 def parse_full_expr(tokens):
     preparsed = apply_all([
         preparse_idf_lit,
@@ -345,7 +361,7 @@ def parse_full_expr(tokens):
         preparse_call,
         preparse_debrace,
         preparse_dot,
-        # preparse_plus_minus,
+        preparse_plus_minus,
         preparse_lambda,
     ], tokens)
     head_preparsed, tail_preparsed = rt_assert_at_least_1(preparsed)
