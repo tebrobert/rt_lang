@@ -7,8 +7,12 @@ string interpolation
 
 sum integers
 
-booleans
+booleans (true, false)
 compare values of the same type
+
+list literals
+
+dict vs named tuple (name: Str, salary: Bint, permitted: Bool)
 
 # ? remove endOfCode
 # ? add _FX _X to type params on both sides before synchronizing
