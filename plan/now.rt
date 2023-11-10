@@ -1,16 +1,15 @@
-integer operations
-
-string interpolation
-?print integers
-
-sum integers
-
-booleans (true, false)
+implement booleans (true, false)
 compare values of the same type
 
 list literals
 
 dict vs named tuple (name: Str, salary: Bint, permitted: Bool)
+
+(not blocking) implement better error locating
+(not blocking) implement escape-characters
+(not blocking) implement comments
+(not blocking) string interpolation
+(not blocking) implement map, bind
 
 # ? remove endOfCode
 # ? add _FX _X to type params on both sides before synchronizing
@@ -18,9 +17,9 @@ dict vs named tuple (name: Str, salary: Bint, permitted: Bool)
     Precedence:
     f(x)                    # ->    done
     l.r                     # ->    done
-    +v, -v                  # <-    TODO!
+    +v, -v                  # <-    done
     not v                   # <-
-    l*r, l/r, l%r           # ->    TODO!
+    l*r, l/r, l%r           # ->    done
     l+r, l-r                # ->    done
     l<r, l<=r, l>r, l>=r    # ? ->
     l==r, l!=r              # ? ->

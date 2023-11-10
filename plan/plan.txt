@@ -1,111 +1,94 @@
-implement booleans
+# String - Arr[Char], Vec20[Char] ? # no idea whether we need it 231110
 
 ? implement one argument functions
 
-?implement structs
-?implement tuples
+implement list type
+?implement structs/tuples/named tuples
     implement functions
-        implement overloadings
+implement dict type
+implement json type
 
-implement comments
-implement escape-characters
-implement better error locating
 implement flags:
 	validate
 	build
 	run (default)
-implement map
 
 Defer:
-Unary plus, minus
-Typeclasses
-...
+    anonymous functions
+    anonymous structs
+    "has" - anonymous trait
+
+    Typeclasses
+        def float(x: Int): Float
+
+        def str(x: Int): Str
+        def str(x: Float): Str
+        def str(x: Bool): Str
+        def str(x: Str): Str = id
+
+        def +(y: Int)(x: Int): Int
+        def +(y: has[float])(x: has[float]): Float
+        def +(y: has[str])(x: has[str]): Str
+
+        trait Plus[A, B]:
+            def +(x: A, y: B): A
+        trait Multiply[A, B]:
+            def *(x: A, y: B): A
+
+        impl Plus[Str, Str]:
+            def +(x, y) = ...
+        impl Multiply[Str, Int]:
+            def *(x, y) = ...
+
+        impl Plus[Int, Int]:
+            def +(x, y) = ...
+        impl Multiply[Int, Int]:
+            def *(x, y) = ...
 
 
-implement list type
-? implement named tuple type
-implement dict type
-implement json type
+        impl Plus[Float, Int]:
+            def +(x, y) = ...
+        impl Multiply[Float, Int]:
+            def *(x, y) = ...
 
 
+        impl Plus[Int, Float]:
+            def +(x, y): Float = ... ###############
+        impl Multiply[Int, Float]:
+            def *(x, y): Float = ... ###############
+
+    end Typeclasses
 
 
-def float(x: Int): Float
+Handling errors:
+    # list access
+        #1
+        [][0]   # Left(IdxOutOfRangErr)
+        myEither.getOrDie("")
 
-def str(x: Int): Str
-def str(x: Float): Str
-def str(x: Bool): Str
-def str(x: Str): Str = id
+        #2
+        [][0]   # RUNTIME ERROR!      # TRADITIONALLY, relying on a programmer
 
-def +(y: Int)(x: Int): Int
-def +(y: has[float])(x: has[float]): Float
-def +(y: has[str])(x: has[str]): Str
+        #3
+        [][0]   # doesn't compile
+        xs[i]   # somehow requires the fact 0 <= i < xs.len, seems too hard to do
 
-# anonymous functions
-# anonymous structs
-# "has" - anonymous trait
+    # division
+        #1
+        1 // 0  # Left(ZeroDivErr)
 
+        #2
+        1 // 0  # doesn't compile
+        1 // x  # somehow requires the fact x!=0   # seems efforts won't worth it
 
-trait Plus[A, B]:
-    def +(x: A, y: B): A
-trait Multiply[A, B]:
-    def *(x: A, y: B): A
+        #
+        1 // 0  # RUNTIME ERROR!  # TRADITIONALLY, relying on a programmer
 
-impl Plus[Str, Str]:
-    def +(x, y) = ...
-impl Multiply[Str, Int]:
-    def *(x, y) = ...
+        #
+        1 // 0  # inf    # values of the Int type are also "inf", "-inf", "nan"
 
-impl Plus[Int, Int]:
-    def +(x, y) = ...
-impl Multiply[Int, Int]:
-    def *(x, y) = ...
-
-
-impl Plus[Float, Int]:
-    def +(x, y) = ...
-impl Multiply[Float, Int]:
-    def *(x, y) = ...
-
-
-impl Plus[Int, Float]:
-    def +(x, y): Float = ... ###############
-impl Multiply[Int, Float]:
-    def *(x, y): Float = ... ###############
-
-
-# String - Arr[Char], Vec20[Char] ?
-# 1. Plus functions
-
-
-# list access
-    #1
-    [][0]   # Left(IdxOutOfRangErr)
-    myEither.getOrDie("")
-
-    #2
-    [][0]   # RAISE ERROR!      # TRADITIONALLY, we should rely on a programmer
-
-    #3
-    [][0]   # doesn't compile
-    xs[i]   # somehow requires the fact 0 <= i < xs.len, seems too hard to do
-
-# division
-    #1
-    1 // 0  # Left(ZeroDivErr)
-
-    #2
-    1 // 0  # doesn't compile
-    1 // x  # somehow requires the fact x!=0   # seems efforts won't worth it
-
-    #
-    1 // 0  # RAISE ERROR!  # TRADITIONALLY, we should rely on a programmer
-
-    #
-    1 // 0  # inf    # values of the Int type are also "inf", "-inf", "nan"
-
-# Memory issues
-    [0] * (1_000 ** 100)
-    # raise error
-    # None
-    # doesn't compile
+    # Memory issues
+        [0] * (1_000 ** 100)
+        # runtime error
+        # None
+        # doesn't compile
