@@ -257,9 +257,27 @@ def continue_typifying_call_1(typified_f, typified_x):
     return TypifiedCall1(new_typified_f, new_typified_x, new_typ_f.t2)
 
 
-def typify_call_1(expr_f, expr_x):
-    typified_f = typify(expr_f)
-    typified_x = typify(expr_x)
+def old_typify_call_1(expr_f, expr_x):
+    typified_f = old_typify(expr_f)
+    typified_x = old_typify(expr_x)
+
+    rt_assert(
+        type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func
+        or type(typified_f.typ) is TypUnknown0,
+        f"typified_f should be a `{builtin_Func}`",
+    )
+
+    return (
+        continue_typifying_call_1_with_unknown_x(typified_f, typified_x)
+        if type(typified_x.typ) is TypUnknown0 else
+        continue_typifying_call_1(typified_f, typified_x)
+    )
+
+
+def new_typify_call_1(expr_f, expr_x):
+    wip()
+    typified_f = old_typify(expr_f)
+    typified_x = old_typify(expr_x)
 
     rt_assert(
         type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func
@@ -290,7 +308,7 @@ def old_typify(expr):
         case_lit_str=lambda s: TypifiedLit(s, T_Str),
         case_lit_bint=lambda i: TypifiedLit(i, T_Bint),
         case_idf=lambda s: TypifiedIdf(s, old_idf_to_type.get(s, T_A)),
-        case_call_1=lambda expr_f, expr_x: typify_call_1(expr_f, expr_x),
+        case_call_1=lambda expr_f, expr_x: old_typify_call_1(expr_f, expr_x),
         case_lambda_1=lambda expr_idf_arg, expr_res: typify_lambda_1(
             expr_idf_arg, expr_res
         ),
@@ -305,7 +323,7 @@ def new_typify(expr):
         case_idf=lambda s: (
             set(map(lambda typ: TypifiedIdf(s, typ), new_idf_to_typ.get(s, T_A)))
         ),
-        case_call_1=lambda expr_f, expr_x: {typify_call_1(expr_f, expr_x)},
+        case_call_1=lambda expr_f, expr_x: {new_typify_call_1(expr_f, expr_x)},
         case_lambda_1=lambda expr_idf_arg, expr_res: {typify_lambda_1(
             expr_idf_arg, expr_res
         )},
