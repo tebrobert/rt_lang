@@ -31,7 +31,7 @@ old_idf_to_type = {
     builtin_str: T_Func(T_Bint, T_Str),
 }
 
-new_idf_to_type = {
+new_idf_to_typ = {
     builtin_input: {T_RIO(T_Str)},
     builtin_print: {T_Func(T_Str, T_RIO(T_Unit))},
     builtin_flatmap: {T_Func(
