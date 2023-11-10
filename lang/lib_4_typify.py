@@ -324,9 +324,8 @@ def new_typify(expr):
             set(map(lambda typ: TypifiedIdf(s, typ), new_idf_to_typ.get(s, T_A)))
         ),
         case_call_1=lambda expr_f, expr_x: {new_typify_call_1(expr_f, expr_x)},
-        case_lambda_1=lambda expr_idf_arg, expr_res: {typify_lambda_1(
-            expr_idf_arg, expr_res
-        )},
+        case_lambda_1=lambda expr_idf_arg, expr_res:
+            wip(),
         case_braced=lambda inner_expr: new_typify(inner_expr),
     )(expr)
     rt_assert(len(typified_set) == 1)
