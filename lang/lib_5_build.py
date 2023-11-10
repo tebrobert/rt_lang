@@ -86,9 +86,14 @@ def build_str_py_idf(s, typ, lamb_arg_stack):
             ),
             case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
             case_plus=lambda: (
-                f"(lambda {_right}: lambda {_left}: " + f"{_left} + {_right})"
+                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
                 if typ == T_Func(T_Str, T_Func(T_Str, T_Str)) else
-                f"(lambda {_right}: lambda {_left}: " + f"{_left} + {_right})"
+                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
+                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+                fail(f"Unexpected typ `{typ}` for `{s}`.")
+            ),
+            case_minus=lambda: (
+                f"(lambda {_right}: lambda {_left}: {_left} - {_right})"
                 if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
                 fail(f"Unexpected typ `{typ}` for `{s}`.")
             ),

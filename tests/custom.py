@@ -223,7 +223,7 @@ def test_integers_plus():
 
 
 def test_typify_set():
-    new_typify_set(ExprIdf("num"))
+    typify_set(ExprIdf("num"))
 
 
 custom_tests = [

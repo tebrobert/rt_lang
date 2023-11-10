@@ -7,6 +7,7 @@ def match_builtin_idf(
     case_flatmap,
     case_pure,
     case_plus,
+    case_minus,
     case_str,
 ):
     return lambda idf: ({
@@ -15,6 +16,7 @@ def match_builtin_idf(
         builtin_flatmap: case_flatmap,
         builtin_pure: case_pure,
         builtin_plus: case_plus,
+        builtin_minus: case_minus,
         builtin_str: case_str,
     }
     .get(
@@ -37,4 +39,5 @@ builtin_bind = ">>"
 builtin_map = "map"
 builtin_pure = "pure"
 builtin_plus = "+"
+builtin_minus = "-"
 builtin_str = "str"
