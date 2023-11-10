@@ -56,6 +56,7 @@ def build_str_py_lit(s, typ):
         fail(f"Unexpected literal `{TypifiedLit(s, typ)}`.")
     )
 
+
 @tailrec
 def operator_to_latin_idf(idf_s, acc):
     return match_list(
@@ -73,7 +74,7 @@ def to_latin_idf(idf_s):
     )
 
 
-def build_str_py_idf(s, _typ, lamb_arg_stack):
+def build_str_py_idf(s, typ, lamb_arg_stack):
     return (
         to_latin_idf(s) if s in lamb_arg_stack else
         match_builtin_idf(
@@ -84,9 +85,12 @@ def build_str_py_idf(s, _typ, lamb_arg_stack):
                         + f"{BrickFlatmap(_a_fb, _fa)})"
             ),
             case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
-            case_plus=(
-                lambda: f"(lambda {_right}: lambda {_left}: "
-                        + f"{_left} + {_right})"
+            case_plus=lambda: (
+                f"(lambda {_right}: lambda {_left}: " + f"{_left} + {_right})"
+                if typ == T_Func(T_Str, T_Func(T_Str, T_Str)) else
+                f"(lambda {_right}: lambda {_left}: " + f"{_left} + {_right})"
+                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+                fail(f"Unexpected typ `{typ}` for `{s}`.")
             ),
             case_str=lambda: f"(str)",
         )(s)
