@@ -298,6 +298,21 @@ def typify(expr):
     )(expr)
 
 
+def new_typify(expr):
+    typified_set = match_expr(
+        case_lit_str=lambda s: {TypifiedLit(s, T_Str)},
+        case_lit_bint=lambda i: {TypifiedLit(i, T_Bint)},
+        case_idf=lambda s: {TypifiedIdf(s, idf_to_type.get(s, T_A))},
+        case_call_1=lambda expr_f, expr_x: {typify_call_1(expr_f, expr_x)},
+        case_lambda_1=lambda expr_idf_arg, expr_res: {typify_lambda_1(
+            expr_idf_arg, expr_res
+        )},
+        case_braced=lambda inner_expr: new_typify(inner_expr),
+    )(expr)
+    rt_assert(len(typified_set) == 1)
+    return typified_set[0]
+
+
 def full_typify(code):
     return typify(full_parse(code))
 

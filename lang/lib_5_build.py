@@ -49,7 +49,7 @@ def match_brick(
     ))()
 
 
-def show_typed_lit(s, typ):
+def build_str_py_lit(s, typ):
     return (
         f"\"{s}\"" if typ == T_Str else
         f"{s}" if typ == T_Bint else
@@ -73,7 +73,7 @@ def to_latin_idf(idf_s):
     )
 
 
-def show_typed_idf(s, lamb_arg_stack):
+def build_str_py_idf(s, _typ, lamb_arg_stack):
     return (
         to_latin_idf(s) if s in lamb_arg_stack else
         match_builtin_idf(
@@ -93,13 +93,13 @@ def show_typed_idf(s, lamb_arg_stack):
     )
 
 
-def show_typed_call_1(typed_f, typed_x, lamb_arg_stack):
+def build_str_py_call_1(typed_f, typed_x, lamb_arg_stack):
     shown_f = build_str_py(typed_f, lamb_arg_stack)
     shown_x = build_str_py(typed_x, lamb_arg_stack)
     return f"({shown_f})({shown_x})"
 
 
-def show_typed_lambda_1(t_idf_x, typed_res, lamb_arg_stack):
+def build_str_py_lambda_1(t_idf_x, typed_res, lamb_arg_stack):
     s = t_idf_x.s
     built = build_str_py(typed_res, [s] + lamb_arg_stack)
     return f"(lambda {to_latin_idf(s)}: {built})"
@@ -107,12 +107,12 @@ def show_typed_lambda_1(t_idf_x, typed_res, lamb_arg_stack):
 
 def build_str_py(typed, lamb_arg_stack=[]):
     return match_typified(
-        case_lit=lambda s, typ: show_typed_lit(s, typ),
-        case_idf=lambda s, _typ: show_typed_idf(s, lamb_arg_stack),
-        case_call_1=lambda typed_f, typed_x, _typ: show_typed_call_1(
+        case_lit=lambda s, typ: build_str_py_lit(s, typ),
+        case_idf=lambda s, typ: build_str_py_idf(s, typ, lamb_arg_stack),
+        case_call_1=lambda typed_f, typed_x, _typ: build_str_py_call_1(
             typed_f, typed_x, lamb_arg_stack
         ),
-        case_lambda_1=lambda t_idf_x, typed_res, _typ: show_typed_lambda_1(
+        case_lambda_1=lambda t_idf_x, typed_res, _typ: build_str_py_lambda_1(
             t_idf_x, typed_res, lamb_arg_stack
         ),
     )(typed)
