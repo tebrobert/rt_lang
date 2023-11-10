@@ -7,13 +7,12 @@ implement booleans
     implement functions
         implement overloadings
 
+implement comments
 implement better error locating
-
 implement flags:
 	validate
 	build
 	run (default)
-
 implement map
 
 Defer:
