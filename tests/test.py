@@ -375,7 +375,7 @@ custom_tests = [
     test_match_list_2o,
     test_unary_minus,
     test_funcs_1,
-]
+]#*0+[test_funcs_2]
 
 deferred_tests = [
     test_funcs_2,

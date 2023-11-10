@@ -268,6 +268,7 @@ def continue_typifying_call_1(typified_f, typified_x):
     new_typ_f = concreted(typified_f.typ, typified_x.typ)
     new_typified_f = replace_typ(typified_f, new_typ_f)
     new_typified_x = replace_typ(typified_x, new_typ_f.t1)
+    #print("continue_typifying_call_1", typified_f, typified_x, typified_f.typ, typified_x.typ, new_typ_f, sep="\n", end="\n\n")
     return TypifiedCall1(new_typified_f, new_typified_x, new_typ_f.t2)
 
 
@@ -288,11 +289,14 @@ def typify_set_call_1(expr_f, expr_x):
                     typified_f, typified_x,
                 )
                 if type(typified_x.typ) is TypUnknown0 else
+                (None,#print("typify_set_call_1", typified_f, typified_x),
                 continue_typifying_call_1(typified_f, typified_x)
+                )[1]
             ))
             if not is_fail(mb_current_typified_call1):
                 typified_call_1_set.add(mb_current_typified_call1)
 
+    #print("typify_set_call_1", typified_f_set, typified_x_set, typified_call_1_set)
     return typified_call_1_set
 
 
