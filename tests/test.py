@@ -319,7 +319,7 @@ def test_unary_minus():
 
 
 def test_funcs_1():
-    print(full_typify("""identity = (x => x)("")\nprint(identity)"""))
+    full_typify("""identity = (x => x)("")\nprint(identity)""")
 
 
 def test_funcs_2():
