@@ -274,25 +274,32 @@ def old_typify_call_1(expr_f, expr_x):
     )
 
 
-def new_typify_call_1(expr_f, expr_x):
-    wip()
-    typified_f = old_typify(expr_f)
-    typified_x = old_typify(expr_x)
+def new_typify_set_call_1(expr_f, expr_x):
+    typified_f_set = new_typify_set(expr_f)
+    typified_x_set = new_typify_set(expr_x)
 
-    rt_assert(
-        type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func
-        or type(typified_f.typ) is TypUnknown0,
-        f"typified_f should be a `{builtin_Func}`",
-    )
+    typified_call_1_set = set()
+    for typified_f in typified_f_set:
+        rt_assert(
+            type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func
+            or type(typified_f.typ) is TypUnknown0,
+            f"typified_f should be a `{builtin_Func}`",
+        )
+        for typified_x in typified_x_set:
+            mb_current_typified_call1 = rt_try(lambda: (
+                continue_typifying_call_1_with_unknown_x(
+                    typified_f, typified_x,
+                )
+                if type(typified_x.typ) is TypUnknown0 else
+                continue_typifying_call_1(typified_f, typified_x)
+            ))
+            if not is_fail(mb_current_typified_call1):
+                typified_call_1_set.add(mb_current_typified_call1)
 
-    return (
-        continue_typifying_call_1_with_unknown_x(typified_f, typified_x)
-        if type(typified_x.typ) is TypUnknown0 else
-        continue_typifying_call_1(typified_f, typified_x)
-    )
+    return typified_call_1_set
 
 
-def typify_lambda_1(expr_arg, expr_res):
+def old_typify_lambda_1(expr_arg, expr_res):
     typified_arg = typify(expr_arg)
     typified_res = typify(expr_res)
 
@@ -303,40 +310,67 @@ def typify_lambda_1(expr_arg, expr_res):
     return TypifiedLambda1(retypified_arg, typified_res)
 
 
+def new_typify_set_lambda_1(expr_arg, expr_res):
+    typified_arg_set = new_typify_set(expr_arg)
+    typified_res_set = new_typify_set(expr_res)
+
+    res_set = set()
+    for typified_arg in typified_arg_set:
+        for typified_res in typified_res_set:
+            def action():
+                found_typ_arg = find_idf_typ(typified_res, typified_arg.s)
+                retypified_arg = replace_typ(typified_arg, found_typ_arg)
+                return TypifiedLambda1(retypified_arg, typified_res)
+
+            mb_res = rt_try(action)
+            if not is_fail(mb_res):
+                res_set.add(mb_res)
+
+    return res_set
+
+
 def old_typify(expr):
     return match_expr(
         case_lit_str=lambda s: TypifiedLit(s, T_Str),
         case_lit_bint=lambda i: TypifiedLit(i, T_Bint),
         case_idf=lambda s: TypifiedIdf(s, old_idf_to_type.get(s, T_A)),
         case_call_1=lambda expr_f, expr_x: old_typify_call_1(expr_f, expr_x),
-        case_lambda_1=lambda expr_idf_arg, expr_res: typify_lambda_1(
+        case_lambda_1=lambda expr_idf_arg, expr_res: old_typify_lambda_1(
             expr_idf_arg, expr_res
         ),
         case_braced=lambda inner_expr: old_typify(inner_expr),
     )(expr)
 
 
-def new_typify(expr):
-    typified_set = match_expr(
+def new_typify_set(expr):
+    return match_expr(
         case_lit_str=lambda s: {TypifiedLit(s, T_Str)},
         case_lit_bint=lambda i: {TypifiedLit(i, T_Bint)},
         case_idf=lambda s: (
-            set(map(lambda typ: TypifiedIdf(s, typ), new_idf_to_typ.get(s, T_A)))
+            set(map(lambda typ: TypifiedIdf(s, typ),
+                new_idf_to_typ.get(s, {T_A})
+            ))
         ),
-        case_call_1=lambda expr_f, expr_x: {new_typify_call_1(expr_f, expr_x)},
-        case_lambda_1=lambda expr_idf_arg, expr_res:
-            wip(),
-        case_braced=lambda inner_expr: new_typify(inner_expr),
+        case_call_1=lambda expr_f, expr_x: new_typify_set_call_1(expr_f,
+            expr_x),
+        case_lambda_1=lambda expr_idf_arg, expr_res: new_typify_set_lambda_1(
+            expr_idf_arg, expr_res
+        ),
+        case_braced=lambda inner_expr: new_typify_set(inner_expr),
     )(expr)
+
+
+def new_typify(expr):
+    typified_set = new_typify_set(expr)
     rt_assert(len(typified_set) == 1)
-    return typified_set[0]
+    return list(typified_set)[0]
 
 
 def full_typify(code):
     return typify(full_parse(code))
 
 
-typify = old_typify
+typify = new_typify
 
 type_match_err_msg = (
     f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"

@@ -222,6 +222,10 @@ def test_integers_plus():
     full_build_py("""num = 1 + 2\nprint("The number is " + str(num))""")
 
 
+def test_typify_set():
+    new_typify_set(ExprIdf("num"))
+
+
 custom_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
@@ -251,10 +255,11 @@ custom_tests = [
     test_assignment_lambdas_3,
     test_integers,
     test_integers_printing,
+    test_typify_set,
+    test_integers_plus,
 ]
 
 deferred_tests = [
-    test_integers_plus,
 ]
 
 path_tests_full = "tests/full/"
