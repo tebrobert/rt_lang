@@ -85,7 +85,8 @@ def show_typed_idf(s, lamb_arg_stack):
             case_plus=(
                 lambda: f"(lambda {_right}: lambda {_left}: "
                         + f"{_left} + {_right})"
-            )
+            ),
+            case_str=lambda: f"(str)",
         )(s)
     )
 
