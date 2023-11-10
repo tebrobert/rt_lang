@@ -33,6 +33,43 @@ def read_built(current_test_dir_reader):
     return current_test_dir_reader("6_shown.py.txt")
 
 
+def test_parse(current_test_dir_reader):
+    tokenized = eval(read_tokenized(current_test_dir_reader))
+    actual_parsed = parse(tokenized)
+    expected_parsed = read_parsed(current_test_dir_reader)
+    return rt_assert_equal(actual_parsed, expected_parsed)
+
+
+def test_typified(current_test_dir_reader):
+    #parsed = eval(read_parsed(current_test_dir_reader))
+    code = read_code(current_test_dir_reader)
+    parsed = full_parse(code)
+    actual_typified = typify(parsed)
+    expected_typified = read_typified(current_test_dir_reader)
+    return rt_assert_equal(actual_typified, expected_typified)
+
+
+def test_built(current_test_dir_reader, test_number):
+    #typified = read_typified(current_test_dir_reader)
+    code = read_code(current_test_dir_reader)
+    typified = full_typify(code)
+    actual_built = build_str_py(typified)
+    expected_built = read_built(current_test_dir_reader)
+    return rt_assert_equal(actual_built, expected_built, test_number)
+
+
+def full_test(test_number):
+    def lazy_full_test():
+        current_test_dir_reader = get_current_test_dir_reader(test_number)
+        #test_desugar(current_test_dir_reader)
+        #test_tokenize(current_test_dir_reader)
+        test_parse(current_test_dir_reader)
+        test_typified(current_test_dir_reader)
+        test_built(current_test_dir_reader, test_number)
+
+    return lazy_full_test
+
+
 def test_sync_typs():
     rt_assert_equal(
         concreted(T_Func(T_A, T_Unit), T_Str),
@@ -253,6 +290,20 @@ def test_funcs_2():
 
 
 custom_tests = [
+    full_test(1),
+    full_test(2),
+    full_test(3),
+    full_test(4),
+    full_test(5),
+    full_test(6),
+    full_test(7),
+    full_test(8),
+    full_test(9),
+    full_test(10),
+    full_test(11),
+    full_test(12),
+    full_test(13),
+    full_test(14),
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
     test_lines_reversed,
