@@ -323,7 +323,7 @@ def test_funcs_1():
 
 
 def test_funcs_2():
-    print(full_typify("""identity = (x => x)\nprint(identity)("")"""))
+    print(full_typify("""identity = (x => x)\nprint(identity(""))"""))
 
 
 custom_tests = [
