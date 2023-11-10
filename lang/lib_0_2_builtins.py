@@ -19,7 +19,7 @@ types = {
     builtin_Func: T_Func,
 }
 
-idf_to_type = {
+old_idf_to_type = {
     builtin_input: T_RIO(T_Str),
     builtin_print: T_Func(T_Str, T_RIO(T_Unit)),
     builtin_flatmap: T_Func(
@@ -29,4 +29,19 @@ idf_to_type = {
     builtin_pure: T_Func(T_A, T_RIO(T_A)),
     builtin_plus: T_Func(T_Str, T_Func(T_Str, T_Str)),
     builtin_str: T_Func(T_Bint, T_Str),
+}
+
+new_idf_to_type = {
+    builtin_input: {T_RIO(T_Str)},
+    builtin_print: {T_Func(T_Str, T_RIO(T_Unit))},
+    builtin_flatmap: {T_Func(
+        T_Func(T_A, T_RIO(T_B)),
+        T_Func(T_RIO(T_A), T_RIO(T_B))
+    )},
+    builtin_pure: {T_Func(T_A, T_RIO(T_A))},
+    builtin_plus: {
+        T_Func(T_Str, T_Func(T_Str, T_Str)),
+        T_Func(T_Bint, T_Func(T_Bint, T_Bint)),
+    },
+    builtin_str: {T_Func(T_Bint, T_Str)},
 }

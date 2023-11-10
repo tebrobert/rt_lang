@@ -9,6 +9,9 @@ class Typ0:
     def __eq__(self, that):
         return type(that) == Typ0 and that.s == self.s
 
+    def __hash__(self):
+        return self.__repr__().__hash__()
+
     def __repr__(self, indent=""):
         return f"{indent}{self.s}"
 
@@ -19,6 +22,9 @@ class TypUnknown0:
 
     def __eq__(self, that):
         return type(that) == TypUnknown0 and that.s == self.s
+
+    def __hash__(self):
+        return self.__repr__().__hash__()
 
     def __repr__(self, indent=""):
         return f"{indent}{self.s}"
@@ -33,6 +39,9 @@ class Typ1:
                 and (that.s, that.t1) == (self.s, self.t1)
                 )
 
+    def __hash__(self):
+        return self.__repr__().__hash__()
+
     def __repr__(self, indent=""):
         return f"{indent}{self.s}[{self.t1}]"
 
@@ -45,6 +54,9 @@ class Typ2:
         return (type(that) == Typ2
                 and (that.s, that.t1, that.t2) == (self.s, self.t1, self.t2)
                 )
+
+    def __hash__(self):
+        return self.__repr__().__hash__()
 
     def __repr__(self, indent=""):
         return indent + (

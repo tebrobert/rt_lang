@@ -285,16 +285,16 @@ def typify_lambda_1(expr_arg, expr_res):
     return TypifiedLambda1(retypified_arg, typified_res)
 
 
-def typify(expr):
+def old_typify(expr):
     return match_expr(
         case_lit_str=lambda s: TypifiedLit(s, T_Str),
         case_lit_bint=lambda i: TypifiedLit(i, T_Bint),
-        case_idf=lambda s: TypifiedIdf(s, idf_to_type.get(s, T_A)),
+        case_idf=lambda s: TypifiedIdf(s, old_idf_to_type.get(s, T_A)),
         case_call_1=lambda expr_f, expr_x: typify_call_1(expr_f, expr_x),
         case_lambda_1=lambda expr_idf_arg, expr_res: typify_lambda_1(
             expr_idf_arg, expr_res
         ),
-        case_braced=lambda inner_expr: typify(inner_expr),
+        case_braced=lambda inner_expr: old_typify(inner_expr),
     )(expr)
 
 
@@ -302,7 +302,7 @@ def new_typify(expr):
     typified_set = match_expr(
         case_lit_str=lambda s: {TypifiedLit(s, T_Str)},
         case_lit_bint=lambda i: {TypifiedLit(i, T_Bint)},
-        case_idf=lambda s: {TypifiedIdf(s, idf_to_type.get(s, T_A))},
+        case_idf=lambda s: {TypifiedIdf(s, old_idf_to_type.get(s, T_A))},
         case_call_1=lambda expr_f, expr_x: {typify_call_1(expr_f, expr_x)},
         case_lambda_1=lambda expr_idf_arg, expr_res: {typify_lambda_1(
             expr_idf_arg, expr_res
@@ -316,6 +316,8 @@ def new_typify(expr):
 def full_typify(code):
     return typify(full_parse(code))
 
+
+typify = old_typify
 
 type_match_err_msg = (
     f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"
