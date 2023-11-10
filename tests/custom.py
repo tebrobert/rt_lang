@@ -244,6 +244,14 @@ def test_unary_minus():
     full_typify("print(str(-2))")
 
 
+def test_funcs_1():
+    print(full_typify("""identity = (x => x)("")\nprint(identity)"""))
+
+
+def test_funcs_2():
+    print(full_typify("""identity = (x => x)\nprint(identity)("")"""))
+
+
 custom_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
@@ -278,9 +286,11 @@ custom_tests = [
     test_match_list_10,
     test_match_list_2o,
     test_unary_minus,
+    test_funcs_1,
 ]
 
 deferred_tests = [
+    test_funcs_2,
 ]
 
 path_tests_full = "tests/full/"

@@ -78,6 +78,20 @@ def match_typified(
     )()
 
 
+def replace_typ_lambda_1(typified_idf_x, typified_res, new_typ):
+    rt_assert(type(new_typ) is Typ2 and new_typ.s == builtin_Func
+        or type(new_typ) is TypUnknown0,
+        f"Unexpected type `{new_typ}`.",
+    )
+    updated_typified_idf_x = replace_typ(typified_idf_x, new_typ.t1)
+    updated_typified_res = replace_typ(typified_res, new_typ.t2)
+    return TypifiedLambda1(
+        typified_idf_x,#updated_typified_idf_x,
+        typified_res,#updated_typified_res,
+        new_typ,
+    )
+
+
 def replace_typ(typified, new_typ):
     return match_typified(
         case_lit=lambda s, typ: TypifiedLit(s, typ),
@@ -86,8 +100,8 @@ def replace_typ(typified, new_typ):
             typed_f, typed_x, new_typ
         ),
         case_lambda_1=(
-            lambda typified_idf_x, typified_res, _typ: TypifiedLambda1(
-                typified_idf_x, typified_res, new_typ
+            lambda typified_idf_x, typified_res, _typ: replace_typ_lambda_1(
+                typified_idf_x, typified_res, new_typ,
             )
         ),
     )(typified)
