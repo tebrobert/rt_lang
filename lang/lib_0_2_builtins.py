@@ -3,9 +3,9 @@ from lang.lib_0_1_types import *
 T_Bint = Typ0(builtin_Bint)
 T_Str = Typ0(builtin_Str)
 T_Unit = Typ0(builtin_Unit)
-T_List = lambda t1: Typ1(builtin_List, t1)
-T_RIO = lambda t1: Typ1(builtin_RIO, t1)
-T_Func = lambda t1, t2: Typ2(builtin_Func, t1, t2)
+def T_List(t1): return Typ1(builtin_List, t1)
+def T_RIO(t1): return Typ1(builtin_RIO, t1)
+def T_Func(t1, t2): return Typ2(builtin_Func, t1, t2)
 
 T_A = TypUnknown0("A")
 T_B = TypUnknown0("B")
