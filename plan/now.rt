@@ -1,4 +1,5 @@
 integer operations
+    overloading + for Bint
 
 string interpolation
 ?print integers
