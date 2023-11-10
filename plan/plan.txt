@@ -8,6 +8,7 @@ implement booleans
         implement overloadings
 
 implement comments
+implement escape-characters
 implement better error locating
 implement flags:
 	validate
