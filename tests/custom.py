@@ -214,6 +214,10 @@ def test_integers():
     full_parse("""\n1\n""")
 
 
+def test_integers_printing():
+    full_build_py("""num = 1\nprint("Thenumber is " + str(num))""")
+
+
 custom_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
@@ -242,6 +246,7 @@ custom_tests = [
     test_assignment_lambdas_2,
     test_assignment_lambdas_3,
     test_integers,
+    test_integers_printing,
 ]
 
 deferred_tests = [

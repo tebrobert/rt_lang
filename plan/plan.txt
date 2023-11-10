@@ -1,8 +1,8 @@
-implement integers
 implement booleans
 
 ? implement one argument functions
 
+?implement structs
 ?implement tuples
     implement functions
         implement overloadings
