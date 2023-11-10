@@ -215,7 +215,7 @@ def test_integers():
 
 
 def test_integers_printing():
-    full_build_py("""num = 1\nprint("Thenumber is " + str(num))""")
+    full_build_py("""num = 1\nprint("The number is " + str(num))""")
 
 
 custom_tests = [
