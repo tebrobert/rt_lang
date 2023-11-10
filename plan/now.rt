@@ -18,10 +18,10 @@ dict vs named tuple (name: Str, salary: Bint, permitted: Bool)
     Precedence:
     f(x)                    # ->    done
     l.r                     # ->    done
-    +v, -v                  # <-
+    +v, -v                  # <-    TODO!
     not v                   # <-
-    l*r, l/r, l%r           # ->
-    l+r, l-r                # ->
+    l*r, l/r, l%r           # ->    TODO!
+    l+r, l-r                # ->    done
     l<r, l<=r, l>r, l>=r    # ? ->
     l==r, l!=r              # ? ->
     l and r                 # ->

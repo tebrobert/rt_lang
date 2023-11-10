@@ -16,7 +16,7 @@ def match_list(
             case_empty=case_empty,
             case_at_least_1=case_at_least_1,
         ),
-        (False, False, True, False, True): lambda: lambda: _match_list_2o(
+        (False, False, True, False, True): lambda: _match_list_2o(
             case_at_least_2=case_at_least_2,
             otherwise=otherwise,
         ),

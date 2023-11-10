@@ -33,6 +33,8 @@ idf_to_typ = {
     },
     builtin_minus: {
         T_Func(T_Bint, T_Func(T_Bint, T_Bint)),
+        T_Func(T_Bint, T_Bint),
     },
+    builtin_multiply: {T_Func(T_Bint, T_Func(T_Bint, T_Bint))},
     builtin_str: {T_Func(T_Bint, T_Str)},
 }

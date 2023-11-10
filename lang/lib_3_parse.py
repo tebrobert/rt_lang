@@ -286,13 +286,43 @@ def preparse_plus_minus(tokens_and_exprs, acc=[]):
     return match_list(
         case_at_least_3=lambda head0, head1, head2, tail2: (
             rec([ExprCall1(ExprCall1(head1, head2), head0)] + tail2, acc)
-            if is_expr(head0) and head1 in [ExprIdf("+"), ExprIdf("-")
+            if is_expr(head0) and head1 in [
+                ExprIdf(builtin_plus),
+                ExprIdf(builtin_minus),
             ] and is_expr(head2) else
             rec([head1, head2] + tail2, acc + [head0])
         ),
         case_at_least_2=lambda head0, head1, _tail: acc + [head0, head1],
         case_at_least_1=lambda head0, _tail: acc + [head0],
         case_empty=lambda: acc,
+    )(tokens_and_exprs)
+
+
+@tailrec
+def preparse_multiply(tokens_and_exprs, acc=[]):
+    return match_list(
+        case_at_least_3=lambda head0, head1, head2, tail2: (
+            rec([ExprCall1(ExprCall1(head1, head2), head0)] + tail2, acc)
+            if is_expr(head0) and head1 in [
+                ExprIdf(builtin_multiply),
+            ] and is_expr(head2) else
+            rec([head1, head2] + tail2, acc + [head0])
+        ),
+        case_at_least_2=lambda head0, head1, _tail: acc + [head0, head1],
+        case_at_least_1=lambda head0, _tail: acc + [head0],
+        case_empty=lambda: acc,
+    )(tokens_and_exprs)
+
+
+@tailrec
+def preparse_unary_minus(tokens_and_exprs):
+    return match_list(
+        case_at_least_2=lambda head0, head1, tail1: (
+            [ExprCall1(head0, head1)] + tail1
+            if head0 == ExprIdf(builtin_minus) else
+            tokens_and_exprs
+        ),
+        otherwise=lambda: tokens_and_exprs,
     )(tokens_and_exprs)
 
 
@@ -303,6 +333,8 @@ def parse_full_expr(tokens):
         preparse_call,
         preparse_debrace,
         preparse_dot,
+        preparse_unary_minus,
+        preparse_multiply,
         preparse_plus_minus,
         preparse_lambda,
     ], tokens)
@@ -392,6 +424,3 @@ def parse(tokens):
 
 def full_parse(code):
     return parse(tokenize(code))
-
-
-end_of_tokens = "\0"

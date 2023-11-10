@@ -95,6 +95,13 @@ def build_str_py_idf(s, typ, lamb_arg_stack):
             case_minus=lambda: (
                 f"(lambda {_right}: lambda {_left}: {_left} - {_right})"
                 if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+                f"(lambda {_num}: - {_num})"
+                if typ == T_Func(T_Bint, T_Bint) else
+                fail(f"Unexpected typ `{typ}` for `{s}`.")
+            ),
+            case_multiply=lambda: (
+                f"(lambda {_right}: lambda {_left}: {_left} * {_right})"
+                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
                 fail(f"Unexpected typ `{typ}` for `{s}`.")
             ),
             case_str=lambda: f"(str)",
@@ -145,3 +152,4 @@ _fa = to_latin_idf("fa")
 _a = to_latin_idf("a")
 _right = to_latin_idf("right")
 _left = to_latin_idf("left")
+_num = to_latin_idf("num")

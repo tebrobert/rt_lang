@@ -263,11 +263,11 @@ def typify_set_call_1(expr_f, expr_x):
 
     typified_call_1_set = set()
     for typified_f in typified_f_set:
-        rt_assert(
+        if not (
             type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func
-            or type(typified_f.typ) is TypUnknown0,
-            f"typified_f should be a `{builtin_Func}`",
-        )
+            or type(typified_f.typ) is TypUnknown0
+        ):
+            continue
         for typified_x in typified_x_set:
             mb_current_typified_call1 = rt_try(lambda: (
                 continue_typifying_call_1_with_unknown_x(
@@ -321,7 +321,7 @@ def typify_set(expr):
 
 def typify(expr):
     typified_set = typify_set(expr)
-    rt_assert(len(typified_set) == 1)
+    rt_assert(len(typified_set) == 1, str(typified_set))
     return list(typified_set)[0]
 
 

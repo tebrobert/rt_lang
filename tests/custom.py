@@ -226,6 +226,24 @@ def test_typify_set():
     typify_set(ExprIdf("num"))
 
 
+def test_match_list_10():
+    match_list(
+        case_at_least_1=lambda head, _tail: head,
+        case_empty=lambda: 0,
+    )([])
+
+
+def test_match_list_2o():
+    match_list(
+        case_at_least_2=lambda head0, head1, tail1: head0 + head1,
+        otherwise=lambda: 0,
+    )([])
+
+
+def test_unary_minus():
+    full_typify("print(str(-2))")
+
+
 custom_tests = [
     test_sync_typs,
     test_sync_typs_with_unknown_f_type,
@@ -257,6 +275,9 @@ custom_tests = [
     test_integers_printing,
     test_typify_set,
     test_integers_plus,
+    test_match_list_10,
+    test_match_list_2o,
+    test_unary_minus,
 ]
 
 deferred_tests = [
