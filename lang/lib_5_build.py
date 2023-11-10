@@ -50,9 +50,11 @@ def match_brick(
 
 
 def show_typed_lit(s, typ):
-    fail_if(typ != T_Str, f"Unexpected literal `{TypifiedLit(s, typ)}`")
-    return f"\"{s}\""
-
+    return (
+        f"\"{s}\"" if typ == T_Str else
+        f"{s}" if typ == T_Bint else
+        fail(f"Unexpected literal `{TypifiedLit(s, typ)}`.")
+    )
 
 @tailrec
 def operator_to_latin_idf(idf_s, acc):

@@ -3,3 +3,6 @@ print(greeting)
 print("What is your name?")
 name <- input
 print("Welcome, " + name + "!")
+
+num = 1
+print("The number is " + str(num))

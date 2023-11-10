@@ -23,7 +23,7 @@ def match_builtin_idf(
     ))()
 
 
-builtin_Bint = "Int"
+builtin_Bint = "Bint"
 builtin_Str = "Str"
 builtin_Unit = "Unit"
 builtin_List = "List"
