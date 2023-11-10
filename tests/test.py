@@ -77,13 +77,13 @@ def test_parse(current_test_dir_reader):
     return rt_assert_equal(actual_parsed, expected_parsed)
 
 
-def test_typified(current_test_dir_reader):
+def test_typified(current_test_dir_reader, test_number):
     #parsed = eval(read_parsed(current_test_dir_reader))
     code = read_code(current_test_dir_reader)
     parsed = full_parse(code)
     actual_typified = typify(parsed)
     expected_typified = read_typified(current_test_dir_reader)
-    return rt_assert_equal(actual_typified, expected_typified)
+    return rt_assert_equal(actual_typified, expected_typified, test_number)
 
 
 def test_built(current_test_dir_reader, test_number):
@@ -101,7 +101,7 @@ def full_test(test_number):
         #test_desugar(current_test_dir_reader)
         #test_tokenize(current_test_dir_reader)
         test_parse(current_test_dir_reader)
-        test_typified(current_test_dir_reader)
+        test_typified(current_test_dir_reader, test_number)
         test_built(current_test_dir_reader, test_number)
 
     return lazy_full_test

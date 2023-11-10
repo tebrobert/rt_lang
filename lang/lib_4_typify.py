@@ -86,8 +86,8 @@ def replace_typ_lambda_1(typified_idf_x, typified_res, new_typ):
     updated_typified_idf_x = replace_typ(typified_idf_x, new_typ.t1)
     updated_typified_res = replace_typ(typified_res, new_typ.t2)
     return TypifiedLambda1(
-        typified_idf_x,#updated_typified_idf_x,
-        typified_res,#updated_typified_res,
+        updated_typified_idf_x,
+        updated_typified_res,
         new_typ,
     )
 
