@@ -4,5 +4,5 @@ print("What is your name?")
 name <- input
 print("Welcome, " + name + "!")
 
-num = -1 + 3 * 4 - 2
-print("The number is " + str(num))
+f = x => 1 + x * 10
+print("The result is " + str(f(5)))
