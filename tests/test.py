@@ -323,7 +323,20 @@ def test_funcs_1():
 
 
 def test_funcs_2():
-    print(full_typify("""identity = (x => x)\nprint(identity(""))"""))
+    actual = concreted(
+        T_Func(
+            T_RIO(T_Func(T_Str, T_A)),
+            T_RIO(T_Unit),
+        ),
+        T_RIO(T_Func(T_A, T_A)),
+    )
+    rt_assert_equal(actual,
+        T_Func(
+            T_RIO(T_Func(T_Str, T_Str)),
+            T_RIO(T_Unit),
+        ),
+    )
+    full_typify("""identity = (x => x)\nprint(identity(""))""")
 
 
 custom_tests = [
@@ -375,10 +388,10 @@ custom_tests = [
     test_match_list_2o,
     test_unary_minus,
     test_funcs_1,
-]#*0+[test_funcs_2]
+    test_funcs_2,
+][:]
 
 deferred_tests = [
-    test_funcs_2,
 ]
 
 path_tests_full = "tests/full/"

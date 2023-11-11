@@ -157,7 +157,18 @@ def solve_typ_0(
     return (
         (typ_f, typ_x, synched_unks)
         if type(typ_sub_x) is Typ0 and typ_sub_fx.s == typ_sub_x.s else
-        fail("Not implemented: solve_rec 1")
+        # fail("Not implemented: solve_rec 1",
+        #     f"`{typ_sub_fx}`, `{typ_sub_x}`, `{_f_x_synched_unks}`.",
+        #     f"`{typ_f}`, `{typ_x}`, `{synched_unks}`.",
+        # )
+        (
+            wip("solve 1.1")
+            if type(typ_sub_fx) is TypUnknown0 else
+            solve(
+                update_typ(typ_f, typ_sub_x, typ_sub_fx),
+                update_typ(typ_x, typ_sub_x, typ_sub_fx),
+            )
+        )
         if type(typ_sub_x) is TypUnknown0 else
         fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
     )
@@ -268,7 +279,6 @@ def continue_typifying_call_1(typified_f, typified_x):
     new_typ_f = concreted(typified_f.typ, typified_x.typ)
     new_typified_f = replace_typ(typified_f, new_typ_f)
     new_typified_x = replace_typ(typified_x, new_typ_f.t1)
-    #print("continue_typifying_call_1", typified_f, typified_x, typified_f.typ, typified_x.typ, new_typ_f, sep="\n", end="\n\n")
     return TypifiedCall1(new_typified_f, new_typified_x, new_typ_f.t2)
 
 
@@ -285,18 +295,13 @@ def typify_set_call_1(expr_f, expr_x):
             continue
         for typified_x in typified_x_set:
             mb_current_typified_call1 = rt_try(lambda: (
-                continue_typifying_call_1_with_unknown_x(
-                    typified_f, typified_x,
-                )
+                continue_typifying_call_1_with_unknown_x(typified_f, typified_x)
                 if type(typified_x.typ) is TypUnknown0 else
-                (None,#print("typify_set_call_1", typified_f, typified_x),
                 continue_typifying_call_1(typified_f, typified_x)
-                )[1]
             ))
             if not is_fail(mb_current_typified_call1):
                 typified_call_1_set.add(mb_current_typified_call1)
 
-    #print("typify_set_call_1", typified_f_set, typified_x_set, typified_call_1_set)
     return typified_call_1_set
 
 

@@ -19,8 +19,8 @@ def rt_assert(cond, msg="Assertion error."):
     fail_if(not cond, msg)
 
 
-def wip():
-    fail("The feature was not implemented. Work in progress...")
+def wip(*msgs):
+    fail("The feature was not implemented. Work in progress...", *msgs)
 
 
 def rt_assert_equal(actual, expected, label=""):
