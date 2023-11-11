@@ -336,7 +336,11 @@ def test_funcs_2():
             T_RIO(T_Unit),
         ),
     )
-    full_typify("""identity = (x => x)\nprint(identity(""))""")
+    full_build_py("""identity = (x => x)\nprint(identity(""))""")
+
+
+def test_funcs_3():
+    full_build_py("""f = x => x + 1\nprint("The result is " + str(f(5)))""")
 
 
 custom_tests = [
@@ -389,6 +393,7 @@ custom_tests = [
     test_unary_minus,
     test_funcs_1,
     test_funcs_2,
+    test_funcs_3,
 ][:]
 
 deferred_tests = [
