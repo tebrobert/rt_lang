@@ -3,6 +3,7 @@ from lang.lib_0_1_types import *
 T_Bint = Typ0(builtin_Bint)
 T_Str = Typ0(builtin_Str)
 T_Unit = Typ0(builtin_Unit)
+T_Bool = Typ0(builtin_Bool)
 def T_List(t1): return Typ1(builtin_List, t1)
 def T_RIO(t1): return Typ1(builtin_RIO, t1)
 def T_Func(t1, t2): return Typ2(builtin_Func, t1, t2)
@@ -12,6 +13,7 @@ T_B = TypUnknown0("B")
 
 types = {
     builtin_Bint: T_Bint,
+    builtin_Bool: T_Bool,
     builtin_Str: T_Str,
     builtin_Unit: T_Unit,
     builtin_List: T_List,
@@ -36,5 +38,10 @@ idf_to_typ = {
         T_Func(T_Bint, T_Bint),
     },
     builtin_multiply: {T_Func(T_Bint, T_Func(T_Bint, T_Bint))},
-    builtin_str: {T_Func(T_Bint, T_Str)},
+    builtin_str: {
+        T_Func(T_Bint, T_Str),
+        #T_Func(T_Bool, T_Str),
+    },
+    builtin_true: {T_Bool},
+    builtin_false: {T_Bool},
 }

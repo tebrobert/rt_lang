@@ -10,6 +10,8 @@ def match_builtin_idf(
     case_minus,
     case_multiply,
     case_str,
+    case_true,
+    case_false,
 ):
     return lambda idf: ({
         builtin_input: case_input,
@@ -20,6 +22,8 @@ def match_builtin_idf(
         builtin_minus: case_minus,
         builtin_multiply: case_multiply,
         builtin_str: case_str,
+        builtin_true: case_true,
+        builtin_false: case_false,
     }
     .get(
         idf,
@@ -28,6 +32,7 @@ def match_builtin_idf(
 
 
 builtin_Bint = "Bint"
+builtin_Bool = "Bool"
 builtin_Str = "Str"
 builtin_Unit = "Unit"
 builtin_List = "List"
@@ -44,3 +49,5 @@ builtin_plus = "+"
 builtin_minus = "-"
 builtin_multiply = "*"
 builtin_str = "str"
+builtin_true = "true"
+builtin_false = "false"

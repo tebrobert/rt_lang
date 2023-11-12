@@ -19,8 +19,23 @@ class TypifiedIdf:
 
 
 class TypifiedCall1:
-    def __init__(self, typed_f, typed_x, typ):
-        self.typed_f, self.typed_x, self.typ = typed_f, typed_x, typ
+    def __init__(self, typified_f, typified_x, typ):
+        rt_assert(type(typified_f) in [TypifiedLit, TypifiedIdf, TypifiedLambda1, TypifiedCall1])
+        rt_assert(type(typified_x) in [TypifiedLit, TypifiedIdf, TypifiedLambda1, TypifiedCall1])
+        rt_assert(type(typ) in [TypUnknown0, Typ0, Typ1, Typ2])
+        rt_assert(
+            type(typified_f.typ) is TypUnknown0
+            or type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func
+        )
+        rt_assert(
+            TypUnknown0 in [type(typified_f.typ.t1), type(typified_x.typ)]
+            or type(typified_f.typ.t1) is type(typified_x.typ)
+        )
+        rt_assert(
+            TypUnknown0 in [type(typified_f.typ.t2), type(typ)]
+            or type(typified_f.typ.t2) is type(typ)
+        )
+        self.typed_f, self.typed_x, self.typ = typified_f, typified_x, typ
 
     def __repr__(self, indent=""):
         shift = indent + 4 * " "
