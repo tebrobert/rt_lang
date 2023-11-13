@@ -8,6 +8,9 @@ class ExprLitStr:
         self.s = s
 
     def __repr__(self, indent=''):
+        if expr_repr_flat():
+            global typified_repr_endl
+            shift, indent, typified_repr_endl = '','',''
         return f"""{indent}Expr_Lit_Str("{self.s}")"""
 
     def __eq__(self, that):
@@ -19,6 +22,9 @@ class ExprLitBint:
         self.i = i
 
     def __repr__(self, indent=""):
+        if expr_repr_flat():
+            global typified_repr_endl
+            shift, indent, typified_repr_endl = '','',''
         return f"""{indent}ExprLitBint({self.i})"""
 
     def __eq__(self, that):
@@ -30,6 +36,9 @@ class ExprIdf:
         self.s = s
 
     def __repr__(self, indent=''):
+        if expr_repr_flat():
+            global typified_repr_endl
+            shift, indent, typified_repr_endl = '','',''
         return f"""{indent}Expr_Idf("{self.s}")"""
 
     def __eq__(self, that):
@@ -41,8 +50,11 @@ class ExprBraced:
         self.expr = expr
 
     def __repr__(self, indent=''):
-        return (f"{indent}ExprBraced(\n"
-                + f"""{self.expr.__repr__(indent + 4 * " ")}\n"""
+        if expr_repr_flat():
+            global typified_repr_endl
+            shift, indent, typified_repr_endl = '','',''
+        return (f"{indent}ExprBraced({typified_repr_endl}"
+                + f"""{self.expr.__repr__(indent + 4 * " ")}{typified_repr_endl}"""
                 + f"""{indent})"""
                 )
 
@@ -56,9 +68,12 @@ class ExprCall1:
         self.expr_f, self.expr_x = expr_f, expr_x
 
     def __repr__(self, indent=''):
-        return (f"{indent}Expr_Call_1(\n"
-                + f"""{self.expr_f.__repr__(indent + 4 * " ")},\n"""
-                + f"""{self.expr_x.__repr__(indent + 4 * " ")}\n"""
+        if expr_repr_flat():
+            global typified_repr_endl
+            shift, indent, typified_repr_endl = '','',''
+        return (f"{indent}Expr_Call_1({typified_repr_endl}"
+                + f"""{self.expr_f.__repr__(indent + 4 * " ")},{typified_repr_endl}"""
+                + f"""{self.expr_x.__repr__(indent + 4 * " ")}{typified_repr_endl}"""
                 + f"""{indent})"""
                 )
 
@@ -75,9 +90,12 @@ class ExprLambda1:
         self.expr_idf_arg, self.expr_res = expr_idf_arg, expr_res
 
     def __repr__(self, indent=''):
-        return (f"{indent}Expr_Lambda_1(\n"
-                + f"""{self.expr_idf_arg.__repr__(indent + 4 * " ")},\n"""
-                + f"""{self.expr_res.__repr__(indent + 4 * " ")}\n"""
+        if expr_repr_flat():
+            global typified_repr_endl
+            shift, indent, typified_repr_endl = '','',''
+        return (f"{indent}Expr_Lambda_1({typified_repr_endl}"
+                + f"""{self.expr_idf_arg.__repr__(indent + 4 * " ")},{typified_repr_endl}"""
+                + f"""{self.expr_res.__repr__(indent + 4 * " ")}{typified_repr_endl}"""
                 + f"""{indent})"""
                 )
 
@@ -94,6 +112,10 @@ def is_expr(val):
         ExprLambda1,
         ExprBraced,
     ]
+
+
+def expr_repr_flat():
+    return False #or True
 
 
 def match_expr(
@@ -416,3 +438,6 @@ def parse(tokens):
 
 def full_parse(code):
     return parse(tokenize(code))
+
+
+typified_repr_endl = "\n"
