@@ -307,19 +307,11 @@ def concreted(typ_f, typ_x):
 
 
 def continue_typifying_call_1_with_unknown_x(typified_f, typified_x):
-    # print("continue_typifying_call_1_with_unknown_x")
-    # print("typified_f", typified_f)
-    # print("typified_x", typified_x)
-    # print()
     new_typified_x = replace_typ(typified_x, typified_f.typ.t1)
     return TypifiedCall1(typified_f, new_typified_x, typified_f.typ.t2)
 
 
 def continue_typifying_call_1(typified_f, typified_x):
-    # print("continue_typifying_call_1")
-    # print("typified_f", typified_f)
-    # print("typified_x", typified_x)
-    # print()
     new_typ_f = concreted(typified_f.typ, typified_x.typ)
     new_typified_f = replace_typ(typified_f, new_typ_f)
     new_typified_x = replace_typ(typified_x, new_typ_f.t1)
@@ -329,10 +321,6 @@ def continue_typifying_call_1(typified_f, typified_x):
 def typify_set_call_1(expr_f, expr_x):
     typified_f_set = typify_set(expr_f)
     typified_x_set = typify_set(expr_x)
-    # print("typify_set_call_1")
-    # print("typified_f_set", typified_f_set)
-    # print("typified_x_set", typified_x_set)
-    # print()
 
     typified_call_1_set = set()
     for typified_f in typified_f_set:
