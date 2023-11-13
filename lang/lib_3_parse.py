@@ -299,16 +299,18 @@ def preparse_left_to_right(*operator_strings):
     return preparser
 
 
-@tailrec
-def preparse_unary_minus(tokens_and_exprs):
-    return match_list(
-        case_at_least_2=lambda head0, head1, tail1: (
-            [ExprCall1(head0, head1)] + tail1
-            if head0 == ExprIdf(builtin_minus) else
-            tokens_and_exprs
-        ),
-        otherwise=lambda: tokens_and_exprs,
-    )(tokens_and_exprs)
+def preparse_unary(operator):
+    def preparser(tokens_and_exprs):
+        return match_list(
+            case_at_least_2=lambda head0, head1, tail1: (
+                [ExprCall1(head0, head1)] + tail1
+                if head0 == ExprIdf(operator) else
+                tokens_and_exprs
+            ),
+            otherwise=lambda: tokens_and_exprs,
+        )(tokens_and_exprs)
+
+    return preparser
 
 
 def parse_full_expr(tokens):
@@ -318,10 +320,14 @@ def parse_full_expr(tokens):
         preparse_call,
         preparse_debrace,
         preparse_dot,
-        preparse_unary_minus,
-        preparse_left_to_right(builtin_multiply),
+        preparse_unary(builtin_minus),
+        preparse_unary(builtin_not),
+        preparse_left_to_right(builtin_multiply, builtin_div, builtin_floor_div, builtin_mod),
         preparse_left_to_right(builtin_plus, builtin_minus),
-        preparse_left_to_right(builtin_eq_eq),
+        preparse_left_to_right(builtin_less, builtin_less_eq, builtin_gr, builtin_gr_eq),
+        preparse_left_to_right(builtin_eq_eq, builtin_not_eq),
+        preparse_left_to_right(builtin_and),
+        preparse_left_to_right(builtin_or),
         preparse_lambda,
     ], tokens)
     head_preparsed, tail_preparsed = rt_assert_at_least_1(preparsed)

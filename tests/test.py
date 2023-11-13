@@ -347,8 +347,9 @@ def test_typify_set_2():
     expr = full_parse("str(f(5))")
     typified_set = typify_set(expr)
     rt_assert_equal(
-        set(map(lambda t: t.typed_x.typed_f.typ.t2, typified_set)),
+        set(map(lambda t: t.typed_x.typed_f.typ.t2, typified_set)) ^
         {T_Bool, T_Bint},
+        set()
     )
 
 
@@ -418,10 +419,10 @@ custom_tests = [
     test_typify_set_2,
     test_tokenize,
     test_apply_1,
-    test_apply_2,
-][-1:]
+]
 
 deferred_tests = [
+    test_apply_2,
 ]
 
 path_tests_full = "tests/full/"

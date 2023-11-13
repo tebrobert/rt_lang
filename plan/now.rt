@@ -13,20 +13,3 @@ dict vs named tuple (name: Str, salary: Bint, permitted: Bool)
 
 # ? remove endOfCode
 # ? add _FX _X to type params on both sides before synchronizing
-
-    Precedence:
-    f(x)                    # ->    done
-    l.r                     # ->    done
-    +v, -v                  # <-    done
-    not v                   # <-
-    l*r, l/r, l%r           # ->    done
-    l+r, l-r                # ->    done
-    l<r, l<=r, l>r, l>=r    # ? ->
-    l==r, l!=r              # ? ->
-    l and r                 # ->
-    l or r                  # ->
-
-    x => y => z             # <-    done
-
-    l = r, l <- r           # ? <-  done
-
