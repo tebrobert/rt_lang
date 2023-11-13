@@ -243,6 +243,7 @@ def lexx_less_minus(code_ext, current_idx, tokens):
 
 def lexx_eq(code_ext, current_idx, tokens):
     rt_assert(code_ext[current_idx:].startswith("="))
+    rt_assert(not is_operator_char(code_ext[current_idx+1]))
     return (code_ext, current_idx + 1, tokens + [TokenEq()])
 
 

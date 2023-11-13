@@ -44,4 +44,9 @@ idf_to_typ = {
     },
     builtin_true: {T_Bool},
     builtin_false: {T_Bool},
+    builtin_eq_eq: {
+        T_Func(T_Str, T_Func(T_Str, T_Bool)),
+        T_Func(T_Bint, T_Func(T_Bint, T_Bool)),
+        T_Func(T_Bool, T_Func(T_Bool, T_Bool)),
+    }
 }

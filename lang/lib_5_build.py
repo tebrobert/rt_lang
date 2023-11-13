@@ -115,6 +115,15 @@ def build_str_py_idf(s, typ, lamb_arg_stack):
             ),
             case_true=lambda: "(True)",
             case_false=lambda: "(False)",
+            case_eq_eq=lambda: (
+                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+                if typ == T_Func(T_Str, T_Func(T_Str, T_Bool)) else
+                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bool)) else
+                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+                if typ == T_Func(T_Bool, T_Func(T_Bool, T_Bool)) else
+                fail(f"Unexpected typ `{typ}` for `{s}`.")
+            )
         )(s)
     )
 

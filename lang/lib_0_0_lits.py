@@ -12,6 +12,7 @@ def match_builtin_idf(
     case_str,
     case_true,
     case_false,
+    case_eq_eq,
 ):
     return lambda idf: ({
         builtin_input: case_input,
@@ -24,6 +25,7 @@ def match_builtin_idf(
         builtin_str: case_str,
         builtin_true: case_true,
         builtin_false: case_false,
+        builtin_eq_eq: case_eq_eq,
     }
     .get(
         idf,
@@ -51,3 +53,4 @@ builtin_multiply = "*"
 builtin_str = "str"
 builtin_true = "true"
 builtin_false = "false"
+builtin_eq_eq = "=="

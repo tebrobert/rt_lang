@@ -352,6 +352,10 @@ def test_typify_set_2():
     )
 
 
+def test_tokenize():
+    rt_assert_equal(tokenize("=="), [TokenIdf("==")])
+
+
 custom_tests = [
     full_test(1),
     full_test(2),
@@ -404,6 +408,7 @@ custom_tests = [
     test_funcs_2,
     test_funcs_3,
     test_typify_set_2,
+    test_tokenize,
 ]
 
 deferred_tests = [
