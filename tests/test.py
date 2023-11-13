@@ -356,6 +356,14 @@ def test_tokenize():
     rt_assert_equal(tokenize("=="), [TokenIdf("==")])
 
 
+def test_apply_1():
+    full_build_py("""f = x => x + ""\nprint(f(""))""")
+
+
+def test_apply_2():
+    full_build_py("""f = x => x + ""\nprint(f(f("")))""")
+
+
 custom_tests = [
     full_test(1),
     full_test(2),
@@ -409,7 +417,9 @@ custom_tests = [
     test_funcs_3,
     test_typify_set_2,
     test_tokenize,
-]
+    test_apply_1,
+    test_apply_2,
+][-1:]
 
 deferred_tests = [
 ]
