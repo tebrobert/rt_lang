@@ -5,12 +5,12 @@ Typed_Call_1(
             Typed_Idf("greeting", Str),
             Typed_Call_1(
                 Typed_Call_1(
-                    Typed_Idf(">>=", (A => RIO[Unit]) => RIO[A] => RIO[Unit]),
+                    Typed_Idf(">>=", (A => RIO[Unit]) => RIO[Unit] => RIO[Unit]),
                     Typed_Lambda_1(
                         Typed_Idf("_", A),
                         Typed_Call_1(
                             Typed_Call_1(
-                                Typed_Idf(">>=", (A => RIO[Unit]) => RIO[A] => RIO[Unit]),
+                                Typed_Idf(">>=", (A => RIO[Unit]) => RIO[Unit] => RIO[Unit]),
                                 Typed_Lambda_1(
                                     Typed_Idf("_", A),
                                     Typed_Call_1(

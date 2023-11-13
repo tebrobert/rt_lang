@@ -343,6 +343,15 @@ def test_funcs_3():
     full_build_py("""f = x => x + 1\nprint("The result is " + str(f(5)))""")
 
 
+def test_typify_set_2():
+    expr = full_parse("str(f(5))")
+    typified_set = typify_set(expr)
+    rt_assert_equal(
+        set(map(lambda t: t.typed_x.typed_f.typ.t2, typified_set)),
+        {T_Bool, T_Bint},
+    )
+
+
 custom_tests = [
     full_test(1),
     full_test(2),
@@ -394,7 +403,8 @@ custom_tests = [
     test_funcs_1,
     test_funcs_2,
     test_funcs_3,
-][:]
+    test_typify_set_2,
+]
 
 deferred_tests = [
 ]

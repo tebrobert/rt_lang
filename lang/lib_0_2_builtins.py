@@ -40,7 +40,7 @@ idf_to_typ = {
     builtin_multiply: {T_Func(T_Bint, T_Func(T_Bint, T_Bint))},
     builtin_str: {
         T_Func(T_Bint, T_Str),
-        #T_Func(T_Bool, T_Str),
+        T_Func(T_Bool, T_Str),
     },
     builtin_true: {T_Bool},
     builtin_false: {T_Bool},
