@@ -236,7 +236,7 @@ def sync_typs_f_x_typ_2(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1, sub_fx_t2,
             *sync_typs_f_x_rec(typ_f, typ_x, sub_fx_t1, typ_sub_x.t1),
             sub_fx_t2, typ_sub_x.t2,
         )
-        if type(typ_sub_x) is Typ2 else
+        if type(typ_sub_x) is Typ2 and typ_sub_x.s == sub_fx_s else
         fail(f"Can't match the types {sub_fx_s} vs {typ_sub_x}")
     )
     return new_typ_f, new_typ_x
