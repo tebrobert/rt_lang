@@ -16,12 +16,12 @@ class Typ0:
         return f"{indent}{self.s}"
 
 
-class TypUnknown0:
+class TypUnk0:
     def __init__(self, i):
         self.i = i
 
     def __eq__(self, that):
-        return type(that) == TypUnknown0 and that.i == self.i
+        return type(that) == TypUnk0 and that.i == self.i
 
     def __hash__(self):
         return self.__repr__().__hash__()
@@ -71,13 +71,13 @@ class Typ2:
 
 def unsafe_match_type(
     lazy_for_type0,
-    lazy_for_unknown0,
+    lazy_for_unk0,
     lazy_for_type1,
     lazy_for_type2,
 ):
     return lambda typ: ({
         Typ0: lazy_for_type0,
-        TypUnknown0: lazy_for_unknown0,
+        TypUnk0: lazy_for_unk0,
         Typ1: lazy_for_type1,
         Typ2: lazy_for_type2,
     }
@@ -95,7 +95,7 @@ def match_typ(
 ):
     return lambda typ: ({
         Typ0: lambda: case_typ0(typ.s),
-        TypUnknown0: lambda: case_unknown0(typ.i),
+        TypUnk0: lambda: case_unknown0(typ.i),
         Typ1: lambda: case_typ1(typ.s, typ.t1),
         Typ2: lambda: case_typ2(typ.s, typ.t1, typ.t2),
     }

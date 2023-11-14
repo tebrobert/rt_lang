@@ -30,17 +30,17 @@ class TypifiedCall1:
         rt_assert(
             type(typified_x) in [TypifiedLit, TypifiedIdf, TypifiedLambda1,
                 TypifiedCall1])
-        rt_assert(type(typ) in [TypUnknown0, Typ0, Typ1, Typ2])
+        rt_assert(type(typ) in [TypUnk0, Typ0, Typ1, Typ2])
         rt_assert(
-            type(typified_f.typ) is TypUnknown0
+            type(typified_f.typ) is TypUnk0
             or type(typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func
         )
         rt_assert(
-            TypUnknown0 in [type(typified_f.typ.t1), type(typified_x.typ)]
+            TypUnk0 in [type(typified_f.typ.t1), type(typified_x.typ)]
             or type(typified_f.typ.t1) is type(typified_x.typ)
         )
         rt_assert(
-            TypUnknown0 in [type(typified_f.typ.t2), type(typ)]
+            TypUnk0 in [type(typified_f.typ.t2), type(typ)]
             or type(typified_f.typ.t2) is type(typ)
         )
         self.typed_f, self.typed_x, self.typ = typified_f, typified_x, typ
@@ -107,7 +107,7 @@ def match_typified(
 
 def replace_typ_lambda_1(typified_idf_x, typified_res, new_typ):
     rt_assert(type(new_typ) is Typ2 and new_typ.s == builtin_Func
-              or type(new_typ) is TypUnknown0,
+              or type(new_typ) is TypUnk0,
         f"Unexpected type `{new_typ}`.",
     )
     updated_typified_idf_x = replace_typ(typified_idf_x, new_typ.t1)
@@ -123,7 +123,7 @@ def replace_typ_call_1(typed_f, typed_x, new_typ):
     return TypifiedCall1(
         # typed_f
         replace_typ(typed_f, T_Func(typed_x.typ, new_typ))
-        if type(typed_f.typ) is TypUnknown0 else
+        if type(typed_f.typ) is TypUnk0 else
         replace_typ(typed_f, T_Func(typed_f.typ.t1, new_typ))
         if type(typed_f.typ) is Typ2 else
         fail(f"Unexpected type `{typed_f.typ}`."),
@@ -172,7 +172,7 @@ def get_unknowns_for_typified(typified):
 def find_idf_typ_call_1(typified_f, typified_x, s_to_find):
     lookup_by_f = find_idf_typ(typified_f, s_to_find)
     return (lookup_by_f
-            if not type(lookup_by_f) is TypUnknown0 else
+            if not type(lookup_by_f) is TypUnk0 else
             find_idf_typ(typified_x, s_to_find)
             )
 
@@ -198,22 +198,22 @@ def sync_typs_typ_0(typ_f, typ_x, typ_sub_x, sub_fx_s):
             update_typ(typ_f, typ_sub_x, Typ0(sub_fx_s)),
             update_typ(typ_x, typ_sub_x, Typ0(sub_fx_s)),
         )
-        if type(typ_sub_x) is TypUnknown0 else
+        if type(typ_sub_x) is TypUnk0 else
         fail(f"Can't match the types {Typ0(sub_fx_s)} vs {typ_sub_x}")
     )
 
 
 def sync_typs_unknown_0(typ_f, typ_x, typ_sub_x, sub_fx_i):
-    sub_fx_unknown_0 = TypUnknown0(sub_fx_i)
+    sub_fx_unknown_0 = TypUnk0(sub_fx_i)
     return (
         sync_typs(update_typ(typ_f, sub_fx_unknown_0, typ_sub_x), typ_x)
         if type(typ_sub_x) is Typ0 else
         (
             (typ_f, typ_x)
-            if type(typ_sub_x) is TypUnknown0 and sub_fx_i == typ_sub_x.i else
+            if type(typ_sub_x) is TypUnk0 and sub_fx_i == typ_sub_x.i else
             fail("Not implemented: solve_rec 4")
         )
-        if type(typ_sub_x) is TypUnknown0 else
+        if type(typ_sub_x) is TypUnk0 else
         sync_typs(update_typ(typ_f, sub_fx_unknown_0, typ_sub_x), typ_x)
     )
 
@@ -221,14 +221,18 @@ def sync_typs_unknown_0(typ_f, typ_x, typ_sub_x, sub_fx_i):
 def sync_typs_typ_1(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1):
     return (
         (typ_f, typ_x)
-        if type(typ_sub_x) is TypUnknown0 else
+        if type(typ_sub_x) is TypUnk0 else
         sync_typs_rec(typ_f, typ_x, sub_fx_t1, typ_sub_x.t1)
         if type(typ_sub_x) is Typ1 and sub_fx_s == typ_sub_x.s else
         fail(f"Can't match the types `{sub_fx_t1}` vs `{typ_sub_x}.`")
     )
 
 
-def sync_typs_typ_2(
+def sync_typs_typ2_typ2():
+    pass
+
+
+def sync_typs_typ2(
     typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1, sub_fx_t2,
 ):
     bad_type = lambda: fail(f"Can't match the types {sub_fx_s} vs {typ_sub_x}")
@@ -254,7 +258,7 @@ def sync_typs_rec(typ_f, typ_x, typ_sub_fx, typ_sub_x):
         case_typ1=lambda s, t1: sync_typs_typ_1(
             typ_f, typ_x, typ_sub_x, s, t1,
         ),
-        case_typ2=lambda s, t1, t2: sync_typs_typ_2(
+        case_typ2=lambda s, t1, t2: sync_typs_typ2(
             typ_f, typ_x, typ_sub_x, s, t1, t2,
         ),
     )(typ_sub_fx)
@@ -296,13 +300,13 @@ def typify_set_call_1(expr_f, expr_x):
         if not (
                 type(
                     typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func
-                or type(typified_f.typ) is TypUnknown0
+                or type(typified_f.typ) is TypUnk0
         ):
             continue
         for typified_x in typified_x_set:
             mb_current_typified_call1 = rt_try(lambda: (
                 continue_typifying_call_1_with_unknown_x(typified_f, typified_x)
-                if type(typified_x.typ) is TypUnknown0 else
+                if type(typified_x.typ) is TypUnk0 else
                 continue_typifying_call_1(typified_f, typified_x)
             ))
             if not is_fail(mb_current_typified_call1):
