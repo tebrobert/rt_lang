@@ -204,19 +204,17 @@ def sync_typs_f_x_typ_0(typ_f, typ_x, typ_sub_x, sub_fx_s):
 
 
 def sync_typs_f_x_unknown_0(typ_f, typ_x, typ_sub_x, sub_fx_i):
+    sub_fx_unknown_0 = TypUnknown0(sub_fx_i)
     return (
-        sync_typs_f_x(update_typ(typ_f, TypUnknown0(sub_fx_i), typ_sub_x),
-            typ_x)
+        sync_typs_f_x(update_typ(typ_f, sub_fx_unknown_0, typ_sub_x), typ_x)
         if type(typ_sub_x) is Typ0 else
         (
             (typ_f, typ_x)
-            if type(typ_sub_x) is TypUnknown0
-               and sub_fx_i == typ_sub_x.i else
+            if type(typ_sub_x) is TypUnknown0 and sub_fx_i == typ_sub_x.i else
             fail("Not implemented: solve_rec 4")
         )
         if type(typ_sub_x) is TypUnknown0 else
-        sync_typs_f_x(update_typ(typ_f, TypUnknown0(sub_fx_i), typ_sub_x),
-            typ_x)
+        sync_typs_f_x(update_typ(typ_f, sub_fx_unknown_0, typ_sub_x), typ_x)
     )
 
 
