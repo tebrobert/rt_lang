@@ -241,19 +241,19 @@ def sync_typs_typ_2(typ_f, typ_x, typ_sub_fx, typ_sub_x):
     return new_typ_f, new_typ_x
 
 
-def sync_typs_rec(typ_sub_fx, typ_sub_x, typF, typX):
+def sync_typs_rec(typ_sub_fx, typ_sub_x, typ_f, typ_x):
     new_typ_f, new_typ_x = match_typ(
         case_typ0=lambda _s: sync_typs_typ_0(
-            typF, typX, typ_sub_fx, typ_sub_x,
+            typ_f, typ_x, typ_sub_fx, typ_sub_x,
         ),
         case_unknown0=lambda _s: sync_typs_unknown_0(
-            typF, typX, typ_sub_fx, typ_sub_x,
+            typ_f, typ_x, typ_sub_fx, typ_sub_x,
         ),
         case_typ1=lambda _s, _t1: sync_typs_typ_1(
-            typF, typX, typ_sub_fx, typ_sub_x,
+            typ_f, typ_x, typ_sub_fx, typ_sub_x,
         ),
         case_typ2=lambda _s, _t1, _t2: sync_typs_typ_2(
-            typF, typX, typ_sub_fx, typ_sub_x,
+            typ_f, typ_x, typ_sub_fx, typ_sub_x,
         ),
     )(typ_sub_fx)
     return new_typ_f, new_typ_x
