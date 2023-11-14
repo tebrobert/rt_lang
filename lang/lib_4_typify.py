@@ -8,8 +8,7 @@ class TypifiedLit:
 
     def __repr__(self, indent=""):
         if expr_repr_flat():
-            global typified_repr_endl
-            shift, indent, typified_repr_endl = '','',''
+            pass
         return f"""{indent}Typed_Lit("{self.s}", {self.typ})"""
 
 
@@ -19,8 +18,7 @@ class TypifiedIdf:
 
     def __repr__(self, indent=""):
         if expr_repr_flat():
-            global typified_repr_endl
-            shift, indent, typified_repr_endl = '','',''
+            pass
         return f"""{indent}Typed_Idf("{self.s}", {self.typ})"""
 
 
@@ -46,8 +44,7 @@ class TypifiedCall1:
     def __repr__(self, indent=""):
         shift = indent + 4 * " "
         if expr_repr_flat():
-            global typified_repr_endl
-            shift, indent, typified_repr_endl = '','',''
+            pass
         return (f"{indent}Typed_Call_1({typified_repr_endl}"
                 + f"{self.typed_f.__repr__(shift)},{typified_repr_endl}"
                 + f"{self.typed_x.__repr__(shift)},{typified_repr_endl}"
@@ -70,8 +67,7 @@ class TypifiedLambda1:
     def __repr__(self, indent=""):
         shift = indent + 4 * " "
         if expr_repr_flat():
-            global typified_repr_endl
-            shift, indent, typified_repr_endl = '','',''
+            pass
         return (f"{indent}Typed_Lambda_1({typified_repr_endl}"
                 + f"{self.typified_idf_x.__repr__(shift)},{typified_repr_endl}"
                 + f"{self.typified_res.__repr__(shift)},{typified_repr_endl}"
@@ -307,10 +303,7 @@ def concreted(typ_f, typ_x):
 
 
 def continue_typifying_call_1_with_unknown_x(typified_f, typified_x):
-    # return continue_typifying_call_1(typified_f, typified_x)
     new_typified_x = replace_typ(typified_x, typified_f.typ.t1)
-    # if str(continue_typifying_call_1(typified_f, typified_x)) != str(TypifiedCall1(typified_f, new_typified_x, typified_f.typ.t2)):
-    #     print("continue_typifying_call_1_with_unknown_x", typified_f, typified_x,sep="\n", end="\n\n")
     return TypifiedCall1(typified_f, new_typified_x, typified_f.typ.t2)
 
 
@@ -369,14 +362,8 @@ def typify_set_idf(s):
     ))
 
 
-rec_depth = 0
 def typify_set(expr):
-    global rec_depth
-    indent = "|   " * rec_depth
-    # print(f"{indent}{expr}")
-    rec_depth += 1
-
-    res = match_expr(
+    return match_expr(
         case_lit_str=lambda s: {TypifiedLit(s, T_Str)},
         case_lit_bint=lambda i: {TypifiedLit(i, T_Bint)},
         case_idf=lambda s: typify_set_idf(s),
@@ -387,10 +374,6 @@ def typify_set(expr):
         ),
         case_braced=lambda inner_expr: typify_set(inner_expr),
     )(expr)
-
-    rec_depth -= 1
-    # print(f"{indent}{res}")
-    return res
 
 
 def typify(expr):

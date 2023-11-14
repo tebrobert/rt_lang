@@ -9,8 +9,7 @@ class ExprLitStr:
 
     def __repr__(self, indent=''):
         if expr_repr_flat():
-            global typified_repr_endl
-            shift, indent, typified_repr_endl = '','',''
+            pass
         return f"""{indent}Expr_Lit_Str("{self.s}")"""
 
     def __eq__(self, that):
@@ -23,8 +22,7 @@ class ExprLitBint:
 
     def __repr__(self, indent=""):
         if expr_repr_flat():
-            global typified_repr_endl
-            shift, indent, typified_repr_endl = '','',''
+            pass
         return f"""{indent}ExprLitBint({self.i})"""
 
     def __eq__(self, that):
@@ -37,8 +35,7 @@ class ExprIdf:
 
     def __repr__(self, indent=''):
         if expr_repr_flat():
-            global typified_repr_endl
-            shift, indent, typified_repr_endl = '','',''
+            pass
         return f"""{indent}Expr_Idf("{self.s}")"""
 
     def __eq__(self, that):
@@ -51,8 +48,7 @@ class ExprBraced:
 
     def __repr__(self, indent=''):
         if expr_repr_flat():
-            global typified_repr_endl
-            shift, indent, typified_repr_endl = '','',''
+            pass
         return (f"{indent}ExprBraced({typified_repr_endl}"
                 + f"""{self.expr.__repr__(indent + 4 * " ")}{typified_repr_endl}"""
                 + f"""{indent})"""
@@ -69,8 +65,7 @@ class ExprCall1:
 
     def __repr__(self, indent=''):
         if expr_repr_flat():
-            global typified_repr_endl
-            shift, indent, typified_repr_endl = '','',''
+            pass
         return (f"{indent}Expr_Call_1({typified_repr_endl}"
                 + f"""{self.expr_f.__repr__(indent + 4 * " ")},{typified_repr_endl}"""
                 + f"""{self.expr_x.__repr__(indent + 4 * " ")}{typified_repr_endl}"""
@@ -91,8 +86,7 @@ class ExprLambda1:
 
     def __repr__(self, indent=''):
         if expr_repr_flat():
-            global typified_repr_endl
-            shift, indent, typified_repr_endl = '','',''
+            pass
         return (f"{indent}Expr_Lambda_1({typified_repr_endl}"
                 + f"""{self.expr_idf_arg.__repr__(indent + 4 * " ")},{typified_repr_endl}"""
                 + f"""{self.expr_res.__repr__(indent + 4 * " ")}{typified_repr_endl}"""

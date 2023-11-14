@@ -1,5 +1,9 @@
-implement booleans (true, false)
-compare values of the same type
+make test independent of representation flatness
+
+refactor typification
+    classes for args
+    add "_FX" "_X" to type params on both sides before sync
+    no synched unknowns
 
 list literals
 
@@ -12,4 +16,3 @@ dict vs named tuple (name: Str, salary: Bint, permitted: Bool)
 (not blocking) implement map, bind
 
 # ? remove endOfCode
-# ? add _FX _X to type params on both sides before synchronizing

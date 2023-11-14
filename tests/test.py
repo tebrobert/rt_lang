@@ -364,6 +364,7 @@ def test_apply_1():
 def test_apply_2():
     expr = full_parse("""f = x => x + ""\nprint(f(f("")))""")
     typified_set = typify_set(expr)
+    rt_assert_equal(len(typified_set), 1)
 
 
 custom_tests = [
@@ -419,11 +420,11 @@ custom_tests = [
     test_typify_set_2,
     test_tokenize,
     test_apply_1,
-    test_apply_2,
     test_flatmap_input_2,
-][-1:]
+]
 
 deferred_tests = [
+    test_apply_2,
 ]
 
 path_tests_full = "tests/full/"
