@@ -182,80 +182,79 @@ def find_idf_typ(typified, s_to_find):
     )(typified)
 
 
-def sync_typs_f_x_typ_0(typ_f, typ_x, typ_sub_fx, typ_sub_x):
+def sync_typs_f_x_typ_0(typ_f, typ_x, typ_sub_x, sub_fx_s):
     new_typ_f, new_typ_x = (
         (typ_f, typ_x)
-        if type(typ_sub_x) is Typ0 and typ_sub_fx.s == typ_sub_x.s else
+        if type(typ_sub_x) is Typ0 and sub_fx_s == typ_sub_x.s else
         (
-            wip("solve 1.1")
-            if type(typ_sub_fx) is TypUnknown0 else
             sync_typs_f_x(
-                update_typ(typ_f, typ_sub_x, typ_sub_fx),
-                update_typ(typ_x, typ_sub_x, typ_sub_fx),
+                update_typ(typ_f, typ_sub_x, Typ0(sub_fx_s)),
+                update_typ(typ_x, typ_sub_x, Typ0(sub_fx_s)),
             )
         )
         if type(typ_sub_x) is TypUnknown0 else
-        fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+        fail(f"Can't match the types {Typ0(sub_fx_s)} vs {typ_sub_x}")
     )
     return new_typ_f, new_typ_x
 
 
-def sync_typs_f_x_unknown_0(typ_f, typ_x, typ_sub_fx, typ_sub_x):
+def sync_typs_f_x_unknown_0(typ_f, typ_x, typ_sub_x, sub_fx_i):
     new_typ_f, new_typ_x = (
-        sync_typs_f_x(update_typ(typ_f, typ_sub_fx, typ_sub_x), typ_x)
+        sync_typs_f_x(update_typ(typ_f, TypUnknown0(sub_fx_i), typ_sub_x), typ_x)
         if type(typ_sub_x) is Typ0 else
         (
             (typ_f, typ_x)
-            if type(typ_sub_fx) is TypUnknown0
-               and typ_sub_fx.i == typ_sub_x.i else
+            if type(typ_sub_x) is TypUnknown0
+               and sub_fx_i == typ_sub_x.i else
             fail("Not implemented: solve_rec 4")
         )
         if type(typ_sub_x) is TypUnknown0 else
-        sync_typs_f_x(update_typ(typ_f, typ_sub_fx, typ_sub_x), typ_x)
+        sync_typs_f_x(update_typ(typ_f, TypUnknown0(sub_fx_i), typ_sub_x), typ_x)
     )
     return new_typ_f, new_typ_x
 
 
-def sync_typs_f_x_typ_1(typ_f, typ_x, typ_sub_fx, typ_sub_x):
+def sync_typs_f_x_typ_1(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1):
     new_typ_f, new_typ_x = (
         (typ_f, typ_x)
         if type(typ_sub_x) is TypUnknown0 else
-        sync_typs_f_x_rec(typ_f, typ_x, typ_sub_fx.t1, typ_sub_x.t1)
-        if type(typ_sub_x) is Typ1 else
-        fail(f"Can't match the types `{typ_sub_fx}` vs `{typ_sub_x}.`")
+        sync_typs_f_x_rec(typ_f, typ_x, sub_fx_t1, typ_sub_x.t1)
+        if type(typ_sub_x) is Typ1 and sub_fx_s == typ_sub_x.s else
+        fail(f"Can't match the types `{sub_fx_t1}` vs `{typ_sub_x}.`")
     )
     return new_typ_f, new_typ_x
 
 
-def sync_typs_f_x_typ_2(typ_f, typ_x, typ_sub_fx, typ_sub_x):
+def sync_typs_f_x_typ_2(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1, sub_fx_t2,
+):
     new_typ_f, new_typ_x = (
         fail(f"Yet can't call `{typ_f}` with `{typ_x}`.",
-            f"Currently matching `{typ_sub_fx}` and `{typ_sub_x}`",
+            f"Currently matching `{sub_fx_s}` and `{typ_sub_x}`",
         )
         if type(typ_sub_x) is TypUnknown0 else
         sync_typs_f_x_rec(
-            *sync_typs_f_x_rec(typ_f, typ_x, typ_sub_fx.t1, typ_sub_x.t1),
-            typ_sub_fx.t2, typ_sub_x.t2,
+            *sync_typs_f_x_rec(typ_f, typ_x, sub_fx_t1, typ_sub_x.t1),
+            sub_fx_t2, typ_sub_x.t2,
         )
         if type(typ_sub_x) is Typ2 else
-        fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
+        fail(f"Can't match the types {sub_fx_s} vs {typ_sub_x}")
     )
     return new_typ_f, new_typ_x
 
 
 def sync_typs_f_x_rec(typ_f, typ_x, typ_sub_fx, typ_sub_x):
     new_typ_f, new_typ_x = match_typ(
-        case_typ0=lambda _s: sync_typs_f_x_typ_0(
-            typ_f, typ_x, typ_sub_fx, typ_sub_x,
+        case_typ0=lambda s: sync_typs_f_x_typ_0(
+            typ_f, typ_x, typ_sub_x, s,
         ),
-        case_unknown0=lambda _s: sync_typs_f_x_unknown_0(
-            typ_f, typ_x, typ_sub_fx, typ_sub_x,
+        case_unknown0=lambda i: sync_typs_f_x_unknown_0(
+            typ_f, typ_x, typ_sub_x, i,
         ),
-        case_typ1=lambda _s, _t1: sync_typs_f_x_typ_1(
-            typ_f, typ_x, typ_sub_fx, typ_sub_x,
+        case_typ1=lambda s, t1: sync_typs_f_x_typ_1(
+            typ_f, typ_x, typ_sub_x, s, t1,
         ),
-        case_typ2=lambda _s, _t1, _t2: sync_typs_f_x_typ_2(
-            typ_f, typ_x, typ_sub_fx, typ_sub_x,
+        case_typ2=lambda s, t1, t2: sync_typs_f_x_typ_2(
+            typ_f, typ_x, typ_sub_x, s, t1, t2,
         ),
     )(typ_sub_fx)
     return new_typ_f, new_typ_x
