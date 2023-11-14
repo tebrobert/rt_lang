@@ -260,14 +260,10 @@ def sync_typs_rec(typ_sub_fx, typ_sub_x, typF, typX):
 
 
 def sync_typs(typ_f, typ_x):  # may have sync conflicts
-    fail_not_a_func = lambda: fail(
-        f"typ_f `{typ_f}` should be a `{builtin_Func}`"
-    )
-
     new_typ_f, new_typ_x = match_typ(
-        case_typ0=lambda _s: fail_not_a_func(),
+        case_typ0=lambda _s: fail(f"Unexpected typ_f `{typ_f}`."),
         case_unknown0=lambda _s: (T_Func(typ_x, T_A), typ_x),
-        case_typ1=lambda _s, _t1: fail_not_a_func(),
+        case_typ1=lambda _s, _t1: fail(f"Unexpected typ_f `{typ_f}`."),
         case_typ2=lambda _s, t1, _t2: sync_typs_rec(t1, typ_x, typ_f, typ_x),
     )(typ_f)
     return new_typ_f, new_typ_x
