@@ -306,7 +306,6 @@ def typify_set_call_1(expr_f, expr_x):
             ))
             if not is_fail(mb_current_typified_call1):
                 typified_call_1_set.add(mb_current_typified_call1)
-            # else: print(mb_current_typified_call1)
 
     return typified_call_1_set
 
@@ -326,7 +325,6 @@ def typify_set_lambda_1(expr_arg, expr_res):
             mb_res = rt_try(action)
             if not is_fail(mb_res):
                 res_set.add(mb_res)
-            # else: print(mb_res)
 
     return res_set
 

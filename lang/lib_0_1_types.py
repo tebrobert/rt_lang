@@ -19,7 +19,6 @@ class Typ0:
 class TypUnknown0:
     def __init__(self, i):
         self.i = i
-        #self.s = i #
 
     def __eq__(self, that):
         return type(that) == TypUnknown0 and that.i == self.i
