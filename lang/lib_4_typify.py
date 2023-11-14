@@ -197,11 +197,10 @@ def sync_typs_typ_0(typ_f, typ_x, typ_sub_fx, typ_sub_x):
         if type(typ_sub_x) is TypUnknown0 else
         fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
     )
-    return new_typ_f, new_typ_x, #new_synched_unks
+    return new_typ_f, new_typ_x
 
 
-def sync_typs_unknown_0(typ_f, typ_x, typ_sub_fx, typ_sub_x, f_x_synched_unks,
-):
+def sync_typs_unknown_0(typ_f, typ_x, typ_sub_fx, typ_sub_x):
     new_typ_f, new_typ_x = (
         sync_typs(update_typ(typ_f, typ_sub_fx, typ_sub_x), typ_x)
         if type(typ_sub_x) is Typ0 else
@@ -211,39 +210,26 @@ def sync_typs_unknown_0(typ_f, typ_x, typ_sub_fx, typ_sub_x, f_x_synched_unks,
             fail("Not implemented: solve_rec 4")
         )
         if type(typ_sub_x) is TypUnknown0 else
-        fail(type_match_err_msg)
-        if typ_sub_fx.s in f_x_synched_unks else
         sync_typs(update_typ(typ_f, typ_sub_fx, typ_sub_x), typ_x)
     )
-    return new_typ_f, new_typ_x, #new_synched_unks
+    return new_typ_f, new_typ_x
 
 
-def sync_typs_typ_1(typ_f, typ_x, typ_sub_fx, typ_sub_x, f_x_synched_unks,
-):
+def sync_typs_typ_1(typ_f, typ_x, typ_sub_fx, typ_sub_x):
     new_typ_f, new_typ_x = (
-        (
-            fail(type_match_err_msg)
-            if typ_sub_x.s in f_x_synched_unks else
-            (typ_f, typ_x)
-        )
+        (typ_f, typ_x)
         if type(typ_sub_x) is TypUnknown0 else
         sync_typs_rec(typ_sub_fx.t1, typ_sub_x.t1, (typ_f, typ_x))
         if type(typ_sub_x) is Typ1 else
         fail(f"Can't match the types `{typ_sub_fx}` vs `{typ_sub_x}.`")
     )
-    return new_typ_f, new_typ_x, #new_synched_unks
+    return new_typ_f, new_typ_x
 
 
-def sync_typs_typ_2(typ_f, typ_x, typ_sub_fx, typ_sub_x, f_x_synched_unks,
-):
+def sync_typs_typ_2(typ_f, typ_x, typ_sub_fx, typ_sub_x):
     new_typ_f, new_typ_x = (
-        (
-            fail(type_match_err_msg)
-            if typ_sub_x.s in f_x_synched_unks else
-            fail(
-                f"Yet can't call `{typ_f}` with `{typ_x}`.",
-                f"Currently matching `{typ_sub_fx}` and `{typ_sub_x}`",
-            )
+        fail(f"Yet can't call `{typ_f}` with `{typ_x}`.",
+            f"Currently matching `{typ_sub_fx}` and `{typ_sub_x}`",
         )
         if type(typ_sub_x) is TypUnknown0 else
         sync_typs_rec(typ_sub_fx.t2, typ_sub_x.t2,
@@ -252,34 +238,25 @@ def sync_typs_typ_2(typ_f, typ_x, typ_sub_fx, typ_sub_x, f_x_synched_unks,
         if type(typ_sub_x) is Typ2 else
         fail(f"Can't match the types {typ_sub_fx} vs {typ_sub_x}")
     )
-    return new_typ_f, new_typ_x, #new_synched_unks
+    return new_typ_f, new_typ_x
 
 
-def sync_typs_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
-    typ_f, typ_x = f_x_synched_unks
-
+def sync_typs_rec(typ_sub_fx, typ_sub_x, typF_typX):
     new_typ_f, new_typ_x = match_typ(
         case_typ0=lambda _s: sync_typs_typ_0(
-            typ_f, typ_x,
-            typ_sub_fx, typ_sub_x,
+            *typF_typX, typ_sub_fx, typ_sub_x,
         ),
         case_unknown0=lambda _s: sync_typs_unknown_0(
-            typ_f, typ_x,
-            typ_sub_fx, typ_sub_x,
-            f_x_synched_unks,
+            *typF_typX, typ_sub_fx, typ_sub_x,
         ),
         case_typ1=lambda _s, _t1: sync_typs_typ_1(
-            typ_f, typ_x,
-            typ_sub_fx, typ_sub_x,
-            f_x_synched_unks,
+            *typF_typX, typ_sub_fx, typ_sub_x,
         ),
         case_typ2=lambda _s, _t1, _t2: sync_typs_typ_2(
-            typ_f, typ_x,
-            typ_sub_fx, typ_sub_x,
-            f_x_synched_unks,
+            *typF_typX, typ_sub_fx, typ_sub_x,
         ),
     )(typ_sub_fx)
-    return new_typ_f, new_typ_x, #new_synched_unks
+    return new_typ_f, new_typ_x
 
 
 def sync_typs(typ_f, typ_x):  # may have sync conflicts
