@@ -295,7 +295,7 @@ def sync_typs(typ_f, typ_x):  # may have sync conflicts
     return new_typ_f, new_typ_x, synched_unks
 
 
-def concreted_f(typ_f, typ_x):
+def concrete_f(typ_f, typ_x):
     new_typ_f, _new_typ_x, _synched_unks = sync_typs(typ_f, typ_x)
     return new_typ_f
 
@@ -306,7 +306,7 @@ def continue_typifying_call_1_with_unknown_x(typified_f, typified_x):
 
 
 def continue_typifying_call_1(typified_f, typified_x):
-    new_typ_f = concreted_f(typified_f.typ, typified_x.typ)
+    new_typ_f = concrete_f(typified_f.typ, typified_x.typ)
     new_typified_f = replace_typ(typified_f, new_typ_f)
     new_typified_x = replace_typ(typified_x, new_typ_f.t1)
     return TypifiedCall1(new_typified_f, new_typified_x, new_typ_f.t2)
