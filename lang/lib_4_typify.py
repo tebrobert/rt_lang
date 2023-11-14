@@ -231,18 +231,16 @@ def sync_typs_f_x_typ_1(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1):
 def sync_typs_f_x_typ_2(
     typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1, sub_fx_t2,
 ):
-    return (
-        fail(f"Yet can't call `{typ_f}` with `{typ_x}`.",
-            f"Currently matching `{sub_fx_s}` and `{typ_sub_x}`",
-        )
-        if type(typ_sub_x) is TypUnknown0 else
-        sync_typs_f_x_rec(
-            *sync_typs_f_x_rec(typ_f, typ_x, sub_fx_t1, typ_sub_x.t1),
-            sub_fx_t2, typ_sub_x.t2,
-        )
-        if type(typ_sub_x) is Typ2 and typ_sub_x.s == sub_fx_s else
-        fail(f"Can't match the types {sub_fx_s} vs {typ_sub_x}")
-    )
+    bad_type = lambda: fail(f"Can't match the types {sub_fx_s} vs {typ_sub_x}")
+    return match_typ(
+        case_typ0=lambda _s: bad_type(),
+        case_unknown0=lambda _i: wip(),
+        case_typ1=lambda _s, _t1: bad_type(),
+        case_typ2=lambda sub_x_s, sub_x_t1, sub_x_t2: sync_typs_f_x_rec(
+            *sync_typs_f_x_rec(typ_f, typ_x, sub_fx_t1, sub_x_t1),
+            sub_fx_t2, sub_x_t2,
+        ) if sub_x_s == sub_fx_s else bad_type(),
+    )(typ_sub_x)
 
 
 def sync_typs_f_x_rec(typ_f, typ_x, typ_sub_fx, typ_sub_x):
