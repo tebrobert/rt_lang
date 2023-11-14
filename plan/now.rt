@@ -4,7 +4,7 @@ refactor typification
     unknown typs with indexes and not letters
 
     classes for args
-    add "_FX" "_X" to type params on both sides before sync
+    #### add "_FX" "_X" to type params on both sides before sync
     no synched unknowns
 
 list literals
