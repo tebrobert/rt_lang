@@ -206,8 +206,9 @@ def sync_typs_f_x_unknown_0(typ_f, typ_x, typ_sub_fx, typ_sub_x):
         if type(typ_sub_x) is Typ0 else
         (
             (typ_f, typ_x)
-            # if typ_sub_fx.s == typ_sub_x.s else
-            # fail("Not implemented: solve_rec 4")
+            if type(typ_sub_fx) is TypUnknown0
+               and typ_sub_fx.i == typ_sub_x.i else
+            fail("Not implemented: solve_rec 4")
         )
         if type(typ_sub_x) is TypUnknown0 else
         sync_typs_f_x(update_typ(typ_f, typ_sub_fx, typ_sub_x), typ_x)
