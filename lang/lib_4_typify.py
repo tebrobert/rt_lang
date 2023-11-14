@@ -182,10 +182,7 @@ def find_idf_typ(typified, s_to_find):
     )(typified)
 
 
-def sync_typs_typ_0(
-    typ_f, typ_x, typ_sub_fx, typ_sub_x,
-    synched_unks,
-):
+def sync_typs_typ_0(typ_f, typ_x, typ_sub_fx, typ_sub_x, synched_unks):
     new_typ_f, new_typ_x, new_synched_unks = (
         (typ_f, typ_x, synched_unks)
         if type(typ_sub_x) is Typ0 and typ_sub_fx.s == typ_sub_x.s else
@@ -203,9 +200,8 @@ def sync_typs_typ_0(
     return new_typ_f, new_typ_x, new_synched_unks
 
 
-def sync_typs_unknown_0(
-    typ_f, typ_x, typ_sub_fx, typ_sub_x,
-    f_x_synched_unks, synched_unks,
+def sync_typs_unknown_0(typ_f, typ_x, typ_sub_fx, typ_sub_x, f_x_synched_unks,
+    synched_unks,
 ):
     new_typ_f, new_typ_x, new_synched_unks = (
         sync_typs(update_typ(typ_f, typ_sub_fx, typ_sub_x), typ_x)
@@ -223,9 +219,8 @@ def sync_typs_unknown_0(
     return new_typ_f, new_typ_x, new_synched_unks
 
 
-def sync_typs_typ_1(
-    typ_f, typ_x, typ_sub_fx, typ_sub_x,
-    f_x_synched_unks, synched_unks,
+def sync_typs_typ_1(typ_f, typ_x, typ_sub_fx, typ_sub_x, f_x_synched_unks,
+    synched_unks,
 ):
     new_typ_f, new_typ_x, new_synched_unks = (
         (
@@ -241,9 +236,8 @@ def sync_typs_typ_1(
     return new_typ_f, new_typ_x, new_synched_unks
 
 
-def sync_typs_typ_2(
-    typ_f, typ_x, typ_sub_fx, typ_sub_x,
-    f_x_synched_unks, synched_unks,
+def sync_typs_typ_2(typ_f, typ_x, typ_sub_fx, typ_sub_x, f_x_synched_unks,
+    synched_unks,
 ):
     new_typ_f, new_typ_x, new_synched_unks = (
         (
