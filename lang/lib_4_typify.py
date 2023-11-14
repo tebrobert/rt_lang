@@ -228,8 +228,15 @@ def sync_typs_typ_1(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1):
     )
 
 
-def sync_typs_typ2_typ2():
-    pass
+def sync_typs_typ2_typ2(
+    typ_f, typ_x,
+    sub_x_s, sub_x_t1, sub_x_t2,
+    sub_fx_s, sub_fx_t1, sub_fx_t2,
+):
+    return sync_typs_rec(
+        *sync_typs_rec(typ_f, typ_x, sub_fx_t1, sub_x_t1),
+        sub_fx_t2, sub_x_t2,
+    ) if sub_x_s == sub_fx_s else fail()
 
 
 def sync_typs_typ2(
@@ -240,10 +247,11 @@ def sync_typs_typ2(
         case_typ0=lambda _s: bad_type(),
         case_unknown0=lambda _i: wip(),
         case_typ1=lambda _s, _t1: bad_type(),
-        case_typ2=lambda sub_x_s, sub_x_t1, sub_x_t2: sync_typs_rec(
-            *sync_typs_rec(typ_f, typ_x, sub_fx_t1, sub_x_t1),
-            sub_fx_t2, sub_x_t2,
-        ) if sub_x_s == sub_fx_s else bad_type(),
+        case_typ2=lambda sub_x_s, sub_x_t1, sub_x_t2: sync_typs_typ2_typ2(
+            typ_f, typ_x,
+            sub_x_s, sub_x_t1, sub_x_t2,
+            sub_fx_s, sub_fx_t1, sub_fx_t2,
+        ),
     )(typ_sub_x)
 
 
