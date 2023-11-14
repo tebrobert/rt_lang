@@ -231,10 +231,6 @@ def sync_typs_typ_1(
         (
             fail(type_match_err_msg)
             if typ_sub_x.s in f_x_synched_unks else
-            # fail(
-            #     f"Yet can't call `{typ_f}` with `{typ_x}`.",
-            #     f"Currently matching `{typ_sub_fx}` and `{typ_sub_x}`.",
-            # )
             (typ_f, typ_x, synched_unks)
         )
         if type(typ_sub_x) is TypUnknown0 else
