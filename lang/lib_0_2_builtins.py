@@ -8,8 +8,8 @@ def T_List(t1): return Typ1(builtin_List, t1)
 def T_RIO(t1): return Typ1(builtin_RIO, t1)
 def T_Func(t1, t2): return Typ2(builtin_Func, t1, t2)
 
-T_A = TypUnknown0("A")
-T_B = TypUnknown0("B")
+T_A = TypUnknown0(1)
+T_B = TypUnknown0(2)
 
 types = {
     builtin_Bint: T_Bint,

@@ -27,7 +27,7 @@ class TypUnknown0:
         return self.__repr__().__hash__()
 
     def __repr__(self, indent=""):
-        return f"{indent}{self.s}"
+        return f"{indent}A{self.s}"
 
 
 class Typ1:
