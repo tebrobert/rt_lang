@@ -184,7 +184,7 @@ def find_idf_typ(typified, s_to_find):
 
 def sync_typs_typ_0(
     typ_f, typ_x, typ_sub_fx, typ_sub_x,
-    _f_x_synched_unks, synched_unks,
+    synched_unks,
 ):
     new_typ_f, new_typ_x, new_synched_unks = (
         (typ_f, typ_x, synched_unks)
@@ -268,15 +268,27 @@ def sync_typs_rec(typ_sub_fx, typ_sub_x, f_x_synched_unks):
     typ_f, typ_x, synched_unks = f_x_synched_unks
 
     new_typ_f, new_typ_x, new_synched_unks = match_typ(
-        case_typ0=lambda _s: sync_typs_typ_0,
-        case_unknown0=lambda _s: sync_typs_unknown_0,
-        case_typ1=lambda _s, _t1: sync_typs_typ_1,
-        case_typ2=lambda _s, _t1, _t2: sync_typs_typ_2,
-    )(typ_sub_fx)(
-        typ_f, typ_x,
-        typ_sub_fx, typ_sub_x,
-        f_x_synched_unks, synched_unks,
-    )
+        case_typ0=lambda _s: sync_typs_typ_0(
+            typ_f, typ_x,
+            typ_sub_fx, typ_sub_x,
+            synched_unks,
+        ),
+        case_unknown0=lambda _s: sync_typs_unknown_0(
+            typ_f, typ_x,
+            typ_sub_fx, typ_sub_x,
+            f_x_synched_unks, synched_unks,
+        ),
+        case_typ1=lambda _s, _t1: sync_typs_typ_1(
+            typ_f, typ_x,
+            typ_sub_fx, typ_sub_x,
+            f_x_synched_unks, synched_unks,
+        ),
+        case_typ2=lambda _s, _t1, _t2: sync_typs_typ_2(
+            typ_f, typ_x,
+            typ_sub_fx, typ_sub_x,
+            f_x_synched_unks, synched_unks,
+        ),
+    )(typ_sub_fx)
     return new_typ_f, new_typ_x, new_synched_unks
 
 
