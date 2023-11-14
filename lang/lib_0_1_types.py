@@ -19,7 +19,7 @@ class Typ0:
 class TypUnknown0:
     def __init__(self, i):
         self.i = i
-        self.s = i #
+        #self.s = i #
 
     def __eq__(self, that):
         return type(that) == TypUnknown0 and that.i == self.i
@@ -62,7 +62,8 @@ class Typ2:
     def __repr__(self, indent=""):
         return indent + (
             f"({self.t1}) => {self.t2}"
-            if self.s == builtin_Func and self.t1.s == builtin_Func
+            if self.s == builtin_Func
+               and type(self.t1) is Typ2 and self.t1.s == builtin_Func
             else f"{self.t1} => {self.t2}"
             if self.s == builtin_Func
             else f"{self.s}[{self.t1}, {self.t2}]"
