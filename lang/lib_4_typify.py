@@ -275,8 +275,7 @@ def sync_typs(typ_f, typ_x):  # may have sync conflicts
         case_typ0=lambda _s: fail(f"Unexpected typ_f `{typ_f}`."),
         case_unknown0=lambda _s: (T_Func(typ_x, T_A), typ_x),
         case_typ1=lambda _s, _t1: fail(f"Unexpected typ_f `{typ_f}`."),
-        case_typ2=lambda _s, t1, _t2: sync_typs_rec(typ_f, typ_x, t1, typ_x,
-        ),
+        case_typ2=lambda _s, t1, _t2: sync_typs_rec(typ_f, typ_x, t1, typ_x),
     )(typ_f)
 
 
