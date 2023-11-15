@@ -191,17 +191,15 @@ def find_idf_typ(typified, s_to_find):
 
 
 def sync_unk0(typ_f, typ_x, typ_sub_x, sub_fx_i): # hmmm
+    known = lambda: sync_typs(
+        update_typ(typ_f, Unk0(sub_fx_i), typ_sub_x),
+        typ_x,
+    )
     return match_typ(
         case_unk0=lambda i: (typ_f, typ_x) if i == sub_fx_i else wip(),
-        case_typ0=lambda _s: sync_typs(
-            update_typ(typ_f, Unk0(sub_fx_i), typ_sub_x), typ_x
-        ),
-        case_typ1=lambda _s, _t1: sync_typs(
-            update_typ(typ_f, Unk0(sub_fx_i), typ_sub_x), typ_x
-        ),
-        case_typ2=lambda _s, _t1, _t2: sync_typs(
-            update_typ(typ_f, Unk0(sub_fx_i), typ_sub_x), typ_x
-        ),
+        case_typ0=lambda _s: known(),
+        case_typ1=lambda _s, _t1: known(),
+        case_typ2=lambda _s, _t1, _t2: known(),
     )(typ_sub_x)
 
 
