@@ -292,12 +292,11 @@ def typify_set_call_1(expr_f, expr_x):
     mut_typified_call_1_set = set()
 
     for typified_f in typified_f_set:
-        if not (
-                type(typified_f.typ) is Typ2
-                and typified_f.typ.s == builtin_Func
-                or type(typified_f.typ) is Unk0
-        ):
-            continue
+        rt_assert(
+            type(typified_f.typ) is Typ2
+            and typified_f.typ.s == builtin_Func
+            or type(typified_f.typ) is Unk0
+        )
 
         for typified_x in typified_x_set:
             mb_current_typified_call1 = rt_try(lambda: (
