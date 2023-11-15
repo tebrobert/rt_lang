@@ -191,7 +191,6 @@ def find_idf_typ(typified, s_to_find):
 
 
 # hmmm
-# wip
 def concrete_f_unk0(typ_f, typ_x, typ_sub_x, sub_fx_i):
     case_known = lambda: concrete_f(
         update_typ(typ_f, Unk0(sub_fx_i), typ_sub_x),
@@ -238,7 +237,6 @@ def concrete_f_typ2_typ2(typ_f, typ_x, sub_x_s, sub_x_t1, sub_x_t2,
     return used_t2
 
 
-# wip
 def concrete_f_typ2(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1, sub_fx_t2):
     bad_type = lambda: fail(f"Can't match the types {sub_fx_s} vs {typ_sub_x}")
     return match_typ(

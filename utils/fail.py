@@ -1,4 +1,5 @@
 import traceback
+import inspect
 
 
 # class RtError(Exception):
@@ -20,6 +21,8 @@ def rt_assert(cond, msg="Assertion error."):
 
 
 def wip(*msgs):
+    caller_func_name = inspect.getouterframes(inspect.currentframe(), 2)[1][3]
+    print("wip", caller_func_name)
     fail("The feature was not implemented. Work in progress...", *msgs)
 
 
