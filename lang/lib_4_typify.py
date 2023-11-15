@@ -227,7 +227,8 @@ def concrete_f_typ1(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1):
     )(typ_sub_x)
 
 
-def concrete_f_typ2_typ2(typ_f, typ_x, sub_x_s, sub_x_t1, sub_x_t2,
+def concrete_f_typ2_typ2(
+    typ_f, typ_x, sub_x_s, sub_x_t1, sub_x_t2,
     sub_fx_s, sub_fx_t1, sub_fx_t2,
 ):
     rt_assert_equal(sub_x_s, sub_fx_s)
@@ -288,24 +289,27 @@ def typify_set_call_1(expr_f, expr_x):
     typified_f_set = typify_set(expr_f)
     typified_x_set = typify_set(expr_x)
 
-    typified_call_1_set = set()
+    mut_typified_call_1_set = set()
+
     for typified_f in typified_f_set:
         if not (
-                type(
-                    typified_f.typ) is Typ2 and typified_f.typ.s == builtin_Func
+                type(typified_f.typ) is Typ2
+                and typified_f.typ.s == builtin_Func
                 or type(typified_f.typ) is Unk0
         ):
             continue
+
         for typified_x in typified_x_set:
             mb_current_typified_call1 = rt_try(lambda: (
                 continue_typifying_call_1_with_unknown_x(typified_f, typified_x)
                 if type(typified_x.typ) is Unk0 else
                 continue_typifying_call_1(typified_f, typified_x)
             ))
-            if not is_fail(mb_current_typified_call1):
-                typified_call_1_set.add(mb_current_typified_call1)
 
-    return typified_call_1_set
+            if not is_fail(mb_current_typified_call1):
+                mut_typified_call_1_set.add(mb_current_typified_call1)
+
+    return mut_typified_call_1_set
 
 
 def typify_set_lambda_1(expr_arg, expr_res):
