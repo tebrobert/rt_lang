@@ -5,9 +5,9 @@ Typed_Call_1(
             Typed_Idf("greeting", Str),
             Typed_Call_1(
                 Typed_Call_1(
-                    Typed_Idf(">>=", (A1 => RIO[Unit]) => RIO[Unit] => RIO[Unit]),
+                    Typed_Idf(">>=", (A0 => RIO[Unit]) => RIO[Unit] => RIO[Unit]),
                     Typed_Lambda_1(
-                        Typed_Idf("_", A1),
+                        Typed_Idf("_", A0),
                         Typed_Call_1(
                             Typed_Call_1(
                                 Typed_Idf(">>=", (Str => RIO[Unit]) => RIO[Str] => RIO[Unit]),
@@ -33,7 +33,7 @@ Typed_Call_1(
                             Typed_Idf("input", RIO[Str]),
                             RIO[Unit]
                         ),
-                        A1 => RIO[Unit]
+                        A0 => RIO[Unit]
                     ),
                     RIO[Unit] => RIO[Unit]
                 ),
