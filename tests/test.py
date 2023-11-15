@@ -365,6 +365,14 @@ def test_apply_2():
     rt_assert_equal(len(typified_set), 1)
 
 
+def test_apply_3():
+    full_typify("""f = +("")\nprint("".f.f)""")
+
+
+def test_apply_4():
+    full_typify("""f = +("")\nprint("".f.f.f)""")
+
+
 custom_tests = [
     full_test(1),
     full_test(2),
@@ -420,9 +428,11 @@ custom_tests = [
     test_apply_1,
     test_flatmap_input_2,
     test_apply_2,
+    test_apply_3,
 ]
 
 deferred_tests = [
+    test_apply_4,
 ]
 
 path_tests_full = "tests/full/"
