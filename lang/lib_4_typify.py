@@ -338,10 +338,9 @@ def typify_set(expr):
         case_lit_str=lambda s: {TypifiedLit(s, T_Str)},
         case_lit_bint=lambda i: {TypifiedLit(i, T_Bint)},
         case_idf=lambda s: typify_set_idf(s),
-        case_call_1=lambda expr_f, expr_x: typify_set_call_1(expr_f,
-            expr_x),
+        case_call_1=lambda expr_f, expr_x: typify_set_call_1(expr_f, expr_x),
         case_lambda_1=lambda expr_idf_arg, expr_res: typify_set_lambda_1(
-            expr_idf_arg, expr_res
+            expr_idf_arg, expr_res,
         ),
         case_braced=lambda inner_expr: typify_set(inner_expr),
     )(expr)
