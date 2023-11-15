@@ -190,8 +190,10 @@ def find_idf_typ(typified, s_to_find):
     )(typified)
 
 
-def sync_unk0(typ_f, typ_x, typ_sub_x, sub_fx_i): # hmmm
-    case_known = lambda: sync_typs(
+# hmmm
+# wip
+def concrete_f_unk0(typ_f, typ_x, typ_sub_x, sub_fx_i):
+    case_known = lambda: concrete_f(
         update_typ(typ_f, Unk0(sub_fx_i), typ_sub_x),
         typ_x,
     )
@@ -203,9 +205,9 @@ def sync_unk0(typ_f, typ_x, typ_sub_x, sub_fx_i): # hmmm
     )(typ_sub_x)
 
 
-def sync_typ0(typ_f, typ_x, typ_sub_x, sub_fx_s):
+def concrete_f_typ0(typ_f, typ_x, typ_sub_x, sub_fx_s):
     return match_typ(
-        case_unk0=lambda i: sync_typs(
+        case_unk0=lambda i: concrete_f(
             update_typ(typ_f, Unk0(i), Typ0(sub_fx_s)),
             update_typ(typ_x, Unk0(i), Typ0(sub_fx_s)),
         ),
@@ -215,34 +217,35 @@ def sync_typ0(typ_f, typ_x, typ_sub_x, sub_fx_s):
     )(typ_sub_x)
 
 
-def sync_typ1(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1):
+def concrete_f_typ1(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1):
     return match_typ(
         case_unk0=lambda i: typ_f,
         case_typ0=lambda s: fail(),
-        case_typ1=lambda s, t1: sync_typs_rec(typ_f, typ_x,
+        case_typ1=lambda s, t1: concrete_f_rec(typ_f, typ_x,
             sub_fx_t1, t1,
         ) if s == sub_fx_s else fail(),
         case_typ2=lambda s, t1, t2: fail(),
     )(typ_sub_x)
 
 
-def sync_typ2_typ2(typ_f, typ_x, sub_x_s, sub_x_t1, sub_x_t2,
+def concrete_f_typ2_typ2(typ_f, typ_x, sub_x_s, sub_x_t1, sub_x_t2,
     sub_fx_s, sub_fx_t1, sub_fx_t2,
 ):
     rt_assert_equal(sub_x_s, sub_fx_s)
-    used_t1 = sync_typs_rec(typ_f, typ_x, sub_fx_t1, sub_x_t1)
+    used_t1 = concrete_f_rec(typ_f, typ_x, sub_fx_t1, sub_x_t1)
     f1, x1 = used_t1, used_t1.t1
-    used_t2 = sync_typs_rec(f1, x1, sub_fx_t2, sub_x_t2)
+    used_t2 = concrete_f_rec(f1, x1, sub_fx_t2, sub_x_t2)
     return used_t2
 
 
-def sync_typ2(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1, sub_fx_t2):
+# wip
+def concrete_f_typ2(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1, sub_fx_t2):
     bad_type = lambda: fail(f"Can't match the types {sub_fx_s} vs {typ_sub_x}")
     return match_typ(
         case_unk0=lambda _i: wip(),
         case_typ0=lambda _s: bad_type(),
         case_typ1=lambda _s, _t1: bad_type(),
-        case_typ2=lambda sub_x_s, sub_x_t1, sub_x_t2: sync_typ2_typ2(
+        case_typ2=lambda sub_x_s, sub_x_t1, sub_x_t2: concrete_f_typ2_typ2(
             typ_f, typ_x,
             sub_x_s, sub_x_t1, sub_x_t2,
             sub_fx_s, sub_fx_t1, sub_fx_t2,
@@ -250,29 +253,25 @@ def sync_typ2(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1, sub_fx_t2):
     )(typ_sub_x)
 
 
-def sync_typs_rec(typ_f, typ_x, typ_sub_fx, typ_sub_x):
+def concrete_f_rec(typ_f, typ_x, typ_sub_fx, typ_sub_x):
     return match_typ(
-        case_unk0=lambda i: sync_unk0(typ_f, typ_x, typ_sub_x, i),
-        case_typ0=lambda s: sync_typ0(typ_f, typ_x, typ_sub_x, s),
-        case_typ1=lambda s, t1: sync_typ1(typ_f, typ_x, typ_sub_x, s, t1),
-        case_typ2=lambda s, t1, t2: sync_typ2(typ_f, typ_x, typ_sub_x,
+        case_unk0=lambda i: concrete_f_unk0(typ_f, typ_x, typ_sub_x, i),
+        case_typ0=lambda s: concrete_f_typ0(typ_f, typ_x, typ_sub_x, s),
+        case_typ1=lambda s, t1: concrete_f_typ1(typ_f, typ_x, typ_sub_x, s, t1),
+        case_typ2=lambda s, t1, t2: concrete_f_typ2(typ_f, typ_x, typ_sub_x,
             s, t1, t2,
         ),
     )(typ_sub_fx)
 
 
-def sync_typs(typ_f, typ_x):  # may have sync conflicts
+# may have sync conflicts
+def concrete_f(typ_f, typ_x):
     return match_typ(
         case_unk0=lambda _s: T_Func(typ_x, T_A),
         case_typ0=lambda _s: fail(f"Unexpected typ_f `{typ_f}`."),
         case_typ1=lambda _s, _t1: fail(f"Unexpected typ_f `{typ_f}`."),
-        case_typ2=lambda _s, t1, _t2: sync_typs_rec(typ_f, typ_x, t1, typ_x),
+        case_typ2=lambda _s, t1, _t2: concrete_f_rec(typ_f, typ_x, t1, typ_x),
     )(typ_f)
-
-
-def concrete_f(typ_f, typ_x):
-    new_typ_f = sync_typs(typ_f, typ_x)
-    return new_typ_f
 
 
 def continue_typifying_call_1_with_unknown_x(typified_f, typified_x):
