@@ -357,32 +357,3 @@ def typify(expr):
 
 def full_typify(code):
     return typify(full_parse(code))
-
-
-type_match_err_msg = (
-    f"Can't match the types #remember the case A=>A vs A=>{builtin_List}[A]"
-)
-
-"""
-solve(f, x) => (updated_f, updated_x, updated_synched_unks)
-= solve_rec(f.x, x, (f, x, empty))
-
-solve_rec(sub_fx, sub_x, (f, x, synched_unks)) => (updated_f, updated_x, updated_synched_unks)
-= sub_fx      sub_x       return
-  Type0_A     Type0_A     (f, x, synched_unks)
-  Type0_A     Unk0_A      solve(f, x.repl(Unk0_A, Type_0))
-  Unk0_A      Type0_A     solve(f.repl(Unk0_A, Type0_A), x)
-  Unk0_A      Unk0_A      (f, x, synched_unks.add(Unk0_A))
-  Unk0_A      Unk0_B      solve(f, x.swap(Unk0_B, Unk0_A), synched_unks.add(Unk0_A))
-  Unk0_A      sub_x       too_much(Unk0_A, sub_x, synched_unks)
-  Type1       Unk0_A      too_much(Unk0_A, Type1, synched_unks)
-  Type1(a)    Type1(b)    solve_rec(a, b, (f, x, synched_unks))
-  Type2       Unk0_A      too_much(Unk0_A, Type2, synched_unks)
-  Type2(a, b) Type2(c, d) solve_rec(b, d, solve_rec(a, c, (x, f, synched_unks)))
-
-too_much(unk0, typ, synched_unks) => Nothing
-= if Unk0_A in Type2:
-      if Unk0_A in synched_unks:
-          err #remember the case A=>A vs A=>{builtin_List}[A]
-      else: exc # A => (B, C) vs (A, B) => C to (A, B) => (C, D) - looks too complicated and unlikely
-"""
