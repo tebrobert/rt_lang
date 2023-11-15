@@ -419,10 +419,10 @@ custom_tests = [
     test_tokenize,
     test_apply_1,
     test_flatmap_input_2,
+    test_apply_2,
 ]
 
 deferred_tests = [
-    test_apply_2,
 ]
 
 path_tests_full = "tests/full/"
