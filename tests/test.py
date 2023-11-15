@@ -109,15 +109,15 @@ def full_test(test_number):
 
 def test_sync_typs():
     rt_assert_equal(
-        concrete_f(T_Func(T_A, T_Unit), T_Str),
+        concrete_f(T_Func(T_A0, T_Unit), T_Str),
         T_Func(T_Str, T_Unit)
     )
 
 
 def test_sync_typs_with_unknown_f_type():
     rt_assert_equal(
-        concrete_f(T_A, T_Str),
-        T_Func(T_Str, T_A)
+        concrete_f(T_A0, T_Str),
+        T_Func(T_Str, T_A0)
     )
 
 
@@ -325,10 +325,10 @@ def test_funcs_1():
 def test_funcs_2():
     actual = concrete_f(
         T_Func(
-            T_RIO(T_Func(T_Str, T_A)),
+            T_RIO(T_Func(T_Str, T_A0)),
             T_RIO(T_Unit),
         ),
-        T_RIO(T_Func(T_A, T_A)),
+        T_RIO(T_Func(T_A0, T_A0)),
     )
     rt_assert_equal(actual,
         T_Func(

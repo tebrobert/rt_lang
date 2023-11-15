@@ -179,8 +179,8 @@ def find_idf_typ_call_1(typified_f, typified_x, s_to_find):
 
 def find_idf_typ(typified, s_to_find):
     return match_typified(
-        case_lit=lambda _s, _typ: T_A,
-        case_idf=lambda s, typ: typ if s == s_to_find else T_A,
+        case_lit=lambda _s, _typ: T_A0,
+        case_idf=lambda s, typ: typ if s == s_to_find else T_A0,
         case_call_1=lambda typed_f, typed_x, _typ: find_idf_typ_call_1(
             typed_f, typed_x, s_to_find
         ),
@@ -266,7 +266,7 @@ def concrete_f_rec(typ_f, typ_x, typ_sub_fx, typ_sub_x):
 # may have sync conflicts
 def concrete_f(typ_f, typ_x):
     return match_typ(
-        case_unk0=lambda _s: T_Func(typ_x, T_A),
+        case_unk0=lambda _s: T_Func(typ_x, T_A0),
         case_typ0=lambda _s: fail(f"Unexpected typ_f `{typ_f}`."),
         case_typ1=lambda _s, _t1: fail(f"Unexpected typ_f `{typ_f}`."),
         case_typ2=lambda _s, t1, _t2: concrete_f_rec(typ_f, typ_x, t1, typ_x),
@@ -346,7 +346,7 @@ def typify_set_lambda_1(expr_arg, expr_res):
 
 def typify_set_idf(s):
     return set(map(lambda typ: TypifiedIdf(s, typ),
-        idf_to_typ.get(s, {T_A})
+        idf_to_typ.get(s, {T_A0})
     ))
 
 

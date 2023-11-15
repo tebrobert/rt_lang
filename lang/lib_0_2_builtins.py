@@ -8,8 +8,8 @@ def T_List(t1): return Typ1(builtin_List, t1)
 def T_RIO(t1): return Typ1(builtin_RIO, t1)
 def T_Func(t1, t2): return Typ2(builtin_Func, t1, t2)
 
-T_A = Unk0(1)
-T_B = Unk0(2)
+T_A0 = Unk0(1)
+T_A1 = Unk0(2)
 
 types = {
     builtin_Bint: T_Bint,
@@ -25,10 +25,10 @@ idf_to_typ = {
     builtin_input: {T_RIO(T_Str)},
     builtin_print: {T_Func(T_Str, T_RIO(T_Unit))},
     builtin_flatmap: {T_Func(
-        T_Func(T_A, T_RIO(T_B)),
-        T_Func(T_RIO(T_A), T_RIO(T_B))
+        T_Func(T_A0, T_RIO(T_A1)),
+        T_Func(T_RIO(T_A0), T_RIO(T_A1))
     )},
-    builtin_pure: {T_Func(T_A, T_RIO(T_A))},
+    builtin_pure: {T_Func(T_A0, T_RIO(T_A0))},
     builtin_plus: {
         T_Func(T_Str, T_Func(T_Str, T_Str)),
         T_Func(T_Bint, T_Func(T_Bint, T_Bint)),
