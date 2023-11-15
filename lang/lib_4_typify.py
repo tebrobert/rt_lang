@@ -255,17 +255,11 @@ def sync_typ2(
 
 def sync_typs_rec(typ_f, typ_x, typ_sub_fx, typ_sub_x):
     return match_typ(
-        case_typ0=lambda s: sync_typ0(
-            typ_f, typ_x, typ_sub_x, s,
-        ),
-        case_unk0=lambda i: sync_unk0(
-            typ_f, typ_x, typ_sub_x, i,
-        ),
-        case_typ1=lambda s, t1: sync_typ1(
-            typ_f, typ_x, typ_sub_x, s, t1,
-        ),
-        case_typ2=lambda s, t1, t2: sync_typ2(
-            typ_f, typ_x, typ_sub_x, s, t1, t2,
+        case_typ0=lambda s: sync_typ0(typ_f, typ_x, typ_sub_x, s),
+        case_unk0=lambda i: sync_unk0(typ_f, typ_x, typ_sub_x, i),
+        case_typ1=lambda s, t1: sync_typ1(typ_f, typ_x, typ_sub_x, s, t1),
+        case_typ2=lambda s, t1, t2: sync_typ2(typ_f, typ_x, typ_sub_x,
+            s, t1, t2,
         ),
     )(typ_sub_fx)
 
