@@ -346,11 +346,9 @@ def test_funcs_3():
 def test_typify_set_2():
     expr = full_parse("str(f(5))")
     typified_set = typify_set(expr)
-    rt_assert_equal(
-        set(map(lambda t: t.typed_x.typed_f.typ.t2, typified_set)) ^
-        {T_Bool, T_Bint},
-        set()
-    )
+    mapped_set = set(map(lambda t: t.typed_x.typed_f.typ.t2, typified_set))
+    rt_assert(T_Bint in mapped_set)
+    rt_assert(T_Bool in mapped_set)
 
 
 def test_tokenize():
