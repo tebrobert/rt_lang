@@ -273,6 +273,18 @@ def concrete_f(typ_f, typ_x):
     )(typ_f)
 
 
+def continue_typifying_call_1_with_unknown_f(typified_f, typified_x):
+    rt_assert_type(typified_f.typ, Unk0)
+    new_typ_f = match_typ(
+        case_unk0=lambda i: T_Func(Unk0(i), Unk0(i+1)),
+        case_typ0=lambda s: wip(),
+        case_typ1=lambda s, t1: wip(),
+        case_typ2=lambda s, t1, t2: wip(),
+    )(typified_x.typ)
+    new_typified_f = replace_typ(typified_f, new_typ_f)
+    return TypifiedCall1(new_typified_f, typified_x, new_typ_f.t2)
+
+
 def continue_typifying_call_1_with_unknown_x(typified_f, typified_x):
     new_typified_x = replace_typ(typified_x, typified_f.typ.t1)
     return TypifiedCall1(typified_f, new_typified_x, typified_f.typ.t2)
@@ -300,6 +312,8 @@ def typify_set_call_1(expr_f, expr_x):
 
         for typified_x in typified_x_set:
             mb_current_typified_call1 = rt_try(lambda: (
+                # continue_typifying_call_1_with_unknown_f(typified_f, typified_x)
+                # if type(typified_f.typ) is Unk0 else
                 continue_typifying_call_1_with_unknown_x(typified_f, typified_x)
                 if type(typified_x.typ) is Unk0 else
                 continue_typifying_call_1(typified_f, typified_x)
