@@ -1,7 +1,6 @@
 make test independent of representation flatness
 
 refactor typification
-    classes for args
     #### add "_FX" "_X" to type params on both sides before sync
 
 list literals
