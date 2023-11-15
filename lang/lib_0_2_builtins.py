@@ -9,7 +9,7 @@ def T_RIO(t1): return Typ1(builtin_RIO, t1)
 def T_Func(t1, t2): return Typ2(builtin_Func, t1, t2)
 
 T_A0 = Unk0(0)
-T_A1 = Unk0(2)
+T_A1 = Unk0(1)
 
 types = {
     builtin_Bint: T_Bint,
