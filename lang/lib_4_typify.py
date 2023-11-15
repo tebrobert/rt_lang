@@ -237,9 +237,7 @@ def sync_typ2_typ2(typ_f, typ_x, sub_x_s, sub_x_t1, sub_x_t2,
     return used_t2
 
 
-def sync_typ2(
-    typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1, sub_fx_t2,
-):
+def sync_typ2(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1, sub_fx_t2):
     bad_type = lambda: fail(f"Can't match the types {sub_fx_s} vs {typ_sub_x}")
     return match_typ(
         case_typ0=lambda _s: bad_type(),
