@@ -196,7 +196,7 @@ def sync_unk0(typ_f, typ_x, typ_sub_x, sub_fx_i): # hmmm
         typ_x,
     )
     return match_typ(
-        case_unk0=lambda i: (typ_f, typ_f.t1) if i == sub_fx_i else wip(),
+        case_unk0=lambda i: typ_f if i == sub_fx_i else wip(),
         case_typ0=lambda _s: case_known(),
         case_typ1=lambda _s, _t1: case_known(),
         case_typ2=lambda _s, _t1, _t2: case_known(),
@@ -209,7 +209,7 @@ def sync_typ0(typ_f, typ_x, typ_sub_x, sub_fx_s):
             update_typ(typ_f, Unk0(i), Typ0(sub_fx_s)),
             update_typ(typ_x, Unk0(i), Typ0(sub_fx_s)),
         ),
-        case_typ0=lambda s: (typ_f, typ_f.t1) if s == sub_fx_s else fail(),
+        case_typ0=lambda s: typ_f if s == sub_fx_s else fail(),
         case_typ1=lambda _s, _t1: fail(),
         case_typ2=lambda _s, _t1, _t2: fail(),
     )(typ_sub_x)
@@ -217,7 +217,7 @@ def sync_typ0(typ_f, typ_x, typ_sub_x, sub_fx_s):
 
 def sync_typ1(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1):
     return match_typ(
-        case_unk0=lambda i: (typ_f, typ_f.t1),
+        case_unk0=lambda i: typ_f,
         case_typ0=lambda s: fail(),
         case_typ1=lambda s, t1: sync_typs_rec(typ_f, typ_x,
             sub_fx_t1, t1,
@@ -226,13 +226,12 @@ def sync_typ1(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1):
     )(typ_sub_x)
 
 
-# really needs to return two tupled values? - no
 def sync_typ2_typ2(typ_f, typ_x, sub_x_s, sub_x_t1, sub_x_t2,
     sub_fx_s, sub_fx_t1, sub_fx_t2,
 ):
     rt_assert_equal(sub_x_s, sub_fx_s)
     used_t1 = sync_typs_rec(typ_f, typ_x, sub_fx_t1, sub_x_t1)
-    f1, x1 = used_t1[0], used_t1[0].t1
+    f1, x1 = used_t1, used_t1.t1
     used_t2 = sync_typs_rec(f1, x1, sub_fx_t2, sub_x_t2)
     return used_t2
 
@@ -264,7 +263,7 @@ def sync_typs_rec(typ_f, typ_x, typ_sub_fx, typ_sub_x):
 
 def sync_typs(typ_f, typ_x):  # may have sync conflicts
     return match_typ(
-        case_unk0=lambda _s: (T_Func(typ_x, T_A), typ_x),
+        case_unk0=lambda _s: T_Func(typ_x, T_A),
         case_typ0=lambda _s: fail(f"Unexpected typ_f `{typ_f}`."),
         case_typ1=lambda _s, _t1: fail(f"Unexpected typ_f `{typ_f}`."),
         case_typ2=lambda _s, t1, _t2: sync_typs_rec(typ_f, typ_x, t1, typ_x),
@@ -272,7 +271,7 @@ def sync_typs(typ_f, typ_x):  # may have sync conflicts
 
 
 def concrete_f(typ_f, typ_x):
-    new_typ_f, _new_typ_x = sync_typs(typ_f, typ_x)
+    new_typ_f = sync_typs(typ_f, typ_x)
     return new_typ_f
 
 
