@@ -206,16 +206,15 @@ def sync_unk0(typ_f, typ_x, typ_sub_x, sub_fx_i):
 
 
 def sync_typ0(typ_f, typ_x, typ_sub_x, sub_fx_s):
-    return (
-        (typ_f, typ_x)
-        if type(typ_sub_x) is Typ0 and sub_fx_s == typ_sub_x.s else
-        sync_typs(
-            update_typ(typ_f, typ_sub_x, Typ0(sub_fx_s)),
-            update_typ(typ_x, typ_sub_x, Typ0(sub_fx_s)),
-        )
-        if type(typ_sub_x) is Unk0 else
-        fail(f"Can't match the types {Typ0(sub_fx_s)} vs {typ_sub_x}")
-    )
+    return match_typ(
+        case_unk0=lambda i: sync_typs(
+            update_typ(typ_f, Unk0(i), Typ0(sub_fx_s)),
+            update_typ(typ_x, Unk0(i), Typ0(sub_fx_s)),
+        ),
+        case_typ0=lambda s: (typ_f, typ_x) if s == sub_fx_s else fail(),
+        case_typ1=lambda _s, _t1: fail(),
+        case_typ2=lambda _s, _t1, _t2: fail(),
+    )(typ_sub_x)
 
 
 def sync_typ1(typ_f, typ_x, typ_sub_x, sub_fx_s, sub_fx_t1):
