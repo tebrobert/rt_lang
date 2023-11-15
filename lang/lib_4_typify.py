@@ -190,19 +190,19 @@ def find_idf_typ(typified, s_to_find):
     )(typified)
 
 
-def sync_unk0(typ_f, typ_x, typ_sub_x, sub_fx_i):
-    sub_fx_unk0 = Unk0(sub_fx_i)
-    return (
-        sync_typs(update_typ(typ_f, sub_fx_unk0, typ_sub_x), typ_x)
-        if type(typ_sub_x) is Typ0 else
-        (
-            (typ_f, typ_x)
-            if type(typ_sub_x) is Unk0 and sub_fx_i == typ_sub_x.i else
-            fail("Not implemented: solve_rec 4")
-        )
-        if type(typ_sub_x) is Unk0 else
-        sync_typs(update_typ(typ_f, sub_fx_unk0, typ_sub_x), typ_x)
-    )
+def sync_unk0(typ_f, typ_x, typ_sub_x, sub_fx_i): # hmmm
+    return match_typ(
+        case_unk0=lambda i: (typ_f, typ_x) if i == sub_fx_i else wip(),
+        case_typ0=lambda _s: sync_typs(
+            update_typ(typ_f, Unk0(sub_fx_i), typ_sub_x), typ_x
+        ),
+        case_typ1=lambda _s, _t1: sync_typs(
+            update_typ(typ_f, Unk0(sub_fx_i), typ_sub_x), typ_x
+        ),
+        case_typ2=lambda _s, _t1, _t2: sync_typs(
+            update_typ(typ_f, Unk0(sub_fx_i), typ_sub_x), typ_x
+        ),
+    )(typ_sub_x)
 
 
 def sync_typ0(typ_f, typ_x, typ_sub_x, sub_fx_s):
