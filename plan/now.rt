@@ -1,7 +1,7 @@
-make test independent of representation flatness
-
 refactor typification
     #### add "_FX" "_X" to type params on both sides before sync
+
+make test independent of representation flatness
 
 list literals
 
