@@ -150,7 +150,7 @@ def replace_typ(typified, new_typ):
 def get_unknowns_fot_typ(typ):
     return match_typ(
         case_typ0=lambda _s: set(),
-        case_unknown0=lambda s: set(s),
+        case_unk0=lambda s: set(s),
         case_typ1=lambda _s, t1: get_unknowns_fot_typ(t1),
         case_typ2=lambda _s, t1, t2: (
                 get_unknowns_fot_typ(t1) + get_unknowns_fot_typ(t2)
@@ -243,7 +243,7 @@ def sync_typ2(
     bad_type = lambda: fail(f"Can't match the types {sub_fx_s} vs {typ_sub_x}")
     return match_typ(
         case_typ0=lambda _s: bad_type(),
-        case_unknown0=lambda _i: wip(),
+        case_unk0=lambda _i: wip(),
         case_typ1=lambda _s, _t1: bad_type(),
         case_typ2=lambda sub_x_s, sub_x_t1, sub_x_t2: sync_typ2_typ2(
             typ_f, typ_x,
@@ -258,7 +258,7 @@ def sync_typs_rec(typ_f, typ_x, typ_sub_fx, typ_sub_x):
         case_typ0=lambda s: sync_typ0(
             typ_f, typ_x, typ_sub_x, s,
         ),
-        case_unknown0=lambda i: sync_unk0(
+        case_unk0=lambda i: sync_unk0(
             typ_f, typ_x, typ_sub_x, i,
         ),
         case_typ1=lambda s, t1: sync_typ1(
@@ -273,7 +273,7 @@ def sync_typs_rec(typ_f, typ_x, typ_sub_fx, typ_sub_x):
 def sync_typs(typ_f, typ_x):  # may have sync conflicts
     return match_typ(
         case_typ0=lambda _s: fail(f"Unexpected typ_f `{typ_f}`."),
-        case_unknown0=lambda _s: (T_Func(typ_x, T_A), typ_x),
+        case_unk0=lambda _s: (T_Func(typ_x, T_A), typ_x),
         case_typ1=lambda _s, _t1: fail(f"Unexpected typ_f `{typ_f}`."),
         case_typ2=lambda _s, t1, _t2: sync_typs_rec(typ_f, typ_x, t1, typ_x),
     )(typ_f)

@@ -89,13 +89,13 @@ def unsafe_match_type(
 
 def match_typ(
     case_typ0,
-    case_unknown0,
+    case_unk0,
     case_typ1,
     case_typ2,
 ):
     return lambda typ: ({
         Typ0: lambda: case_typ0(typ.s),
-        TypUnk0: lambda: case_unknown0(typ.i),
+        TypUnk0: lambda: case_unk0(typ.i),
         Typ1: lambda: case_typ1(typ.s, typ.t1),
         Typ2: lambda: case_typ2(typ.s, typ.t1, typ.t2),
     }
@@ -107,7 +107,7 @@ def match_typ(
 
 def update_typ(typ, typ_from, typ_to):
     return match_typ(
-        case_unknown0=lambda _i: typ_to if typ == typ_from else typ,
+        case_unk0=lambda _i: typ_to if typ == typ_from else typ,
         case_typ0=lambda _s: typ,
         case_typ1=lambda s, t1: Typ1(s, update_typ(t1, typ_from, typ_to)),
         case_typ2=lambda s, t1, t2: Typ2(s,
