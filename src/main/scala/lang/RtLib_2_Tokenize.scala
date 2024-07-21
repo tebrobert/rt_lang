@@ -200,46 +200,33 @@ object RtLib_2_Tokenize {
         (code_ext, current_idx + 1, tokens.appended(TokenEq))
     }
 
+    def lexx_endl(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+        rt_assert(code_ext.substring(current_idx).startsWith("\n"))
+        (code_ext, current_idx + 1, tokens.appended(TokenEndl))
+    }
 
-    def lexx_endl(code_ext, current_idx, tokens):
-    rt_assert
+    def lexx_dot(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+        rt_assert(code_ext(current_idx) == '.')
+        (code_ext, current_idx + 1, tokens.appended(TokenDot))
+    }
 
-    (code_ext[current_idx:
-    ].startswith("\n")
-    )
-    return (code_ext, current_idx + 1, tokens +[TokenEndl()
-    ] )
-
-
-    def lexx_dot(code_ext, current_idx, tokens):
-    rt_assert
-
-    (code_ext[current_idx] == ".")
-    return (code_ext, current_idx + 1, tokens +[TokenDot()
-    ] )
-
-
-    def lexx_string(code_ext, token_idx_end, tokens):
-    rt_assert
-
-    (code_ext[token_idx_end] == "\"")
-    idx_string_start = token_idx_end + 1
-    idx_string_end = get_idx_string_end_rec(code_ext, idx_string_start)
-    return (code_ext, idx_string_end + 1,
-        tokens +[TokenLitStr (code_ext[idx_string_start: idx_string_end
-    ] )],
-    )
+    def lexx_string(code_ext: String, token_idx_end: Int, tokens: Seq[Token]) = {
+        rt_assert(code_ext(token_idx_end) == '\"')
+        val idx_string_start = token_idx_end + 1
+        val idx_string_end = get_idx_string_end_rec(code_ext, idx_string_start)
+        (code_ext, idx_string_end + 1, tokens.appended(TokenLitStr(
+            code_ext.substring(idx_string_start, idx_string_end)
+        )))
+    }
 
 
-    def lexx_operator(code_ext, token_idx_end, tokens):
-    rt_assert
-
-    (is_operator_char(code_ext[token_idx_end]))
-    idx_operator_start = token_idx_end
-    idx_operator_end = get_idx_operator_end_rec(code_ext, idx_operator_start)
-    return (code_ext, idx_operator_end,
-        tokens +[TokenIdf (code_ext[idx_operator_start: idx_operator_end
-    ] )],
-    )
+    def lexx_operator(code_ext: String, token_idx_end: Int, tokens: Seq[Token]) = {
+        rt_assert(is_operator_char(code_ext(token_idx_end)))
+        val idx_operator_start = token_idx_end
+        val idx_operator_end = get_idx_operator_end_rec(code_ext, idx_operator_start)
+        (code_ext, idx_operator_end, tokens.appended(TokenIdf(
+            code_ext.substring(idx_operator_start, idx_operator_end)
+        )))
+    }
 
 }
