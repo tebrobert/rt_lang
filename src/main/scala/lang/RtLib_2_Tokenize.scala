@@ -229,4 +229,37 @@ object RtLib_2_Tokenize {
         )))
     }
 
+    type LexxBundle = (String, Int, Seq[Token])
+    type Tokenizer = LexxBundle => LexxBundle
+
+    @tailrec
+    def tokenize_first_of(
+        code_ext: String,
+        current_idx: Int,
+        tokens: Seq[Token],
+        tokenizers: Seq[Tokenizer]
+    ) = {
+        def try_next_tokenizer(current_tokenizer: Tokenizer, rest_tokenizers: Seq[Tokenizer]):
+        either_result = rt_try(
+            lambda: current_tokenizer(code_ext, current_idx, tokens)
+
+        )
+        return (
+            rec(code_ext, current_idx, tokens, rest_tokenizers)
+        if is_fail(either_result) else
+            either_result
+        )
+
+        return match_list(
+            case_empty = lambda: fail(
+            f"Can't tokenize.",
+            f"Given `{current_idx}` `{code_ext}`.",
+        )
+        ,
+        case_at_least_1 = lambda head
+        , tail: try_next_tokenizer
+        (head, tail)
+        ,
+        ) (tokenizers)
+    }
 }
