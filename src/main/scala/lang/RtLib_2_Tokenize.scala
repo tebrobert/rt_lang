@@ -1,6 +1,7 @@
 package lang
 
 import utils.RtFail.{rtFail, rt_assert}
+import utils.RtList.match_list
 
 import scala.annotation.tailrec
 
@@ -237,29 +238,31 @@ object RtLib_2_Tokenize {
         code_ext: String,
         current_idx: Int,
         tokens: Seq[Token],
-        tokenizers: Seq[Tokenizer]
-    ) = {
-        def try_next_tokenizer(current_tokenizer: Tokenizer, rest_tokenizers: Seq[Tokenizer]):
-        either_result = rt_try(
-            lambda: current_tokenizer(code_ext, current_idx, tokens)
+        tokenizers: List[Tokenizer]
+    ): LexxBundle = {
+        def try_next_tokenizer(
+            current_tokenizer: Tokenizer,
+            rest_tokenizers: List[Tokenizer]
+        ) = {
+            val either_result = rt_try(
+                () => current_tokenizer(code_ext, current_idx, tokens)
+            )
+    
+            if (is_fail(either_result))
+                tokenize_first_of(
+                    code_ext, current_idx, tokens, rest_tokenizers
+                )
+            else  either_result
+        }
 
-        )
-        return (
-            rec(code_ext, current_idx, tokens, rest_tokenizers)
-        if is_fail(either_result) else
-            either_result
-        )
-
-        return match_list(
-            case_empty = lambda: fail(
-            f"Can't tokenize.",
-            f"Given `{current_idx}` `{code_ext}`.",
-        )
-        ,
-        case_at_least_1 = lambda head
-        , tail: try_next_tokenizer
-        (head, tail)
-        ,
-        ) (tokenizers)
+        match_list(
+            case_empty = Some(() => rtFail(
+                f"Can't tokenize.",
+                f"Given `{current_idx}` `{code_ext}`.",
+            )),
+            case_at_least_1 = Some((head, tail) =>
+                try_next_tokenizer(head, tail)
+            ),
+        )(tokenizers)
     }
 }
