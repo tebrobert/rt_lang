@@ -53,7 +53,7 @@ object RtLib_2_Tokenize {
 
     def match_token[A](
         case_lit_str: Option[String => A] = None,
-        case_lit_bint: Option[Int => A] = None,
+        case_lit_bint: Option[String => A] = None,
         case_idf: Option[String => A] = None,
         case_paren_open: Option[() => A] = None,
         case_paren_close: Option[() => A] = None,
@@ -108,7 +108,7 @@ object RtLib_2_Tokenize {
             || is_digit(char)
 
     def is_operator_char(char: Char) =
-        char_to_latin.keys().contains(char)
+        char_to_latin.keys.toSeq.contains(char.toString)
 
     def fail_bad_eq_seq(code_ext: String, token_idx_end: Int) =
         rtFail(s"""Unexpected sequence "=${code_ext(token_idx_end + 1)}".""")
@@ -143,7 +143,7 @@ object RtLib_2_Tokenize {
         else operator_current_idx
     }
 
-    def lexx_idf(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+    def lexx_idf(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(is_initial_idf_char(code_ext(current_idx)))
 
         val idx_idf_start = current_idx
@@ -164,7 +164,7 @@ object RtLib_2_Tokenize {
     }
 
 
-    def lexx_integer(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+    def lexx_integer(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(is_digit(code_ext(current_idx)))
 
         val idx_idf_start = current_idx
@@ -175,43 +175,43 @@ object RtLib_2_Tokenize {
         )))
     }
 
-    def lexx_paren_open(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+    def lexx_paren_open(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext(current_idx) == '(')
         (code_ext, current_idx + 1, tokens.appended(TokenParenOpen))
     }
 
-    def lexx_paren_close(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+    def lexx_paren_close(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext(current_idx) == ')')
         (code_ext, current_idx + 1, tokens.appended(TokenParenClose))
     }
 
-    def lexx_eq_gr(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+    def lexx_eq_gr(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext.substring(current_idx).startsWith("=>"))
         (code_ext, current_idx + 2, tokens.appended(TokenEqGr))
     }
 
-    def lexx_less_minus(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+    def lexx_less_minus(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext.substring(current_idx).startsWith("<-"))
         (code_ext, current_idx + 2, tokens.appended(TokenLessMinus))
     }
 
-    def lexx_eq(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+    def lexx_eq(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext.substring(current_idx).startsWith("="))
         rt_assert(!is_operator_char(code_ext(current_idx + 1)))
         (code_ext, current_idx + 1, tokens.appended(TokenEq))
     }
 
-    def lexx_endl(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+    def lexx_endl(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext.substring(current_idx).startsWith("\n"))
         (code_ext, current_idx + 1, tokens.appended(TokenEndl))
     }
 
-    def lexx_dot(code_ext: String, current_idx: Int, tokens: Seq[Token]) = {
+    def lexx_dot(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext(current_idx) == '.')
         (code_ext, current_idx + 1, tokens.appended(TokenDot))
     }
 
-    def lexx_string(code_ext: String, token_idx_end: Int, tokens: Seq[Token]) = {
+    def lexx_string(code_ext: String, token_idx_end: Int, tokens: List[Token]) = {
         rt_assert(code_ext(token_idx_end) == '\"')
         val idx_string_start = token_idx_end + 1
         val idx_string_end = get_idx_string_end_rec(code_ext, idx_string_start)
@@ -221,7 +221,7 @@ object RtLib_2_Tokenize {
     }
 
 
-    def lexx_operator(code_ext: String, token_idx_end: Int, tokens: Seq[Token]) = {
+    def lexx_operator(code_ext: String, token_idx_end: Int, tokens: List[Token]) = {
         rt_assert(is_operator_char(code_ext(token_idx_end)))
         val idx_operator_start = token_idx_end
         val idx_operator_end = get_idx_operator_end_rec(code_ext, idx_operator_start)
@@ -230,14 +230,14 @@ object RtLib_2_Tokenize {
         )))
     }
 
-    type LexxBundle = (String, Int, Seq[Token])
+    type LexxBundle = (String, Int, List[Token])
     type Tokenizer = LexxBundle => LexxBundle
 
-    @tailrec
+    //@tailrec
     def tokenize_first_of(
         code_ext: String,
         current_idx: Int,
-        tokens: Seq[Token],
+        tokens: List[Token],
         tokenizers: List[Tokenizer]
     ): LexxBundle = {
         def try_next_tokenizer(
@@ -262,4 +262,59 @@ object RtLib_2_Tokenize {
             ),
         )(tokenizers)
     }
+
+    //@tailrec
+    def tokenize_rec(
+        code_ext: String,
+        current_idx: Int,
+        tokens: List[Token],
+    ): List[Token] = {
+        val current_char = code_ext(current_idx)
+
+        if (current_char == end_of_code)
+            tokens
+        else if (current_char == ' ')
+            tokenize_rec(code_ext, current_idx + 1, tokens)
+        else
+            tokenize_rec.tupled(tokenize_first_of(
+                code_ext, current_idx, tokens, all_tokenizers
+            ))
+    }
+
+
+    def tokenize(code: String): List[Token] =
+        tokenize_rec(code + end_of_code, 0, List())
+
+    val end_of_code: Char = 0
+
+
+    val char_to_latin = Map(
+        "+" -> "plus_",
+        "-" -> "minus_",
+        "*" -> "star_",
+        "/" -> "slash_",
+        "%" -> "percent_",
+        ">" -> "greater_",
+        "<" -> "less_",
+        "=" -> "equal_",
+        "!" -> "exclamation_",
+        "~" -> "tilda_",
+        "|" -> "or_",
+        "&" -> "and_",
+    )
+
+
+    val all_tokenizers: List[Tokenizer] = List(
+        lexx_idf,
+        lexx_integer,
+        lexx_paren_open,
+        lexx_paren_close,
+        lexx_eq_gr,
+        lexx_eq,
+        lexx_less_minus,
+        lexx_endl,
+        lexx_string,
+        lexx_operator,
+        lexx_dot,
+    )
 }
