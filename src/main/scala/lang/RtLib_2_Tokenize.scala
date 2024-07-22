@@ -1,6 +1,6 @@
 package lang
 
-import utils.RtFail.{rtFail, rt_assert}
+import utils.RtFail.{rtFail, rt_assert, try_and_match}
 import utils.RtList.match_list
 
 import scala.annotation.tailrec
@@ -243,17 +243,14 @@ object RtLib_2_Tokenize {
         def try_next_tokenizer(
             current_tokenizer: Tokenizer,
             rest_tokenizers: List[Tokenizer]
-        ) = {
-            val either_result = rt_try(
-                () => current_tokenizer(code_ext, current_idx, tokens)
-            )
-    
-            if (is_fail(either_result))
-                tokenize_first_of(
+        ) =
+            try_and_match(
+                () => current_tokenizer(code_ext, current_idx, tokens),
+                identity,
+                () => tokenize_first_of(
                     code_ext, current_idx, tokens, rest_tokenizers
                 )
-            else  either_result
-        }
+            )
 
         match_list(
             case_empty = Some(() => rtFail(

@@ -11,5 +11,14 @@ object RtFail {
   def rt_assert(cond: Boolean, msg: String = "Assertion error.") =
     fail_if(!cond, msg)
 
-
+  def try_and_match[A, B](
+      action: () => A,
+      ifSuccess: A => B,
+      ifFail: () => B,
+  ): B =
+    (try {
+      Right(action())
+    } catch {
+      case _: Throwable => Left(ifFail())
+    }).map(ifSuccess).merge
 }
