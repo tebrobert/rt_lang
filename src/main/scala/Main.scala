@@ -1,3 +1,4 @@
+import lang.RtLib_2_Tokenize.tokenize
 import zio.*
 import zio.Console.printLine
 
@@ -16,5 +17,7 @@ object Main extends ZIOAppDefault:
       |print("The result is " + str(f(5)))
       |""".stripMargin
 
-  override def run: ZIO[ZIOAppArgs, IOException, Unit] =
-    printLine("Welcome to your first ZIO app!")
+  override def run: ZIO[ZIOAppArgs, IOException, Unit] = {
+    val x = tokenize("input")
+    printLine(x.toString)
+  }
