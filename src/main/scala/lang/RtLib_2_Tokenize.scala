@@ -121,8 +121,8 @@ object RtLib_2_Tokenize {
         if (current_string_char == '\"')
             idx_string_end
         else if (current_string_char == end_of_code)
-            get_idx_string_end_rec(code_ext, idx_string_end + 1)
-        else rtFail(f"""No closing `"` for string literal.""")
+            rtFail(f"""No closing `"` for string literal.""")
+        else get_idx_string_end_rec(code_ext, idx_string_end + 1)
     }
 
     @tailrec
