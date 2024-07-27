@@ -34,11 +34,12 @@ object Main extends ZIOAppDefault:
 //        |print(s)
 //        |print(s)
 //        |""".stripMargin
-      """print("Hey! What is your name?")
-        |name <- input
-        |print("Welcome, ...")
-        |print(name)
-        |""".stripMargin
+//      """print("Hey! What is your name?")
+//        |name <- input
+//        |print("Welcome, ...")
+//        |print(name)
+//        |""".stripMargin
+      code
     )
     printLine(x.toString)
   }
