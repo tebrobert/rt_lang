@@ -254,8 +254,8 @@ object RtLib_2_Tokenize {
 
         match_list(
             case_empty = Some(() => rtFail(
-                f"Can't tokenize.",
-                f"Given `{current_idx}` `{code_ext}`.",
+                "Can't tokenize.",
+                s"Given `$current_idx` `$code_ext`.",
             )),
             case_at_least_1 = Some((head, tail) =>
                 try_next_tokenizer(head, tail)
