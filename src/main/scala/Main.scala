@@ -18,6 +18,27 @@ object Main extends ZIOAppDefault:
       |""".stripMargin
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] = {
-    val x = tokenize("input")
+    val x = tokenize(
+      //"input"
+      //"(s => s)(input)"
+      //"(s => s)(s => s)(input)"
+      //"(s => s)((s => s)(input))"
+      //">>=(s => print(s))(input)"
+      //">>=(s => >>=(u => print(s))(print(s)))(input)"
+//      """x <- input
+//        |y <- input
+//        |print(x)
+//        |print(y)
+//        |""".stripMargin
+//      """s <- input
+//        |print(s)
+//        |print(s)
+//        |""".stripMargin
+      """print("Hey! What is your name?")
+        |name <- input
+        |print("Welcome, ...")
+        |print(name)
+        |""".stripMargin
+    )
     printLine(x.toString)
   }
