@@ -1,3 +1,32 @@
+* * * * * * To Scala:
+```
+TypifiedCall1(typified_f, typified_x, typ)
+() => (do(typified_f))(do(typified_x))
+
+TypifiedIdf("input", "RIO[Str]")
+    => BrickInput()
+
+TypifiedCall1(
+    TypifiedIdf("print", "Str => RIO[Unit]"),
+    TypifiedLit("hi", "Str"),
+    "RIO[Unit]",
+) => (s => BrickPrint(s))("print")
+  => BrickPrint("print")
+
+TypifiedCall1(
+    TypifiedCall1(
+        TypifiedIdf(">>=", "(A => RIO[B]) => (RIO[A] => RIO[B])"),
+        TypifiedLit("print", "Str => RIO[Unit]"),
+        "RIO[Str] => RIO[Unit]",
+    ),
+    TypifiedIdf("input", "RIO[Str]"),
+    RIO[Unit],
+) => (a_fb => fa => BrickFlatmap(a_fb, fa))(s => BrickPrint(s))(BrickInput())
+  => BrickFlatmap(s => BrickPrint(s), BrickInput())
+```
+
+* * * * * * Then:
+
 refactor typification
     #### add "_FX" "_X" to type params on both sides before sync
 
