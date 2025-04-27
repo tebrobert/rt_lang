@@ -1,0 +1,388 @@
+def main =
+    gameLogic.provide(DatabaseLive <+>
+        NetworkLive).toExitCode
+
+
+Opts[A] ~ URIO[Console, A] ~ Console => UIO[A]
+
+
+def gameLogic: ZIO[Console & Database & Network, Nothing, Unit] =
+	quiet <- Opts[Bool]("quiet")
+	PutStrLn("Sh..") if quiet else PutStrLn("Yo!"))
+
+# > game.jar --quiet true
+# Sh..
+
+# > game.jar --quiet false
+# Yo!
+
+# > game.jar
+Argument "--quiet" not found
+# Usage: jame.jar --quiet <true|false>
+
+
+
+parseInt(s): IO[ParseException, Int]
+x/y        : IO[ZeroDivision, Int]
+
+for {
+    getIntForever = s => getStrLn()
+              #:RIO[Console, IOException, String]
+                 .map(parseInt)
+                 #:ZIO[Console, IOException | ParseException, Int]
+                 .catch[ParseException]()
+    height <- getIntForever("Enter your height: ")
+    weight <- ...
+    bodyIndex <- height.sqrt./(weight)
+                     .recover[ZeroDivision](MyExWrongWeight)
+} : ZIO[Console, IOExeption |MyExWrongWeight, Float]
+
+
+
+arrOnStack = [a, b, c]    //3 intsz
+arrOnHeap = heap(int[5])  //ptrsz
+
+Vertex[A] = Vertex(value: A)
+
+vx = Vertex(1)
+vy = Vertex 3
+vz = Vertex 4
+
+vertices = heap [vx, vy, vz]
+edges = heap [Edge(vx, vy), Edge(vy, vz),
+    Edge(vx, vz), ]
+graph = Graph(vertices, edges)
+
+graph = Graph(
+    heap [vx:=Vertex(1), vy:=Vertex 3, vz := Vertex 4],
+    heap [Edge]
+)
+
+
+x = Array3(1, 2, 3).0 // 1 - не нужно, тк
+    // возможно прлучение индекса извне
+y = ArrayN()(4) // OutOfBoundaries(4, ArrayN(), "stackTrace")
+str = getStackTrace()
+
+
+
+
+
+new lang:
+1. purely functional
+2. no garbage collector
+3. no memolry leaks
+4. tail rec optimization
+5. string interpolation
+6. signature indicates fails
+7. signature indicates requirements
+8. cross platform
+9. no versioned types like varchar2
+10. compiler is a pure function (same code => same build)
+11. no semicolons
+12. no reflection (am i a realist?)
+13. last expression is the return
+14. global imports
+15. formatting tool
+16. converter to newer lang versions
+17. shadowing (is it convinient? probably yes)
+18. commenting a line at its end
+#x. newlines don't matter (am i a realist?)
+20. indentation matters
+21. ":" forces to shift indent
+22. explicit lazyness with "()" (am i a realist?)
+
+
+let main: RIO[Console, KeyInterrupt, Unit] = 
+    name <- getStrLn("What's your name?")
+    printStrLn("Hey $name!") #
+    
+    let l = len(name)
+    let msg = len(name) match:
+                l if l < 1  => "too short"
+                l if l > 30 => "too long"
+                _           => "ok"
+    
+    
+    
+    (?)[A]: (Bool, A) => (A => A)
+    (:)[A]: (A => A, A) => A
+
+
+
+
+
+
+# syntax cares of programmets not of hardware
+Any
+Bool
+BigInt  Int8 Int16 Int32 Int64 Int128 Int
+Float32 Float64 Float
+Tuple
+Char # Utf8
+Str # Utf8
+List   # []
+Set    # {}
+Dict   # {:}
+Func   # Tuple => Tuple
+Maybe  # None Some ?? Has
+Either # Fail Succ
+RIO
+Stream ?? Gen
+Nothing
+# validation at function's start is a part of the signature
+# type is a value
+# functions have method syntax (or even operator one)
+# no operator priority number but priority neighbors
+# inf: Int ?? BigInt ??
+# Int, Float - max for arch
+# call by name: timeNow() == timeNow$ ?? no call by name ??
+# functions accept tupled values
+
+f = (x: Int, y: Int) =>
+    x + y
+
+f = (x: Int) => (y: Int) =>
+    x + y
+
+f = (x: Int)(y: Int) =>
+    x + y
+
+f: () | (Int) | (Int, Int) | (Int, Int, Int) => Gen =
+    case () => f(0, inf, 1)
+    case (b) => f(0, b, 1)
+    case (a, b) => f(a, b, 1)
+    case (a, b, s) => ???
+
+f = case () => f(0, inf, 1)
+    case (b) => f(0, b, 1)
+    case (a, b) => f(a, b, 1)
+    case (a, b, s) => ???
+
+mF =case () => f(0, inf, 1)
+    case (b) => f(0, b, 1)
+    case (a, b) => f(a, b, 1)
+    case (a, b, s) => ???
+
+myF=case () => f(0, inf, 1)
+    case (b) => f(0, b, 1)
+    case (a, b) => f(a, b, 1)
+    case (a, b, s) => ???
+
+myFn =
+    case () => f(0, inf, 1)
+    case (b) => f(0, b, 1)
+    case (a, b) => f(a, b, 1)
+    case (a, b, s) => ???
+
+Person = struct {
+    name: Str
+    age: Int8
+    isMarried: Bool
+    mom: Person
+    dad: Person
+}
+
+main: RIO(Console)(Nothing)(Unit) = chain
+    name <- input("What's your name?").orDie
+    print(f"Hi, {name}!")
+
+main = input("What's your name?").orDie
+    >>= print(f"Hi, {_}!")
+
+trait Number[A]:
+    (+): (A, A) => A
+    (-): (A, A) => A
+    (*): (A, A) => A
+
+trait Semigroup[A]:
+    (++): (A, A) => A
+
+trait Monoid[A: Semigroup]:
+    empty: A
+
+impl Semigroup[Str]:
+    (++) = (s1, s2) => ???
+
+impl Monoid[Str]:
+    empty = ""
+    
+sumSemigroup = Semigroup[A: Number]:
+    (++) = (+)
+
+s
+
+
+
+
+
+type RangeArgs = () | (BigInt) | (BigInt, BigInt)
+    | (BigInt, BigInt, BigInt)
+
+def range(RangeArgs): Gen[BigInt] = match:
+    () => range(0, inf, 1)
+    (b) => range(0, b, 1)
+    (a, b) => range(a, b, 1)
+    (a, b, s) => ???
+
+def add(x, y) =
+    x + y
+
+def add[A: Number](x: A, y: A): A =
+    x + y
+
+def combine[A: Semigroup](x: A, y: A): A =
+    x ++ y
+
+[1, 4, 5].map(_ * 10)
+    .filt(_ > 18)
+    .fold(0)(_ + _)
+
+range(5).map(_ * 10).filt(_ > 18).list()
+
+struct Person:
+    name: Str
+    age: Int8
+    isAlive: Bool
+
+trait Number[A]:
+    def (+): (A, A) => A
+    def (-): (A, A) => A
+    def (*): (A, A) => A
+    def (/): (A, A) => Either[ValueError, A]
+
+struct Graph[A]:
+    vertices: RefArr[A]
+    edges: RefArr[Edge[A]]
+    def call(vs, es) =
+        
+        
+
+struct Edge[A]: a: Ref[A]; b: Ref[A]
+
+[-128, 127, 128, 255] # stack A(Int8, Int8, Unt8, Unt8) 
+[0, 1, ..., N] # heap  RefArr[Unt16]
+
+#Graph([1, 4, 5]@x, [Edge(&x[0], &x[1])]).orDie()
+# x is not valid here
+
+x = input().refArr()! # [1, 4, 5]
+Graph(x, [Edge(&x[0]!, &x[1]!)])!
+
+Graph(Arr(1, 4, 5)@a, Arr(Edge(&a(0)!, &a(1)!)))!
+# a is not valid here
+
+type Vec4[A] = (A, A, A, A)
+
+x: Int = 5       # stack BAB0: 05 00 00 00
+rx: Ref[Int] = &x # stack BAB4: B0 BA 00 00
+n: Int = input().int() # stack BAB8: 03 00 00 00
+
+a: Arr[Int8] = Arr(_)(n)
+# stack BAC0: 0000BAC0 00000003 00000003
+# heap C000: 00 01 02
+
+def div!(x: Int, y: Int): Int =
+    x //! y
+
+def div!(x: Int, y: Int):
+    x //! y
+
+def div!(x, y): Int =
+    x //! y
+
+def div!(x, y):
+    x //! y
+
+div! = (x: Int, y: Int) => Int:
+    x //! y
+
+div! = (x: Int, y: Int) =>
+    x //! y
+
+div! = (x, y) => Int:
+    x //! y
+
+div! = (x, y) =>
+    x //! y
+
+
+
+def main() =
+    print()
+
+def main() throws ValueError =
+    print()
+
+def main(): RIO[Console, Nothing, Unit] =
+    print()
+
+def print(): Unit
+
+
+         <----- (A,)  <------
+Any <--(>) Unit <------ Nothing
+         <----- Arr[A] <-----
+
+def main!(): RIO[Console & Memory, Nothing, Unit] =
+    do:
+        a <- Arr(10)! #.retry(4).delay(60)!
+        x = a(0)!
+        print(x)
+
+
+
+
+
+
+
+
+
+struct Tree[A] with Ord[A]:
+  | Leaf
+  | Node[A]:
+    x: A
+    left: Ref[Tree] = Leaf
+    right: Ref[Tree] = Leaf
+        
+  def has(self: Tree, x: A): Bool =
+    False if self == Leaf else
+    True if self.x == x else
+    False if x < self.x and self.left == Leaf else
+    False if x > self.x and self.right == Leaf else
+    self.left.has(x) if x < self.x else
+    self.right.has(x)
+    
+  def add(self: Tree, x: A): Tree =
+    case:
+      self == Leaf => Node(x)
+      self.x == x => self
+      x < self.x and self.left == Leaf => Node(self.x, Node(x), self.right)
+      x > self.x and self.right == Leaf => Node(self.x, self.left, Node(x))
+      x < self.x => Node(self.x, self.left.add(x), self.right)
+      x > self.x => Node(self.x, self.left, self.right.add(x))
+
+  def del(self: Tree, x: A): Tree =
+    case:
+      self == Leaf => self
+      self
+
+
+
+
+object Fp:
+	def div(x, y) where y != 0:
+		x // y#
+		x.//(y)#
+		//(x, y)
+		
+	def head(xs) where xs != []:
+		xs(0)
+	
+	def int(s) where s.isInt():
+		...
+	
+	def main(args):
+		x = input("Enter a number:")
+		if x.isInt(): x.int()
+		

@@ -1,0 +1,17 @@
+Typed_Call_1(
+    Typed_Call_1(
+        Typed_Idf(">>=", (Str => RIO[Unit]) => RIO[Str] => RIO[Unit]),
+        Typed_Lambda_1(
+            Typed_Idf("s", Str),
+            Typed_Call_1(
+                Typed_Idf("print", Str => RIO[Unit]),
+                Typed_Idf("s", Str),
+                RIO[Unit]
+            ),
+            Str => RIO[Unit]
+        ),
+        RIO[Str] => RIO[Unit]
+    ),
+    Typed_Idf("input", RIO[Str]),
+    RIO[Unit]
+)

@@ -1,0 +1,61 @@
+Expr_Call_1(
+    Expr_Call_1(
+        Expr_Idf(">>="),
+        Expr_Lambda_1(
+            Expr_Idf("greeting"),
+            Expr_Call_1(
+                Expr_Call_1(
+                    Expr_Idf(">>="),
+                    Expr_Lambda_1(
+                        Expr_Idf("_"),
+                        Expr_Call_1(
+                            Expr_Call_1(
+                                Expr_Idf(">>="),
+                                Expr_Lambda_1(
+                                    Expr_Idf("_"),
+                                    Expr_Call_1(
+                                        Expr_Call_1(
+                                            Expr_Idf(">>="),
+                                            Expr_Lambda_1(
+                                                Expr_Idf("name"),
+                                                Expr_Call_1(
+                                                    Expr_Idf("print"),
+                                                    Expr_Call_1(
+                                                        Expr_Call_1(
+                                                            Expr_Idf("+"),
+                                                            Expr_Lit_Str(", welcome!")
+                                                        ),
+                                                        Expr_Call_1(
+                                                            Expr_Call_1(
+                                                                Expr_Idf("+"),
+                                                                Expr_Idf("name")
+                                                            ),
+                                                            Expr_Lit_Str("Dear ")
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        ),
+                                        Expr_Idf("input")
+                                    )
+                                )
+                            ),
+                            Expr_Call_1(
+                                Expr_Idf("print"),
+                                Expr_Lit_Str("What is your name?")
+                            )
+                        )
+                    )
+                ),
+                Expr_Call_1(
+                    Expr_Idf("print"),
+                    Expr_Idf("greeting")
+                )
+            )
+        )
+    ),
+    Expr_Call_1(
+        Expr_Idf("pure"),
+        Expr_Lit_Str("Hi!")
+    )
+)

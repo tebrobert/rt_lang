@@ -1,0 +1,27 @@
+Int
+mut Int
+
+RefStackRead[Int]
+RefStackRead[mut Int]
+RefStackWrite[mut Int]
+RefHeapRead[Int]
+RefHeapRead[mut Int]
+RefHeapWrite[mut Int]
+
+#Array[Int] ~ {val PTR, val cap, val len}
+#Vector[Int] ~ {PTR, cap, len}
+
+Array[Int]
+mut Array[int] #длина фиксирована
+RefStackRead[Array[Int]]
+RefStackRead[mut Array[Int]]
+RefStackWrite[mut Array[Int]]
+RefHeapRead[Array[Int]]
+RefHeapRead[mut Array[Int]]
+RefHeapWrite[mut Array[Int]]
+
+RefHeapRead[Vector[Int]]
+RefHeapRead[mut Vector[Int]]
+RefHeapWrite[mut Vector[Int]] #длина изменяема
+
+...

@@ -1,0 +1,50 @@
+                           Int
+                            |
+Int8 -> Int16 -> Int32 -> Int64 -> In128 ---------> BigInt ->
+     /        /        /        /                /           \  
+    /        /        /        /                /             \  
+Unt8 -> Unt16 -> Unt32 -> Unt64 -> Un128 --> BigUnt            -> Num -> Ord -> Negatable
+                            |                                 /              /
+                           Unt                               /              /
+Float32 -> Float64 ----------------------------------------->              /
+             |                                                            /
+           Float                                                         /
+                                                                        /
+Inf ------------------------------------------------------------------->
+
+
+trait Ord a => Num a:
+  (<) :: a -> Lim -> Bool
+  (>) :: a -> Lim -> Bool
+
+
+
+trait Negatable a where
+  negate :: a -> a
+    -- Defined in ‘GHC.Num’
+instance Num Word -- Defined in ‘GHC.Num’
+instance Num Integer -- Defined in ‘GHC.Num’
+instance Num Int -- Defined in ‘GHC.Num’
+instance Num Float -- Defined in ‘GHC.Float’
+instance Num Double -- Defined in ‘GHC.Float’
+instance Num Inf -- Defined in ‘GHC.Inf’
+
+
+
+trait Negatable a => Num a where
+  (+) :: a -> a -> a
+  (-) :: a -> a -> a
+  (*) :: a -> a -> a
+  abs :: a -> a
+  signum :: a -> a
+  fromInteger :: Integer -> a
+  {-# MINIMAL (+), (*), abs, signum, fromInteger, (negate | (-)) #-}
+    -- Defined in ‘GHC.Num’
+instance Num Word -- Defined in ‘GHC.Num’
+instance Num Integer -- Defined in ‘GHC.Num’
+instance Num Int -- Defined in ‘GHC.Num’
+instance Num Float -- Defined in ‘GHC.Float’
+instance Num Double -- Defined in ‘GHC.Float’
+
+
+

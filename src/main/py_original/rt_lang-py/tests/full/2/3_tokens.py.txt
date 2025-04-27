@@ -1,0 +1,1 @@
+[TokenParenOpen(), TokenIdf("s"), TokenEqGr(), TokenIdf("s"), TokenParenClose(), TokenParenOpen(), TokenIdf("input"), TokenParenClose()]

@@ -1,0 +1,1 @@
+((lambda identifier_s: identifier_s))(BrickInput())

@@ -1,0 +1,8 @@
+greeting = "Hi!"
+print(greeting)
+print("What is your name?")
+name <- input
+print("Welcome, " + name + "!")
+
+f = x => 1 + x * 10
+print("The result is " + str(f(5)))

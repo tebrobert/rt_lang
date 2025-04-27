@@ -1,0 +1,89 @@
+struct Vertex[A]:
+    x::A
+
+struct Edge[A]:
+    a :: Ref[Vertex[A]]
+    b :: Ref[Vertex[A]]
+
+struct Graph[A]:
+    vs :: Arr[Vertex[A]]
+    es :: Arr[Edge[A]]
+
+main = toExitCode$ do:
+    vs = Vec(10, 12, 13).map(Vertex)
+
+    g = Graph $ vs
+        Vec(
+            (&vs.0, &vs.1)
+            (&vs.0, &vs.1)
+        ).smap(Edge)
+
+    name <- input $ "Who are you?"
+    print $ "Hi, {name}!"
+
+    strNums <- input()
+    print $ strNums.words.tail.map(read).sum
+
+    "A multiline string
+    used as a multiline comment"
+
+    input() >>= _.words.tail
+        .map(read).sum.print
+
+    aLambda = x => x + 1
+    aLambda = (x, y) => x * y
+    aLambda = x => y => x * y
+
+    f x y = x + y
+
+    f x y -> Int = x + y
+
+    f x::Int y::Int = x + y
+
+    f x::Int y::Int -> Int = x + y
+
+    f x::A y::A -> A with Num[A] = x + y
+
+    f :: A -> A -> A with Num[A] = (+)
+
+# a trait is a declaration of functions
+trait Semigroup[A]:
+    (++) :: A -> A -> A
+trait Monoid[A] with Semigroup[A]:
+    e :: A
+
+
+impl Semigroup[Str]:
+    (++) # low level
+impl Monoid[Str]:
+    e = ""
+
+
+type Sum with Num[A] = A
+
+impl Semigroup[Sum]:
+    (++) = (+)
+impl Monoid[Sum]:
+    e = 0
+
+type Mul with Num[A] = A
+
+impl Semigroup[Mul]:
+    (++) = (*)
+impl Monoid[Mul]:
+    e = 1
+
+main = toExitCode $ do::RIO[Screen, ValueErr, Unit]:
+    cellPxSize = (20, 20)
+    fieldCellSize = (10, 10)
+    fieldColor = (0, 255, 0)
+    cellColor = (255, 0, 0)
+
+    fieldPxSize = fieldCellSize.zip(cellPxSize).smap(_ * _)
+
+    window <- Window(fieldPxSize, "Snake game")
+
+    drawSquare((0, 0), fieldColor, fieldPxSize)
+
+    drawSquare(, cellColor)
+

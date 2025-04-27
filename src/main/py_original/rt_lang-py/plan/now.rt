@@ -1,0 +1,111 @@
+* * * * * * To Scala:
+```
+def do =
+    TypifiedCall1(typified_f, typified_x, typ) =>
+        f = do(typified_f) // Str -> Brick[Unit]
+        x = do(typified_x) // Str
+        f(x)               // Brick[Unit]
+    
+    TypifiedLambda1(typified_idf_x, typified_res, typ) =>
+        x => do(typified_res, ) // ????????????
+
+TypifiedIdf("input", "RIO[Str]")
+    => BrickInput()
+
+
+do examples:
+    TypifiedCall1(
+        TypifiedIdf("print", "Str => RIO[Unit]"),
+        TypifiedLit("hi", "Str"),
+        "RIO[Unit]",
+    ) => (s => BrickPrint(s))("print")
+    => BrickPrint("print")
+
+    TypifiedCall1(
+        TypifiedCall1(
+            TypifiedIdf(">>=", "(Str => RIO[Unit]) => RIO[Str] => RIO[Unit]"),
+            TypifiedLit("print", "Str => RIO[Unit]"),
+            "RIO[Str] => RIO[Unit]",
+        ),
+        TypifiedIdf("input", "RIO[Str]"),
+        "RIO[Unit]",
+    ) => (a_fb => fa => BrickFlatmap(a_fb, fa))(s => BrickPrint(s))(BrickInput())
+    => BrickFlatmap(s => BrickPrint(s), BrickInput())
+
+    Typed_Lambda_1(
+        Typed_Idf("s", RIO[Str]),
+        Typed_Idf("s", RIO[Str]),
+        RIO[Str] => RIO[Str],
+    ) => (s: Brick[String]) => s
+
+    Typed_Lambda_1(
+        Typed_Idf("s", Str),
+        TypifiedCall1(
+            TypifiedIdf("print", "Str => RIO[Unit]"),
+            Typed_Idf("s", RIO[Str]),
+            "RIO[Unit]",
+        ),
+        Str => RIO[Unit],
+    ) =
+         s => do_func_body(body, "s" -> s)
+      => (s: String) => ((xx => BrickPrint(xx)(s)) // ??????????????
+      => (s: String) => BrickPrint(s)
+
+
+Typified => Brick[Any]
+
+
+BrickPrintFed(s: String): Brick[Unit]
+    -> Unit
+
+BrickInput(): Brick[String]
+    -> String
+
+PureFed[A](a: A): Brick[A]
+    -> A
+
+BrickFlatmapFed[A, B](a_fb: A => RIO[B], fa: RIO[A]): Brick[B]
+    -> B
+
+
+
+
+
+
+
+def buildScalaBrick(typified: Typified): Either[?, Brick[Any]] = {
+    typified  match {
+        case TypifiedLit =>
+            error
+
+        case TypifiedIdf =>
+            input
+
+        case TypifiedCall(f, x) =>
+            ...
+            (buildScala(f))(buildScala(x))
+
+        case TypifiedLambda =>
+            ???
+    }
+}
+```
+
+* * * * * * Then:
+
+refactor typification
+    #### add "_FX" "_X" to type params on both sides before sync
+
+make test independent of representation flatness
+
+list literals
+
+dict vs named tuple (name: Str, salary: Bint, permitted: Bool)
+
+(not blocking) implement better error locating
+(not blocking) implement escape-characters
+(not blocking) implement comments
+(not blocking) string interpolation
+(not blocking) implement map, bind
+
+# ? remove endOfCode

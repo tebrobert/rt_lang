@@ -1,0 +1,37 @@
+Expr_Call_1(
+    Expr_Call_1(
+        Expr_Idf(">>="),
+        Expr_Lambda_1(
+            Expr_Idf("_"),
+            Expr_Call_1(
+                Expr_Call_1(
+                    Expr_Idf(">>="),
+                    Expr_Lambda_1(
+                        Expr_Idf("name"),
+                        Expr_Call_1(
+                            Expr_Call_1(
+                                Expr_Idf(">>="),
+                                Expr_Lambda_1(
+                                    Expr_Idf("_"),
+                                    Expr_Call_1(
+                                        Expr_Idf("print"),
+                                        Expr_Idf("name")
+                                    )
+                                )
+                            ),
+                            Expr_Call_1(
+                                Expr_Idf("print"),
+                                Expr_Lit_Str("Welcome, ...")
+                            )
+                        )
+                    )
+                ),
+                Expr_Idf("input")
+            )
+        )
+    ),
+    Expr_Call_1(
+        Expr_Idf("print"),
+        Expr_Lit_Str("Hey! What is your name?")
+    )
+)
