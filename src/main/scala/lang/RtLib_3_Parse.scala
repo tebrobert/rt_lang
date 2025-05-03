@@ -193,7 +193,32 @@ object RtLib_3_Parse {
             case_empty=Some(() => acc),
         )(tokens_and_exprs)
 
-    // left 14
+    //@tailrec
+    def preparse_call(
+        tokens_and_exprs: List[Token | Expr],
+        acc: List[Token | Expr],
+    ): List[Token | Expr] =
+        match_list[List[Token | Expr], Token | Expr](
+            case_at_least_3=Some((head0, head1, head2, tail2) => (
+                preparse_call([ExprCall1(head0, head1), head2] + tail2, acc)
+                if is_expr(head0) and type(head1) is ExprBraced else
+                preparse_call([head1, head2] + tail2, acc + [head0])
+                if type(head1) is not ExprIdf else
+                preparse_call([head2] + tail2, acc + [head0, head1])
+                if is_expr(head0) else
+                preparse_call([head1, head2] + tail2, acc + [head0])
+            )),
+            case_at_least_2=lambda head0, head1, tail1: (
+                rec([ExprCall1(head0, head1)] + tail1, acc)
+                if is_expr(head0) and type(head1) is ExprBraced else
+                rec([head1] + tail1, acc + [head0])
+            ),
+            case_at_least_1=lambda head0, _tail: acc + [head0],
+            case_empty=lambda: acc,
+        )(tokens_and_exprs)
+
+
+    // left 12
 
     // ...
     def parse_full_expr(tokens: List[Token | Expr]): Expr =
