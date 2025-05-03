@@ -1,6 +1,6 @@
 package lang
 
-import lang.RtLib_2_Tokenize.{Token, TokenIdf, TokenLitBint, TokenLitStr}
+import lang.RtLib_2_Tokenize.{Token, TokenIdf, TokenLitBint, TokenLitStr, TokenParenOpen, TokenParenClose}
 import utils.RtFail.{rtFail, try_and_match}
 import utils.RtList.match_list
 
@@ -111,7 +111,10 @@ object RtLib_3_Parse {
         ) (funcs)
 
     //@tailrec
-    def preparse_idf_lit(tokens_and_exprs: List[Token | Expr], acc: List[Token | Expr]): List[Token | Expr] =
+    def preparse_idf_lit(
+        tokens_and_exprs: List[Token | Expr],
+        acc: List[Token | Expr]
+    ): List[Token | Expr] =
         match_list[Token | Expr, List[Token | Expr]](
             case_at_least_1=Some((head, tail) => preparse_idf_lit(tail, acc :+ (
                 head match {
@@ -125,28 +128,45 @@ object RtLib_3_Parse {
             case_empty=Some(() => acc),
         )(tokens_and_exprs)
 
-    /*/@tailrec
+    //@tailrec
     def continue_preparse_braced(
         ext_tokens_and_exprs: List[Token | Expr],
         acc: List[Token | Expr],
         acc_braced: List[Token | Expr],
         unclosed_parens_count: Int,
-    ) =
-        match_list(
-            case_empty=lambda: fail("`)` expected."),
-            case_at_least_1=lambda head, tail: (
-                (
-                    rec(tail, acc, acc_braced + [head], unclosed_parens_count - 1)
-                    if unclosed_parens_count > 1 else
-                    (tail, acc + [ExprBraced(parse_full_expr(acc_braced))])
-                )
-                if head == TokenParenClose() else
-                rec(tail, acc, acc_braced + [head], unclosed_parens_count + 1)
-                if head == TokenParenOpen() else
-                rec(tail, acc, acc_braced + [head], unclosed_parens_count)
+    ): (List[Token | Expr], List[Token | Expr]) =
+        match_list[Token | Expr, (List[Token | Expr], List[Token | Expr])](
+            case_empty=rtFail("`)` expected."),
+            case_at_least_1=Some((head, tail) =>
+                  if (unclosed_parens_count > 1)
+                    continue_preparse_braced(tail, acc, acc_braced :+ head, unclosed_parens_count - 1)
+                  else if (head == TokenParenClose)
+                    (tail, acc :+ ExprBraced(parse_full_expr(acc_braced)))
+                  else if (head == TokenParenOpen)
+                    continue_preparse_braced(tail, acc, acc_braced :+ head, unclosed_parens_count + 1)
+                  else continue_preparse_braced(tail, acc, acc_braced :+ head, unclosed_parens_count)
             )
         )(ext_tokens_and_exprs)
-    // */
+
+    //@tailrec
+    def preparse_braced(
+        tokens_and_exprs: List[Token | Expr],
+        acc: List[Token | Expr],
+    ): List[Token | Expr] =
+        match_list[Token | Expr, List[Token | Expr]](
+            case_empty=Some(() => acc),
+            case_at_least_1=Some((head, tail) => (
+                if (head == TokenParenOpen)
+                    preparse_braced.tupled(continue_preparse_braced(tail, acc, List(), 1))
+                else preparse_braced(tail, acc :+ head)
+            ))
+        )(tokens_and_exprs)
+
+
+    // ...
+    def parse_full_expr(tokens: List[Token | Expr]): Expr =
+        ???
+
 
     val typified_repr_endl = "\n"
 }
