@@ -178,7 +178,22 @@ object RtLib_3_Parse {
             case_braced=inner_expr => debrace_expr(inner_expr),
         )(expr)
 
-    // left 15
+    //@tailrec
+    def preparse_debrace(
+        tokens_and_exprs: List[Token | Expr],
+        acc: List[Token | Expr],
+    ): List[Token | Expr] =
+        match_list[Token | Expr, List[Token | Expr]](
+            case_at_least_1=Some((head, tail) =>
+              head match {
+                  case expr: Expr => preparse_debrace(tail, acc :+ debrace_expr(expr))
+                  case _ => preparse_debrace(tail, acc :+ head)
+               }
+            ),
+            case_empty=Some(() => acc),
+        )(tokens_and_exprs)
+
+    // left 14
 
     // ...
     def parse_full_expr(tokens: List[Token | Expr]): Expr =
