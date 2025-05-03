@@ -162,6 +162,22 @@ object RtLib_3_Parse {
             ))
         )(tokens_and_exprs)
 
+    def debrace_expr(expr: Expr): Expr =
+        match_expr(
+            case_lit_str = _s => expr,
+            case_lit_bint= _i => expr,
+            case_idf= _s => expr,
+            case_call_1= (f, x) => ExprCall1(
+                debrace_expr(f),
+                debrace_expr(x),
+            ),
+            case_lambda_1=(arg, res) => ExprLambda1(
+                arg, //debrace_expr(arg),
+                debrace_expr(res),
+            ),
+            case_braced=inner_expr => debrace_expr(inner_expr),
+        )(expr)
+
 
     // ...
     def parse_full_expr(tokens: List[Token | Expr]): Expr =
