@@ -1,5 +1,6 @@
 package lang
 
+import lang.RtLib_2_Tokenize.{Token, TokenIdf, TokenLitBint, TokenLitStr}
 import utils.RtFail.{rtFail, try_and_match}
 import utils.RtList.match_list
 
@@ -96,6 +97,56 @@ object RtLib_3_Parse {
         )(parsers)
     }
 
+    //@tailrec
+    def apply_all(
+      funcs: List[(List[Token | Expr], List[Token | Expr]) => List[Token | Expr]],
+      args: List[Token | Expr],
+    ): List[Token | Expr] =
+        match_list[
+          (List[Token | Expr], List[Token | Expr]) => List[Token | Expr],
+          List[Token | Expr]
+        ](
+            case_empty = Some(() => args),
+            case_at_least_1 = Some((head, tail) => apply_all(tail, head(args, List())))
+        ) (funcs)
+
+    //@tailrec
+    def preparse_idf_lit(tokens_and_exprs: List[Token | Expr], acc: List[Token | Expr]): List[Token | Expr] =
+        match_list[Token | Expr, List[Token | Expr]](
+            case_at_least_1=Some((head, tail) => preparse_idf_lit(tail, acc :+ (
+                head match {
+                    case expr: Expr => expr
+                    case TokenLitStr(s) => ExprLitStr(s)
+                    case TokenLitBint(i) => ExprLitBint(i)
+                    case TokenIdf(s) => ExprIdf(s)
+                    case _ => head
+                }
+            ))),
+            case_empty=Some(() => acc),
+        )(tokens_and_exprs)
+
+    /*/@tailrec
+    def continue_preparse_braced(
+        ext_tokens_and_exprs: List[Token | Expr],
+        acc: List[Token | Expr],
+        acc_braced: List[Token | Expr],
+        unclosed_parens_count: Int,
+    ) =
+        match_list(
+            case_empty=lambda: fail("`)` expected."),
+            case_at_least_1=lambda head, tail: (
+                (
+                    rec(tail, acc, acc_braced + [head], unclosed_parens_count - 1)
+                    if unclosed_parens_count > 1 else
+                    (tail, acc + [ExprBraced(parse_full_expr(acc_braced))])
+                )
+                if head == TokenParenClose() else
+                rec(tail, acc, acc_braced + [head], unclosed_parens_count + 1)
+                if head == TokenParenOpen() else
+                rec(tail, acc, acc_braced + [head], unclosed_parens_count)
+            )
+        )(ext_tokens_and_exprs)
+    //*/
 
     val typified_repr_endl = "\n"
 }
