@@ -15,5 +15,8 @@ object TestsRunner extends ZIOSpecDefault {
       allTestCases.map(testCase => test(testCase.getClass.getSimpleName) {
         assertTrue(tokenize(testCase.code_0) == testCase.tokens_1)
       })
+      ++ allTestCases_22.map(testCase => test(testCase.getClass.getSimpleName) {
+          assertTrue(tokenize(testCase.code_0) == testCase.tokens_1)
+        })
     )
 }

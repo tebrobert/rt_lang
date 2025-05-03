@@ -18,3 +18,5 @@ val allTestCases = List(
   TestCase13,
   TestCase14,
 )
+
+val allTestCases_22 = allTestCases.take(1)
