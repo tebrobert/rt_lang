@@ -1,1 +1,0 @@
-val x = lang.TokenIdf("input")

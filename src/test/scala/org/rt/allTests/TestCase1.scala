@@ -1,6 +1,6 @@
 package org.rt.allTests
 
-import lang.RtLib_2_Tokenize.TokenIdf
+import lang.RtLib_2_Tokenize.*
 import org.rt.RtTestCase
 
 object TestCase1 extends RtTestCase {

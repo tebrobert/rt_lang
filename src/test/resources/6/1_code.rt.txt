@@ -1,1 +1,0 @@
->>=(s => >>=(u => print(s))(print(s)))(input)
