@@ -10,4 +10,7 @@ val allTestCases = List(
   TestCase5,
   TestCase6,
   TestCase7,
+  TestCase8,
+  TestCase9,
+  TestCase10,
 )

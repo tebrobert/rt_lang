@@ -10,9 +10,9 @@ object TestCase7 extends RtTestCase {
     + "\nprint(y)"
 
   val tokens_1 = List(
-    TokenIdf(s = "x"), TokenLessMinus, TokenIdf(s = "input"), TokenEndl,
-    TokenIdf(s = "y"), TokenLessMinus, TokenIdf(s = "input"), TokenEndl,
-    TokenIdf(s = "print"), TokenParenOpen, TokenIdf(s = "x"), TokenParenClose, TokenEndl,
-    TokenIdf(s = "print"), TokenParenOpen, TokenIdf(s = "y"), TokenParenClose,
+    TokenIdf("x"), TokenLessMinus, TokenIdf("input"), TokenEndl,
+    TokenIdf("y"), TokenLessMinus, TokenIdf("input"), TokenEndl,
+    TokenIdf("print"), TokenParenOpen, TokenIdf("x"), TokenParenClose, TokenEndl,
+    TokenIdf("print"), TokenParenOpen, TokenIdf("y"), TokenParenClose,
   )
 }

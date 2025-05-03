@@ -8,5 +8,9 @@ object TestCase8 extends RtTestCase {
     + "print(s)\n"
     + "print(s)\n"
 
-  val tokens_1 = List()
+  val tokens_1 = List(
+    TokenIdf("s"), TokenLessMinus, TokenIdf("input"), TokenEndl,
+    TokenIdf("print"), TokenParenOpen, TokenIdf("s"), TokenParenClose, TokenEndl,
+    TokenIdf("print"), TokenParenOpen, TokenIdf("s"), TokenParenClose, TokenEndl,
+  )
 }
