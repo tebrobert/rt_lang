@@ -9,6 +9,14 @@ object TestCase14 extends RtTestCase {
     + s"""print("What is your name?")\n"""
     + s"""name <- input\n"""
     + s"""print("Dear ".+(name).+(", welcome!"))\n"""
-  
-  val tokens_1 = List()
+
+  val tokens_1 = List(
+    TokenIdf("greeting"), TokenEq, TokenLitStr("Hi!"), TokenEndl,
+    TokenIdf("print"), TokenParenOpen, TokenIdf("greeting"), TokenParenClose, TokenEndl,
+    TokenIdf("print"), TokenParenOpen, TokenLitStr("What is your name?"), TokenParenClose, TokenEndl,
+    TokenIdf("name"), TokenLessMinus, TokenIdf("input"), TokenEndl,
+    TokenIdf("print"), TokenParenOpen, TokenLitStr("Dear "),
+    TokenDot, TokenIdf("+"), TokenParenOpen, TokenIdf("name"), TokenParenClose,
+    TokenDot, TokenIdf("+"), TokenParenOpen, TokenLitStr(", welcome!"), TokenParenClose, TokenParenClose, TokenEndl,
+  )
 }
