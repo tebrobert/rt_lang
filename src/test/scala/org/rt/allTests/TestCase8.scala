@@ -1,8 +1,12 @@
 package org.rt.allTests
 
-import lang.RtLib_2_Tokenize.TokenIdf
+import lang.RtLib_2_Tokenize.*
+import org.rt.RtTestCase
 
-object TestCase8 /*extends Test*/ {
-  val code_0 = ???
-  val tokens_1 = ???
+object TestCase8 extends RtTestCase {
+  val code_0 = "s <- input\n"
+    + "print(s)\n"
+    + "print(s)\n"
+
+  val tokens_1 = List()
 }
