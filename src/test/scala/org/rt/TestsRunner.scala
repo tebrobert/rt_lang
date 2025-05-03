@@ -12,17 +12,8 @@ trait RtTestCase {
 object TestsRunner extends ZIOSpecDefault {
   def spec: Spec[Any, Nothing] =
     suite("HelloWorldSpec")(
-      test("1"){
-        assertTrue(tokenize(TestCase1.code_0) == TestCase1.tokens_1)
-      },
-      test("2"){
-        assertTrue(tokenize(TestCase2.code_0) == TestCase2.tokens_1)
-      },
-      test("3"){
-        assertTrue(tokenize(TestCase3.code_0) == TestCase3.tokens_1)
-      },
-      test("4"){
-        assertTrue(tokenize(TestCase4.code_0) == TestCase4.tokens_1)
-      },
+      allTestCases.map(testCase => test(testCase.getClass.getSimpleName) {
+        assertTrue(tokenize(testCase.code_0) == testCase.tokens_1)
+      })
     )
 }
