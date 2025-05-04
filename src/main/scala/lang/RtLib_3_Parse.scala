@@ -371,8 +371,22 @@ object RtLib_3_Parse {
             ),
         )
     }
+    
+    def parse_effectful_line(
+        current_line: List[Token],
+        next_lines_expr: Expr,
+    ) = {
+        val right_expr = parse_full_expr(current_line)
+        ExprCall1(
+            ExprCall1(
+                ExprIdf(builtin_flatmap),
+                ExprLambda1(ExprIdf("_"), next_lines_expr),
+            ),
+            right_expr,
+        )
+    }
 
-    // left 5
+    // left 4
 
 
 
