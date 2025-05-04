@@ -198,23 +198,27 @@ object RtLib_3_Parse {
         tokens_and_exprs: List[Token | Expr],
         acc: List[Token | Expr],
     ): List[Token | Expr] =
-        match_list[List[Token | Expr], Token | Expr](
-            case_at_least_3=Some((head0, head1, head2, tail2) => (
-                preparse_call([ExprCall1(head0, head1), head2] + tail2, acc)
-                if is_expr(head0) and type(head1) is ExprBraced else
-                preparse_call([head1, head2] + tail2, acc + [head0])
-                if type(head1) is not ExprIdf else
-                preparse_call([head2] + tail2, acc + [head0, head1])
-                if is_expr(head0) else
-                preparse_call([head1, head2] + tail2, acc + [head0])
-            )),
-            case_at_least_2=lambda head0, head1, tail1: (
-                rec([ExprCall1(head0, head1)] + tail1, acc)
-                if is_expr(head0) and type(head1) is ExprBraced else
-                rec([head1] + tail1, acc + [head0])
+        match_list[Token | Expr, List[Token | Expr]](
+            case_at_least_3=Some((head0, head1, head2, tail2) =>
+                (head0, head1) match {
+                    case (expr0: Expr, exprBraced1: ExprBraced) =>
+                        preparse_call(List(ExprCall1(expr0, exprBraced1), head2) ++ tail2, acc)
+                    case _ if !head1.isInstanceOf[ExprIdf] =>
+                        preparse_call(List(head1, head2) ++ tail2, acc ++ List(head0))
+                    case _ if head0.isInstanceOf[Expr] =>
+                        preparse_call(head2 +: tail2, acc ++ List(head0, head1))
+                    case _ => preparse_call(List(head1, head2) ++ tail2, acc :+ head0)
+                }
             ),
-            case_at_least_1=lambda head0, _tail: acc + [head0],
-            case_empty=lambda: acc,
+            case_at_least_2=Some((head0, head1, tail1) =>
+              (head0, head1) match {
+                  case (expr0: Expr, exprBraced1: ExprBraced) =>
+                      preparse_call(ExprCall1(expr0, exprBraced1) +: tail1, acc)
+                  case _ => preparse_call(head1 +: tail1, acc :+ head0)
+              }
+            ),
+            case_at_least_1=Some((head0, _tail) => acc :+ head0),
+            case_empty=Some(() => acc),
         )(tokens_and_exprs)
 
 
