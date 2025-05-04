@@ -1,7 +1,7 @@
 package lang
 
 import lang.RtLib_0_0_Lits.*
-import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEqGr, TokenIdf, TokenLessMinus, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen}
+import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEq, TokenEqGr, TokenIdf, TokenLessMinus, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen}
 import utils.RtFail.{rtFail, rt_assert, rt_assert_type, try_and_match}
 import utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_empty}
 
@@ -309,7 +309,7 @@ object RtLib_3_Parse {
 
         preparser
     }
-    
+
     def parse_full_expr(tokens: List[Token | Expr]): Expr = {
         val preparsed = apply_all(List(
             preparse_idf_lit,
@@ -330,13 +330,13 @@ object RtLib_3_Parse {
 
         val (head_preparsed, tail_preparsed) = rt_assert_at_least_1(preparsed)
         rt_assert_empty(tail_preparsed)
-        
+
         head_preparsed match {
             case expr: Expr => expr
             case _: Token => rtFail(s"got token `$head_preparsed`")
         }
     }
-    
+
     def parse_line_with_less_minus(
         current_line: List[Token],
         next_lines_expr: Expr,
@@ -353,7 +353,26 @@ object RtLib_3_Parse {
         )
     }
 
-    // left 6
+    def parse_line_with_equals(
+        current_line: List[Token],
+        next_lines_expr: Expr,
+    ) = {
+        val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
+        rt_assert_type[TokenEq.type](current_line(1)) // todo unsafe
+        val right_expr = parse_full_expr(current_line.drop(2))
+        ExprCall1(
+            ExprCall1(
+                ExprIdf(builtin_flatmap),
+                ExprLambda1(ExprIdf(idf.s), next_lines_expr),
+            ),
+            ExprCall1(
+                ExprIdf(builtin_pure),
+                right_expr,
+            ),
+        )
+    }
+
+    // left 5
 
 
 
