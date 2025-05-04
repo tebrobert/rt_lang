@@ -1,7 +1,7 @@
 package lang
 
 import lang.RtLib_0_0_Lits.*
-import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEndl, TokenEq, TokenEqGr, TokenIdf, TokenLessMinus, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen}
+import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEndl, TokenEq, TokenEqGr, TokenIdf, TokenLessMinus, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen, tokenize}
 import utils.RtFail.{rtFail, rt_assert, rt_assert_type, try_and_match}
 import utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_empty}
 
@@ -422,10 +422,20 @@ object RtLib_3_Parse {
             ),
         )(tokens_reversed)
 
-    // left 2
+    def parse(tokens: List[Token]): Expr = {
+        val tokens_reversed = tokens.reverse
+        val lines_reversed = get_lines_reversed(tokens_reversed, List(), List())
+        val nonempty_lines_reversed = lines_reversed.filter(_.nonEmpty)
+        match_list[List[Token], Expr](
+            case_empty=Some(() => rtFail("Yet empty file is unsupported.")),
+            case_at_least_1=Some((head, tail) => parse_previous_lines(
+                tail, parse_full_expr(head)
+            )),
+        )(nonempty_lines_reversed)
+    }
 
-
-
-
+    def full_parse(code: String): Expr =
+        parse(tokenize(code))
+    
     val typified_repr_endl = "\n"
 }
