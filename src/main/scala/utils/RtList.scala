@@ -21,10 +21,10 @@ object RtList {
                 list match
                     case Nil => empty()
                     case head::tail => at_least_1(head, tail)
-            case (Some(empty), Some(at_least_1), _, _, _) =>
+            case (None, None, Some(at_least_2), _, Some(otherwise)) =>
                 list match
-                    case Nil => empty()
-                    case head::tail => at_least_1(head, tail)
+                    case head1::head2::tail => at_least_2(head1, head2, tail)
+                    case _ => otherwise()
             case _ => rtFail("ni")
         }
 
