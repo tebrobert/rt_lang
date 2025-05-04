@@ -256,15 +256,57 @@ object RtLib_3_Parse {
             case_at_least_1=Some((head0, _tail0) => acc :+ head0),
             case_empty=Some(() => acc),
         )(reversed_tokens_and_exprs)
-        
+
     def preparse_lambda(
         tokens_and_exprs: List[Token | Expr]
     ): List[Token | Expr] =
         preparse_lambda_reversed_rec(
             tokens_and_exprs.reverse, List()
         ).reverse
-        
-    // left 9
+
+
+    def preparse_left_to_right(operator_strings: List[String]) = {
+        //@tailrec
+        def preparser(
+            tokens_and_exprs: List[Token | Expr],
+            acc: List[Token | Expr],
+        ): List[Token | Expr] =
+            match_list[Token | Expr, List[Token | Expr]](
+                case_at_least_3=Some((head0, head1, head2, tail2) =>
+                    (head0, head1, head2) match {
+                        case (expr0: Expr, ExprIdf(s1), expr2: Expr)
+                            if operator_strings.contains(s1) =>
+                            preparser(ExprCall1(ExprCall1(ExprIdf(s1), expr2), expr0) +: tail2, acc)
+                        case _ => preparser(List(head1, head2) ++ tail2, acc :+ head0)
+                    }
+                ),
+                case_at_least_2=Some((head0, head1, _tail) => acc ++ List(head0, head1)),
+                case_at_least_1=Some((head0, _tail) => acc :+ head0),
+                case_empty=Some(() => acc),
+            )(tokens_and_exprs)
+
+        preparser
+    }
+
+    def preparse_unary(operator: String) = {
+        def preparser(
+            tokens_and_exprs: List[Token | Expr]
+        ): List[Token | Expr] =
+            match_list[Token | Expr, List[Token | Expr]](
+                case_at_least_2=Some((head0, head1, tail1) =>
+                    (head0, head1) match {
+                        case (ExprIdf(`operator`), expr1: Expr) =>
+                            ExprCall1(ExprIdf(operator), expr1) +: tail1
+                        case _ => tokens_and_exprs
+                    }
+                ),
+                otherwise=Some(() => tokens_and_exprs),
+            )(tokens_and_exprs)
+
+        preparser
+    }
+
+    // left 8
 
     // ...
     def parse_full_expr(tokens: List[Token | Expr]): Expr =
