@@ -257,7 +257,14 @@ object RtLib_3_Parse {
             case_empty=Some(() => acc),
         )(reversed_tokens_and_exprs)
         
-    // left 10
+    def preparse_lambda(
+        tokens_and_exprs: List[Token | Expr]
+    ): List[Token | Expr] =
+        preparse_lambda_reversed_rec(
+            tokens_and_exprs.reverse, List()
+        ).reverse
+        
+    // left 9
 
     // ...
     def parse_full_expr(tokens: List[Token | Expr]): Expr =
