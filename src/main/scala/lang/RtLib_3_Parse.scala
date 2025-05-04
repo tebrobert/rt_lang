@@ -1,8 +1,8 @@
 package lang
 
 import lang.RtLib_0_0_Lits.*
-import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEqGr, TokenIdf, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen}
-import utils.RtFail.{rtFail, rt_assert, try_and_match}
+import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEqGr, TokenIdf, TokenLessMinus, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen}
+import utils.RtFail.{rtFail, rt_assert, rt_assert_type, try_and_match}
 import utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_empty}
 
 object RtLib_3_Parse {
@@ -336,8 +336,24 @@ object RtLib_3_Parse {
             case _: Token => rtFail(s"got token `$head_preparsed`")
         }
     }
+    
+    def parse_line_with_less_minus(
+        current_line: List[Token],
+        next_lines_expr: Expr,
+    ) = {
+        val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
+        rt_assert_type[TokenLessMinus.type](current_line(1)) // todo unsafe
+        val right_expr = parse_full_expr(current_line.drop(2))
+        ExprCall1(
+            ExprCall1(
+                ExprIdf(builtin_flatmap),
+                ExprLambda1(ExprIdf(idf.s), next_lines_expr),
+            ),
+            right_expr,
+        )
+    }
 
-    // left 7
+    // left 6
 
 
 

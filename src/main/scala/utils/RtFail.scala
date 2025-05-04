@@ -21,4 +21,10 @@ object RtFail {
     } catch {
       case _: Throwable => Left(ifFail())
     }).map(ifSuccess).merge
+    
+  def rt_assert_type[EXPECTED](value: Any): EXPECTED =
+    value match {
+      case expected: EXPECTED => expected
+      case _ => rtFail(s"Expected ..., got `$value`")
+    }
 }
