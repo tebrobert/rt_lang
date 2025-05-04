@@ -19,4 +19,4 @@ val allTestCases = List(
   TestCase14,
 )
 
-val allTestCases_22 = allTestCases.dropRight(13)
+val allTestCases_22 = allTestCases.dropRight(12)
