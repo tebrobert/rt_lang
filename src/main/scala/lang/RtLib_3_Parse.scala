@@ -1,6 +1,6 @@
 package lang
 
-import lang.RtLib_2_Tokenize.{Token, TokenIdf, TokenLitBint, TokenLitStr, TokenParenOpen, TokenParenClose}
+import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEqGr, TokenIdf, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen}
 import utils.RtFail.{rtFail, try_and_match}
 import utils.RtList.match_list
 
@@ -221,8 +221,43 @@ object RtLib_3_Parse {
             case_empty=Some(() => acc),
         )(tokens_and_exprs)
 
+    //@tailrec
+    def preparse_dot(
+        tokens_and_exprs: List[Token | Expr],
+        acc: List[Token | Expr],
+    ): List[Token | Expr] =
+        match_list[Token | Expr, List[Token | Expr]](
+            case_at_least_3=Some((head0, head1, head2, tail2) =>
+                (head0, head1, head2) match {
+                    case (expr0: Expr, TokenDot, expr2: Expr) =>
+                        preparse_dot(ExprCall1(expr2, expr0) +: tail2, acc)
+                    case _ => preparse_dot(List(head1, head2) ++ tail2, acc :+ head0)
+                }
+            ),
+            case_at_least_2=Some((head0, head1, _tail1) => acc ++ List(head0, head1)),
+            case_at_least_1=Some((head0, _tail0) => acc :+ head0),
+            case_empty=Some(() => acc),
+        )(tokens_and_exprs)
 
-    // left 12
+    //@tailrec
+    def preparse_lambda_reversed_rec(
+        reversed_tokens_and_exprs: List[Token | Expr],
+        acc: List[Token | Expr],
+    ): List[Token | Expr] =
+        match_list[Token | Expr, List[Token | Expr]](
+            case_at_least_3=Some((head0, head1, head2, tail2) =>
+                (head0, head1, head2) match {
+                    case (expr0: Expr, TokenEqGr, exprIdf2: /*Expr*/ ExprIdf ) =>
+                        preparse_lambda_reversed_rec(ExprLambda1(exprIdf2, expr0) +: tail2, acc)
+                    case _ => preparse_lambda_reversed_rec(List(head1, head2) ++ tail2, acc :+ head0)
+                }
+            ),
+            case_at_least_2=Some((head0, head1, _tail1) => acc ++ List(head0, head1)),
+            case_at_least_1=Some((head0, _tail0) => acc :+ head0),
+            case_empty=Some(() => acc),
+        )(reversed_tokens_and_exprs)
+        
+    // left 10
 
     // ...
     def parse_full_expr(tokens: List[Token | Expr]): Expr =
