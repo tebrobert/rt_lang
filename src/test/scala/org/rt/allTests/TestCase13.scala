@@ -19,4 +19,6 @@ object TestCase13 extends RtTestCase {
     TokenParenOpen, TokenLitStr("Welcome, "), TokenParenClose, TokenEndl,
     TokenIdf("print"), TokenParenOpen, TokenIdf("result"), TokenParenClose,
   )
+
+  val expr_2 = lang.RtLib_3_Parse.ExprIdf("???")
 }

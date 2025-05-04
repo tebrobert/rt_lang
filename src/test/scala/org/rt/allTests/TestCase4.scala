@@ -5,6 +5,7 @@ import org.rt.RtTestCase
 
 object TestCase4 extends RtTestCase {
   val code_0 = "(s => s)((s => s)(input))\n"
+
   val tokens_1 = List(
     TokenParenOpen, TokenIdf("s"), TokenEqGr, TokenIdf("s"), TokenParenClose,
     TokenParenOpen,
@@ -12,4 +13,6 @@ object TestCase4 extends RtTestCase {
     TokenParenOpen, TokenIdf("input"), TokenParenClose,
     TokenParenClose, TokenEndl,
   )
+
+  val expr_2 = lang.RtLib_3_Parse.ExprIdf("???")
 }
