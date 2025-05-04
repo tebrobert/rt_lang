@@ -1,7 +1,7 @@
 package lang
 
 import lang.RtLib_0_0_Lits.*
-import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEq, TokenEqGr, TokenIdf, TokenLessMinus, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen}
+import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEndl, TokenEq, TokenEqGr, TokenIdf, TokenLessMinus, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen}
 import utils.RtFail.{rtFail, rt_assert, rt_assert_type, try_and_match}
 import utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_empty}
 
@@ -371,7 +371,7 @@ object RtLib_3_Parse {
             ),
         )
     }
-    
+
     def parse_effectful_line(
         current_line: List[Token],
         next_lines_expr: Expr,
@@ -385,7 +385,7 @@ object RtLib_3_Parse {
             right_expr,
         )
     }
-    
+
     //@tailrec
     def parse_previous_lines(
         lines_reversed: List[List[Token]],
@@ -407,7 +407,22 @@ object RtLib_3_Parse {
             )),
         )(lines_reversed)
 
-    // left 3
+    //@tailrec
+    def get_lines_reversed(
+        tokens_reversed: List[Token],
+        acc_lines: List[List[Token]],
+        acc_current_line: List[Token],
+    ): List[List[Token]] =
+        match_list[Token, List[List[Token]]](
+            case_empty=Some(() => acc_lines :+ acc_current_line),
+            case_at_least_1=Some((head, tail) =>
+              if (head == TokenEndl)
+                get_lines_reversed(tail, acc_lines :+ acc_current_line, List())
+              else get_lines_reversed(tail, acc_lines, head +: acc_current_line)
+            ),
+        )(tokens_reversed)
+
+    // left 2
 
 
 
