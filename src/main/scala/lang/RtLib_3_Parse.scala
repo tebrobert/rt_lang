@@ -74,17 +74,17 @@ object RtLib_3_Parse {
             case ExprBraced(expr) => case_braced(expr)
 
     //@tailrec
-    def get_first_success[A, B](
-        parsers: List[List[A] => B],
-        parser_args: List[A]/**/,
+    def get_first_success(
+        parsers: List[(List[Token], Expr) => Expr],
+        parser_args: (List[Token], Expr),
         fails: List[String] = List(),
-    ): B = {
+    ): Expr = {
         def try_next_parser(
-            current_parser: List[A] => B,
-            rest_parsers: List[List[A] => B],
-        ): B =
+            current_parser: (List[Token], Expr) => Expr,
+            rest_parsers: List[(List[Token], Expr) => Expr],
+        ): Expr =
             try_and_match(
-                () => current_parser(parser_args),
+                () => current_parser.tupled(parser_args),
                 identity,
                 () => get_first_success(rest_parsers, parser_args, fails = fails /*+[either_result]*/)
             )
@@ -340,7 +340,7 @@ object RtLib_3_Parse {
     def parse_line_with_less_minus(
         current_line: List[Token],
         next_lines_expr: Expr,
-    ) = {
+    ): ExprCall1 = {
         val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
         rt_assert_type[TokenLessMinus.type](current_line(1)) // todo unsafe
         val right_expr = parse_full_expr(current_line.drop(2))
@@ -356,7 +356,7 @@ object RtLib_3_Parse {
     def parse_line_with_equals(
         current_line: List[Token],
         next_lines_expr: Expr,
-    ) = {
+    ): ExprCall1 = {
         val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
         rt_assert_type[TokenEq.type](current_line(1)) // todo unsafe
         val right_expr = parse_full_expr(current_line.drop(2))
@@ -375,7 +375,7 @@ object RtLib_3_Parse {
     def parse_effectful_line(
         current_line: List[Token],
         next_lines_expr: Expr,
-    ) = {
+    ): ExprCall1 = {
         val right_expr = parse_full_expr(current_line)
         ExprCall1(
             ExprCall1(
@@ -385,8 +385,29 @@ object RtLib_3_Parse {
             right_expr,
         )
     }
+    
+    //@tailrec
+    def parse_previous_lines(
+        lines_reversed: List[List[Token]],
+        acc_expr: Expr,
+    ): Expr =
+        match_list[List[Token], Expr](
+            case_empty=Some(() => acc_expr),
+            case_at_least_1=Some((lastLine, prevLines) => parse_previous_lines(
+                prevLines,
+                get_first_success(
+                    List(
+                        parse_line_with_less_minus,
+                        parse_line_with_equals,
+                        parse_effectful_line,
+                    ),
+                    (lastLine, acc_expr),
+                    fails = List(),
+                )
+            )),
+        )(lines_reversed)
 
-    // left 4
+    // left 3
 
 
 
