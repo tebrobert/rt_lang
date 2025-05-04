@@ -1,8 +1,9 @@
 package lang
 
+import lang.RtLib_0_0_Lits.*
 import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEqGr, TokenIdf, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen}
-import utils.RtFail.{rtFail, try_and_match}
-import utils.RtList.match_list
+import utils.RtFail.{rtFail, rt_assert, try_and_match}
+import utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_empty}
 
 object RtLib_3_Parse {
     sealed trait Expr {
@@ -258,14 +259,15 @@ object RtLib_3_Parse {
         )(reversed_tokens_and_exprs)
 
     def preparse_lambda(
-        tokens_and_exprs: List[Token | Expr]
+        tokens_and_exprs: List[Token | Expr],
+        /**/ _acc: List[Token | Expr],
     ): List[Token | Expr] =
         preparse_lambda_reversed_rec(
             tokens_and_exprs.reverse, List()
         ).reverse
 
 
-    def preparse_left_to_right(operator_strings: List[String]) = {
+    def preparse_left_to_right(operator_strings: String*) = {
         //@tailrec
         def preparser(
             tokens_and_exprs: List[Token | Expr],
@@ -288,9 +290,11 @@ object RtLib_3_Parse {
         preparser
     }
 
-    def preparse_unary(operator: String) = {
+    def preparse_unary(operator: String)
+    : (List[Token | Expr], List[Token | Expr]) => List[Token | Expr] = {
         def preparser(
-            tokens_and_exprs: List[Token | Expr]
+            tokens_and_exprs: List[Token | Expr],
+            _acc: List[Token | Expr],
         ): List[Token | Expr] =
             match_list[Token | Expr, List[Token | Expr]](
                 case_at_least_2=Some((head0, head1, tail1) =>
@@ -305,12 +309,37 @@ object RtLib_3_Parse {
 
         preparser
     }
+    
+    def parse_full_expr(tokens: List[Token | Expr]): Expr = {
+        val preparsed = apply_all(List(
+            preparse_idf_lit,
+            preparse_braced,
+            preparse_call,
+            preparse_debrace,
+            preparse_dot,
+            preparse_unary(builtin_minus),
+            preparse_unary(builtin_not),
+            preparse_left_to_right(builtin_multiply, builtin_div, builtin_floor_div, builtin_mod),
+            preparse_left_to_right(builtin_plus, builtin_minus),
+            preparse_left_to_right(builtin_less, builtin_less_eq, builtin_gr, builtin_gr_eq),
+            preparse_left_to_right(builtin_eq_eq, builtin_not_eq),
+            preparse_left_to_right(builtin_and),
+            preparse_left_to_right(builtin_or),
+            preparse_lambda,
+        ), tokens)
 
-    // left 8
+        val (head_preparsed, tail_preparsed) = rt_assert_at_least_1(preparsed)
+        rt_assert_empty(tail_preparsed)
+        
+        head_preparsed match {
+            case expr: Expr => expr
+            case _: Token => rtFail(s"got token `$head_preparsed`")
+        }
+    }
 
-    // ...
-    def parse_full_expr(tokens: List[Token | Expr]): Expr =
-        ???
+    // left 7
+
+
 
 
     val typified_repr_endl = "\n"

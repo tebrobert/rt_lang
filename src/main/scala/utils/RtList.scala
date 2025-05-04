@@ -28,4 +28,15 @@ object RtList {
             case _ => rtFail("ni")
         }
 
+    def rt_assert_at_least_1[A](vals: List[A], msg: String*): (A, List[A]) =
+        vals match {
+            case head::tail => (head, tail)
+            case Nil => rtFail(msg*)
+        }
+        
+    def rt_assert_empty[A](vals: List[A], msg: String*): Unit =
+        vals match {
+            case head::tail => rtFail((s"The list is not empty, `${vals}`." +: msg.toList)*)
+            case Nil => ()
+        }
 }
