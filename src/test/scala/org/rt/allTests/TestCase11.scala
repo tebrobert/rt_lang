@@ -1,6 +1,7 @@
 package org.rt.allTests
 
 import lang.RtLib_2_Tokenize.*
+import lang.RtLib_3_Parse.*
 import org.rt.RtTestCase
 
 object TestCase11 extends RtTestCase {
@@ -18,5 +19,54 @@ object TestCase11 extends RtTestCase {
     TokenIdf("print"), TokenParenOpen, TokenIdf("name"), TokenParenClose, TokenEndl,
   )
 
-  val expr_2 = lang.RtLib_3_Parse.ExprIdf("???")
+  val expr_2 =
+    ExprCall1(
+      ExprCall1(
+        ExprIdf(">>="),
+        ExprLambda1(
+          ExprIdf("greeting"),
+          ExprCall1(
+            ExprCall1(
+              ExprIdf(">>="),
+              ExprLambda1(
+                ExprIdf("_"),
+                ExprCall1(
+                  ExprCall1(
+                    ExprIdf(">>="),
+                    ExprLambda1(
+                      ExprIdf("name"),
+                      ExprCall1(
+                        ExprCall1(
+                          ExprIdf(">>="),
+                          ExprLambda1(
+                            ExprIdf("_"),
+                            ExprCall1(
+                              ExprIdf("print"),
+                              ExprIdf("name")
+                            )
+                          )
+                        ),
+                        ExprCall1(
+                          ExprIdf("print"),
+                          ExprLitStr("Welcome, ...")
+                        )
+                      )
+                    )
+                  ),
+                  ExprIdf("input")
+                )
+              )
+            ),
+            ExprCall1(
+              ExprIdf("print"),
+              ExprIdf("greeting")
+            )
+          )
+        )
+      ),
+      ExprCall1(
+        ExprIdf("pure"),
+        ExprLitStr("Hey! What is your name?")
+      )
+    )
 }
