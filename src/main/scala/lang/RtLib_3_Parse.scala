@@ -362,6 +362,8 @@ object RtLib_3_Parse {
         println(s"next_lines_expr $next_lines_expr")
         println("")
         val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
+        println(s"idf $idf")
+        println("")
 
         //rt_assert_type[TokenEq.type](current_line(1)) // todo unsafe
         rt_assert_type_TokenEq(current_line(1)) // todo unsafe
