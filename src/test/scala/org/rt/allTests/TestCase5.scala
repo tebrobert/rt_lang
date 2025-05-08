@@ -1,6 +1,7 @@
 package org.rt.allTests
 
 import lang.RtLib_2_Tokenize.*
+import lang.RtLib_3_Parse.*
 import org.rt.RtTestCase
 
 object TestCase5 extends RtTestCase {
@@ -15,5 +16,15 @@ object TestCase5 extends RtTestCase {
     TokenEndl,
   )
 
-  val expr_2 = lang.RtLib_3_Parse.ExprIdf("???")
+  val expr_2 =
+    ExprCall1(
+      ExprCall1(
+        ExprIdf(">>="),
+        ExprLambda1(
+          ExprIdf("s"),
+          ExprCall1(ExprIdf("print"), ExprIdf("s")),
+        )
+      ),
+      ExprIdf("input")
+    )
 }
