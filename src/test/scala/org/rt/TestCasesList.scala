@@ -20,4 +20,4 @@ val allTestCases = List(
   TestCase14,
 )
 
-val allTestCases_22 = allTestCases.dropRight(9)//.takeRight(1)
+val allTestCases_22 = allTestCases.dropRight(6)//.takeRight(1)
