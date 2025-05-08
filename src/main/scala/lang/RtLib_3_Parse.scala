@@ -137,13 +137,13 @@ object RtLib_3_Parse {
         unclosed_parens_count: Int,
     ): (List[Token | Expr], List[Token | Expr]) =
         match_list[Token | Expr, (List[Token | Expr], List[Token | Expr])](
-            case_empty=rtFail("`)` expected."),
+            case_empty=Some(() => rtFail("`)` expected.")),
             case_at_least_1=Some((head, tail) =>
-                  if (unclosed_parens_count > 1)
-                    continue_preparse_braced(tail, acc, acc_braced :+ head, unclosed_parens_count - 1)
-                  else if (head == TokenParenClose)
-                    (tail, acc :+ ExprBraced(parse_full_expr(acc_braced)))
-                  else if (head == TokenParenOpen)
+                  if (head == TokenParenClose) {
+                    if (unclosed_parens_count > 1)
+                      continue_preparse_braced(tail, acc, acc_braced :+ head, unclosed_parens_count - 1)
+                    else (tail, acc :+ ExprBraced(parse_full_expr(acc_braced)))
+                  } else if (head == TokenParenOpen)
                     continue_preparse_braced(tail, acc, acc_braced :+ head, unclosed_parens_count + 1)
                   else continue_preparse_braced(tail, acc, acc_braced :+ head, unclosed_parens_count)
             )
@@ -156,11 +156,11 @@ object RtLib_3_Parse {
     ): List[Token | Expr] =
         match_list[Token | Expr, List[Token | Expr]](
             case_empty=Some(() => acc),
-            case_at_least_1=Some((head, tail) => (
+            case_at_least_1=Some((head, tail) =>
                 if (head == TokenParenOpen)
                     preparse_braced.tupled(continue_preparse_braced(tail, acc, List(), 1))
                 else preparse_braced(tail, acc :+ head)
-            ))
+            )
         )(tokens_and_exprs)
 
     def debrace_expr(expr: Expr): Expr =

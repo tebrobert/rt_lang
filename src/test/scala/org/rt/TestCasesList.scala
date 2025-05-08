@@ -4,6 +4,7 @@ import org.rt.allTests.*
 
 val allTestCases = List(
   TestCase1,
+  TestCase1_2,
   TestCase2,
   TestCase3,
   TestCase4,
@@ -19,4 +20,4 @@ val allTestCases = List(
   TestCase14,
 )
 
-val allTestCases_22 = allTestCases.dropRight(12)
+val allTestCases_22 = allTestCases.take(3)//.takeRight(1)
