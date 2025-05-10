@@ -29,7 +29,6 @@ import org.rt.lang.RtLib_2_Tokenize.{
     TokenLitStr,
     TokenParenClose,
     TokenParenOpen,
-    tokenize,
 }
 import org.rt.utils.RtFail.{
     rtFail,
