@@ -14,19 +14,19 @@ object RtLib_2_Tokenize {
 
     final case class TokenIdf(s: String) extends Token
 
-    final case object TokenParenOpen extends Token
+    case object TokenParenOpen extends Token
 
-    final case object TokenParenClose extends Token
+    case object TokenParenClose extends Token
 
-    final case object TokenLessMinus extends Token
+    case object TokenLessMinus extends Token
 
-    final case object TokenEq extends Token
+    case object TokenEq extends Token
 
-    final case object TokenEndl extends Token
+    case object TokenEndl extends Token
 
-    final case object TokenEqGr extends Token
+    case object TokenEqGr extends Token
 
-    final case object TokenDot extends Token
+    case object TokenDot extends Token
 
 
     private val end_of_code: Char = 0
