@@ -4,6 +4,7 @@ import org.rt.lang.RtLib_0_1_Types.Typ
 import org.rt.utils.RtFail.rt_assert
 
 object RtLib_4_Typify {
+  //todo - typ? then what about TypifiedLambda1?
   sealed trait Typified
 
   final case class TypifiedLit(
