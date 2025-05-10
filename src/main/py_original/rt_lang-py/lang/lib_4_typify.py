@@ -338,6 +338,7 @@ def typify_set_lambda_1(expr_arg, expr_res):
             def action():
                 found_typ_arg = find_idf_typ(typified_res, typified_arg.s)
                 retypified_arg = replace_typ(typified_arg, found_typ_arg)
+                # todo - likely, next Unk0 needed
                 return TypifiedLambda1(retypified_arg, typified_res, Unk0(-1))
 
             mb_res = rt_try(action)
