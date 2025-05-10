@@ -21,10 +21,12 @@ object RtLib_4_Typify {
     typified_f: Typified,
     typified_x: Typified,
     typ: Typ,
-  ) extends Typified {
+  ) extends Typified
+
+  object TypifiedCall1 {
     def apply(typified_f: Typified, typified_x: Typified, typ: Typ): TypifiedCall1 =
       //rt_assert(typified_f.isInstanceOf[])
-      ??? ///  todo
+      new TypifiedCall1(typified_f, typified_x, typ)
   }
 
   final case class TypifiedLambda1(
