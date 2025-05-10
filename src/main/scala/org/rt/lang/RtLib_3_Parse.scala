@@ -20,11 +20,6 @@ object RtLib_3_Parse {
 
     final case class ExprBraced(expr: Expr) extends Expr
 
-    def is_expr(expr: Expr): Boolean =
-        true
-
-    //def expr_repr_flat() =
-    //    false //or true
 
     def match_expr[A](
         case_lit_str: String => A,
