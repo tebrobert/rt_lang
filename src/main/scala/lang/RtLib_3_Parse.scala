@@ -2,7 +2,7 @@ package lang
 
 import lang.RtLib_0_0_Lits.*
 import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEndl, TokenEq, TokenEqGr, TokenIdf, TokenLessMinus, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen, tokenize}
-import utils.RtFail.{rtFail, rt_assert, rt_assert_type, rt_assert_type_TokenEq, try_and_match}
+import utils.RtFail.{rtFail, rt_assert, rt_assert_type_TokenEq, rt_assert_type_TokenIdf, rt_assert_type_TokenLessMinus, try_and_match}
 import utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_empty}
 
 object RtLib_3_Parse {
@@ -341,8 +341,10 @@ object RtLib_3_Parse {
         current_line: List[Token],
         next_lines_expr: Expr,
     ): ExprCall1 = {
-        val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
-        rt_assert_type[TokenLessMinus.type](current_line(1)) // todo unsafe
+        //val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
+        val idf = rt_assert_type_TokenIdf(current_line(0)) // todo unsafe
+        //rt_assert_type[TokenLessMinus.type](current_line(1)) // todo unsafe
+        rt_assert_type_TokenLessMinus(current_line(1)) // todo unsafe
         val right_expr = parse_full_expr(current_line.drop(2))
         ExprCall1(
             ExprCall1(
@@ -361,7 +363,8 @@ object RtLib_3_Parse {
         println(s"current_line $current_line")
         println(s"next_lines_expr $next_lines_expr")
         println("")
-        val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
+        //val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
+        val idf = rt_assert_type_TokenIdf(current_line(0)) // todo unsafe
         println(s"idf $idf")
         println("")
 
@@ -369,7 +372,7 @@ object RtLib_3_Parse {
         rt_assert_type_TokenEq(current_line(1)) // todo unsafe
 
         println(current_line(1))
-        println(rt_assert_type[TokenEq.type](current_line(1)))
+        println(rt_assert_type_TokenEq(current_line(1)))
         println("... = ...")
         println("")
         val right_expr = parse_full_expr(current_line.drop(2))

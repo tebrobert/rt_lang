@@ -68,6 +68,5 @@ object TestCase11 extends RtTestCase {
         ExprIdf("pure"),
         ExprLitStr("Hey! What is your name?")
       )
-      //ExprLitStr(s = "Hey! What is your name?")
     )
 }

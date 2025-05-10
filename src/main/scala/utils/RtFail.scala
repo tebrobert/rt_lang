@@ -1,6 +1,6 @@
 package utils
 
-import lang.RtLib_2_Tokenize.{Token, TokenEq}
+import lang.RtLib_2_Tokenize.{Token, TokenEq, TokenIdf, TokenLessMinus}
 import lang.RtLib_3_Parse.Expr
 
 object RtFail {
@@ -25,15 +25,21 @@ object RtFail {
       case _: Throwable => Left(ifFail())
     }).map(ifSuccess).merge
     
-  def rt_assert_type[EXPECTED <: (Token | Expr)](value: Token | Expr): EXPECTED =
-    value match {
-      case expected: EXPECTED => expected
-      case _ => rtFail(s"Expected ..., got `$value`")
-    }
-
   def rt_assert_type_TokenEq(value: Token | Expr): TokenEq.type =
     value match {
       case expected: TokenEq.type => expected
-      case _ => rtFail(s"Expected ..., got `$value`")
+      case _ => rtFail(s"Expected TokenEq, got `$value`")
+    }
+
+  def rt_assert_type_TokenIdf(value: Token | Expr): TokenIdf =
+    value match {
+      case expected: TokenIdf => expected
+      case _ => rtFail(s"Expected TokenIdf, got `$value`")
+    }
+
+  def rt_assert_type_TokenLessMinus(value: Token | Expr): TokenLessMinus.type =
+    value match {
+      case expected: TokenLessMinus.type => expected
+      case _ => rtFail(s"Expected TokenLessMinus, got `$value`")
     }
 }
