@@ -8,50 +8,63 @@ import scala.annotation.tailrec
 object RtLib_2_Tokenize {
     sealed trait Token
 
-    final case class TokenLitStr(s: String) extends Token:
-        def repr =
-            s"""TokenLitStr("$s")"""
+    final case class TokenLitStr(s: String) extends Token
 
-    final case class TokenLitBint(i: String) extends Token:
-        def repr =
-            s"""TokenLitBint($i)"""
+    final case class TokenLitBint(i: String) extends Token
 
-    final case class TokenIdf(s: String) extends Token:
-        def repr =
-            s"""TokenIdf("$s")"""
+    final case class TokenIdf(s: String) extends Token
 
-    final case object TokenParenOpen extends Token:
-        def repr =
-            "TokenParenOpen()"
+    final case object TokenParenOpen extends Token
 
-    final case object TokenParenClose extends Token:
-        def repr =
-            "TokenParenClose()"
+    final case object TokenParenClose extends Token
 
-    final case object TokenLessMinus extends Token:
-        def repr =
-            "TokenLessMinus()"
+    final case object TokenLessMinus extends Token
 
-    final case object TokenEq extends Token:
-        def repr =
-            "TokenEq()"
+    final case object TokenEq extends Token
 
-    final case object TokenEndl extends Token:
-        def repr =
-            "TokenEndl()"
+    final case object TokenEndl extends Token
 
-    final case object TokenEqGr extends Token:
-        def repr =
-            "TokenEqGr()"
+    final case object TokenEqGr extends Token
 
-    final case object TokenDot extends Token:
-        def repr =
-            "TokenDot()"
+    final case object TokenDot extends Token
 
-    def unexpectedToken(token: Token) =
+
+    private val end_of_code: Char = 0
+
+    private val char_to_latin = Map(
+        "+" -> "plus_",
+        "-" -> "minus_",
+        "*" -> "star_",
+        "/" -> "slash_",
+        "%" -> "percent_",
+        ">" -> "greater_",
+        "<" -> "less_",
+        "=" -> "equal_",
+        "!" -> "exclamation_",
+        "~" -> "tilda_",
+        "|" -> "or_",
+        "&" -> "and_",
+    )
+
+    private val all_tokenizers: List[Tokenizer] = List(
+        lexx_idf,
+        lexx_integer,
+        lexx_paren_open,
+        lexx_paren_close,
+        lexx_eq_gr,
+        lexx_eq,
+        lexx_less_minus,
+        lexx_endl,
+        lexx_string,
+        lexx_operator,
+        lexx_dot,
+    )
+
+
+    private def unexpectedToken(token: Token) =
         rtFail(s"Unspecified case for `$token` of type `${type value}`.")
 
-    def match_token[A](
+    private def match_token[A](
         case_lit_str: Option[String => A] = None,
         case_lit_bint: Option[String => A] = None,
         case_idf: Option[String => A] = None,
@@ -87,35 +100,35 @@ object RtLib_2_Tokenize {
         }
 
 
-    def rt_assert_token_idf(token: Token) =
+    private def rt_assert_token_idf(token: Token) =
         match_token(
             case_idf = Some(_ => ()),
             otherwise = Some(() => rtFail())
         )
 
 
-    def is_initial_idf_char(char: Char) =
+    private def is_initial_idf_char(char: Char) =
         char == '_'
             || 'a' <= char && char <= 'z'
             || 'A' <= char && char <= 'Z'
 
-    def is_digit(char: Char) =
+    private def is_digit(char: Char) =
         '0' <= char && char <= '9'
 
 
-    def is_non_initial_idf_char(char: Char) =
+    private def is_non_initial_idf_char(char: Char) =
         is_initial_idf_char(char)
             || is_digit(char)
 
-    def is_operator_char(char: Char) =
+    private def is_operator_char(char: Char) =
         char_to_latin.keys.toSeq.contains(char.toString)
 
-    def fail_bad_eq_seq(code_ext: String, token_idx_end: Int) =
+    private def fail_bad_eq_seq(code_ext: String, token_idx_end: Int) =
         rtFail(s"""Unexpected sequence "=${code_ext(token_idx_end + 1)}".""")
 
 
     @tailrec
-    def get_idx_string_end_rec(code_ext: String, idx_string_end: Int): Int = {
+    private def get_idx_string_end_rec(code_ext: String, idx_string_end: Int): Int = {
         val current_string_char = code_ext(idx_string_end)
 
         if (current_string_char == '\"')
@@ -126,7 +139,7 @@ object RtLib_2_Tokenize {
     }
 
     @tailrec
-    def get_idx_idf_end_rec(code_ext: String, idf_current_idx: Int): Int = {
+    private def get_idx_idf_end_rec(code_ext: String, idf_current_idx: Int): Int = {
         val current_idf_char = code_ext(idf_current_idx)
 
         if (is_non_initial_idf_char(current_idf_char))
@@ -135,7 +148,7 @@ object RtLib_2_Tokenize {
     }
 
     @tailrec
-    def get_idx_operator_end_rec(code_ext: String, operator_current_idx: Int): Int = {
+    private def get_idx_operator_end_rec(code_ext: String, operator_current_idx: Int): Int = {
         val current_operator_char = code_ext(operator_current_idx)
 
         if (is_operator_char(current_operator_char))
@@ -143,7 +156,7 @@ object RtLib_2_Tokenize {
         else operator_current_idx
     }
 
-    def lexx_idf(code_ext: String, current_idx: Int, tokens: List[Token]) = {
+    private def lexx_idf(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(is_initial_idf_char(code_ext(current_idx)))
 
         val idx_idf_start = current_idx
@@ -155,7 +168,7 @@ object RtLib_2_Tokenize {
     }
 
     @tailrec
-    def get_idx_integer_end_rec(code_ext: String, idf_current_idx: Int): Int = {
+    private def get_idx_integer_end_rec(code_ext: String, idf_current_idx: Int): Int = {
         val current_idf_char = code_ext(idf_current_idx)
 
         if (is_digit(current_idf_char))
@@ -163,8 +176,7 @@ object RtLib_2_Tokenize {
         else idf_current_idx
     }
 
-
-    def lexx_integer(code_ext: String, current_idx: Int, tokens: List[Token]) = {
+    private def lexx_integer(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(is_digit(code_ext(current_idx)))
 
         val idx_idf_start = current_idx
@@ -175,43 +187,43 @@ object RtLib_2_Tokenize {
         )))
     }
 
-    def lexx_paren_open(code_ext: String, current_idx: Int, tokens: List[Token]) = {
+    private def lexx_paren_open(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext(current_idx) == '(')
         (code_ext, current_idx + 1, tokens.appended(TokenParenOpen))
     }
 
-    def lexx_paren_close(code_ext: String, current_idx: Int, tokens: List[Token]) = {
+    private def lexx_paren_close(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext(current_idx) == ')')
         (code_ext, current_idx + 1, tokens.appended(TokenParenClose))
     }
 
-    def lexx_eq_gr(code_ext: String, current_idx: Int, tokens: List[Token]) = {
+    private def lexx_eq_gr(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext.substring(current_idx).startsWith("=>"))
         (code_ext, current_idx + 2, tokens.appended(TokenEqGr))
     }
 
-    def lexx_less_minus(code_ext: String, current_idx: Int, tokens: List[Token]) = {
+    private def lexx_less_minus(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext.substring(current_idx).startsWith("<-"))
         (code_ext, current_idx + 2, tokens.appended(TokenLessMinus))
     }
 
-    def lexx_eq(code_ext: String, current_idx: Int, tokens: List[Token]) = {
+    private def lexx_eq(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext.substring(current_idx).startsWith("="))
         rt_assert(!is_operator_char(code_ext(current_idx + 1)))
         (code_ext, current_idx + 1, tokens.appended(TokenEq))
     }
 
-    def lexx_endl(code_ext: String, current_idx: Int, tokens: List[Token]) = {
+    private def lexx_endl(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext.substring(current_idx).startsWith("\n"))
         (code_ext, current_idx + 1, tokens.appended(TokenEndl))
     }
 
-    def lexx_dot(code_ext: String, current_idx: Int, tokens: List[Token]) = {
+    private def lexx_dot(code_ext: String, current_idx: Int, tokens: List[Token]) = {
         rt_assert(code_ext(current_idx) == '.')
         (code_ext, current_idx + 1, tokens.appended(TokenDot))
     }
 
-    def lexx_string(code_ext: String, token_idx_end: Int, tokens: List[Token]) = {
+    private def lexx_string(code_ext: String, token_idx_end: Int, tokens: List[Token]) = {
         rt_assert(code_ext(token_idx_end) == '\"')
         val idx_string_start = token_idx_end + 1
         val idx_string_end = get_idx_string_end_rec(code_ext, idx_string_start)
@@ -220,8 +232,7 @@ object RtLib_2_Tokenize {
         )))
     }
 
-
-    def lexx_operator(code_ext: String, token_idx_end: Int, tokens: List[Token]) = {
+    private def lexx_operator(code_ext: String, token_idx_end: Int, tokens: List[Token]) = {
         rt_assert(is_operator_char(code_ext(token_idx_end)))
         val idx_operator_start = token_idx_end
         val idx_operator_end = get_idx_operator_end_rec(code_ext, idx_operator_start)
@@ -230,11 +241,11 @@ object RtLib_2_Tokenize {
         )))
     }
 
-    type LexxBundle = (String, Int, List[Token])
-    type Tokenizer = LexxBundle => LexxBundle
+    private type LexxBundle = (String, Int, List[Token])
+    private type Tokenizer = LexxBundle => LexxBundle
 
     //@tailrec
-    def tokenize_first_of(
+    private def tokenize_first_of(
         code_ext: String,
         current_idx: Int,
         tokens: List[Token],
@@ -264,7 +275,7 @@ object RtLib_2_Tokenize {
     }
 
     //@tailrec
-    def tokenize_rec(
+    private def tokenize_rec(
         code_ext: String,
         current_idx: Int,
         tokens: List[Token],
@@ -284,37 +295,4 @@ object RtLib_2_Tokenize {
 
     def tokenize(code: String): List[Token] =
         tokenize_rec(code + end_of_code, 0, List())
-
-    val end_of_code: Char = 0
-
-
-    val char_to_latin = Map(
-        "+" -> "plus_",
-        "-" -> "minus_",
-        "*" -> "star_",
-        "/" -> "slash_",
-        "%" -> "percent_",
-        ">" -> "greater_",
-        "<" -> "less_",
-        "=" -> "equal_",
-        "!" -> "exclamation_",
-        "~" -> "tilda_",
-        "|" -> "or_",
-        "&" -> "and_",
-    )
-
-
-    val all_tokenizers: List[Tokenizer] = List(
-        lexx_idf,
-        lexx_integer,
-        lexx_paren_open,
-        lexx_paren_close,
-        lexx_eq_gr,
-        lexx_eq,
-        lexx_less_minus,
-        lexx_endl,
-        lexx_string,
-        lexx_operator,
-        lexx_dot,
-    )
 }

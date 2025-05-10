@@ -74,7 +74,7 @@ object RtLib_3_Parse {
     )
 
 
-    def match_expr[A](
+    private def match_expr[A](
         case_lit_str: String => A,
         case_lit_bint: String => A,
         case_idf: String => A,
@@ -91,7 +91,7 @@ object RtLib_3_Parse {
     }
 
     //@tailrec
-    def get_first_success(
+    private def get_first_success(
         parsers: List[(List[Token], Expr) => Expr],
         parser_args: (List[Token], Expr),
         fails: List[String] = List(),
@@ -116,7 +116,7 @@ object RtLib_3_Parse {
     }
 
     //@tailrec
-    def apply_all(
+    private def apply_all(
       funcs: List[(List[Token | Expr], List[Token | Expr]) => List[Token | Expr]],
       args: List[Token | Expr],
     ): List[Token | Expr] =
@@ -129,7 +129,7 @@ object RtLib_3_Parse {
         ) (funcs)
 
     //@tailrec
-    def preparse_idf_lit(
+    private def preparse_idf_lit(
         tokens_and_exprs: List[Token | Expr],
         acc: List[Token | Expr]
     ): List[Token | Expr] =
@@ -147,7 +147,7 @@ object RtLib_3_Parse {
         )(tokens_and_exprs)
 
     //@tailrec
-    def continue_preparse_braced(
+    private def continue_preparse_braced(
         ext_tokens_and_exprs: List[Token | Expr],
         acc: List[Token | Expr],
         acc_braced: List[Token | Expr],
@@ -167,7 +167,7 @@ object RtLib_3_Parse {
         )(ext_tokens_and_exprs)
 
     //@tailrec
-    def preparse_braced(
+    private def preparse_braced(
         tokens_and_exprs: List[Token | Expr],
         acc: List[Token | Expr],
     ): List[Token | Expr] =
@@ -180,7 +180,7 @@ object RtLib_3_Parse {
             )
         )(tokens_and_exprs)
 
-    def debrace_expr(expr: Expr): Expr =
+    private def debrace_expr(expr: Expr): Expr =
         match_expr(
             case_lit_str = _s => expr,
             case_lit_bint= _i => expr,
@@ -197,7 +197,7 @@ object RtLib_3_Parse {
         )(expr)
 
     //@tailrec
-    def preparse_debrace(
+    private def preparse_debrace(
         tokens_and_exprs: List[Token | Expr],
         acc: List[Token | Expr],
     ): List[Token | Expr] =
@@ -212,7 +212,7 @@ object RtLib_3_Parse {
         )(tokens_and_exprs)
 
     //@tailrec
-    def preparse_call(
+    private def preparse_call(
         tokens_and_exprs: List[Token | Expr],
         acc: List[Token | Expr],
     ): List[Token | Expr] =
@@ -240,7 +240,7 @@ object RtLib_3_Parse {
         )(tokens_and_exprs)
 
     //@tailrec
-    def preparse_dot(
+    private def preparse_dot(
         tokens_and_exprs: List[Token | Expr],
         acc: List[Token | Expr],
     ): List[Token | Expr] =
@@ -258,7 +258,7 @@ object RtLib_3_Parse {
         )(tokens_and_exprs)
 
     //@tailrec
-    def preparse_lambda_reversed_rec(
+    private def preparse_lambda_reversed_rec(
         reversed_tokens_and_exprs: List[Token | Expr],
         acc: List[Token | Expr],
     ): List[Token | Expr] =
@@ -275,7 +275,7 @@ object RtLib_3_Parse {
             case_empty=Some(() => acc),
         )(reversed_tokens_and_exprs)
 
-    def preparse_lambda(
+    private def preparse_lambda(
         tokens_and_exprs: List[Token | Expr],
         /**/ _acc: List[Token | Expr],
     ): List[Token | Expr] =
@@ -309,7 +309,7 @@ object RtLib_3_Parse {
         preparser
     }
 
-    def preparse_unary(operator: String)
+    private def preparse_unary(operator: String)
     : (List[Token | Expr], List[Token | Expr]) => List[Token | Expr] = {
         def preparser(
             tokens_and_exprs: List[Token | Expr],
@@ -329,7 +329,7 @@ object RtLib_3_Parse {
         preparser
     }
 
-    def parse_full_expr(tokens: List[Token | Expr]): Expr = {
+    private def parse_full_expr(tokens: List[Token | Expr]): Expr = {
         val preparsed = apply_all(allPreparsers, tokens)
 
         val (head_preparsed, tail_preparsed) = rt_assert_at_least_1(preparsed)
@@ -341,7 +341,7 @@ object RtLib_3_Parse {
         }
     }
 
-    def parse_line_with_less_minus(
+    private def parse_line_with_less_minus(
         current_line: List[Token],
         next_lines_expr: Expr,
     ): ExprCall1 = {
@@ -359,7 +359,7 @@ object RtLib_3_Parse {
         )
     }
 
-    def parse_line_with_equals(
+    private def parse_line_with_equals(
         current_line: List[Token],
         next_lines_expr: Expr,
     ): ExprCall1 = {
@@ -392,7 +392,7 @@ object RtLib_3_Parse {
         )
     }
 
-    def parse_effectful_line(
+    private def parse_effectful_line(
         current_line: List[Token],
         next_lines_expr: Expr,
     ): ExprCall1 = {
@@ -407,7 +407,7 @@ object RtLib_3_Parse {
     }
 
     //@tailrec
-    def parse_previous_lines(
+    private def parse_previous_lines(
         lines_reversed: List[List[Token]],
         acc_expr: Expr,
     ): Expr =
@@ -428,7 +428,7 @@ object RtLib_3_Parse {
         )(lines_reversed)
 
     //@tailrec
-    def get_lines_reversed(
+    private def get_lines_reversed(
         tokens_reversed: List[Token],
         acc_lines: List[List[Token]],
         acc_current_line: List[Token],
@@ -454,8 +454,8 @@ object RtLib_3_Parse {
         )(nonempty_lines_reversed)
     }
 
-    def full_parse(code: String): Expr =
-        parse(tokenize(code))
-
-    val typified_repr_endl = "\n"
+//    def full_parse(code: String): Expr =
+//        parse(tokenize(code))
+//
+//    private val typified_repr_endl = "\n"
 }
