@@ -33,10 +33,15 @@ object RtList {
             case head::tail => (head, tail)
             case Nil => rtFail(msg*)
         }
-        
+
+    def rt_assert_at_least_2[A](vals: List[A], msg: String*): (A, A, List[A]) =
+        val (head0, tail1) = rt_assert_at_least_1(vals, msg*)
+        val (head1, tail2) = rt_assert_at_least_1(tail1, msg*)
+        (head0, head1, tail2)
+
     def rt_assert_empty[A](vals: List[A], msg: String*): Unit =
         vals match {
-            case head::tail => rtFail((s"The list is not empty, `${vals}`." +: msg.toList)*)
+            case head::tail => rtFail(s"The list is not empty, `$vals`." +: msg.toList*)
             case Nil => ()
         }
 }

@@ -1,43 +1,9 @@
 package org.rt.lang
 
-import org.rt.lang.RtLib_0_0_Lits.{
-    builtin_and,
-    builtin_div,
-    builtin_eq_eq,
-    builtin_flatmap,
-    builtin_floor_div,
-    builtin_gr,
-    builtin_gr_eq,
-    builtin_less,
-    builtin_less_eq,
-    builtin_minus,
-    builtin_mod,
-    builtin_multiply,
-    builtin_not,
-    builtin_not_eq,
-    builtin_or,
-    builtin_plus,
-    builtin_pure,
-}
-import org.rt.lang.RtLib_2_Tokenize.{
-    Token,
-    TokenDot,
-    TokenEndl,
-    TokenEqGr,
-    TokenIdf,
-    TokenLitBint,
-    TokenLitStr,
-    TokenParenClose,
-    TokenParenOpen,
-}
-import org.rt.utils.RtFail.{
-    rtFail,
-    rt_assert_type_TokenEq,
-    rt_assert_type_TokenIdf,
-    rt_assert_type_TokenLessMinus,
-    try_and_match,
-}
-import org.rt.utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_empty}
+import org.rt.lang.RtLib_0_0_Lits.{builtin_and, builtin_div, builtin_eq_eq, builtin_flatmap, builtin_floor_div, builtin_gr, builtin_gr_eq, builtin_less, builtin_less_eq, builtin_minus, builtin_mod, builtin_multiply, builtin_not, builtin_not_eq, builtin_or, builtin_plus, builtin_pure}
+import org.rt.lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEndl, TokenEqGr, TokenIdf, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen}
+import org.rt.utils.RtFail.{rtFail, rt_assert_type_TokenEq, rt_assert_type_TokenIdf, rt_assert_type_TokenLessMinus, try_and_match}
+import org.rt.utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_at_least_2, rt_assert_empty}
 
 object RtLib_3_Parse {
     sealed trait Expr
@@ -344,11 +310,13 @@ object RtLib_3_Parse {
         current_line: List[Token],
         next_lines_expr: Expr,
     ): ExprCall1 = {
-        //val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
-        val idf = rt_assert_type_TokenIdf(current_line(0)) // todo unsafe
-        //rt_assert_type[TokenLessMinus.type](current_line(1)) // todo unsafe
-        rt_assert_type_TokenLessMinus(current_line(1)) // todo unsafe
-        val right_expr = parse_full_expr(current_line.drop(2))
+        val (head0, head1, tail2) = rt_assert_at_least_2(current_line)
+
+        val idf = rt_assert_type_TokenIdf(head0)
+        rt_assert_type_TokenLessMinus(head1)
+
+        val right_expr = parse_full_expr(tail2)
+
         ExprCall1(
             ExprCall1(
                 ExprIdf(builtin_flatmap),
@@ -362,23 +330,13 @@ object RtLib_3_Parse {
         current_line: List[Token],
         next_lines_expr: Expr,
     ): ExprCall1 = {
-        println("parse_line_with_equals")
-        println(s"current_line $current_line")
-        println(s"next_lines_expr $next_lines_expr")
-        println("")
-        //val idf = rt_assert_type[TokenIdf](current_line(0)) // todo unsafe
-        val idf = rt_assert_type_TokenIdf(current_line(0)) // todo unsafe
-        println(s"idf $idf")
-        println("")
+        val (head0, head1, tail2) = rt_assert_at_least_2(current_line)
 
-        //rt_assert_type[TokenEq.type](current_line(1)) // todo unsafe
-        rt_assert_type_TokenEq(current_line(1)) // todo unsafe
+        val idf = rt_assert_type_TokenIdf(head0)
+        rt_assert_type_TokenEq(head1)
 
-        println(current_line(1))
-        println(rt_assert_type_TokenEq(current_line(1)))
-        println("... = ...")
-        println("")
-        val right_expr = parse_full_expr(current_line.drop(2))
+        val right_expr = parse_full_expr(tail2)
+
         ExprCall1(
             ExprCall1(
                 ExprIdf(builtin_flatmap),
