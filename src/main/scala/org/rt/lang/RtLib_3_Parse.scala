@@ -6,50 +6,19 @@ import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_type_TokenEq, rt_assert
 import org.rt.utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_empty}
 
 object RtLib_3_Parse {
-    sealed trait Expr {
-        def repr(indent: String = ""): String
-    }
+    sealed trait Expr
 
-    final case class ExprLitStr(s: String) extends Expr:
-        def repr(indent: String = "") =
-            //if expr_repr_flat(): pass
-            s"""${indent}Expr_Lit_Str("$s")"""
+    final case class ExprLitStr(s: String) extends Expr
 
-    final case class ExprLitBint(i: String) extends Expr:
-        def repr(indent: String = "") =
-            //if expr_repr_flat(): pass
-            s"""${indent}ExprLitBint($i)"""
+    final case class ExprLitBint(i: String) extends Expr
 
-    final case class ExprIdf(s: String) extends Expr:
-        def repr(indent: String = "") =
-            //if expr_repr_flat(): pass
-            s"""${indent}Expr_Idf("$s")"""
+    final case class ExprIdf(s: String) extends Expr
 
-    final case class ExprCall1(expr_f: Expr, expr_x: Expr) extends Expr:
-        def repr(indent: String = "") =
-            //if expr_repr_flat(): pass
-            (     s"""${indent}Expr_Call_1($typified_repr_endl"""
-                + s"""${expr_f.repr(indent + " "*4)},$typified_repr_endl"""
-                + s"""${expr_x.repr(indent + " "*4)}$typified_repr_endl"""
-                + s"""$indent)"""
-                )
+    final case class ExprCall1(expr_f: Expr, expr_x: Expr) extends Expr
 
-    final case class ExprLambda1(expr_idf_arg: ExprIdf, expr_res: Expr) extends Expr:
-        def repr(indent: String = "") =
-            //if expr_repr_flat(): pass
-            (     s"""${indent}Expr_Lambda_1($typified_repr_endl"""
-                + s"""${expr_idf_arg.repr(indent + " "*4)},$typified_repr_endl"""
-                + s"""${expr_res.repr(indent + " "*4)}$typified_repr_endl"""
-                + s"""$indent)"""
-                )
+    final case class ExprLambda1(expr_idf_arg: ExprIdf, expr_res: Expr) extends Expr
 
-    final case class ExprBraced(expr: Expr) extends Expr:
-        def repr(indent: String = "") =
-            //if expr_repr_flat(): pass
-            (     s"""${indent}ExprBraced($typified_repr_endl"""
-                + s"""${expr.repr(indent + " "*4)}$typified_repr_endl"""
-                + s"""$indent)"""
-                )
+    final case class ExprBraced(expr: Expr) extends Expr
 
     def is_expr(expr: Expr): Boolean =
         true
