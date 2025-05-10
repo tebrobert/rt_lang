@@ -11,7 +11,8 @@ object RtFail {
     if (cond)
         rtFail(msg:_*)
 
-  def rt_assert(cond: Boolean, msg: String = "Assertion error.") =
+  // todo - either
+  def rt_assert(cond: Boolean, msg: String = "Assertion error."): Unit =
     fail_if(!cond, msg)
 
   def try_and_match[A, B](

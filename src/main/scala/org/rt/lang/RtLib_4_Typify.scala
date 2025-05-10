@@ -1,6 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_0_1_Types.Typ
+import org.rt.utils.RtFail.rt_assert
 
 object RtLib_4_Typify {
   sealed trait Typified
@@ -21,6 +22,7 @@ object RtLib_4_Typify {
     typ: Typ,
   ) extends Typified {
     def apply(typified_f: Typified, typified_x: Typified, typ: Typ): TypifiedCall1 =
+      //rt_assert(typified_f.isInstanceOf[])
       ??? ///  todo
   }
 
