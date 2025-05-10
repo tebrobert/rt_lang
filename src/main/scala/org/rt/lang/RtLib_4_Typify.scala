@@ -33,7 +33,7 @@ object RtLib_4_Typify {
       ??? ///  todo
   }
 
-  def match_typified[A](
+  private def match_typified[A](
     case_lit: (String, Typ) => A,
     case_idf: (String, Typ) => A,
     case_call_1: (Typified, Typified, Typ) => A,
