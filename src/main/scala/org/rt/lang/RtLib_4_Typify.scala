@@ -1,7 +1,8 @@
 package org.rt.lang
 
-import org.rt.lang.RtLib_0_1_Types.Typ
-import org.rt.utils.RtFail.rt_assert
+import org.rt.lang.RtLib_0_0_Lits.builtin_Func
+import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0}
+import org.rt.utils.RtFail.{rtFail, rt_assert}
 
 object RtLib_4_Typify {
   sealed trait Typified {
@@ -25,9 +26,25 @@ object RtLib_4_Typify {
   ) extends Typified
 
   object TypifiedCall1 {
-    def apply(typified_f: Typified, typified_x: Typified, typ: Typ): TypifiedCall1 =
-      //rt_assert(typified_f.isInstanceOf[])
+    def apply(typified_f: Typified, typified_x: Typified, typ: Typ): TypifiedCall1 = {
+      typified_f.typ match {
+        case Unk0(_) => ()
+        case Typ2(`builtin_Func`, _, _) => ()
+        case _ => rtFail()
+      }
+
+      (typified_f.typ, typified_x.typ) match {
+        case (Typ2(_, f_typ_t1, _), x_typ)
+          if Seq(f_typ_t1, x_typ).exists(_.isInstanceOf[Unk0]) =>
+          ()
+        case (Typ2(_, f_typ_t1, _), x_typ)
+          if Set(f_typ_t1, x_typ).map(_.getClass.getSimpleName).size == 1 =>
+          ()
+        case _ => rtFail()
+      }
+
       new TypifiedCall1(typified_f, typified_x, typ)
+    }
   }
 
   final case class TypifiedLambda1(
