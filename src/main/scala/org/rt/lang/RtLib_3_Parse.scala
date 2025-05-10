@@ -19,6 +19,24 @@ object RtLib_3_Parse {
     final case class ExprLambda1(expr_idf_arg: ExprIdf, expr_res: Expr) extends Expr
 
     final case class ExprBraced(expr: Expr) extends Expr
+    
+    
+    private val allPreparsers = List(
+        preparse_idf_lit,
+        preparse_braced,
+        preparse_call,
+        preparse_debrace,
+        preparse_dot,
+        preparse_unary(builtin_minus),
+        preparse_unary(builtin_not),
+        preparse_left_to_right(builtin_multiply, builtin_div, builtin_floor_div, builtin_mod),
+        preparse_left_to_right(builtin_plus, builtin_minus),
+        preparse_left_to_right(builtin_less, builtin_less_eq, builtin_gr, builtin_gr_eq),
+        preparse_left_to_right(builtin_eq_eq, builtin_not_eq),
+        preparse_left_to_right(builtin_and),
+        preparse_left_to_right(builtin_or),
+        preparse_lambda,
+    )
 
 
     def match_expr[A](
@@ -275,22 +293,7 @@ object RtLib_3_Parse {
     }
 
     def parse_full_expr(tokens: List[Token | Expr]): Expr = {
-        val preparsed = apply_all(List(
-            preparse_idf_lit,
-            preparse_braced,
-            preparse_call,
-            preparse_debrace,
-            preparse_dot,
-            preparse_unary(builtin_minus),
-            preparse_unary(builtin_not),
-            preparse_left_to_right(builtin_multiply, builtin_div, builtin_floor_div, builtin_mod),
-            preparse_left_to_right(builtin_plus, builtin_minus),
-            preparse_left_to_right(builtin_less, builtin_less_eq, builtin_gr, builtin_gr_eq),
-            preparse_left_to_right(builtin_eq_eq, builtin_not_eq),
-            preparse_left_to_right(builtin_and),
-            preparse_left_to_right(builtin_or),
-            preparse_lambda,
-        ), tokens)
+        val preparsed = apply_all(allPreparsers, tokens)
 
         val (head_preparsed, tail_preparsed) = rt_assert_at_least_1(preparsed)
         rt_assert_empty(tail_preparsed)
