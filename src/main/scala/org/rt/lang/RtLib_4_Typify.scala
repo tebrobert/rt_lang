@@ -32,4 +32,19 @@ object RtLib_4_Typify {
     def apply(typified_idf_x: Typified, typified_res: Typified, typ:Option[Typ] = None): TypifiedLambda1 =
       ??? ///  todo
   }
+
+  def match_typified[A](
+    case_lit: (String, Typ) => A,
+    case_idf: (String, Typ) => A,
+    case_call_1: (Typified, Typified, Typ) => A,
+    case_lambda_1: (Typified, Typified, Option[Typ]) => A,
+  ): Typified => A = {
+    case TypifiedLit(s, typ) => case_lit(s, typ)
+    case TypifiedIdf(s, typ) => case_idf(s, typ)
+    case TypifiedCall1(typified_f, typified_x, typ) => case_call_1(typified_f, typified_x, typ)
+    case TypifiedLambda1(typified_idf_x, typified_res, typ) => case_lambda_1(typified_idf_x, typified_res, typ)
+  }
+
+
+  //remaining: 20
 }
