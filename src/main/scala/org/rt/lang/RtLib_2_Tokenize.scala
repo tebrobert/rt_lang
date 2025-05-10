@@ -95,7 +95,6 @@ object RtLib_2_Tokenize {
                 case TokenEndl => case_endl
                 case TokenEqGr => case_eq_gr
                 case TokenDot => case_dot
-                case _ => Some(() => rtFail(s"Value $token ${type token} is not a Token."))
             )
         }
 
