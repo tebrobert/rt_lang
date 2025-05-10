@@ -81,14 +81,14 @@ object RtLib_3_Parse {
         case_call_1: (Expr, Expr) => A,
         case_lambda_1: (ExprIdf, Expr) => A,
         case_braced: Expr => A,
-    ): Expr => A =
-        (expr: Expr) => expr match
-            case ExprLitStr(s) => case_lit_str(s)
-            case ExprLitBint(i) => case_lit_bint(i)
-            case ExprIdf(s) => case_idf(s)
-            case ExprCall1(expr_f, expr_x) => case_call_1(expr_f, expr_x)
-            case ExprLambda1(expr_idf_arg, expr_res) => case_lambda_1(expr_idf_arg, expr_res)
-            case ExprBraced(expr) => case_braced(expr)
+    ): Expr => A = {
+        case ExprLitStr(s) => case_lit_str(s)
+        case ExprLitBint(i) => case_lit_bint(i)
+        case ExprIdf(s) => case_idf(s)
+        case ExprCall1(expr_f, expr_x) => case_call_1(expr_f, expr_x)
+        case ExprLambda1(expr_idf_arg, expr_res) => case_lambda_1(expr_idf_arg, expr_res)
+        case ExprBraced(expr) => case_braced(expr)
+    }
 
     //@tailrec
     def get_first_success(
@@ -284,7 +284,9 @@ object RtLib_3_Parse {
         ).reverse
 
 
-    def preparse_left_to_right(operator_strings: String*) = {
+    private def preparse_left_to_right(
+        operator_strings: String*
+    ): (List[Token | Expr], List[Token | Expr]) => List[Token | Expr] = {
         //@tailrec
         def preparser(
             tokens_and_exprs: List[Token | Expr],
