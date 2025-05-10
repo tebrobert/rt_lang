@@ -58,13 +58,13 @@ class TypifiedCall1:
 
 
 class TypifiedLambda1:
-    def __init__(self, typified_idf_x, typified_res, typ=None):
+    def __init__(self, typified_idf_x, typified_res, typ):
         rt_assert(type(typified_idf_x) is TypifiedIdf)
-        rt_assert(typ is None or type(typ) is Typ2 and typ.s == builtin_Func)
+        rt_assert(type(typ) is Unk0 or type(typ) is Typ2 and typ.s == builtin_Func)
         self.typified_idf_x = typified_idf_x
         self.typified_res = typified_res
         self.typ = (typ
-                    if typ is not None else
+                    if type(typ) is not Unk0 else
                     T_Func(typified_idf_x.typ, typified_res.typ)
                     )
 
@@ -338,7 +338,7 @@ def typify_set_lambda_1(expr_arg, expr_res):
             def action():
                 found_typ_arg = find_idf_typ(typified_res, typified_arg.s)
                 retypified_arg = replace_typ(typified_arg, found_typ_arg)
-                return TypifiedLambda1(retypified_arg, typified_res)
+                return TypifiedLambda1(retypified_arg, typified_res, Unk0(0))
 
             mb_res = rt_try(action)
             if not is_fail(mb_res):
