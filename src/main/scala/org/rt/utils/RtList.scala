@@ -1,6 +1,6 @@
-package utils
+package org.rt.utils
 
-import utils.RtFail.rtFail
+import RtFail.rtFail
 
 object RtList {
     def match_list[A, B](

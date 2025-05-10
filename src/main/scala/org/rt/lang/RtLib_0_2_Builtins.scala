@@ -1,7 +1,7 @@
-package lang
+package org.rt.lang
 
-import lang.RtLib_0_0_Lits._
-import lang.RtLib_0_1_Types._
+import RtLib_0_0_Lits._
+import RtLib_0_1_Types._
 
 object RtLib_0_2_Builtins {
     val T_Bint = Typ0(builtin_Bint)

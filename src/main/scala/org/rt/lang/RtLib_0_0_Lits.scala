@@ -1,6 +1,6 @@
-package lang
+package org.rt.lang
 
-import utils.RtFail.rtFail
+import org.rt.utils.RtFail.rtFail
 
 object RtLib_0_0_Lits {
   val builtin_Bint = "Bint"

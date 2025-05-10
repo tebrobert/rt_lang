@@ -1,7 +1,7 @@
-package lang
+package org.rt.lang
 
-import utils.RtFail.{rtFail, rt_assert, try_and_match}
-import utils.RtList.match_list
+import org.rt.utils.RtFail.{rtFail, rt_assert, try_and_match}
+import org.rt.utils.RtList.match_list
 
 import scala.annotation.tailrec
 

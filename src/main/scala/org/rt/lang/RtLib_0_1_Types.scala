@@ -1,7 +1,7 @@
-package lang
+package org.rt.lang
 
-import lang.RtLib_0_0_Lits.builtin_Func
-import utils.RtFail.rtFail
+import RtLib_0_0_Lits.builtin_Func
+import org.rt.utils.RtFail.rtFail
 
 object RtLib_0_1_Types {
     sealed trait Typ

@@ -1,9 +1,9 @@
-package lang
+package org.rt.lang
 
-import lang.RtLib_0_0_Lits.*
-import lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEndl, TokenEq, TokenEqGr, TokenIdf, TokenLessMinus, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen, tokenize}
-import utils.RtFail.{rtFail, rt_assert, rt_assert_type_TokenEq, rt_assert_type_TokenIdf, rt_assert_type_TokenLessMinus, try_and_match}
-import utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_empty}
+import RtLib_0_0_Lits.*
+import RtLib_2_Tokenize.{Token, TokenDot, TokenEndl, TokenEq, TokenEqGr, TokenIdf, TokenLessMinus, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen, tokenize}
+import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_type_TokenEq, rt_assert_type_TokenIdf, rt_assert_type_TokenLessMinus, try_and_match}
+import org.rt.utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_empty}
 
 object RtLib_3_Parse {
     sealed trait Expr {

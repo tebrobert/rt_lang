@@ -1,7 +1,7 @@
-package utils
+package org.rt.utils
 
-import lang.RtLib_2_Tokenize.{Token, TokenEq, TokenIdf, TokenLessMinus}
-import lang.RtLib_3_Parse.Expr
+import org.rt.lang.RtLib_2_Tokenize.{Token, TokenEq, TokenIdf, TokenLessMinus}
+import org.rt.lang.RtLib_3_Parse.Expr
 
 object RtFail {
   def rtFail(msgs: String*) =

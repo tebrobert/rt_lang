@@ -1,8 +1,8 @@
 package org.rt.allTests
 
-import lang.RtLib_2_Tokenize.*
-import lang.RtLib_3_Parse.*
 import org.rt.RtTestCase
+import org.rt.lang.RtLib_2_Tokenize.*
+import org.rt.lang.RtLib_3_Parse.*
 
 object TestCase4 extends RtTestCase {
   val code_0 = "(s => s)((s => s)(input))\n"
