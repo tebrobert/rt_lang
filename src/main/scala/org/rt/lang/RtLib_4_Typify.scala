@@ -17,7 +17,7 @@ object RtLib_4_Typify {
     typ: Typ,
   ) extends Typified
 
-  final case class TypifiedCall1(
+  final case class TypifiedCall1 private (
     typified_f: Typified,
     typified_x: Typified,
     typ: Typ,
