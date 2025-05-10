@@ -4,8 +4,9 @@ import org.rt.lang.RtLib_0_1_Types.Typ
 import org.rt.utils.RtFail.rt_assert
 
 object RtLib_4_Typify {
-  //todo - typ? then what about TypifiedLambda1?
-  sealed trait Typified
+  sealed trait Typified {
+    val typ: Typ
+  }
 
   final case class TypifiedLit(
     s: String,
@@ -32,7 +33,7 @@ object RtLib_4_Typify {
   final case class TypifiedLambda1(
     typified_idf_x: Typified,
     typified_res: Typified,
-    typ:Option[Typ] = None,
+    typ: Typ,
   ) extends Typified {
     def apply(typified_idf_x: Typified, typified_res: Typified, typ:Option[Typ] = None): TypifiedLambda1 =
       ??? ///  todo
@@ -42,7 +43,7 @@ object RtLib_4_Typify {
     case_lit: (String, Typ) => A,
     case_idf: (String, Typ) => A,
     case_call_1: (Typified, Typified, Typ) => A,
-    case_lambda_1: (Typified, Typified, Option[Typ]) => A,
+    case_lambda_1: (Typified, Typified, Typ) => A,
   ): Typified => A = {
     case TypifiedLit(s, typ) => case_lit(s, typ)
     case TypifiedIdf(s, typ) => case_idf(s, typ)
