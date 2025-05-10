@@ -19,5 +19,3 @@ val allTestCases = List(
   TestCase13,
   TestCase14,
 )
-
-val allTestCases_22 = allTestCases.dropRight(3).takeRight(1)
