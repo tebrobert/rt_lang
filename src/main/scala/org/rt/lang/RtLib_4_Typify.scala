@@ -2,6 +2,7 @@ package org.rt.lang
 
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0}
+import org.rt.lang.RtLib_0_2_Builtins.T_Func
 import org.rt.utils.RtFail.{rtFail, rt_assert}
 
 object RtLib_4_Typify {
@@ -56,8 +57,26 @@ object RtLib_4_Typify {
     typified_res: Typified,
     typ: Typ,
   ) extends Typified {
-    def apply(typified_idf_x: Typified, typified_res: Typified, typ:Option[Typ] = None): TypifiedLambda1 =
-      ??? ///  todo
+    def apply(typified_idf_x: Typified, typified_res: Typified, typ: Typ): TypifiedLambda1 = {
+      typified_idf_x match {
+        case TypifiedIdf(_, _) => () // perhaps: specify arg type
+        case _ => rtFail()
+      }
+
+      typ match {
+        case Unk0(-1) => () // maybe typ is always Func2
+        case Typ2(`builtin_Func`, _, _) => ()
+        case _ => ???
+      }
+
+      TypifiedLambda1(
+        typified_idf_x,
+        typified_res,
+        if (typ != Unk0(-1))
+          typ
+        else T_Func(typified_idf_x.typ, typified_res.typ),
+      )
+    }
   }
 
   private def match_typified[A](
