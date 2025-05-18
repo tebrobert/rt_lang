@@ -34,12 +34,10 @@ object RtLib_4_Typify {
       }
 
       (typified_f.typ, typified_x.typ) match {
+        case (Typ2(_, Unk0(_), _), _) => () // suspicious: what if typ_f is Unk
+        case (_, Unk0(_)) => ()
         case (Typ2(_, f_typ_t1, _), x_typ)
-          if Seq(f_typ_t1, x_typ).exists(_.isInstanceOf[Unk0]) =>
-          ()
-        case (Typ2(_, f_typ_t1, _), x_typ)
-          if Set(f_typ_t1, x_typ).map(_.getClass.getSimpleName).size == 1 =>
-          ()
+          if f_typ_t1 == x_typ => ()
         case _ => rtFail()
       }
 
