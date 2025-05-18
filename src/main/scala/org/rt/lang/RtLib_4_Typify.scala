@@ -66,7 +66,7 @@ object RtLib_4_Typify {
       typ match {
         case Unk0(-1) => () // maybe typ is always Func2
         case Typ2(`builtin_Func`, _, _) => ()
-        case _ => ???
+        case _ => rtFail()
       }
 
       TypifiedLambda1(
