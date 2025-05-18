@@ -91,7 +91,7 @@ object RtLib_4_Typify {
     case TypifiedLambda1(typified_idf_x, typified_res, typ) => case_lambda_1(typified_idf_x, typified_res, typ)
   }
 
-  def replace_typ_lambda_1(typified_idf_x: Typified, typified_res: Typified, new_typ: Typ) = {
+  def replace_typ_lambda_1(typified_idf_x: Typified, typified_res: Typified, new_typ: Typ): TypifiedLambda1 = {
     new_typ match {
       case Unk0(_) =>
         ()
@@ -110,8 +110,23 @@ object RtLib_4_Typify {
     }
   }
 
+  def replace_typ_call_1(typed_f: Typified, typed_x: Typified, new_typ: Typ): Typified =
+    TypifiedCall1(
+      typed_f.typ match {
+        case Unk0(i) =>
+          replace_typ(typed_f, T_Func(typed_x.typ, new_typ)) // typed_f - legacy comment
+
+        case Typ2(_, t1, _) =>
+          replace_typ(typed_f, T_Func(t1, new_typ))
+
+        case _ => rtFail(s"Unexpected type `${typed_f.typ}`.")
+      },
+      typed_x,
+      new_typ,
+    )
+
   def replace_typ(typified: Typified, new_typ: Typ): Typified =
     ???
 
-  //remaining: 19
+  //remaining: 18
 }
