@@ -3,14 +3,14 @@ package org.rt.lang
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0}
 import org.rt.lang.RtLib_0_2_Builtins.T_Func
-import org.rt.utils.RtFail.{rtFail, rt_assert}
+import org.rt.utils.RtFail.rtFail
 
 object RtLib_4_Typify {
   sealed trait Typified {
     val typ: Typ
   }
 
-  final case class TypifiedLit(
+  private final case class TypifiedLit(
     s: String,
     typ: Typ,
   ) extends Typified
@@ -91,7 +91,7 @@ object RtLib_4_Typify {
     case TypifiedLambda1(typified_idf_x, typified_res, typ) => case_lambda_1(typified_idf_x, typified_res, typ)
   }
 
-  def replace_typ_lambda_1(typified_idf_x: Typified, typified_res: Typified, new_typ: Typ): TypifiedLambda1 = {
+  private def replace_typ_lambda_1(typified_idf_x: Typified, typified_res: Typified, new_typ: Typ): TypifiedLambda1 = {
     new_typ match {
       case Unk0(_) =>
         ()
@@ -110,7 +110,7 @@ object RtLib_4_Typify {
     }
   }
 
-  def replace_typ_call_1(typed_f: Typified, typed_x: Typified, new_typ: Typ): Typified =
+  private def replace_typ_call_1(typed_f: Typified, typed_x: Typified, new_typ: Typ): Typified =
     TypifiedCall1(
       typed_f.typ match {
         case Unk0(i) =>
@@ -125,8 +125,14 @@ object RtLib_4_Typify {
       new_typ,
     )
 
-  def replace_typ(typified: Typified, new_typ: Typ): Typified =
-    ???
+  private def replace_typ(typified: Typified, new_typ: Typ): Typified =
+    match_typified(
+      case_lit = (s, typ) => TypifiedLit(s, typ),
+      case_idf = (s, _) => TypifiedIdf(s, new_typ),
+      case_call_1 = (typed_f, typed_x, _) => replace_typ_call_1(typed_f, typed_x, new_typ),
+      case_lambda_1 = (typified_idf_x, typified_res, _typ) =>
+        replace_typ_lambda_1(typified_idf_x, typified_res, new_typ),
+    )(typified)
 
-  //remaining: 18
+  //remaining: 17
 }
