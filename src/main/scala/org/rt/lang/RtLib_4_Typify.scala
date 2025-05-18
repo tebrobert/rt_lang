@@ -72,7 +72,7 @@ object RtLib_4_Typify {
       TypifiedLambda1(
         typified_idf_x,
         typified_res,
-        if (typ != Unk0(-1))
+        if (typ != Unk0(-1)) // perhaps: intermediatory Unk0(-1) unneeded
           typ
         else T_Func(typified_idf_x.typ, typified_res.typ),
       )
