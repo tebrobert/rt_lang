@@ -36,8 +36,14 @@ object RtLib_4_Typify {
       (typified_f.typ, typified_x.typ) match {
         case (Typ2(_, Unk0(_), _), _) => () // suspicious: what if typ_f is Unk
         case (_, Unk0(_)) => ()
-        case (Typ2(_, f_typ_t1, _), x_typ)
-          if f_typ_t1 == x_typ => ()
+        case (Typ2(_, typified_x.typ, _), x_typ) => ()
+        case _ => rtFail()
+      }
+
+      (typified_f.typ, typ) match {
+        case (Typ2(_, _, Unk0(_)), _) => () // suspicious: what if typ_f is Unk
+        case (_, Unk0(_)) => ()
+        case (Typ2(_, _, `typ`), _) => ()
         case _ => rtFail()
       }
 
