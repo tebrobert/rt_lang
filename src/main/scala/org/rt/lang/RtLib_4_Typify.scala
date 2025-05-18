@@ -91,6 +91,27 @@ object RtLib_4_Typify {
     case TypifiedLambda1(typified_idf_x, typified_res, typ) => case_lambda_1(typified_idf_x, typified_res, typ)
   }
 
+  def replace_typ_lambda_1(typified_idf_x: Typified, typified_res: Typified, new_typ: Typ) = {
+    new_typ match {
+      case Unk0(_) =>
+        ()
+        rtFail("not implemented...?")
 
-  //remaining: 20
+      case Typ2(`builtin_Func`, new_typ_t1, new_typ_t2) =>
+        val updated_typified_idf_x = replace_typ(typified_idf_x, new_typ_t1)
+        val updated_typified_res = replace_typ(typified_res, new_typ_t2)
+        TypifiedLambda1(
+          updated_typified_idf_x,
+          updated_typified_res,
+          new_typ,
+        )
+
+      case _ => rtFail(s"Unexpected type `$new_typ`.")
+    }
+  }
+
+  def replace_typ(typified: Typified, new_typ: Typ): Typified =
+    ???
+
+  //remaining: 19
 }
