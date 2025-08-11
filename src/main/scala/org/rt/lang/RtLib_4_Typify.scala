@@ -3,8 +3,10 @@ package org.rt.lang
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ1, Typ2, Unk0, increase_unk, match_typ, update_typ}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Func, T_Str, idf_to_typ}
-import org.rt.lang.RtLib_3_Parse.{Expr, match_expr}
+import org.rt.lang.RtLib_3_Parse.{Expr, full_parse, match_expr}
 import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, rt_try, wip}
+
+import scala.collection.immutable.{AbstractSet, SortedSet}
 
 object RtLib_4_Typify {
   sealed trait Typified {
@@ -400,5 +402,15 @@ object RtLib_4_Typify {
       case_braced = inner_expr => typify_set(inner_expr),
     )(expr)
 
-  //remaining: 4
+  def typify(
+    expr: Expr,
+  ): Typified = {
+    val typified_set = typify_set(expr)
+    typified_set.toList match {
+      case head::Nil => head
+      case _ => rtFail(typified_set.toString)
+    }
+  }
+  def full_typify(code: String) =
+      typify(full_parse(code))
 }
