@@ -55,12 +55,15 @@ object RtLib_4_Typify {
     }
   }
 
-  final case class TypifiedLambda1(
+  final case class TypifiedLambda1 private(
     typified_idf_x: Typified,
     typified_res: Typified,
     typ: Typ,
-  ) extends Typified {
-    def apply(typified_idf_x: Typified, typified_res: Typified, typ: Typ): TypifiedLambda1 = {
+  ) extends Typified
+
+  object TypifiedLambda1 {
+    // todo - contemplate/reconsider
+    def create(typified_idf_x: Typified, typified_res: Typified, typ: Typ): TypifiedLambda1 = {
       typified_idf_x match {
         case TypifiedIdf(_, _) => () // perhaps: specify arg type
         case _ => rtFail()
@@ -102,7 +105,7 @@ object RtLib_4_Typify {
       case Typ2(`builtin_Func`, new_typ_t1, new_typ_t2) =>
         val updated_typified_idf_x = replace_typ(typified_idf_x, new_typ_t1)
         val updated_typified_res = replace_typ(typified_res, new_typ_t2)
-        TypifiedLambda1(
+        TypifiedLambda1.create(
           updated_typified_idf_x,
           updated_typified_res,
           new_typ,
@@ -379,7 +382,7 @@ object RtLib_4_Typify {
         val retypified_arg = replace_typ(typified_arg, found_typ_arg)
 
         //todo - likely, next Unk0 needed
-        TypifiedLambda1(retypified_arg, typified_res, Unk0(-1))
+        TypifiedLambda1.create(retypified_arg, typified_res, Unk0(-1))
       }
     } yield mb_res)
       .collect { case Right(typified) => typified }
