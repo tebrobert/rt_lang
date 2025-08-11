@@ -3,7 +3,8 @@ package org.rt.lang
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ1, Typ2, Unk0, increase_unk, match_typ, update_typ}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Func}
-import org.rt.utils.RtFail.{rtFail, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, wip}
+import org.rt.lang.RtLib_3_Parse.Expr
+import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, rt_try, wip}
 
 object RtLib_4_Typify {
   sealed trait Typified {
@@ -333,5 +334,29 @@ object RtLib_4_Typify {
     TypifiedCall1(new_typified_f, new_typified_x, new_typ2_f.t2)
   }
 
-  //remaining: 7
+  def typify_set_call_1(
+    expr_f: Expr,
+    expr_x: Expr,
+  ) =
+    (for {
+      typified_f <- typify_set(expr_f)
+      _ = rt_assert(
+        (typified_f.typ.isInstanceOf[Typ2]
+          && typified_f.typ.asInstanceOf[Typ2].s == builtin_Func // todo - try better typing
+          ) || typified_f.typ.isInstanceOf[Unk0]
+      )
+      typified_x <- typify_set(expr_x)
+
+      mb_current_typified_call1 = rt_try(() =>
+        if (typified_f.typ.isInstanceOf[Unk0])
+          continue_typifying_call_1_with_unknown_f(typified_f, typified_x)
+        else if (typified_x.typ.isInstanceOf[Unk0])
+          continue_typifying_call_1_with_unknown_x(typified_f, typified_x)
+        else continue_typifying_call_1(typified_f, typified_x)
+      )
+    } yield mb_current_typified_call1)
+      .collect {case Right(typified) => typified}
+
+  //remaining: 6
+  def typify_set(expr: Expr): Set[Typified] = ???
 }

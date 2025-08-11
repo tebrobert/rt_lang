@@ -71,6 +71,16 @@ object RtFail {
       case _ => rtFail(s"Expected Unk0, got `$value`")
     }
 
+  def rt_try[A](action: () => A): Either[Throwable, A] =
+      try {
+          Right(action())
+      } catch {
+        case e: Throwable =>
+          Left(e)
+        // traceback.format_exc()
+        // RtError
+      }
+
   def wip(msgs: String*): Nothing = {
     //caller_func_name = inspect.getouterframes (inspect.currentframe (), 2)[1][3]
     //print ("wip", caller_func_name)
