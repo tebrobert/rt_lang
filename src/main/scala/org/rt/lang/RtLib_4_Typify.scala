@@ -269,9 +269,23 @@ object RtLib_4_Typify {
     )(typ_sub_x)
   }
 
-  //remaining: 12
+  def concrete_f_rec(
+    typ_f: Typ,
+    typ_x: Typ,
+    typ_sub_fx: Typ,
+    typ_sub_x: Typ,
+  ): Typ =
+    match_typ(
+      case_unk0 = i => concrete_f_unk0(typ_f, typ_x, typ_sub_x, i),
+      case_typ0 = s => concrete_f_typ0(typ_f, typ_x, typ_sub_x, s),
+      case_typ1 = (s, t1) => concrete_f_typ1(typ_f, typ_x, typ_sub_x, s, t1),
+      case_typ2 = (s, t1, t2) => concrete_f_typ2(
+        typ_f, typ_x, typ_sub_x,
+        s, t1, t2,
+      ),
+    )(typ_sub_fx)
 
-  def concrete_f_rec(typ_f: Typ, typ_x: Typ, typ_sub_fx: Typ, typ_sub_x: Typ): Typ = ???
+  //remaining: 11
 
   def concrete_f(typ_f: Typ, typ_x: Typ): Typ = ???
 }
