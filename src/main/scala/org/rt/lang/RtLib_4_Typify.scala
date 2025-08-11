@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
-import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0, match_typ, update_typ}
+import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ2, Unk0, match_typ, update_typ}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Func}
 import org.rt.utils.RtFail.{rtFail, wip}
 
@@ -176,6 +176,7 @@ object RtLib_4_Typify {
           find_idf_typ(typed_res, s_to_find),
     )(typified)
 
+  // hmmm
   def concrete_f_unk0(
     typ_f: Typ,
     typ_x: Typ,
@@ -195,7 +196,24 @@ object RtLib_4_Typify {
         case_typ2 = (_s, _t1, _t2) => case_known(),
     )(typ_sub_x)
   }
-  //remaining: 15
+
+  def concrete_f_typ0(
+    typ_f: Typ,
+    typ_x: Typ,
+    typ_sub_x: Typ,
+    sub_fx_s: String
+  ) =
+    match_typ(
+        case_unk0= i => concrete_f(
+            update_typ(Unk0(i), Typ0(sub_fx_s))(typ_f),
+            update_typ(Unk0(i), Typ0(sub_fx_s))(typ_x),
+        ),
+        case_typ0 = s => if (s == sub_fx_s) typ_f else rtFail(),
+        case_typ1 = (_s, _t1) => rtFail(),
+        case_typ2 = (_s, _t1, _t2) => rtFail(),
+    )(typ_sub_x)
+
+  //remaining: 14
 
   def concrete_f(typ_f: Typ, typ_x: Typ): Typ = ???
 }
