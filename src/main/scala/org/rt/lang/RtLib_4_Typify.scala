@@ -322,5 +322,16 @@ object RtLib_4_Typify {
     TypifiedCall1(typified_f, new_typified_x, typified_f_typ.t2)
   }
 
-  //remaining: 8
+  def continue_typifying_call_1(
+    typified_f: Typified,
+    typified_x: Typified,
+  ) = {
+    val new_typ_f = concrete_f(typified_f.typ, typified_x.typ)
+    val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
+    val new_typified_f = replace_typ(typified_f, new_typ2_f)
+    val new_typified_x = replace_typ(typified_x, new_typ2_f.t1)
+    TypifiedCall1(new_typified_f, new_typified_x, new_typ2_f.t2)
+  }
+
+  //remaining: 7
 }
