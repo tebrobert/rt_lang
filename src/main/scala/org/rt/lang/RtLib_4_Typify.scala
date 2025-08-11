@@ -20,7 +20,7 @@ object RtLib_4_Typify {
     typ: Typ,
   ) extends Typified
 
-  final case class TypifiedCall1 private (
+  final case class TypifiedCall1 private(
     typified_f: Typified,
     typified_x: Typified,
     typ: Typ,
@@ -142,17 +142,17 @@ object RtLib_4_Typify {
       case_typ1 = (_s, t1) => get_unknowns_fot_typ(t1),
       case_typ2 = (_s, t1, t2) => (
         get_unknowns_fot_typ(t1) ++ get_unknowns_fot_typ(t2)
-      ),
+        ),
     )(typ)
 
   def get_unknowns_for_typified(typified: Typified) =
-      match_typified(
-          case_lit = (_s, typ) => get_unknowns_fot_typ(typ),
-          case_idf = (_s, typ) => get_unknowns_fot_typ(typ),
-          case_call_1 = (_typed_f, _typed_x, typ) => get_unknowns_fot_typ(typ),
-          case_lambda_1 = (_typified_idf_x, _typified_res, typ) =>
-              get_unknowns_fot_typ(typ),
-      )(typified)
+    match_typified(
+      case_lit = (_s, typ) => get_unknowns_fot_typ(typ),
+      case_idf = (_s, typ) => get_unknowns_fot_typ(typ),
+      case_call_1 = (_typed_f, _typed_x, typ) => get_unknowns_fot_typ(typ),
+      case_lambda_1 = (_typified_idf_x, _typified_res, typ) =>
+        get_unknowns_fot_typ(typ),
+    )(typified)
 
   def find_idf_typ_call_1(
     typified_f: Typified,
@@ -168,12 +168,12 @@ object RtLib_4_Typify {
 
   def find_idf_typ(typified: Typified, s_to_find: String): Typ =
     match_typified(
-        case_lit = (_s, _typ) => T_A0,
-        case_idf = (s, typ) => if (s == s_to_find) typ else T_A0,
-        case_call_1 = (typed_f, typed_x, _typ) =>
-          find_idf_typ_call_1(typed_f, typed_x, s_to_find),
-        case_lambda_1 = (_t_idf_x, typed_res, _typ) =>
-          find_idf_typ(typed_res, s_to_find),
+      case_lit = (_s, _typ) => T_A0,
+      case_idf = (s, typ) => if (s == s_to_find) typ else T_A0,
+      case_call_1 = (typed_f, typed_x, _typ) =>
+        find_idf_typ_call_1(typed_f, typed_x, s_to_find),
+      case_lambda_1 = (_t_idf_x, typed_res, _typ) =>
+        find_idf_typ(typed_res, s_to_find),
     )(typified)
 
   // hmmm
@@ -190,10 +190,10 @@ object RtLib_4_Typify {
       )
 
     match_typ(
-        case_unk0 = i => if (i == sub_fx_i) typ_f else wip(),
-        case_typ0 = _s => case_known(),
-        case_typ1 = (_s, _t1) => case_known(),
-        case_typ2 = (_s, _t1, _t2) => case_known(),
+      case_unk0 = i => if (i == sub_fx_i) typ_f else wip(),
+      case_typ0 = _s => case_known(),
+      case_typ1 = (_s, _t1) => case_known(),
+      case_typ2 = (_s, _t1, _t2) => case_known(),
     )(typ_sub_x)
   }
 
@@ -204,16 +204,34 @@ object RtLib_4_Typify {
     sub_fx_s: String
   ) =
     match_typ(
-        case_unk0= i => concrete_f(
-            update_typ(Unk0(i), Typ0(sub_fx_s))(typ_f),
-            update_typ(Unk0(i), Typ0(sub_fx_s))(typ_x),
-        ),
-        case_typ0 = s => if (s == sub_fx_s) typ_f else rtFail(),
-        case_typ1 = (_s, _t1) => rtFail(),
-        case_typ2 = (_s, _t1, _t2) => rtFail(),
+      case_unk0 = i => concrete_f(
+        update_typ(Unk0(i), Typ0(sub_fx_s))(typ_f),
+        update_typ(Unk0(i), Typ0(sub_fx_s))(typ_x),
+      ),
+      case_typ0 = s => if (s == sub_fx_s) typ_f else rtFail(),
+      case_typ1 = (_s, _t1) => rtFail(),
+      case_typ2 = (_s, _t1, _t2) => rtFail(),
     )(typ_sub_x)
 
-  //remaining: 14
+  def concrete_f_typ1(
+    typ_f: Typ,
+    typ_x: Typ,
+    typ_sub_x: Typ,
+    sub_fx_s: String,
+    sub_fx_t1: Typ,
+  ) =
+    match_typ(
+      case_unk0 = i => typ_f,
+      case_typ0 = s => rtFail(),
+      case_typ1 = (s, t1) => if (s == sub_fx_s) concrete_f_rec(typ_f, typ_x,
+        sub_fx_t1, t1,
+      ) else rtFail(),
+      case_typ2 = (s, t1, t2) => rtFail(),
+    )(typ_sub_x)
+
+  //remaining: 13
+
+  def concrete_f_rec(typ_f: Typ, typ_x: Typ, typ_sub_fx: Typ, typ_sub_x: Typ): Typ = ???
 
   def concrete_f(typ_f: Typ, typ_x: Typ): Typ = ???
 }
