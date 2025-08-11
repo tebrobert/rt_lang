@@ -28,7 +28,7 @@ object RtLib_0_2_Builtins {
         builtin_Func -> T_Func,
     )
 
-    val idf_to_typ = Map(
+    val idf_to_typ = Map[String, Set[Typ]](
         builtin_input -> Set(T_RIO(T_Str)),
         builtin_print -> Set(T_Func(T_Str, T_RIO(T_Unit))),
         builtin_flatmap -> Set(T_Func(

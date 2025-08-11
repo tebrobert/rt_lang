@@ -73,7 +73,7 @@ object RtLib_3_Parse {
     )
 
 
-    private def match_expr[A](
+    def match_expr[A](
         case_lit_str: String => A,
         case_lit_bint: String => A,
         case_idf: String => A,

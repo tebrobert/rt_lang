@@ -2,8 +2,8 @@ package org.rt.lang
 
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ1, Typ2, Unk0, increase_unk, match_typ, update_typ}
-import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Func}
-import org.rt.lang.RtLib_3_Parse.Expr
+import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Func, T_Str, idf_to_typ}
+import org.rt.lang.RtLib_3_Parse.{Expr, match_expr}
 import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, rt_try, wip}
 
 object RtLib_4_Typify {
@@ -382,6 +382,23 @@ object RtLib_4_Typify {
     } yield mb_res)
       .collect { case Right(typified) => typified }
 
-  //remaining: 5
-  def typify_set(expr: Expr): Set[Typified] = ???
+  def typify_set_idf(s: String) =
+    idf_to_typ.getOrElse(s, Set(T_A0))
+      .map(typ => TypifiedIdf(s, typ))
+
+  def typify_set(expr: Expr): Set[Typified] =
+    match_expr(
+      case_lit_str = s => Set(TypifiedLit(s, T_Str)),
+      case_lit_bint = i => Set(TypifiedLit(i, T_Bint)),
+      case_idf = s => typify_set_idf(s)
+        .map(_.asInstanceOf[Typified]), // todo - ... mb try to use set in other way
+      case_call_1 = (expr_f, expr_x) => typify_set_call_1(expr_f, expr_x)
+        .map(_.asInstanceOf[Typified]), // todo - ... mb try to use set in other way
+      case_lambda_1 = (expr_idf_arg, expr_res) =>
+        typify_set_lambda_1(expr_idf_arg, expr_res)
+          .map(_.asInstanceOf[Typified]), // todo - ... mb try to use set in other way
+      case_braced = inner_expr => typify_set(inner_expr),
+    )(expr)
+
+  //remaining: 4
 }
