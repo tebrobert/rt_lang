@@ -94,7 +94,6 @@ object RtLib_4_Typify {
   private def replace_typ_lambda_1(typified_idf_x: Typified, typified_res: Typified, new_typ: Typ): TypifiedLambda1 = {
     new_typ match {
       case Unk0(_) =>
-        ()
         rtFail("not implemented...?")
 
       case Typ2(`builtin_Func`, new_typ_t1, new_typ_t2) =>
@@ -140,9 +139,8 @@ object RtLib_4_Typify {
       case_typ0 = _s => Set.empty[String],
       case_unk0 = s => Set(s.toString), // todo - try a more proper type
       case_typ1 = (_s, t1) => get_unknowns_fot_typ(t1),
-      case_typ2 = (_s, t1, t2) => (
-        get_unknowns_fot_typ(t1) ++ get_unknowns_fot_typ(t2)
-        ),
+      case_typ2 = (_s, t1, t2) =>
+        get_unknowns_fot_typ(t1) ++ get_unknowns_fot_typ(t2),
     )(typ)
 
   def get_unknowns_for_typified(typified: Typified) =
@@ -285,7 +283,17 @@ object RtLib_4_Typify {
       ),
     )(typ_sub_fx)
 
-  //remaining: 11
+  // may have sync conflicts
+  def concrete_f(
+    typ_f: Typ,
+    typ_x: Typ,
+  ): Typ =
+    match_typ(
+      case_unk0 = _s => T_Func(typ_x, T_A0),
+      case_typ0 = _s => rtFail(s"Unexpected typ_f `$typ_f`."),
+      case_typ1 = (_s, _t1) => rtFail(s"Unexpected typ_f `$typ_f`."),
+      case_typ2 = (_s, t1, _t2) => concrete_f_rec(typ_f, typ_x, t1, typ_x),
+    )(typ_f)
 
-  def concrete_f(typ_f: Typ, typ_x: Typ): Typ = ???
+  //remaining: 10
 }
