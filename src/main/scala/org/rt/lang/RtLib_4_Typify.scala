@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
-import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0}
+import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0, match_typ}
 import org.rt.lang.RtLib_0_2_Builtins.T_Func
 import org.rt.utils.RtFail.rtFail
 
@@ -134,5 +134,16 @@ object RtLib_4_Typify {
         replace_typ_lambda_1(typified_idf_x, typified_res, new_typ),
     )(typified)
 
-  //remaining: 17
+
+  def get_unknowns_fot_typ(typ: Typ): Set[String] =
+    match_typ(
+      case_typ0 = _s => Set.empty[String],
+      case_unk0 = s => Set(s.toString), // todo - try a more proper type
+      case_typ1 = (_s, t1) => get_unknowns_fot_typ(t1),
+      case_typ2 = (_s, t1, t2) => (
+        get_unknowns_fot_typ(t1) ++ get_unknowns_fot_typ(t2)
+      ),
+    )(typ)
+
+  //remaining: 16
 }
