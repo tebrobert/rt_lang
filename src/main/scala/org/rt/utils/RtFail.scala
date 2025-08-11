@@ -43,4 +43,11 @@ object RtFail {
       case expected: TokenLessMinus.type => expected
       case _ => rtFail(s"Expected TokenLessMinus, got `$value`")
     }
+
+  def wip(msgs: String*): Nothing = {
+    //caller_func_name = inspect.getouterframes (inspect.currentframe (), 2)[1][3]
+    //print ("wip", caller_func_name)
+
+    rtFail(msgs.prepended("The feature was not implemented. Work in progress..."):_*)
+  }
 }

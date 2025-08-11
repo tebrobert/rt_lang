@@ -1,9 +1,9 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
-import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0, match_typ}
+import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0, match_typ, update_typ}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Func}
-import org.rt.utils.RtFail.rtFail
+import org.rt.utils.RtFail.{rtFail, wip}
 
 object RtLib_4_Typify {
   sealed trait Typified {
@@ -176,5 +176,26 @@ object RtLib_4_Typify {
           find_idf_typ(typed_res, s_to_find),
     )(typified)
 
-  //remaining: 13
+  def concrete_f_unk0(
+    typ_f: Typ,
+    typ_x: Typ,
+    typ_sub_x: Typ,
+    sub_fx_i: Int,
+  ) = {
+    val case_known =
+      () => concrete_f(
+        update_typ(Unk0(sub_fx_i), typ_sub_x)(typ_f),
+        typ_x,
+      )
+
+    match_typ(
+        case_unk0 = i => if (i == sub_fx_i) typ_f else wip(),
+        case_typ0 = _s => case_known(),
+        case_typ1 = (_s, _t1) => case_known(),
+        case_typ2 = (_s, _t1, _t2) => case_known(),
+    )(typ_sub_x)
+  }
+  //remaining: 15
+
+  def concrete_f(typ_f: Typ, typ_x: Typ): Typ = ???
 }
