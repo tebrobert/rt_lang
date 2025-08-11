@@ -1,6 +1,6 @@
 package org.rt.utils
 
-import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2}
+import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0}
 import org.rt.lang.RtLib_2_Tokenize.{Token, TokenEq, TokenIdf, TokenLessMinus}
 import org.rt.lang.RtLib_3_Parse.Expr
 
@@ -63,6 +63,12 @@ object RtFail {
     value match {
       case expected: Typ2 => expected
       case _ => rtFail(s"Expected Typ2, got `$value`")
+    }
+
+  def rt_assert_type_Unk0(value: Typ): Unk0 =
+    value match {
+      case expected: Unk0 => expected
+      case _ => rtFail(s"Expected Unk0, got `$value`")
     }
 
   def wip(msgs: String*): Nothing = {

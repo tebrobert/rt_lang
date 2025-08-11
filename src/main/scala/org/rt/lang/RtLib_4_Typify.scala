@@ -1,9 +1,9 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
-import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ2, Unk0, match_typ, update_typ}
+import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ1, Typ2, Unk0, increase_unk, match_typ, update_typ}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Func}
-import org.rt.utils.RtFail.{rtFail, rt_assert_equal, rt_assert_type_Typ2, wip}
+import org.rt.utils.RtFail.{rtFail, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, wip}
 
 object RtLib_4_Typify {
   sealed trait Typified {
@@ -295,5 +295,23 @@ object RtLib_4_Typify {
       case_typ2 = (_s, t1, _t2) => concrete_f_rec(typ_f, typ_x, t1, typ_x),
     )(typ_f)
 
-  //remaining: 10
+  def continue_typifying_call_1_with_unknown_f(
+    typified_f: Typified,
+    typified_x: Typified,
+  ) = {
+    rt_assert_type_Unk0(typified_f.typ)
+
+    val new_typ_f = match_typ(
+      case_unk0 = i => T_Func(Unk0(i), Unk0(i + 1)),
+      case_typ0 = s => T_Func(Typ0(s), T_A0),
+      case_typ1 = (s, t1) => T_Func(Typ1(s, increase_unk(t1)), T_A0),
+      case_typ2 = (s, t1, t2) => T_Func(
+        Typ2(s, increase_unk(t1), increase_unk(t2)), T_A0)
+    )(typified_x.typ)
+
+    val new_typified_f = replace_typ(typified_f, new_typ_f)
+    TypifiedCall1(new_typified_f, typified_x, new_typ_f.t2)
+  }
+
+  //remaining: 9
 }
