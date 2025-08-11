@@ -43,7 +43,6 @@ object RtLib_0_1_Types {
             case Typ1(s, t1) => lazy_for_type1()
             case Typ2(s, t1, t2) => lazy_for_type2()
             case Unk0(i) => lazy_for_unk0()
-            case _ => rtFail(s"Value $typ ${type typ} is not a type")
 
 
     def match_typ[A](
@@ -57,7 +56,6 @@ object RtLib_0_1_Types {
             case Unk0(i) => case_unk0(i)
             case Typ1(s, t1) => case_typ1(s, t1)
             case Typ2(s, t1, t2) => case_typ2(s, t1, t2)
-            case _ => rtFail(s"Value $typ ${type typ} is not a typ.")
 
     def update_typ(typ_from: Typ, typ_to: Typ): Typ => Typ =
         (typ: Typ) => {
