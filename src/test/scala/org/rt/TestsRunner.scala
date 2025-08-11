@@ -25,7 +25,7 @@ object TestsRunner extends ZIOSpecDefault {
       ++ allTestCases.flatMap(testCase =>
         testCase.mb_typified_3.map { typified_3 =>
           test("typify " + testCase.getClass.getSimpleName) {
-            assertTrue(typify(testCase.expr_2) == testCase.expr_2)
+            assertTrue(typify(testCase.expr_2) == typified_3)
           }
         }
       )
