@@ -145,5 +145,14 @@ object RtLib_4_Typify {
       ),
     )(typ)
 
-  //remaining: 16
+  def get_unknowns_for_typified(typified: Typified) =
+      match_typified(
+          case_lit = (_s, typ) => get_unknowns_fot_typ(typ),
+          case_idf = (_s, typ) => get_unknowns_fot_typ(typ),
+          case_call_1 = (_typed_f, _typed_x, typ) => get_unknowns_fot_typ(typ),
+          case_lambda_1 = (_typified_idf_x, _typified_res, typ) =>
+              get_unknowns_fot_typ(typ),
+      )(typified)
+
+  //remaining: 15
 }
