@@ -355,8 +355,33 @@ object RtLib_4_Typify {
         else continue_typifying_call_1(typified_f, typified_x)
       )
     } yield mb_current_typified_call1)
-      .collect {case Right(typified) => typified}
+      .collect { case Right(typified) => typified }
 
-  //remaining: 6
+  def typify_set_lambda_1(
+    expr_arg: Expr,
+    expr_res: Expr,
+  ) =
+    (for {
+      typified_arg <- typify_set(expr_arg)
+      typified_res <- typify_set(expr_res)
+
+      mb_res = rt_try { () =>
+        val typified_arg_s = match_typified(
+          case_idf = (s, _) => s,
+          case_lit = (_, _) => rtFail(),
+          case_call_1 = (_, _, _) => rtFail(),
+          case_lambda_1 = (_, _, _) => rtFail(),
+        )(typified_arg) // todo - try better typing
+
+        val found_typ_arg = find_idf_typ(typified_res, typified_arg_s)
+        val retypified_arg = replace_typ(typified_arg, found_typ_arg)
+
+        //todo - likely, next Unk0 needed
+        TypifiedLambda1(retypified_arg, typified_res, Unk0(-1))
+      }
+    } yield mb_res)
+      .collect { case Right(typified) => typified }
+
+  //remaining: 5
   def typify_set(expr: Expr): Set[Typified] = ???
 }
