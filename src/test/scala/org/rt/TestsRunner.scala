@@ -3,12 +3,14 @@ package org.rt
 import lang.RtLib_2_Tokenize.{Token, tokenize}
 import lang.RtLib_3_Parse.{Expr, parse}
 import org.rt.allTests.*
+import org.rt.lang.RtLib_4_Typify.{Typified, typify}
 import zio.test.*
 
 trait RtTestCase {
   val code_0: String
   val tokens_1: List[Token]
   val expr_2: Expr
+  val mb_typified_3: Option[Typified] = None
 }
 
 object TestsRunner extends ZIOSpecDefault {
@@ -20,5 +22,12 @@ object TestsRunner extends ZIOSpecDefault {
       ++ allTestCases.map(testCase => test("parse "+testCase.getClass.getSimpleName) {
           assertTrue(parse(testCase.tokens_1) == testCase.expr_2)
         })
+      ++ allTestCases.flatMap(testCase =>
+        testCase.mb_typified_3.map { typified_3 =>
+          test("typify " + testCase.getClass.getSimpleName) {
+            assertTrue(typify(testCase.expr_2) == testCase.expr_2)
+          }
+        }
+      )
     )
 }
