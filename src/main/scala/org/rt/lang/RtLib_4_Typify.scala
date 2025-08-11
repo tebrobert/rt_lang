@@ -3,7 +3,7 @@ package org.rt.lang
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ2, Unk0, match_typ, update_typ}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Func}
-import org.rt.utils.RtFail.{rtFail, wip}
+import org.rt.utils.RtFail.{rtFail, rt_assert_equal, rt_assert_type_Typ2, wip}
 
 object RtLib_4_Typify {
   sealed trait Typified {
@@ -228,6 +228,25 @@ object RtLib_4_Typify {
       ) else rtFail(),
       case_typ2 = (s, t1, t2) => rtFail(),
     )(typ_sub_x)
+
+
+  def concrete_f_typ2_typ2(
+    typ_f: Typ,
+    typ_x: Typ,
+    sub_x_s: String,
+    sub_x_t1: Typ,
+    sub_x_t2: Typ,
+  )(
+    sub_fx_s: String,
+    sub_fx_t1: Typ,
+    sub_fx_t2: Typ,
+  ) = {
+    rt_assert_equal(sub_x_s, sub_fx_s)
+    val used_t1 = concrete_f_rec(typ_f, typ_x, sub_fx_t1, sub_x_t1)
+    val (f1, x1) = (used_t1, rt_assert_type_Typ2(used_t1).t1) // todo - try better typing
+    val used_t2 = concrete_f_rec(f1, x1, sub_fx_t2, sub_x_t2)
+    used_t2
+  }
 
   //remaining: 13
 
