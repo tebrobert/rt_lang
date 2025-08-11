@@ -2,7 +2,7 @@ package org.rt.lang
 
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0, match_typ}
-import org.rt.lang.RtLib_0_2_Builtins.T_Func
+import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Func}
 import org.rt.utils.RtFail.rtFail
 
 object RtLib_4_Typify {
@@ -154,5 +154,27 @@ object RtLib_4_Typify {
               get_unknowns_fot_typ(typ),
       )(typified)
 
-  //remaining: 15
+  def find_idf_typ_call_1(
+    typified_f: Typified,
+    typified_x: Typified,
+    s_to_find: String,
+  ) = {
+    val lookup_by_f = find_idf_typ(typified_f, s_to_find)
+
+    if (!lookup_by_f.isInstanceOf[Unk0])
+      lookup_by_f
+    else find_idf_typ(typified_x, s_to_find)
+  }
+
+  def find_idf_typ(typified: Typified, s_to_find: String): Typ =
+    match_typified(
+        case_lit = (_s, _typ) => T_A0,
+        case_idf = (s, typ) => if (s == s_to_find) typ else T_A0,
+        case_call_1 = (typed_f, typed_x, _typ) =>
+          find_idf_typ_call_1(typed_f, typed_x, s_to_find),
+        case_lambda_1 = (_t_idf_x, typed_res, _typ) =>
+          find_idf_typ(typed_res, s_to_find),
+    )(typified)
+
+  //remaining: 13
 }
