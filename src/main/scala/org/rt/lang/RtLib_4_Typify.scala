@@ -248,7 +248,28 @@ object RtLib_4_Typify {
     used_t2
   }
 
-  //remaining: 13
+  def concrete_f_typ2(
+    typ_f: Typ,
+    typ_x: Typ,
+    typ_sub_x: Typ,
+    sub_fx_s: String,
+    sub_fx_t1: Typ,
+    sub_fx_t2: Typ,
+  ) = {
+    val bad_type =
+      () => rtFail(s"Can't match the types $sub_fx_s vs $typ_sub_x")
+
+    match_typ(
+      case_unk0 = _i => wip(),
+      case_typ0 = _s => bad_type(),
+      case_typ1 = (_s, _t1) => bad_type(),
+      case_typ2 = (sub_x_s, sub_x_t1, sub_x_t2) => concrete_f_typ2_typ2(
+        typ_f, typ_x, sub_x_s, sub_x_t1, sub_x_t2
+      )(sub_fx_s, sub_fx_t1, sub_fx_t2),
+    )(typ_sub_x)
+  }
+
+  //remaining: 12
 
   def concrete_f_rec(typ_f: Typ, typ_x: Typ, typ_sub_fx: Typ, typ_sub_x: Typ): Typ = ???
 
