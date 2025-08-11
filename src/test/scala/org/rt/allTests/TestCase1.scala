@@ -4,7 +4,6 @@ import org.rt.RtTestCase
 import org.rt.lang.RtLib_0_2_Builtins.{T_RIO, T_Str}
 import org.rt.lang.RtLib_2_Tokenize.*
 import org.rt.lang.RtLib_3_Parse.*
-import org.rt.lang.RtLib_4_Typify
 import org.rt.lang.RtLib_4_Typify.TypifiedIdf
 
 object TestCase1 extends RtTestCase {
