@@ -60,17 +60,17 @@ object TestCase7 extends RtTestCase {
     TypifiedCall1(
       TypifiedCall1(
         TypifiedIdf(">>=", T_Func(T_Func(T_Str, T_RIO(T_Unit)), T_Func(T_RIO(T_Str), T_RIO(T_Unit)))),
-        TypifiedLambda1.create(
+        TypifiedLambda1(
           TypifiedIdf("x", T_Str),
           TypifiedCall1(
             TypifiedCall1(
               TypifiedIdf(">>=", T_Func(T_Func(T_Str, T_RIO(T_Unit)), T_Func(T_RIO(T_Str), T_RIO(T_Unit)))),
-              TypifiedLambda1.create(
+              TypifiedLambda1(
                 TypifiedIdf("y", T_Str),
                 TypifiedCall1(
                   TypifiedCall1(
                     TypifiedIdf(">>=", T_Func(T_Func(T_A0, T_RIO(T_Unit)), T_Func(T_RIO(T_Unit), T_RIO(T_Unit)))),
-                    TypifiedLambda1.create(
+                    TypifiedLambda1(
                       TypifiedIdf("_", T_A0),
                       TypifiedCall1(
                         TypifiedIdf("print", T_Func(T_Str, T_RIO(T_Unit))),

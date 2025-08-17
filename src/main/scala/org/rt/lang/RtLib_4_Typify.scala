@@ -6,8 +6,6 @@ import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Func, T_Str, idf_to_typ}
 import org.rt.lang.RtLib_3_Parse.{Expr, full_parse, match_expr}
 import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, rt_try, wip}
 
-import scala.collection.immutable.{AbstractSet, SortedSet}
-
 object RtLib_4_Typify {
   sealed trait Typified {
     val typ: Typ
@@ -62,8 +60,7 @@ object RtLib_4_Typify {
   ) extends Typified
 
   object TypifiedLambda1 {
-    // todo - contemplate/reconsider
-    def create(typified_idf_x: Typified, typified_res: Typified, typ: Typ): TypifiedLambda1 = {
+    def apply(typified_idf_x: Typified, typified_res: Typified, typ: Typ): TypifiedLambda1 = {
       typified_idf_x match {
         case TypifiedIdf(_, _) => () // perhaps: specify arg type
         case _ => rtFail()
@@ -75,7 +72,7 @@ object RtLib_4_Typify {
         case _ => rtFail()
       }
 
-      TypifiedLambda1(
+      new TypifiedLambda1(
         typified_idf_x,
         typified_res,
         if (typ != Unk0(-1)) // perhaps: intermediatory Unk0(-1) unneeded
@@ -105,7 +102,7 @@ object RtLib_4_Typify {
       case Typ2(`builtin_Func`, new_typ_t1, new_typ_t2) =>
         val updated_typified_idf_x = replace_typ(typified_idf_x, new_typ_t1)
         val updated_typified_res = replace_typ(typified_res, new_typ_t2)
-        TypifiedLambda1.create(
+        TypifiedLambda1(
           updated_typified_idf_x,
           updated_typified_res,
           new_typ,
@@ -382,7 +379,7 @@ object RtLib_4_Typify {
         val retypified_arg = replace_typ(typified_arg, found_typ_arg)
 
         //todo - likely, next Unk0 needed
-        TypifiedLambda1.create(retypified_arg, typified_res, Unk0(-1))
+        TypifiedLambda1(retypified_arg, typified_res, Unk0(-1))
       }
     } yield mb_res)
       .collect { case Right(typified) => typified }
@@ -410,10 +407,11 @@ object RtLib_4_Typify {
   ): Typified = {
     val typified_set = typify_set(expr)
     typified_set.toList match {
-      case head::Nil => head
+      case head :: Nil => head
       case _ => rtFail(typified_set.toString)
     }
   }
+
   def full_typify(code: String) =
-      typify(full_parse(code))
+    typify(full_parse(code))
 }

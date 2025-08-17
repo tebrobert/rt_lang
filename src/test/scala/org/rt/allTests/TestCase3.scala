@@ -27,12 +27,12 @@ object TestCase3 extends RtTestCase {
 
   override val mb_typified_3 = Some(TypifiedCall1(
     TypifiedCall1(
-      TypifiedLambda1.create(
+      TypifiedLambda1(
         TypifiedIdf("s", T_Func(T_A0, T_A0)),
         TypifiedIdf("s", T_Func(T_RIO(T_Str), T_RIO(T_Str))),
         T_Func(T_Func(T_A0, T_A0), T_Func(T_RIO(T_Str), T_RIO(T_Str))),
       ),
-      TypifiedLambda1.create(
+      TypifiedLambda1(
         TypifiedIdf("s", T_A0),
         TypifiedIdf("s", T_A0),
         T_Func(T_A0, T_A0),
