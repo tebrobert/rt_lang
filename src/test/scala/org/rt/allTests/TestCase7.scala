@@ -5,10 +5,11 @@ import org.rt.lang.RtLib_2_Tokenize.*
 import org.rt.lang.RtLib_3_Parse.*
 
 object TestCase7 extends RtTestCase {
-  val code_0 = "x <- input"
-    + "\ny <- input"
-    + "\nprint(x)"
-    + "\nprint(y)"
+  val code_0 = ""
+    + "x <- input\n"
+    + "y <- input\n"
+    + "print(x)\n"
+    + "print(y)"
 
   val tokens_1 = List(
     TokenIdf("x"), TokenLessMinus, TokenIdf("input"), TokenEndl,
