@@ -7,7 +7,8 @@ import org.rt.lang.RtLib_3_Parse.*
 import org.rt.lang.RtLib_4_Typify.{TypifiedCall1, TypifiedIdf, TypifiedLambda1}
 
 object TestCase8 extends RtTestCase {
-  val code_0 = "s <- input\n"
+  val code_0 = ""
+    + "s <- input\n"
     + "print(s)\n"
     + "print(s)\n"
 
