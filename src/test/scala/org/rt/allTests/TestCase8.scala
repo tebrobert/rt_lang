@@ -29,10 +29,10 @@ object TestCase8 extends RtTestCase {
       ),
     )
 
-  def typifiedAndThen(
+  def lintedAndThen(
     resultTuple: (String, Typ),
-    typified: Linted,
-    typifiedNext: Linted,
+    linted: Linted,
+    lintedNext: Linted,
   ) = {
     val typifiedResult = LintedIdf.apply.tupled(resultTuple)
 
@@ -41,13 +41,13 @@ object TestCase8 extends RtTestCase {
         LintedIdf(
           ">>=",
           (typifiedResult.typ tTo T_RIO_Unit)
-            tTo (T_RIO_Unit /*T_RIO(typifiedResult.typ)*/ tTo typifiedNext.typ)
+            tTo (T_RIO_Unit /*T_RIO(typifiedResult.typ)*/ tTo lintedNext.typ)
         ),
-        LintedLambda1(typifiedResult, typifiedNext, typifiedResult.typ tTo T_RIO_Unit),
-        T_RIO_Unit /*T_RIO(typifiedResult.typ)*/ tTo typifiedNext.typ,
+        LintedLambda1(typifiedResult, lintedNext, typifiedResult.typ tTo T_RIO_Unit),
+        T_RIO_Unit /*T_RIO(typifiedResult.typ)*/ tTo lintedNext.typ,
       ),
-      typified,
-      typifiedNext.typ,
+      linted,
+      lintedNext.typ,
     )
   }
 
