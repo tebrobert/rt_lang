@@ -1,6 +1,6 @@
 package org.rt
 
-import lang.RtLib_2_Tokenize.{Token, tokenize}
+import lang.RtLib_2_Tokenize.{Tok, tokenize}
 import lang.RtLib_3_Parse.{Expr, parse}
 import org.rt.allTests.*
 import org.rt.lang.RtLib_4_Typify.{Typified, typify}
@@ -8,7 +8,7 @@ import zio.test.*
 
 trait RtTestCase {
   val code_0: String
-  val tokens_1: List[Token]
+  val tokens_1: List[Tok]
   val expr_2: Expr
   val mb_typified_3: Option[Typified] = None
 }

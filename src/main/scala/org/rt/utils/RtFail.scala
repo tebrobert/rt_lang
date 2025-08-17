@@ -1,7 +1,7 @@
 package org.rt.utils
 
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0}
-import org.rt.lang.RtLib_2_Tokenize.{Token, TokenEq, TokenIdf, TokenLessMinus}
+import org.rt.lang.RtLib_2_Tokenize.{Tok, TokEq, TokIdf, TokLessMinus}
 import org.rt.lang.RtLib_3_Parse.Expr
 
 object RtFail {
@@ -41,21 +41,21 @@ object RtFail {
   }
 
 
-  def rt_assert_type_TokenEq(value: Token | Expr): TokenEq.type =
+  def rt_assert_type_TokenEq(value: Tok | Expr): TokEq.type =
     value match {
-      case expected: TokenEq.type => expected
+      case expected: TokEq.type => expected
       case _ => rtFail(s"Expected TokenEq, got `$value`")
     }
 
-  def rt_assert_type_TokenIdf(value: Token | Expr): TokenIdf =
+  def rt_assert_type_TokenIdf(value: Tok | Expr): TokIdf =
     value match {
-      case expected: TokenIdf => expected
+      case expected: TokIdf => expected
       case _ => rtFail(s"Expected TokenIdf, got `$value`")
     }
 
-  def rt_assert_type_TokenLessMinus(value: Token | Expr): TokenLessMinus.type =
+  def rt_assert_type_TokenLessMinus(value: Tok | Expr): TokLessMinus.type =
     value match {
-      case expected: TokenLessMinus.type => expected
+      case expected: TokLessMinus.type => expected
       case _ => rtFail(s"Expected TokenLessMinus, got `$value`")
     }
 

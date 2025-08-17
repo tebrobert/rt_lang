@@ -10,12 +10,12 @@ object TestCase5 extends RtTestCase {
   val code_0 = ">>=(s => print(s))(input)\n"
 
   val tokens_1 = List(
-    TokenIdf(">>="),
-    TokenParenOpen,
-    TokenIdf("s"), TokenEqGr, TokenIdf("print"), TokenParenOpen, TokenIdf("s"), TokenParenClose,
-    TokenParenClose,
-    TokenParenOpen, TokenIdf("input"), TokenParenClose,
-    TokenEndl,
+    TokIdf(">>="),
+    TokParenOpen,
+    TokIdf("s"), TokEqGr, TokIdf("print"), TokParenOpen, TokIdf("s"), TokParenClose,
+    TokParenClose,
+    TokParenOpen, TokIdf("input"), TokParenClose,
+    TokEndl,
   )
 
   val expr_2 =

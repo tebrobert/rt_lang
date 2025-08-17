@@ -8,7 +8,7 @@ import org.rt.lang.RtLib_4_Typify.TypifiedIdf
 
 object TestCase1 extends RtTestCase {
   val code_0 = "input"
-  val tokens_1 = List(TokenIdf("input"))
+  val tokens_1 = List(TokIdf("input"))
   val expr_2 = ExprIdf("input")
   override val mb_typified_3 = Some(TypifiedIdf("input", T_RIO(T_Str)))
 }

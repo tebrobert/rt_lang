@@ -12,13 +12,13 @@ object TestCase14 extends RtTestCase {
     + s"""print("Dear ".+(name).+(", welcome!"))\n"""
 
   val tokens_1 = List(
-    TokenIdf("greeting"), TokenEq, TokenLitStr("Hi!"), TokenEndl,
-    TokenIdf("print"), TokenParenOpen, TokenIdf("greeting"), TokenParenClose, TokenEndl,
-    TokenIdf("print"), TokenParenOpen, TokenLitStr("What is your name?"), TokenParenClose, TokenEndl,
-    TokenIdf("name"), TokenLessMinus, TokenIdf("input"), TokenEndl,
-    TokenIdf("print"), TokenParenOpen, TokenLitStr("Dear "),
-    TokenDot, TokenIdf("+"), TokenParenOpen, TokenIdf("name"), TokenParenClose,
-    TokenDot, TokenIdf("+"), TokenParenOpen, TokenLitStr(", welcome!"), TokenParenClose, TokenParenClose, TokenEndl,
+    TokIdf("greeting"), TokEq, TokLitStr("Hi!"), TokEndl,
+    TokIdf("print"), TokParenOpen, TokIdf("greeting"), TokParenClose, TokEndl,
+    TokIdf("print"), TokParenOpen, TokLitStr("What is your name?"), TokParenClose, TokEndl,
+    TokIdf("name"), TokLessMinus, TokIdf("input"), TokEndl,
+    TokIdf("print"), TokParenOpen, TokLitStr("Dear "),
+    TokDot, TokIdf("+"), TokParenOpen, TokIdf("name"), TokParenClose,
+    TokDot, TokIdf("+"), TokParenOpen, TokLitStr(", welcome!"), TokParenClose, TokParenClose, TokEndl,
   )
 
   val expr_2 =

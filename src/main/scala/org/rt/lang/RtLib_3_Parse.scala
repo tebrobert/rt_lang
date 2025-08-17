@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_0_0_Lits.{builtin_and, builtin_div, builtin_eq_eq, builtin_flatmap, builtin_floor_div, builtin_gr, builtin_gr_eq, builtin_less, builtin_less_eq, builtin_minus, builtin_mod, builtin_multiply, builtin_not, builtin_not_eq, builtin_or, builtin_plus, builtin_pure}
-import org.rt.lang.RtLib_2_Tokenize.{Token, TokenDot, TokenEndl, TokenEqGr, TokenIdf, TokenLitBint, TokenLitStr, TokenParenClose, TokenParenOpen, tokenize}
+import org.rt.lang.RtLib_2_Tokenize.{Tok, TokDot, TokEndl, TokEqGr, TokIdf, TokLitBint, TokLitStr, TokParenClose, TokParenOpen, tokenize}
 import org.rt.utils.RtFail.{rtFail, rt_assert_type_TokenEq, rt_assert_type_TokenIdf, rt_assert_type_TokenLessMinus, try_and_match}
 import org.rt.utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_at_least_2, rt_assert_empty}
 
@@ -57,13 +57,13 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def get_first_success(
-        parsers: List[(List[Token], Expr) => Expr],
-        parser_args: (List[Token], Expr),
+        parsers: List[(List[Tok], Expr) => Expr],
+        parser_args: (List[Tok], Expr),
         fails: List[String] = List(),
     ): Expr = {
         def try_next_parser(
-            current_parser: (List[Token], Expr) => Expr,
-            rest_parsers: List[(List[Token], Expr) => Expr],
+            current_parser: (List[Tok], Expr) => Expr,
+            rest_parsers: List[(List[Tok], Expr) => Expr],
         ): Expr =
             try_and_match(
                 () => current_parser.tupled(parser_args),
@@ -82,12 +82,12 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def apply_all(
-      funcs: List[(List[Token | Expr], List[Token | Expr]) => List[Token | Expr]],
-      args: List[Token | Expr],
-    ): List[Token | Expr] =
+      funcs: List[(List[Tok | Expr], List[Tok | Expr]) => List[Tok | Expr]],
+      args: List[Tok | Expr],
+    ): List[Tok | Expr] =
         match_list[
-          (List[Token | Expr], List[Token | Expr]) => List[Token | Expr],
-          List[Token | Expr]
+          (List[Tok | Expr], List[Tok | Expr]) => List[Tok | Expr],
+          List[Tok | Expr]
         ](
             case_empty = Some(() => args),
             case_at_least_1 = Some((head, tail) => apply_all(tail, head(args, List())))
@@ -95,16 +95,16 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def preparse_idf_lit(
-        tokens_and_exprs: List[Token | Expr],
-        acc: List[Token | Expr]
-    ): List[Token | Expr] =
-        match_list[Token | Expr, List[Token | Expr]](
+        tokens_and_exprs: List[Tok | Expr],
+        acc: List[Tok | Expr]
+    ): List[Tok | Expr] =
+        match_list[Tok | Expr, List[Tok | Expr]](
             case_at_least_1=Some((head, tail) => preparse_idf_lit(tail, acc :+ (
                 head match {
                     case expr: Expr => expr
-                    case TokenLitStr(s) => ExprLitStr(s)
-                    case TokenLitBint(i) => ExprLitBint(i)
-                    case TokenIdf(s) => ExprIdf(s)
+                    case TokLitStr(s) => ExprLitStr(s)
+                    case TokLitBint(i) => ExprLitBint(i)
+                    case TokIdf(s) => ExprIdf(s)
                     case _ => head
                 }
             ))),
@@ -113,19 +113,19 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def continue_preparse_braced(
-        ext_tokens_and_exprs: List[Token | Expr],
-        acc: List[Token | Expr],
-        acc_braced: List[Token | Expr],
+        ext_tokens_and_exprs: List[Tok | Expr],
+        acc: List[Tok | Expr],
+        acc_braced: List[Tok | Expr],
         unclosed_parens_count: Int,
-    ): (List[Token | Expr], List[Token | Expr]) =
-        match_list[Token | Expr, (List[Token | Expr], List[Token | Expr])](
+    ): (List[Tok | Expr], List[Tok | Expr]) =
+        match_list[Tok | Expr, (List[Tok | Expr], List[Tok | Expr])](
             case_empty=Some(() => rtFail("`)` expected.")),
             case_at_least_1=Some((head, tail) =>
-                  if (head == TokenParenClose) {
+                  if (head == TokParenClose) {
                     if (unclosed_parens_count > 1)
                       continue_preparse_braced(tail, acc, acc_braced :+ head, unclosed_parens_count - 1)
                     else (tail, acc :+ ExprBraced(parse_full_expr(acc_braced)))
-                  } else if (head == TokenParenOpen)
+                  } else if (head == TokParenOpen)
                     continue_preparse_braced(tail, acc, acc_braced :+ head, unclosed_parens_count + 1)
                   else continue_preparse_braced(tail, acc, acc_braced :+ head, unclosed_parens_count)
             )
@@ -133,13 +133,13 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def preparse_braced(
-        tokens_and_exprs: List[Token | Expr],
-        acc: List[Token | Expr],
-    ): List[Token | Expr] =
-        match_list[Token | Expr, List[Token | Expr]](
+        tokens_and_exprs: List[Tok | Expr],
+        acc: List[Tok | Expr],
+    ): List[Tok | Expr] =
+        match_list[Tok | Expr, List[Tok | Expr]](
             case_empty=Some(() => acc),
             case_at_least_1=Some((head, tail) =>
-                if (head == TokenParenOpen)
+                if (head == TokParenOpen)
                     preparse_braced.tupled(continue_preparse_braced(tail, acc, List(), 1))
                 else preparse_braced(tail, acc :+ head)
             )
@@ -163,10 +163,10 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def preparse_debrace(
-        tokens_and_exprs: List[Token | Expr],
-        acc: List[Token | Expr],
-    ): List[Token | Expr] =
-        match_list[Token | Expr, List[Token | Expr]](
+        tokens_and_exprs: List[Tok | Expr],
+        acc: List[Tok | Expr],
+    ): List[Tok | Expr] =
+        match_list[Tok | Expr, List[Tok | Expr]](
             case_at_least_1=Some((head, tail) =>
               head match {
                   case expr: Expr => preparse_debrace(tail, acc :+ debrace_expr(expr))
@@ -178,10 +178,10 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def preparse_call(
-        tokens_and_exprs: List[Token | Expr],
-        acc: List[Token | Expr],
-    ): List[Token | Expr] =
-        match_list[Token | Expr, List[Token | Expr]](
+        tokens_and_exprs: List[Tok | Expr],
+        acc: List[Tok | Expr],
+    ): List[Tok | Expr] =
+        match_list[Tok | Expr, List[Tok | Expr]](
             case_at_least_3=Some((head0, head1, head2, tail2) =>
                 (head0, head1) match {
                     case (expr0: Expr, exprBraced1: ExprBraced) =>
@@ -206,13 +206,13 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def preparse_dot(
-        tokens_and_exprs: List[Token | Expr],
-        acc: List[Token | Expr],
-    ): List[Token | Expr] =
-        match_list[Token | Expr, List[Token | Expr]](
+        tokens_and_exprs: List[Tok | Expr],
+        acc: List[Tok | Expr],
+    ): List[Tok | Expr] =
+        match_list[Tok | Expr, List[Tok | Expr]](
             case_at_least_3=Some((head0, head1, head2, tail2) =>
                 (head0, head1, head2) match {
-                    case (expr0: Expr, TokenDot, expr2: Expr) =>
+                    case (expr0: Expr, TokDot, expr2: Expr) =>
                         preparse_dot(ExprCall1(expr2, expr0) +: tail2, acc)
                     case _ => preparse_dot(List(head1, head2) ++ tail2, acc :+ head0)
                 }
@@ -224,13 +224,13 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def preparse_lambda_reversed_rec(
-        reversed_tokens_and_exprs: List[Token | Expr],
-        acc: List[Token | Expr],
-    ): List[Token | Expr] =
-        match_list[Token | Expr, List[Token | Expr]](
+        reversed_tokens_and_exprs: List[Tok | Expr],
+        acc: List[Tok | Expr],
+    ): List[Tok | Expr] =
+        match_list[Tok | Expr, List[Tok | Expr]](
             case_at_least_3=Some((head0, head1, head2, tail2) =>
                 (head0, head1, head2) match {
-                    case (expr0: Expr, TokenEqGr, exprIdf2: /*Expr*/ ExprIdf ) =>
+                    case (expr0: Expr, TokEqGr, exprIdf2: /*Expr*/ ExprIdf ) =>
                         preparse_lambda_reversed_rec(ExprLambda1(exprIdf2, expr0) +: tail2, acc)
                     case _ => preparse_lambda_reversed_rec(List(head1, head2) ++ tail2, acc :+ head0)
                 }
@@ -241,9 +241,9 @@ object RtLib_3_Parse {
         )(reversed_tokens_and_exprs)
 
     private def preparse_lambda(
-        tokens_and_exprs: List[Token | Expr],
-        /**/ _acc: List[Token | Expr],
-    ): List[Token | Expr] =
+        tokens_and_exprs: List[Tok | Expr],
+        /**/ _acc: List[Tok | Expr],
+    ): List[Tok | Expr] =
         preparse_lambda_reversed_rec(
             tokens_and_exprs.reverse, List()
         ).reverse
@@ -251,13 +251,13 @@ object RtLib_3_Parse {
 
     private def preparse_left_to_right(
         operator_strings: String*
-    ): (List[Token | Expr], List[Token | Expr]) => List[Token | Expr] = {
+    ): (List[Tok | Expr], List[Tok | Expr]) => List[Tok | Expr] = {
         //@tailrec
         def preparser(
-            tokens_and_exprs: List[Token | Expr],
-            acc: List[Token | Expr],
-        ): List[Token | Expr] =
-            match_list[Token | Expr, List[Token | Expr]](
+            tokens_and_exprs: List[Tok | Expr],
+            acc: List[Tok | Expr],
+        ): List[Tok | Expr] =
+            match_list[Tok | Expr, List[Tok | Expr]](
                 case_at_least_3=Some((head0, head1, head2, tail2) =>
                     (head0, head1, head2) match {
                         case (expr0: Expr, ExprIdf(s1), expr2: Expr)
@@ -275,12 +275,12 @@ object RtLib_3_Parse {
     }
 
     private def preparse_unary(operator: String)
-    : (List[Token | Expr], List[Token | Expr]) => List[Token | Expr] = {
+    : (List[Tok | Expr], List[Tok | Expr]) => List[Tok | Expr] = {
         def preparser(
-            tokens_and_exprs: List[Token | Expr],
-            _acc: List[Token | Expr],
-        ): List[Token | Expr] =
-            match_list[Token | Expr, List[Token | Expr]](
+            tokens_and_exprs: List[Tok | Expr],
+            _acc: List[Tok | Expr],
+        ): List[Tok | Expr] =
+            match_list[Tok | Expr, List[Tok | Expr]](
                 case_at_least_2=Some((head0, head1, tail1) =>
                     (head0, head1) match {
                         case (ExprIdf(`operator`), expr1: Expr) =>
@@ -294,7 +294,7 @@ object RtLib_3_Parse {
         preparser
     }
 
-    private def parse_full_expr(tokens: List[Token | Expr]): Expr = {
+    private def parse_full_expr(tokens: List[Tok | Expr]): Expr = {
         val preparsed = apply_all(allPreparsers, tokens)
 
         val (head_preparsed, tail_preparsed) = rt_assert_at_least_1(preparsed)
@@ -302,12 +302,12 @@ object RtLib_3_Parse {
 
         head_preparsed match {
             case expr: Expr => expr
-            case _: Token => rtFail(s"got token `$head_preparsed`")
+            case _: Tok => rtFail(s"got token `$head_preparsed`")
         }
     }
 
     private def parse_line_with_less_minus(
-        current_line: List[Token],
+        current_line: List[Tok],
         next_lines_expr: Expr,
     ): ExprCall1 = {
         val (head0, head1, tail2) = rt_assert_at_least_2(current_line)
@@ -327,7 +327,7 @@ object RtLib_3_Parse {
     }
 
     private def parse_line_with_equals(
-        current_line: List[Token],
+        current_line: List[Tok],
         next_lines_expr: Expr,
     ): ExprCall1 = {
         val (head0, head1, tail2) = rt_assert_at_least_2(current_line)
@@ -350,7 +350,7 @@ object RtLib_3_Parse {
     }
 
     private def parse_effectful_line(
-        current_line: List[Token],
+        current_line: List[Tok],
         next_lines_expr: Expr,
     ): ExprCall1 = {
         val right_expr = parse_full_expr(current_line)
@@ -365,10 +365,10 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def parse_previous_lines(
-        lines_reversed: List[List[Token]],
+        lines_reversed: List[List[Tok]],
         acc_expr: Expr,
     ): Expr =
-        match_list[List[Token], Expr](
+        match_list[List[Tok], Expr](
             case_empty=Some(() => acc_expr),
             case_at_least_1=Some((lastLine, prevLines) => parse_previous_lines(
                 prevLines,
@@ -386,24 +386,24 @@ object RtLib_3_Parse {
 
     //@tailrec
     private def get_lines_reversed(
-        tokens_reversed: List[Token],
-        acc_lines: List[List[Token]],
-        acc_current_line: List[Token],
-    ): List[List[Token]] =
-        match_list[Token, List[List[Token]]](
+        tokens_reversed: List[Tok],
+        acc_lines: List[List[Tok]],
+        acc_current_line: List[Tok],
+    ): List[List[Tok]] =
+        match_list[Tok, List[List[Tok]]](
             case_empty=Some(() => acc_lines :+ acc_current_line),
             case_at_least_1=Some((head, tail) =>
-              if (head == TokenEndl)
+              if (head == TokEndl)
                 get_lines_reversed(tail, acc_lines :+ acc_current_line, List())
               else get_lines_reversed(tail, acc_lines, head +: acc_current_line)
             ),
         )(tokens_reversed)
 
-    def parse(tokens: List[Token]): Expr = {
+    def parse(tokens: List[Tok]): Expr = {
         val tokens_reversed = tokens.reverse
         val lines_reversed = get_lines_reversed(tokens_reversed, List(), List())
         val nonempty_lines_reversed = lines_reversed.filter(_.nonEmpty)
-        match_list[List[Token], Expr](
+        match_list[List[Tok], Expr](
             case_empty=Some(() => rtFail("Yet empty file is unsupported.")),
             case_at_least_1=Some((head, tail) => parse_previous_lines(
                 tail, parse_full_expr(head)

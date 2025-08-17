@@ -12,11 +12,11 @@ object TestCase11 extends RtTestCase {
     + s"""print(name)\n"""
 
   val tokens_1 = List(
-    TokenIdf("greeting"), TokenEq, TokenLitStr("Hey! What is your name?"), TokenEndl,
-    TokenIdf("print"), TokenParenOpen, TokenIdf("greeting"), TokenParenClose, TokenEndl,
-    TokenIdf("name"), TokenLessMinus, TokenIdf("input"), TokenEndl,
-    TokenIdf("print"), TokenParenOpen, TokenLitStr("Welcome, ..."), TokenParenClose, TokenEndl,
-    TokenIdf("print"), TokenParenOpen, TokenIdf("name"), TokenParenClose, TokenEndl,
+    TokIdf("greeting"), TokEq, TokLitStr("Hey! What is your name?"), TokEndl,
+    TokIdf("print"), TokParenOpen, TokIdf("greeting"), TokParenClose, TokEndl,
+    TokIdf("name"), TokLessMinus, TokIdf("input"), TokEndl,
+    TokIdf("print"), TokParenOpen, TokLitStr("Welcome, ..."), TokParenClose, TokEndl,
+    TokIdf("print"), TokParenOpen, TokIdf("name"), TokParenClose, TokEndl,
   )
 
   val expr_2 =

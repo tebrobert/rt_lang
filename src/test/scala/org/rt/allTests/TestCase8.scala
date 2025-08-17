@@ -15,9 +15,9 @@ object TestCase8 extends RtTestCase {
 
   val tokens_1 =
     List(
-      TokenIdf("s"), TokenLessMinus, TokenIdf("input"), TokenEndl,
-      TokenIdf("print"), TokenParenOpen, TokenIdf("s"), TokenParenClose, TokenEndl,
-      TokenIdf("print"), TokenParenOpen, TokenIdf("s"), TokenParenClose, TokenEndl,
+      TokIdf("s"), TokLessMinus, TokIdf("input"), TokEndl,
+      TokIdf("print"), TokParenOpen, TokIdf("s"), TokParenClose, TokEndl,
+      TokIdf("print"), TokParenOpen, TokIdf("s"), TokParenClose, TokEndl,
     )
 
   val expr_2 =
