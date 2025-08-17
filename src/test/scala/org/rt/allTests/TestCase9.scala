@@ -5,7 +5,8 @@ import org.rt.lang.RtLib_2_Tokenize.Classes.*
 import org.rt.lang.RtLib_3_Parse.*
 
 object TestCase9 extends RtTestCase {
-  val code_0 = s"""print("Hey! What is your name?")\n"""
+  val code_0 = ""
+    + s"""print("Hey! What is your name?")\n"""
     + s"""name <- input\n"""
     + s"""print("Welcome, ...")\n"""
     + s"""print(name)\n"""
