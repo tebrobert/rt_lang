@@ -342,14 +342,14 @@ object RtLib_4_Lint { //todo: rename remaining - typifi-ed -> linted
   }
 
   def continue_linting_call_1(
-    typified_f: Linted,
-    typified_x: Linted,
+    linted_f: Linted,
+    linted_x: Linted,
   ) = {
-    val new_typ_f = concrete_f(typified_f.typ, typified_x.typ)
+    val new_typ_f = concrete_f(linted_f.typ, linted_x.typ)
     val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
-    val new_typified_f = replace_typ(typified_f, new_typ2_f)
-    val new_typified_x = replace_typ(typified_x, new_typ2_f.t1)
-    LintedCall1(new_typified_f, new_typified_x, new_typ2_f.t2)
+    val new_linted_f = replace_typ(linted_f, new_typ2_f)
+    val new_linted_x = replace_typ(linted_x, new_typ2_f.t1)
+    LintedCall1(new_linted_f, new_linted_x, new_typ2_f.t2)
   }
 
   def lint_set_call_1(
@@ -357,48 +357,48 @@ object RtLib_4_Lint { //todo: rename remaining - typifi-ed -> linted
     expr_x: Expr,
   ) =
     (for {
-      typified_f <- lint_set(expr_f)
+      linted_f <- lint_set(expr_f)
       _ = rt_assert(
-        (typified_f.typ.isInstanceOf[Typ2]
-          && typified_f.typ.asInstanceOf[Typ2].s == builtin_Func // todo - try better typing
-          ) || typified_f.typ.isInstanceOf[Unk0]
+        (linted_f.typ.isInstanceOf[Typ2]
+          && linted_f.typ.asInstanceOf[Typ2].s == builtin_Func // todo - try better typing
+          ) || linted_f.typ.isInstanceOf[Unk0]
       )
-      typified_x <- lint_set(expr_x)
+      linted_x <- lint_set(expr_x)
 
-      mb_current_typified_call1 = rt_try(() =>
-        if (typified_f.typ.isInstanceOf[Unk0])
-          continue_linting_call_1_with_unknown_f(typified_f, typified_x)
-        else if (typified_x.typ.isInstanceOf[Unk0])
-          continue_linting_call_1_with_unknown_x(typified_f, typified_x)
-        else continue_linting_call_1(typified_f, typified_x)
+      mb_current_linted_call1 = rt_try(() =>
+        if (linted_f.typ.isInstanceOf[Unk0])
+          continue_linting_call_1_with_unknown_f(linted_f, linted_x)
+        else if (linted_x.typ.isInstanceOf[Unk0])
+          continue_linting_call_1_with_unknown_x(linted_f, linted_x)
+        else continue_linting_call_1(linted_f, linted_x)
       )
-    } yield mb_current_typified_call1)
-      .collect { case Right(typified) => typified }
+    } yield mb_current_linted_call1)
+      .collect { case Right(linted) => linted }
 
   def lint_set_lambda_1(
     expr_arg: Expr,
     expr_res: Expr,
   ) =
     (for {
-      typified_arg <- lint_set(expr_arg)
-      typified_res <- lint_set(expr_res)
+      linted_arg <- lint_set(expr_arg)
+      linted_res <- lint_set(expr_res)
 
       mb_res = rt_try { () =>
-        val typified_arg_s = match_linted(
+        val linted_arg_s = match_linted(
           case_idf = (s, _) => s,
           case_lit = (_, _) => rtFail(),
           case_call_1 = (_, _, _) => rtFail(),
           case_lambda_1 = (_, _, _) => rtFail(),
-        )(typified_arg) // todo - try better typing
+        )(linted_arg) // todo - try better typing
 
-        val found_typ_arg = find_idf_typ(typified_res, typified_arg_s)
-        val retypified_arg = replace_typ(typified_arg, found_typ_arg)
+        val found_typ_arg = find_idf_typ(linted_res, linted_arg_s)
+        val relinted_arg = replace_typ(linted_arg, found_typ_arg)
 
         //todo - likely, next Unk0 needed
-        LintedLambda1(retypified_arg, typified_res, Unk0(-1))
+        LintedLambda1(relinted_arg, linted_res, Unk0(-1))
       }
     } yield mb_res)
-      .collect { case Right(typified) => typified }
+      .collect { case Right(linted) => linted }
 
   def lint_set_idf(s: String) =
     idf_to_typ.getOrElse(s, Set(T_A0))
@@ -421,10 +421,10 @@ object RtLib_4_Lint { //todo: rename remaining - typifi-ed -> linted
   def lint(
     expr: Expr,
   ): Linted = {
-    val typified_set = lint_set(expr)
-    typified_set.toList match {
+    val linted_set = lint_set(expr)
+    linted_set.toList match {
       case head :: Nil => head
-      case _ => rtFail(typified_set.toString)
+      case _ => rtFail(linted_set.toString)
     }
   }
 
