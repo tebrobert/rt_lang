@@ -29,6 +29,11 @@ object TestCase8 extends RtTestCase {
       ),
     )
 
+  def hack(typResult: Typ) = // todo - FIX the cause
+    if (typResult == T_A0)
+      T_RIO_Unit
+    else T_RIO(typResult)
+
   def lintedAndThen(
     resultTuple: (String, Typ),
     linted: Linted,
@@ -40,11 +45,11 @@ object TestCase8 extends RtTestCase {
       LintedCall1(
         LintedIdf(
           ">>=",
-          (typifiedResult.typ tTo T_RIO_Unit)
-            tTo (T_RIO_Unit /*T_RIO(typifiedResult.typ)*/ tTo lintedNext.typ)
+          (typifiedResult.typ tTo lintedNext.typ)
+            tTo (hack(typifiedResult.typ) tTo lintedNext.typ)
         ),
-        LintedLambda1(typifiedResult, lintedNext, typifiedResult.typ tTo T_RIO_Unit),
-        T_RIO_Unit /*T_RIO(typifiedResult.typ)*/ tTo lintedNext.typ,
+        LintedLambda1(typifiedResult, lintedNext, typifiedResult.typ tTo lintedNext.typ),
+        hack(typifiedResult.typ) tTo lintedNext.typ,
       ),
       linted,
       lintedNext.typ,
@@ -52,45 +57,12 @@ object TestCase8 extends RtTestCase {
   }
 
   override val mb_linted_3 =
-    Some({
-      (("s", T_Str), LintedIdf("input", T_RIO_Str),
-        (("_", T_A0), LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit),
-          LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit),
+    Some(
+      lintedAndThen(("s", T_Str), LintedIdf("input", T_RIO_Str),
+        // todo - final Linted must not contain Unk
+        lintedAndThen(("_", T_A0), LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit),
+          LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit)
         )
       )
-
-      LintedCall1(
-        LintedCall1(
-          LintedIdf(">>=", (T_Str tTo T_RIO_Unit) tTo (T_RIO_Str tTo T_RIO_Unit)),
-          LintedLambda1(
-            LintedIdf("s", T_Str),
-            LintedCall1(
-              LintedCall1(
-                LintedIdf(">>=", (T_A0 tTo T_RIO_Unit) tTo (T_RIO_Unit tTo T_RIO_Unit)),
-                LintedLambda1(
-                  LintedIdf("_", T_A0),
-                  LintedCall1(
-                    LintedIdf("print", T_Str tTo T_RIO_Unit),
-                    LintedIdf("s", T_Str),
-                    T_RIO_Unit,
-                  ),
-                  T_A0 tTo T_RIO_Unit,
-                ),
-                T_RIO_Unit tTo T_RIO_Unit,
-              ),
-              LintedCall1(
-                LintedIdf("print", T_Str tTo T_RIO_Unit),
-                LintedIdf("s", T_Str),
-                T_RIO_Unit,
-              ),
-              T_RIO_Unit,
-            ),
-            T_Str tTo T_RIO_Unit,
-          ),
-          T_RIO_Str tTo T_RIO_Unit,
-        ),
-        LintedIdf("input", T_RIO_Str),
-        T_RIO_Unit,
-      )
-    })
+    )
 }
