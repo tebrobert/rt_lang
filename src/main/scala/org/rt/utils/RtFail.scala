@@ -1,7 +1,7 @@
 package org.rt.utils
 
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0}
-import org.rt.lang.RtLib_2_Tokenize.{Tok, TokEq, TokIdf, TokLessMinus}
+import org.rt.lang.RtLib_2_Tokenize.Classes.{Tok, TokEq, TokIdf, TokLessMinus}
 import org.rt.lang.RtLib_3_Parse.Expr
 
 object RtFail {

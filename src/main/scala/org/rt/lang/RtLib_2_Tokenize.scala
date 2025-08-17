@@ -1,32 +1,36 @@
 package org.rt.lang
 
+import org.rt.lang.RtLib_2_Tokenize.Classes.{Tok, TokDot, TokEndl, TokEq, TokEqGr, TokIdf, TokLessMinus, TokLitBint, TokLitStr, TokParenClose, TokParenOpen}
 import org.rt.utils.RtFail.{rtFail, rt_assert, try_and_match}
 import org.rt.utils.RtList.match_list
 
 import scala.annotation.tailrec
 
 object RtLib_2_Tokenize {
-  sealed trait Tok // token
+  object Classes {
+    sealed trait Tok // token
 
-  final case class TokLitStr(s: String) extends Tok // literal string
+    final case class TokLitStr(s: String) extends Tok // literal string
 
-  final case class TokLitBint(i: String) extends Tok //literal big int
+    final case class TokLitBint(i: String) extends Tok //literal big int
 
-  final case class TokIdf(s: String) extends Tok // identifier
+    final case class TokIdf(s: String) extends Tok // identifier
 
-  case object TokParenOpen extends Tok
+    case object TokParenOpen extends Tok
 
-  case object TokParenClose extends Tok
+    case object TokParenClose extends Tok
 
-  case object TokLessMinus extends Tok
+    case object TokLessMinus extends Tok
 
-  case object TokEq extends Tok
+    case object TokEq extends Tok
 
-  case object TokEndl extends Tok
+    case object TokEndl extends Tok
 
-  case object TokEqGr extends Tok
+    case object TokEqGr extends Tok
 
-  case object TokDot extends Tok
+    case object TokDot extends Tok
+  }
+
 
 
   private val end_of_code: Char = 0

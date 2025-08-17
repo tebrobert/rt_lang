@@ -1,8 +1,9 @@
 package org.rt
 
-import lang.RtLib_2_Tokenize.{Tok, tokenize}
+import lang.RtLib_2_Tokenize.tokenize
 import lang.RtLib_3_Parse.{Expr, parse}
 import org.rt.allTests.*
+import org.rt.lang.RtLib_2_Tokenize.Classes.Tok
 import org.rt.lang.RtLib_4_Typify.{Typified, typify}
 import zio.test.*
 
