@@ -414,6 +414,4 @@ object RtLib_3_Parse {
 
     def full_parse(code: String): Expr =
         parse(tokenize(code))
-
-//    private val typified_repr_endl = "\n"
 }

@@ -6,7 +6,7 @@ import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Func, T_Str, idf_to_typ}
 import org.rt.lang.RtLib_3_Parse.{Expr, full_parse, match_expr}
 import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, rt_try, wip}
 
-object RtLib_4_Lint { //todo: rename remaining - typifi-ed -> linted
+object RtLib_4_Lint {
   sealed trait Linted {
     val typ: Typ
   }

@@ -39,17 +39,17 @@ object TestCase8 extends RtTestCase {
     linted: Linted,
     lintedNext: Linted,
   ) = {
-    val typifiedResult = LintedIdf.apply.tupled(resultTuple)
+    val lintedResult = LintedIdf.apply.tupled(resultTuple)
 
     LintedCall1(
       LintedCall1(
         LintedIdf(
           ">>=",
-          (typifiedResult.typ tTo lintedNext.typ)
-            tTo (hack(typifiedResult.typ) tTo lintedNext.typ)
+          (lintedResult.typ tTo lintedNext.typ)
+            tTo (hack(lintedResult.typ) tTo lintedNext.typ)
         ),
-        LintedLambda1(typifiedResult, lintedNext, typifiedResult.typ tTo lintedNext.typ),
-        hack(typifiedResult.typ) tTo lintedNext.typ,
+        LintedLambda1(lintedResult, lintedNext, lintedResult.typ tTo lintedNext.typ),
+        hack(lintedResult.typ) tTo lintedNext.typ,
       ),
       linted,
       lintedNext.typ,
