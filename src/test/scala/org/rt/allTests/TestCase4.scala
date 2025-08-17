@@ -4,7 +4,7 @@ import org.rt.RtTestCase
 import org.rt.lang.RtLib_0_2_Builtins.{T_Func, T_RIO, T_Str}
 import org.rt.lang.RtLib_2_Tokenize.Classes.*
 import org.rt.lang.RtLib_3_Parse.*
-import org.rt.lang.RtLib_4_Typify.{TypifiedCall1, TypifiedIdf, TypifiedLambda1}
+import org.rt.lang.RtLib_4_Lint.{LintedCall1, LintedIdf, LintedLambda1}
 
 object TestCase4 extends RtTestCase {
   val code_0 = "(s => s)((s => s)(input))\n"
@@ -26,19 +26,19 @@ object TestCase4 extends RtTestCase {
       )
     )
 
-  override val mb_typified_3 = Some(TypifiedCall1(
-    TypifiedLambda1(
-      TypifiedIdf("s", T_RIO(T_Str)),
-      TypifiedIdf("s", T_RIO(T_Str)),
+  override val mb_linted_3 = Some(LintedCall1(
+    LintedLambda1(
+      LintedIdf("s", T_RIO(T_Str)),
+      LintedIdf("s", T_RIO(T_Str)),
       T_Func(T_RIO(T_Str), T_RIO(T_Str)),
     ),
-    TypifiedCall1(
-      TypifiedLambda1(
-        TypifiedIdf("s", T_RIO(T_Str)),
-        TypifiedIdf("s", T_RIO(T_Str)),
+    LintedCall1(
+      LintedLambda1(
+        LintedIdf("s", T_RIO(T_Str)),
+        LintedIdf("s", T_RIO(T_Str)),
         T_Func(T_RIO(T_Str), T_RIO(T_Str)),
       ),
-      TypifiedIdf("input", T_RIO(T_Str)),
+      LintedIdf("input", T_RIO(T_Str)),
       T_RIO(T_Str),
     ),
     T_RIO(T_Str),

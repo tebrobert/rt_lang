@@ -5,7 +5,7 @@ import org.rt.TestHelpers.*
 import org.rt.lang.RtLib_0_2_Builtins.T_Func
 import org.rt.lang.RtLib_2_Tokenize.Classes.*
 import org.rt.lang.RtLib_3_Parse.*
-import org.rt.lang.RtLib_4_Typify.{TypifiedCall1, TypifiedIdf, TypifiedLambda1}
+import org.rt.lang.RtLib_4_Lint.{LintedCall1, LintedIdf, LintedLambda1}
 
 object TestCase2 extends RtTestCase {
   val code_0 =
@@ -25,14 +25,14 @@ object TestCase2 extends RtTestCase {
       ExprIdf("input"),
     )
 
-  override val mb_typified_3 =
+  override val mb_linted_3 =
     Some(
-      TypifiedCall1(
-        TypifiedLambda1(
-          TypifiedIdf("s", T_RIO_Str), TypifiedIdf("s", T_RIO_Str),
+      LintedCall1(
+        LintedLambda1(
+          LintedIdf("s", T_RIO_Str), LintedIdf("s", T_RIO_Str),
           T_RIO_Str tTo T_RIO_Str,
         ),
-        TypifiedIdf("input", T_RIO_Str),
+        LintedIdf("input", T_RIO_Str),
         T_RIO_Str,
       ))
 }

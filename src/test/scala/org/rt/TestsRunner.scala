@@ -4,14 +4,14 @@ import lang.RtLib_2_Tokenize.tokenize
 import lang.RtLib_3_Parse.{Expr, parse}
 import org.rt.allTests.*
 import org.rt.lang.RtLib_2_Tokenize.Classes.Tok
-import org.rt.lang.RtLib_4_Typify.{Typified, typify}
+import org.rt.lang.RtLib_4_Lint.{Linted, lint}
 import zio.test.*
 
 trait RtTestCase {
   val code_0: String
   val tokens_1: List[Tok]
   val expr_2: Expr
-  val mb_typified_3: Option[Typified] = None
+  val mb_linted_3: Option[Linted] = None
 }
 
 object TestsRunner extends ZIOSpecDefault {
@@ -24,9 +24,9 @@ object TestsRunner extends ZIOSpecDefault {
           assertTrue(parse(testCase.tokens_1) == testCase.expr_2)
         })
       ++ allTestCases.flatMap(testCase =>
-        testCase.mb_typified_3.map { typified_3 =>
-          test("typify " + testCase.getClass.getSimpleName) {
-            assertTrue(typify(testCase.expr_2) == typified_3)
+        testCase.mb_linted_3.map { typified_3 =>
+          test("lint " + testCase.getClass.getSimpleName) {
+            assertTrue(lint(testCase.expr_2) == typified_3)
           }
         }
       )

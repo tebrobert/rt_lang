@@ -6,29 +6,29 @@ import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Func, T_Str, idf_to_typ}
 import org.rt.lang.RtLib_3_Parse.{Expr, full_parse, match_expr}
 import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, rt_try, wip}
 
-object RtLib_4_Typify {
-  sealed trait Typified {
+object RtLib_4_Lint { //todo: rename remaining - typify -> lint
+  sealed trait Linted {
     val typ: Typ
   }
 
-  private final case class TypifiedLit(
+  private final case class LintedLit(
     s: String,
     typ: Typ,
-  ) extends Typified
+  ) extends Linted
 
-  final case class TypifiedIdf(
+  final case class LintedIdf(
     s: String,
     typ: Typ,
-  ) extends Typified
+  ) extends Linted
 
-  final case class TypifiedCall1 private(
-    typified_f: Typified,
-    typified_x: Typified,
+  final case class LintedCall1 private(
+    typified_f: Linted,
+    typified_x: Linted,
     typ: Typ,
-  ) extends Typified
+  ) extends Linted
 
-  object TypifiedCall1 {
-    def apply(typified_f: Typified, typified_x: Typified, typ: Typ): TypifiedCall1 = {
+  object LintedCall1 {
+    def apply(typified_f: Linted, typified_x: Linted, typ: Typ): LintedCall1 = {
       typified_f.typ match {
         case Unk0(_) => ()
         case Typ2(`builtin_Func`, _, _) => ()
@@ -39,30 +39,30 @@ object RtLib_4_Typify {
         case (Typ2(_, Unk0(_), _), _) => () // suspicious: what if typ_f is Unk
         case (_, Unk0(_)) => ()
         case (Typ2(_, typified_x.typ, _), x_typ) => ()
-        case _ => rtFail("can't create TypifiedCall1")
+        case _ => rtFail("can't create LintedCall1")
       }
 
       (typified_f.typ, typ) match {
         case (Typ2(_, _, Unk0(_)), _) => () // suspicious: what if typ_f is Unk
         case (_, Unk0(_)) => ()
         case (Typ2(_, _, `typ`), _) => ()
-        case _ => rtFail("can't create TypifiedCall1")
+        case _ => rtFail("can't create LintedCall1")
       }
 
-      new TypifiedCall1(typified_f, typified_x, typ)
+      new LintedCall1(typified_f, typified_x, typ)
     }
   }
 
-  final case class TypifiedLambda1 private(
-    typified_idf_x: Typified,
-    typified_res: Typified,
+  final case class LintedLambda1 private(
+    typified_idf_x: Linted,
+    typified_res: Linted,
     typ: Typ,
-  ) extends Typified
+  ) extends Linted
 
-  object TypifiedLambda1 {
-    def apply(typified_idf_x: Typified, typified_res: Typified, typ: Typ): TypifiedLambda1 = {
+  object LintedLambda1 {
+    def apply(typified_idf_x: Linted, typified_res: Linted, typ: Typ): LintedLambda1 = {
       typified_idf_x match {
-        case TypifiedIdf(_, _) => () // perhaps: specify arg type
+        case LintedIdf(_, _) => () // perhaps: specify arg type
         case _ => rtFail()
       }
 
@@ -72,7 +72,7 @@ object RtLib_4_Typify {
         case _ => rtFail()
       }
 
-      new TypifiedLambda1(
+      new LintedLambda1(
         typified_idf_x,
         typified_res,
         if (typ != Unk0(-1)) // perhaps: intermediatory Unk0(-1) unneeded
@@ -85,16 +85,16 @@ object RtLib_4_Typify {
   private def match_typified[A](
     case_lit: (String, Typ) => A,
     case_idf: (String, Typ) => A,
-    case_call_1: (Typified, Typified, Typ) => A,
-    case_lambda_1: (Typified, Typified, Typ) => A,
-  ): Typified => A = {
-    case TypifiedLit(s, typ) => case_lit(s, typ)
-    case TypifiedIdf(s, typ) => case_idf(s, typ)
-    case TypifiedCall1(typified_f, typified_x, typ) => case_call_1(typified_f, typified_x, typ)
-    case TypifiedLambda1(typified_idf_x, typified_res, typ) => case_lambda_1(typified_idf_x, typified_res, typ)
+    case_call_1: (Linted, Linted, Typ) => A,
+    case_lambda_1: (Linted, Linted, Typ) => A,
+  ): Linted => A = {
+    case LintedLit(s, typ) => case_lit(s, typ)
+    case LintedIdf(s, typ) => case_idf(s, typ)
+    case LintedCall1(typified_f, typified_x, typ) => case_call_1(typified_f, typified_x, typ)
+    case LintedLambda1(typified_idf_x, typified_res, typ) => case_lambda_1(typified_idf_x, typified_res, typ)
   }
 
-  private def replace_typ_lambda_1(typified_idf_x: Typified, typified_res: Typified, new_typ: Typ): TypifiedLambda1 = {
+  private def replace_typ_lambda_1(typified_idf_x: Linted, typified_res: Linted, new_typ: Typ): LintedLambda1 = {
     new_typ match {
       case Unk0(_) =>
         rtFail("not implemented...?")
@@ -102,7 +102,7 @@ object RtLib_4_Typify {
       case Typ2(`builtin_Func`, new_typ_t1, new_typ_t2) =>
         val updated_typified_idf_x = replace_typ(typified_idf_x, new_typ_t1)
         val updated_typified_res = replace_typ(typified_res, new_typ_t2)
-        TypifiedLambda1(
+        LintedLambda1(
           updated_typified_idf_x,
           updated_typified_res,
           new_typ,
@@ -112,8 +112,8 @@ object RtLib_4_Typify {
     }
   }
 
-  private def replace_typ_call_1(typed_f: Typified, typed_x: Typified, new_typ: Typ): Typified =
-    TypifiedCall1(
+  private def replace_typ_call_1(typed_f: Linted, typed_x: Linted, new_typ: Typ): Linted =
+    LintedCall1(
       typed_f.typ match {
         case Unk0(i) =>
           replace_typ(typed_f, T_Func(typed_x.typ, new_typ)) // typed_f - legacy comment
@@ -127,10 +127,10 @@ object RtLib_4_Typify {
       new_typ,
     )
 
-  private def replace_typ(typified: Typified, new_typ: Typ): Typified =
+  private def replace_typ(typified: Linted, new_typ: Typ): Linted =
     match_typified(
-      case_lit = (s, typ) => TypifiedLit(s, typ),
-      case_idf = (s, _) => TypifiedIdf(s, new_typ),
+      case_lit = (s, typ) => LintedLit(s, typ),
+      case_idf = (s, _) => LintedIdf(s, new_typ),
       case_call_1 = (typed_f, typed_x, _) => replace_typ_call_1(typed_f, typed_x, new_typ),
       case_lambda_1 = (typified_idf_x, typified_res, _typ) =>
         replace_typ_lambda_1(typified_idf_x, typified_res, new_typ),
@@ -146,7 +146,7 @@ object RtLib_4_Typify {
         get_unknowns_fot_typ(t1) ++ get_unknowns_fot_typ(t2),
     )(typ)
 
-  def get_unknowns_for_typified(typified: Typified) =
+  def get_unknowns_for_typified(typified: Linted) =
     match_typified(
       case_lit = (_s, typ) => get_unknowns_fot_typ(typ),
       case_idf = (_s, typ) => get_unknowns_fot_typ(typ),
@@ -156,8 +156,8 @@ object RtLib_4_Typify {
     )(typified)
 
   def find_idf_typ_call_1(
-    typified_f: Typified,
-    typified_x: Typified,
+    typified_f: Linted,
+    typified_x: Linted,
     s_to_find: String,
   ) = {
     val lookup_by_f = find_idf_typ(typified_f, s_to_find)
@@ -167,7 +167,7 @@ object RtLib_4_Typify {
     else find_idf_typ(typified_x, s_to_find)
   }
 
-  def find_idf_typ(typified: Typified, s_to_find: String): Typ =
+  def find_idf_typ(typified: Linted, s_to_find: String): Typ =
     match_typified(
       case_lit = (_s, _typ) => T_A0,
       case_idf = (s, typ) => if (s == s_to_find) typ else T_A0,
@@ -299,8 +299,8 @@ object RtLib_4_Typify {
     )(typ_f)
 
   def continue_typifying_call_1_with_unknown_f(
-    typified_f: Typified,
-    typified_x: Typified,
+    typified_f: Linted,
+    typified_x: Linted,
   ) = {
     rt_assert_type_Unk0(typified_f.typ)
 
@@ -313,27 +313,27 @@ object RtLib_4_Typify {
     )(typified_x.typ)
 
     val new_typified_f = replace_typ(typified_f, new_typ_f)
-    TypifiedCall1(new_typified_f, typified_x, new_typ_f.t2)
+    LintedCall1(new_typified_f, typified_x, new_typ_f.t2)
   }
 
   def continue_typifying_call_1_with_unknown_x(
-    typified_f: Typified,
-    typified_x: Typified,
+    typified_f: Linted,
+    typified_x: Linted,
   ) = {
     val typified_f_typ = rt_assert_type_Typ2(typified_f.typ) // todo - try better typing
     val new_typified_x = replace_typ(typified_x, typified_f_typ.t1)
-    TypifiedCall1(typified_f, new_typified_x, typified_f_typ.t2)
+    LintedCall1(typified_f, new_typified_x, typified_f_typ.t2)
   }
 
   def continue_typifying_call_1(
-    typified_f: Typified,
-    typified_x: Typified,
+    typified_f: Linted,
+    typified_x: Linted,
   ) = {
     val new_typ_f = concrete_f(typified_f.typ, typified_x.typ)
     val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
     val new_typified_f = replace_typ(typified_f, new_typ2_f)
     val new_typified_x = replace_typ(typified_x, new_typ2_f.t1)
-    TypifiedCall1(new_typified_f, new_typified_x, new_typ2_f.t2)
+    LintedCall1(new_typified_f, new_typified_x, new_typ2_f.t2)
   }
 
   def typify_set_call_1(
@@ -379,32 +379,32 @@ object RtLib_4_Typify {
         val retypified_arg = replace_typ(typified_arg, found_typ_arg)
 
         //todo - likely, next Unk0 needed
-        TypifiedLambda1(retypified_arg, typified_res, Unk0(-1))
+        LintedLambda1(retypified_arg, typified_res, Unk0(-1))
       }
     } yield mb_res)
       .collect { case Right(typified) => typified }
 
   def typify_set_idf(s: String) =
     idf_to_typ.getOrElse(s, Set(T_A0))
-      .map(typ => TypifiedIdf(s, typ))
+      .map(typ => LintedIdf(s, typ))
 
-  def typify_set(expr: Expr): Set[Typified] =
+  def typify_set(expr: Expr): Set[Linted] =
     match_expr(
-      case_lit_str = s => Set(TypifiedLit(s, T_Str)),
-      case_lit_bint = i => Set(TypifiedLit(i, T_Bint)),
+      case_lit_str = s => Set(LintedLit(s, T_Str)),
+      case_lit_bint = i => Set(LintedLit(i, T_Bint)),
       case_idf = s => typify_set_idf(s)
-        .map(_.asInstanceOf[Typified]), // todo - ... mb try to use set in other way
+        .map(_.asInstanceOf[Linted]), // todo - ... mb try to use set in other way
       case_call_1 = (expr_f, expr_x) => typify_set_call_1(expr_f, expr_x)
-        .map(_.asInstanceOf[Typified]), // todo - ... mb try to use set in other way
+        .map(_.asInstanceOf[Linted]), // todo - ... mb try to use set in other way
       case_lambda_1 = (expr_idf_arg, expr_res) =>
         typify_set_lambda_1(expr_idf_arg, expr_res)
-          .map(_.asInstanceOf[Typified]), // todo - ... mb try to use set in other way
+          .map(_.asInstanceOf[Linted]), // todo - ... mb try to use set in other way
       case_braced = inner_expr => typify_set(inner_expr),
     )(expr)
 
-  def typify(
+  def lint(
     expr: Expr,
-  ): Typified = {
+  ): Linted = {
     val typified_set = typify_set(expr)
     typified_set.toList match {
       case head :: Nil => head
@@ -412,6 +412,6 @@ object RtLib_4_Typify {
     }
   }
 
-  def full_typify(code: String) =
-    typify(full_parse(code))
+  def full_lint(code: String) =
+    lint(full_parse(code))
 }

@@ -4,7 +4,7 @@ import org.rt.RtTestCase
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Func, T_RIO, T_Str, T_Unit}
 import org.rt.lang.RtLib_2_Tokenize.Classes.*
 import org.rt.lang.RtLib_3_Parse.*
-import org.rt.lang.RtLib_4_Typify.{TypifiedCall1, TypifiedIdf, TypifiedLambda1}
+import org.rt.lang.RtLib_4_Lint.{LintedCall1, LintedIdf, LintedLambda1}
 
 object TestCase6 extends RtTestCase {
   val code_0 = ">>=(s => >>=(u => print(s))(print(s)))(input)\n"
@@ -46,28 +46,28 @@ object TestCase6 extends RtTestCase {
       ExprIdf("input")
     )
 
-  override val mb_typified_3 = Some(TypifiedCall1(
-    TypifiedCall1(
-      TypifiedIdf(">>=", T_Func(T_Func(T_Str, T_RIO(T_Unit)), T_Func(T_RIO(T_Str), T_RIO(T_Unit)))),
-      TypifiedLambda1(
-        TypifiedIdf("s", T_Str),
-        TypifiedCall1(
-          TypifiedCall1(
-            TypifiedIdf(">>=", T_Func(T_Func(T_A0, T_RIO(T_Unit)), T_Func(T_RIO(T_Unit), T_RIO(T_Unit)))),
-            TypifiedLambda1(
-              TypifiedIdf("u", T_A0),
-              TypifiedCall1(
-                TypifiedIdf("print", T_Func(T_Str, T_RIO(T_Unit))),
-                TypifiedIdf("s", T_Str),
+  override val mb_linted_3 = Some(LintedCall1(
+    LintedCall1(
+      LintedIdf(">>=", T_Func(T_Func(T_Str, T_RIO(T_Unit)), T_Func(T_RIO(T_Str), T_RIO(T_Unit)))),
+      LintedLambda1(
+        LintedIdf("s", T_Str),
+        LintedCall1(
+          LintedCall1(
+            LintedIdf(">>=", T_Func(T_Func(T_A0, T_RIO(T_Unit)), T_Func(T_RIO(T_Unit), T_RIO(T_Unit)))),
+            LintedLambda1(
+              LintedIdf("u", T_A0),
+              LintedCall1(
+                LintedIdf("print", T_Func(T_Str, T_RIO(T_Unit))),
+                LintedIdf("s", T_Str),
                 T_RIO(T_Unit)
               ),
               T_Func(T_A0, T_RIO(T_Unit)),
             ),
             T_Func(T_RIO(T_Unit), T_RIO(T_Unit)),
           ),
-          TypifiedCall1(
-            TypifiedIdf("print", T_Func(T_Str, T_RIO(T_Unit))),
-            TypifiedIdf("s", T_Str),
+          LintedCall1(
+            LintedIdf("print", T_Func(T_Str, T_RIO(T_Unit))),
+            LintedIdf("s", T_Str),
             T_RIO(T_Unit)
           ),
           T_RIO(T_Unit)
@@ -76,7 +76,7 @@ object TestCase6 extends RtTestCase {
       ),
       T_Func(T_RIO(T_Str), T_RIO(T_Unit)),
     ),
-    TypifiedIdf("input", T_RIO(T_Str)),
+    LintedIdf("input", T_RIO(T_Str)),
     T_RIO(T_Unit)
   ))
 }

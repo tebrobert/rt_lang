@@ -4,7 +4,7 @@ import org.rt.RtTestCase
 import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_2_Tokenize.Classes.*
 import org.rt.lang.RtLib_3_Parse.*
-import org.rt.lang.RtLib_4_Typify.TypifiedIdf
+import org.rt.lang.RtLib_4_Lint.LintedIdf
 
 object TestCase1 extends RtTestCase {
   val code_0 =
@@ -18,8 +18,8 @@ object TestCase1 extends RtTestCase {
   val expr_2 =
     ExprIdf("input")
 
-  override val mb_typified_3 =
+  override val mb_linted_3 =
     Some(
-      TypifiedIdf("input", T_RIO(T_Str))
+      LintedIdf("input", T_RIO(T_Str))
     )
 }
