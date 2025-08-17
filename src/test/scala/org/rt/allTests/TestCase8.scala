@@ -8,10 +8,11 @@ import org.rt.lang.RtLib_3_Parse.*
 import org.rt.lang.RtLib_4_Typify.{TypifiedCall1, TypifiedIdf, TypifiedLambda1}
 
 object TestCase8 extends RtTestCase {
-  val code_0 = ""
-    + "s <- input\n"
-    + "print(s)\n"
-    + "print(s)\n"
+  val code_0 =
+    """s <- input
+      |print(s)
+      |print(s)
+      |""".stripMargin
 
   val tokens_1 =
     List(
@@ -23,8 +24,8 @@ object TestCase8 extends RtTestCase {
   val expr_2 =
     exprAndThen("s", ExprIdf("input"),
       exprAndThen("_", ExprCall1(ExprIdf("print"), ExprIdf("s")),
-        ExprCall1(ExprIdf("print"), ExprIdf("s"))
-      )
+        ExprCall1(ExprIdf("print"), ExprIdf("s")),
+      ),
     )
 
   override val mb_typified_3 = Some(

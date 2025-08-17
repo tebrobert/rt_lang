@@ -1,6 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
+//import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.TestHelpers.exprAndThen
 import org.rt.lang.RtLib_2_Tokenize.Classes.*
 import org.rt.lang.RtLib_3_Parse.*
@@ -25,8 +26,8 @@ object TestCase9 extends RtTestCase {
     exprAndThen("_", ExprCall1(ExprIdf("print"), ExprLitStr("Hey! What is your name?")),
       exprAndThen("name", ExprIdf("input"),
         exprAndThen("_", ExprCall1(ExprIdf("print"), ExprLitStr("Welcome, ...")),
-          ExprCall1(ExprIdf("print"), ExprIdf("name"))
-        )
-      )
+          ExprCall1(ExprIdf("print"), ExprIdf("name")),
+        ),
+      ),
     )
 }
