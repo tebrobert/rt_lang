@@ -64,6 +64,12 @@ object RtLib_4_Lint {
   ) extends Linted
 
   object LintedLambda1 {
+    def createUnlinted(
+      linted_idf_x: Linted,
+      linted_res: Linted,
+    ): LintedLambda1 =
+      apply(linted_idf_x, linted_res, Unk0(-1)) // todo mb use None
+
     def apply(
       linted_idf_x: Linted,
       linted_res: Linted,
@@ -395,7 +401,7 @@ object RtLib_4_Lint {
         val relinted_arg = replace_typ(linted_arg, found_typ_arg)
 
         //todo - likely, next Unk0 needed
-        LintedLambda1(relinted_arg, linted_res, Unk0(-1))
+        LintedLambda1.createUnlinted(relinted_arg, linted_res)
       }
     } yield mb_res)
       .collect { case Right(linted) => linted }
