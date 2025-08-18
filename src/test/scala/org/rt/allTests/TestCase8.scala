@@ -29,7 +29,7 @@ object TestCase8 extends RtTestCase {
       ),
     )
 
-  def hack(typResult: Typ) = // todo - FIX the cause
+  def rioHack(typResult: Typ) = // todo - FIX the cause
     if (typResult == T_A0)
       T_RIO_Unit
     else T_RIO(typResult)
@@ -46,10 +46,10 @@ object TestCase8 extends RtTestCase {
         LintedIdf(
           ">>=",
           (lintedResult.typ tTo lintedNext.typ)
-            tTo (hack(lintedResult.typ) tTo lintedNext.typ)
+            tTo (rioHack(lintedResult.typ) tTo lintedNext.typ)
         ),
         LintedLambda1(lintedResult, lintedNext, lintedResult.typ tTo lintedNext.typ),
-        hack(lintedResult.typ) tTo lintedNext.typ,
+        rioHack(lintedResult.typ) tTo lintedNext.typ,
       ),
       linted,
       lintedNext.typ,
