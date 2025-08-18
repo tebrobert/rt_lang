@@ -406,17 +406,13 @@ object RtLib_4_Lint {
 
   def lint_set(expr: Expr): Set[Linted] =
     match_expr(
-      case_lit_str = s => Set(LintedLit(s, T_Str)),
-      case_lit_bint = i => Set(LintedLit(i, T_Bint)),
-      case_idf = s => lint_set_idf(s)
-        .map(_.asInstanceOf[Linted]), // todo - ... mb try to use set in other way
-      case_call_1 = (expr_f, expr_x) => lint_set_call_1(expr_f, expr_x)
-        .map(_.asInstanceOf[Linted]), // todo - ... mb try to use set in other way
-      case_lambda_1 = (expr_idf_arg, expr_res) =>
-        lint_set_lambda_1(expr_idf_arg, expr_res)
-          .map(_.asInstanceOf[Linted]), // todo - ... mb try to use set in other way
-      case_braced = inner_expr => lint_set(inner_expr),
-    )(expr)
+      case_lit_str = s => Iterable(LintedLit(s, T_Str)),
+      case_lit_bint = i => Iterable(LintedLit(i, T_Bint)),
+      case_idf = lint_set_idf,
+      case_call_1 = lint_set_call_1,
+      case_lambda_1 = lint_set_lambda_1,
+      case_braced = lint_set,
+    )(expr).toSet
 
   def lint(
     expr: Expr,
