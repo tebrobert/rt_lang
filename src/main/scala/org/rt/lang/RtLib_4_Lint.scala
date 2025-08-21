@@ -205,7 +205,7 @@ object RtLib_4_Lint {
     sub_fx_i: Int,
   ): Typ = {
     val case_known =
-      () => concrete_f(
+      () => concretize_f(
         typ_f.clarifyUnk(Unk0(sub_fx_i), typ_sub_x),
         typ_x,
       )
@@ -225,7 +225,7 @@ object RtLib_4_Lint {
     sub_fx_s: String
   ) =
     typ_sub_x.rtMatch(
-      caseUnk0 = unk0 => concrete_f(
+      caseUnk0 = unk0 => concretize_f(
         typ_f.clarifyUnk(unk0, Typ0(sub_fx_s)),
         typ_x.clarifyUnk(unk0, Typ0(sub_fx_s)),
       ),
@@ -307,7 +307,7 @@ object RtLib_4_Lint {
     )
 
   // may have sync conflicts
-  def concrete_f(
+  def concretize_f(
     typ_f: Typ,
     typ_x: Typ,
   ): Typ =
@@ -351,7 +351,7 @@ object RtLib_4_Lint {
     linted_f: Linted,
     linted_x: Linted,
   ) = {
-    val new_typ_f = concrete_f(linted_f.typ, linted_x.typ)
+    val new_typ_f = concretize_f(linted_f.typ, linted_x.typ)
     //Typ2(Func,Typ1(RIO,Typ0(Unit)),Typ1(RIO,Typ0(Unit)))
 
     val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
