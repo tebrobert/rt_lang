@@ -58,6 +58,19 @@ object RtLib_2_Tokenize {
         lexx_dot,
       )
 
+    def call_or_otherwise[A](
+      otherwise: Option[() => A],
+      token: Tok,
+    )(
+      funcCalled: Option[() => A],
+    ): A =
+      funcCalled
+        .orElse(otherwise)
+        .getOrElse(rtFail(
+          s"Unspecified case for `$token` of type `${type value}`.",
+        ))
+        ()
+
     def match_token[A](
       case_lit_str: Option[String => A] = None,
       case_lit_bint: Option[String => A] = None,
@@ -72,15 +85,7 @@ object RtLib_2_Tokenize {
       otherwise: Option[() => A] = None,
     ): Tok => A =
       (token: Tok) => {
-        def call_or_otherwise(funcCalled: Option[() => A]): A =
-          funcCalled
-            .orElse(otherwise)
-            .getOrElse(rtFail(
-              s"Unspecified case for `$token` of type `${type value}`.",
-            ))
-            ()
-
-        call_or_otherwise(token match
+        call_or_otherwise(otherwise, token)(token match
           case TokLitStr(s) => case_lit_str.map(f => () => f(s))
           case TokLitBint(i) => case_lit_bint.map(f => () => f(i))
           case TokIdf(s) => case_idf.map(f => () => f(s))
@@ -102,7 +107,9 @@ object RtLib_2_Tokenize {
         otherwise = Some(() => rtFail())
       )
 
-    def is_initial_idf_char(char: Char) =
+    def is_initial_idf_char(
+      char: Char,
+    ) =
       char == '_'
         || 'a' <= char && char <= 'z'
         || 'A' <= char && char <= 'Z'
