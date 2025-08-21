@@ -1,9 +1,9 @@
 package org.rt.lang
 
-import org.rt.lang.RtLib_0_0_Lits.{builtin_and, builtin_div, builtin_eq_eq, builtin_flatmap, builtin_floor_div, builtin_gr, builtin_gr_eq, builtin_less, builtin_less_eq, builtin_minus, builtin_mod, builtin_multiply, builtin_not, builtin_not_eq, builtin_or, builtin_plus, builtin_pure}
+import org.rt.lang.RtLib_0_0_Lits.*
 import org.rt.lang.RtLib_2_Tokenize.Public.*
-import org.rt.utils.RtFail.{rtFail, rt_assert_type_TokenEq, rt_assert_type_TokenIdf, rt_assert_type_TokenLessMinus, tryOrRecover}
-import org.rt.utils.RtList.{match_list, rt_assert_at_least_1, rt_assert_at_least_2, rt_assert_empty}
+import org.rt.utils.RtFail.*
+import org.rt.utils.RtList.*
 
 object RtLib_3_Parse {
     sealed trait Expr
