@@ -143,6 +143,16 @@ object RtLib_4_Lint {
 
         case Typ2(_, t1, _) =>
           replace_typ(linted_f, T_Func(t1, new_typ))
+            .tapDebug(res => println(
+              s"""replace_typ_call_1(
+                 |  linted_f = $linted_f
+                 |  linted_x = $linted_x
+                 |  new_typ = $new_typ
+                 |) {
+                 |   t1 = $t1
+                 |   res = $res
+                 |}""".stripMargin
+            ))
 
         case _ => rtFail(s"Unexpected type `${linted_f.typ}`.")
       },
