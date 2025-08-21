@@ -23,29 +23,32 @@ object RtLib_0_2_Builtins {
     Map[String, Set[Typ]](
       builtin_input -> Set(T_RIO(T_Str)),
       builtin_print -> Set(T_Str tTo T_RIO(T_Unit)),
-      builtin_flatmap -> Set(
-        (T_A0 tTo T_RIO(T_A1)) tTo (T_RIO(T_A0) tTo T_RIO(T_A1)),
-      ),
+      builtin_flatmap ->
+        Set((T_A0 tTo T_RIO(T_A1)) tTo (T_RIO(T_A0) tTo T_RIO(T_A1))),
       builtin_pure -> Set(T_A0 tTo T_RIO(T_A0)),
-      builtin_plus -> Set(
-        T_Str tTo (T_Str tTo T_Str),
-        T_Bint tTo (T_Bint tTo T_Bint),
-      ),
-      builtin_minus -> Set(
-        T_Bint tTo (T_Bint tTo T_Bint),
-        T_Bint tTo T_Bint,
-      ),
+      builtin_plus ->
+        Set(
+          T_Str tTo (T_Str tTo T_Str),
+          T_Bint tTo (T_Bint tTo T_Bint),
+        ),
+      builtin_minus ->
+        Set(
+          T_Bint tTo (T_Bint tTo T_Bint),
+          T_Bint tTo T_Bint,
+        ),
       builtin_multiply -> Set(T_Bint tTo (T_Bint tTo T_Bint)),
-      builtin_str -> Set(
-        T_Bint tTo T_Str,
-        T_Bool tTo T_Str,
-      ),
+      builtin_str ->
+        Set(
+          T_Bint tTo T_Str,
+          T_Bool tTo T_Str,
+        ),
       builtin_true -> Set(T_Bool),
       builtin_false -> Set(T_Bool),
-      builtin_eq_eq -> Set(
-        T_Str tTo (T_Str tTo T_Bool),
-        T_Bint tTo (T_Bint tTo T_Bool),
-        T_Bool tTo (T_Bool tTo T_Bool),
-      )
+      builtin_eq_eq ->
+        Set(
+          T_Str tTo (T_Str tTo T_Bool),
+          T_Bint tTo (T_Bint tTo T_Bool),
+          T_Bool tTo (T_Bool tTo T_Bool),
+        )
     )
 }
