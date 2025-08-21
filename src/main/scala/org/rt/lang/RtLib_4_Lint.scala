@@ -187,7 +187,10 @@ object RtLib_4_Lint {
     else find_idf_typ(linted_x, s_to_find)
   }
 
-  def find_idf_typ(linted: Linted, s_to_find: String): Typ =
+  def find_idf_typ(
+    linted: Linted,
+    s_to_find: String,
+  ): Typ =
     linted.rtMatch(
       case_lit = (_s, _typ) => T_A0,
       case_idf = (s, typ) => if (s == s_to_find) typ else T_A0,
