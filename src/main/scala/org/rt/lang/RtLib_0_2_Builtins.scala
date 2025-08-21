@@ -10,13 +10,14 @@ object RtLib_0_2_Builtins {
   val T_Bool = Typ0(builtin_Bool)
   val T_List = (t1: Typ) => Typ1(builtin_List, t1)
   val T_RIO = (t1: Typ) => Typ1(builtin_RIO, t1)
+  private val T_Func = (from: Typ, to: Typ) => Typ2(builtin_Func, from, to)
 
   val T_A0 = Unk0(0)
   val T_A1 = Unk0(1)
 
   extension (typ: Typ) {
     def tTo(resultTyp: Typ) =
-      Typ2(builtin_Func, typ, resultTyp)
+      T_Func(typ, resultTyp)
   }
 
   val idf_to_typ =
