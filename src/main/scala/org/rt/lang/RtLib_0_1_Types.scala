@@ -137,43 +137,34 @@ object RtLib_0_1_Types {
     typ_x: Typ,
   )(
     typ_sub_x: Typ,
-    sub_fx_s: String,
-    sub_fx_t1: Typ,
+    typ1_sub_fx: Typ1,
   ) =
     typ_sub_x.rtMatch(
       caseUnk0 = _ => typ_f,
       caseTyp0 = _ => rtFail(),
       caseTyp1 = typ1 =>
-        if (typ1.s == sub_fx_s)
-          concretizeAsFuncRec(typ_f, typ_x, sub_fx_t1, typ1.t1)
+        if (typ1.s == typ1_sub_fx.s)
+          concretizeAsFuncRec(typ_f, typ_x, typ1_sub_fx.t1, typ1.t1)
         else rtFail(),
       caseTyp2 = _ => rtFail(),
     )
-
-  def bad_type(
-    sub_fx_s: String,
-    typ_sub_x: Typ,
-  ): Nothing =
-    rtFail(s"Can't match the types $sub_fx_s vs $typ_sub_x")
 
   def concretizeAsFuncTyp2(
     typ_f: Typ,
     typ_x: Typ,
   )(
     typ_sub_x: Typ,
-    sub_fx_s: String,
-    sub_fx_t1: Typ,
-    sub_fx_t2: Typ,
+    typ2_sub_fx: Typ2,
   ): Typ =
     typ_sub_x.rtMatch(
       caseUnk0 = _ => wip(),
-      caseTyp0 = _ => bad_type(sub_fx_s, typ_sub_x),
-      caseTyp1 = _ => bad_type(sub_fx_s, typ_sub_x),
+      caseTyp0 = _ => rtFail(s"Can't match the types $typ2_sub_fx vs $typ_sub_x"),
+      caseTyp1 = _ => rtFail(s"Can't match the types $typ2_sub_fx vs $typ_sub_x"),
       caseTyp2 = typ2_sub_x => {
-        rt_assert_equal(typ2_sub_x.s, sub_fx_s)
-        val used_t1 = concretizeAsFuncRec(typ_f, typ_x, sub_fx_t1, typ2_sub_x.t1)
+        rt_assert_equal(typ2_sub_x.s, typ2_sub_fx.s)
+        val used_t1 = concretizeAsFuncRec(typ_f, typ_x, typ2_sub_fx.t1, typ2_sub_x.t1)
         val (f1, x1) = (used_t1, rt_assert_type_Typ2(used_t1).t1) // todo - try better typing
-        val used_t2 = concretizeAsFuncRec(f1, x1, sub_fx_t2, typ2_sub_x.t2)
+        val used_t2 = concretizeAsFuncRec(f1, x1, typ2_sub_fx.t2, typ2_sub_x.t2)
         used_t2
       },
     )
@@ -187,9 +178,7 @@ object RtLib_0_1_Types {
     typ_sub_fx.rtMatch(
       caseUnk0 = unk0 => concretizeAsFuncUnk0(typ_f, typ_x)(typ_sub_x, unk0),
       caseTyp0 = typ0 => concretizeAsFuncTyp0(typ_f, typ_x)(typ_sub_x, typ0),
-      caseTyp1 = typ1 => concretizeAsFuncTyp1(typ_f, typ_x)(typ_sub_x, typ1.s, typ1.t1),
-      caseTyp2 = typ2 => concretizeAsFuncTyp2(typ_f, typ_x)(
-        typ_sub_x, typ2.s, typ2.t1, typ2.t2,
-      ),
+      caseTyp1 = typ1 => concretizeAsFuncTyp1(typ_f, typ_x)(typ_sub_x, typ1),
+      caseTyp2 = typ2 => concretizeAsFuncTyp2(typ_f, typ_x)(typ_sub_x, typ2),
     )
 }
