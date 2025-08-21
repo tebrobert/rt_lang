@@ -161,7 +161,7 @@ object RtLib_4_Lint {
         case Typ2(_, t1, _) =>
           linted_f.withTyp(t1 tTo new_typ)
             .tapDebug(res => println(
-              s"""replace_typ_call_1(
+              s"""withTypCall1(
                  |  linted_f = $linted_f
                  |  linted_x = $linted_x
                  |  new_typ = $new_typ
