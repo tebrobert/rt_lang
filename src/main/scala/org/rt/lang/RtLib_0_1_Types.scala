@@ -102,7 +102,6 @@ object RtLib_0_1_Types {
   def concretizeAsFuncUnk0(
     tF: Typ,
     tX: Typ,
-  )(
     tSubX: Typ,
     tSubFx: Unk0,
   ): Typ =
@@ -118,7 +117,6 @@ object RtLib_0_1_Types {
   def concretizeAsFuncTyp0(
     tF: Typ,
     tX: Typ,
-  )(
     tSubX: Typ,
     tSubFx: Typ0
   ) =
@@ -135,7 +133,6 @@ object RtLib_0_1_Types {
   def concretizeAsFuncTyp1(
     tF: Typ,
     tX: Typ,
-  )(
     tSubX: Typ,
     tSubFx: Typ1,
   ) =
@@ -152,7 +149,6 @@ object RtLib_0_1_Types {
   def concretizeAsFuncTyp2(
     tF: Typ,
     tX: Typ,
-  )(
     tSubX: Typ,
     tSubFx: Typ2,
   ): Typ =
@@ -176,9 +172,9 @@ object RtLib_0_1_Types {
     tSubFx: Typ,
   ): Typ =
     tSubFx.rtMatch(
-      caseUnk0 = unk0 => concretizeAsFuncUnk0(tF, tX)(tSubX, unk0),
-      caseTyp0 = typ0 => concretizeAsFuncTyp0(tF, tX)(tSubX, typ0),
-      caseTyp1 = typ1 => concretizeAsFuncTyp1(tF, tX)(tSubX, typ1),
-      caseTyp2 = typ2 => concretizeAsFuncTyp2(tF, tX)(tSubX, typ2),
+      caseUnk0 = unk0 => concretizeAsFuncUnk0(tF, tX, tSubX, unk0),
+      caseTyp0 = typ0 => concretizeAsFuncTyp0(tF, tX, tSubX, typ0),
+      caseTyp1 = typ1 => concretizeAsFuncTyp1(tF, tX, tSubX, typ1),
+      caseTyp2 = typ2 => concretizeAsFuncTyp2(tF, tX, tSubX, typ2),
     )
 }
