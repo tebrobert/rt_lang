@@ -141,7 +141,7 @@ object RtLib_0_1_Types {
     tSubArg: Typ1,
   ) =
     tSubX.rtMatch(
-      caseUnk0 = _ => tF,
+      caseUnk0 = _ => wip(),
       caseTyp0 = _ => rtFail(),
       caseTyp1 = typ1 =>
         if (typ1.s == tSubArg.s)
