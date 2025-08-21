@@ -168,7 +168,7 @@ object RtLib_4_Lint {
     new_typ: Typ,
   ): Linted =
     linted.rtMatch(
-      case_lit = LintedLit,
+      case_lit = (s, typ) => LintedLit(s, typ),
       case_idf = (s, _) => LintedIdf(s, new_typ),
       case_call_1 = (typed_f, typed_x, _) =>
         replace_typ_call_1(typed_f, typed_x, new_typ),
