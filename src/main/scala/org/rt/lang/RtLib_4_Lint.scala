@@ -2,7 +2,7 @@ package org.rt.lang
 
 import org.rt.Helpers.*
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
-import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ1, Typ2, Unk0, increase_unk, update_typ}
+import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ1, Typ2, Unk0, increase_unk}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Func, T_Str, idf_to_typ}
 import org.rt.lang.RtLib_3_Parse.{Expr, full_parse, match_expr}
 import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, rt_try, wip}
@@ -222,7 +222,7 @@ object RtLib_4_Lint {
   ): Typ = {
     val case_known =
       () => concrete_f(
-        update_typ(Unk0(sub_fx_i), typ_sub_x)(typ_f),
+        typ_f.clarifyUnk(Unk0(sub_fx_i), typ_sub_x),
         typ_x,
       )
 
@@ -242,8 +242,8 @@ object RtLib_4_Lint {
   ) =
     typ_sub_x.rtMatch(
       case_unk0 = i => concrete_f(
-        update_typ(Unk0(i), Typ0(sub_fx_s))(typ_f),
-        update_typ(Unk0(i), Typ0(sub_fx_s))(typ_x),
+        typ_f.clarifyUnk(Unk0(i), Typ0(sub_fx_s)),
+        typ_x.clarifyUnk(Unk0(i), Typ0(sub_fx_s)),
       ),
       case_typ0 = s => if (s == sub_fx_s) typ_f else rtFail(),
       case_typ1 = (_s, _t1) => rtFail(),

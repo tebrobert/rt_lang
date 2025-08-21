@@ -44,22 +44,21 @@ object RtLib_0_1_Types {
         case Unk0(i) => case_unk0(i)
         case Typ1(s, t1) => case_typ1(s, t1)
         case Typ2(s, t1, t2) => case_typ2(s, t1, t2)
-  }
 
-  def update_typ(typ_from: Typ, typ_to: Typ): Typ => Typ =
-    (typ: Typ) => {
-      val continue_updating = update_typ(typ_from, typ_to)
-
+    def clarifyUnk(
+      unk_from: Unk0,
+      typ_to: Typ,
+    ): Typ =
       typ.rtMatch(
-        case_unk0 = _i => if (typ == typ_from) typ_to else typ,
+        case_unk0 = _i => if (typ == unk_from) typ_to else typ,
         case_typ0 = s => Typ0(s),
-        case_typ1 = (s, t1) => Typ1(s, continue_updating(t1)),
+        case_typ1 = (s, t1) => Typ1(s, t1.clarifyUnk(unk_from, typ_to)),
         case_typ2 = (s, t1, t2) => Typ2(s,
-          continue_updating(t1),
-          continue_updating(t2),
+          t1.clarifyUnk(unk_from, typ_to),
+          t2.clarifyUnk(unk_from, typ_to),
         ),
       )
-    }
+  }
 
   def increase_unk(typ: Typ): Typ =
     typ.rtMatch(
