@@ -2,7 +2,7 @@ package org.rt.allTests
 
 import org.rt.RtTestCase
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_RIO, T_Str, tTo}
-import org.rt.lang.RtLib_2_Tokenize.Classes.*
+import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.*
 import org.rt.lang.RtLib_4_Lint.{LintedCall1, LintedIdf, LintedLambda1}
 

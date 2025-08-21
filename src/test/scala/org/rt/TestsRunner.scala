@@ -1,10 +1,8 @@
 package org.rt
 
-import lang.RtLib_2_Tokenize.tokenize
 import lang.RtLib_3_Parse.{Expr, parse}
-import org.rt.allTests.*
 import org.rt.lang.RtLib_0_1_Types.{Typ0, Typ1, Typ2, Unk0}
-import org.rt.lang.RtLib_2_Tokenize.Classes.Tok
+import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, lint}
 import zio.test.*
 

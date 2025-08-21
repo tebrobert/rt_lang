@@ -1,6 +1,6 @@
 package org.rt
 
-import org.rt.lang.RtLib_2_Tokenize.tokenize
+import org.rt.lang.RtLib_2_Tokenize.Public.tokenize
 import zio.*
 import zio.Console.printLine
 

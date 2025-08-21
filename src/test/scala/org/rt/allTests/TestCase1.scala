@@ -2,7 +2,7 @@ package org.rt.allTests
 
 import org.rt.RtTestCase
 import org.rt.lang.RtLib_0_2_Builtins.*
-import org.rt.lang.RtLib_2_Tokenize.Classes.*
+import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.*
 import org.rt.lang.RtLib_4_Lint.LintedIdf
 

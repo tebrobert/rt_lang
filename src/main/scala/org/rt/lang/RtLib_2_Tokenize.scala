@@ -1,37 +1,30 @@
 package org.rt.lang
 
-import org.rt.lang.RtLib_2_Tokenize.Classes.*
+import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_assert, tryOrRecover}
 import org.rt.utils.RtList.rtMatch
 
 import scala.annotation.tailrec
 
 object RtLib_2_Tokenize {
-  object Classes {
+  object Public {
     sealed trait Tok // token
-
     final case class TokLitStr(s: String) extends Tok // literal string
-
     final case class TokLitBint(i: String) extends Tok //literal big int
-
     final case class TokIdf(s: String) extends Tok // identifier
-
     case object TokParenOpen extends Tok // `(`
-
     case object TokParenClose extends Tok // `)`
-
     case object TokLessMinus extends Tok // `<-`
-
     case object TokEq extends Tok // `=`
-
     case object TokEndl extends Tok // `\n`
-
     case object TokEqGr extends Tok // `=>`
-
     case object TokDot extends Tok // `.`
+
+    def tokenize(code: String): List[Tok] =
+      Internal.tokenize_rec((code + Internal.end_of_code, 0, List()))
   }
 
-  private object Internal:
+  private object Internal {
     val end_of_code: Char = 0
 
     val char_to_latin =
@@ -280,9 +273,5 @@ object RtLib_2_Tokenize {
         tokenize_rec((code_ext, current_idx + 1, tokens))
       else tokenize_rec(tokenize_first_of(lexxBundle)(all_tokenizers))
     }
-
-  end Internal
-
-  def tokenize(code: String): List[Tok] =
-    Internal.tokenize_rec((code + Internal.end_of_code, 0, List()))
+  }
 }
