@@ -78,18 +78,27 @@ object RtLib_2_Tokenize {
         || 'a' <= char && char <= 'z'
         || 'A' <= char && char <= 'Z'
 
-    def is_digit(char: Char) =
+    def is_digit(
+      char: Char,
+    ) =
       '0' <= char && char <= '9'
 
-    def is_non_initial_idf_char(char: Char) =
+    def is_non_initial_idf_char(
+      char: Char,
+    ) =
       is_initial_idf_char(char)
         || is_digit(char)
 
-    def is_operator_char(char: Char) =
+    def is_operator_char(
+      char: Char,
+    ) =
       char_to_latin.keys.toSeq.contains(char.toString)
 
     @tailrec
-    def get_idx_string_end_rec(code_ext: String, idx_string_end: Int): Int = {
+    def get_idx_string_end_rec(
+      code_ext: String,
+      idx_string_end: Int,
+    ): Int = {
       val current_string_char = code_ext(idx_string_end)
 
       if (current_string_char == '\"')
@@ -100,7 +109,10 @@ object RtLib_2_Tokenize {
     }
 
     @tailrec
-    def get_idx_idf_end_rec(code_ext: String, idf_current_idx: Int): Int = {
+    def get_idx_idf_end_rec(
+      code_ext: String,
+      idf_current_idx: Int,
+    ): Int = {
       val current_idf_char = code_ext(idf_current_idx)
 
       if (is_non_initial_idf_char(current_idf_char))
@@ -109,7 +121,10 @@ object RtLib_2_Tokenize {
     }
 
     @tailrec
-    def get_idx_operator_end_rec(code_ext: String, operator_current_idx: Int): Int = {
+    def get_idx_operator_end_rec(
+      code_ext: String,
+      operator_current_idx: Int,
+    ): Int = {
       val current_operator_char = code_ext(operator_current_idx)
 
       if (is_operator_char(current_operator_char))
@@ -117,7 +132,11 @@ object RtLib_2_Tokenize {
       else operator_current_idx
     }
 
-    def lexx_idf(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
+    def lexx_idf(
+      code_ext: String,
+      current_idx: Int,
+      tokens: List[Tok],
+    ) = {
       rt_assert(is_initial_idf_char(code_ext(current_idx)))
 
       val idx_idf_start = current_idx
@@ -129,7 +148,10 @@ object RtLib_2_Tokenize {
     }
 
     @tailrec
-    def get_idx_integer_end_rec(code_ext: String, idf_current_idx: Int): Int = {
+    def get_idx_integer_end_rec(
+      code_ext: String,
+      idf_current_idx: Int,
+    ): Int = {
       val current_idf_char = code_ext(idf_current_idx)
 
       if (is_digit(current_idf_char))
@@ -137,7 +159,11 @@ object RtLib_2_Tokenize {
       else idf_current_idx
     }
 
-    def lexx_integer(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
+    def lexx_integer(
+      code_ext: String,
+      current_idx: Int,
+      tokens: List[Tok],
+    ) = {
       rt_assert(is_digit(code_ext(current_idx)))
 
       val idx_idf_start = current_idx
@@ -148,12 +174,20 @@ object RtLib_2_Tokenize {
       )))
     }
 
-    def lexx_paren_open(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
+    def lexx_paren_open(
+      code_ext: String,
+      current_idx: Int,
+      tokens: List[Tok],
+    ) = {
       rt_assert(code_ext(current_idx) == '(')
       (code_ext, current_idx + 1, tokens.appended(TokParenOpen))
     }
 
-    def lexx_paren_close(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
+    def lexx_paren_close(
+      code_ext: String,
+      current_idx: Int,
+      tokens: List[Tok],
+    ) = {
       rt_assert(code_ext(current_idx) == ')')
       (code_ext, current_idx + 1, tokens.appended(TokParenClose))
     }
