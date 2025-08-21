@@ -110,6 +110,18 @@ object RtLib_4_Lint {
         case LintedCall1(linted_f, linted_x, typ) => case_call_1(linted_f, linted_x, typ)
         case LintedLambda1(linted_idf_x, linted_res, typ) => case_lambda_1(linted_idf_x, linted_res, typ)
       }
+
+    def withTyp(
+      new_typ: Typ
+    ): Linted =
+      linted.rtMatch(
+        case_lit = (s, typ) => LintedLit(s, typ),
+        case_idf = (s, _) => LintedIdf(s, new_typ),
+        case_call_1 = (typed_f, typed_x, _) =>
+          replace_typ_call_1(typed_f, typed_x, new_typ),
+        case_lambda_1 = (linted_idf_x, linted_res, _typ) =>
+          replace_typ_lambda_1(linted_idf_x, linted_res, new_typ),
+      )
   }
 
   private def replace_typ_lambda_1(
@@ -122,8 +134,8 @@ object RtLib_4_Lint {
         rtFail("not implemented...?")
 
       case Typ2(`builtin_Func`, new_typ_t1, new_typ_t2) =>
-        val updated_linted_idf_x = replace_typ(linted_idf_x, new_typ_t1)
-        val updated_linted_res = replace_typ(linted_res, new_typ_t2)
+        val updated_linted_idf_x = linted_idf_x.withTyp(new_typ_t1)
+        val updated_linted_res = linted_res.withTyp(new_typ_t2)
         LintedLambda1(
           updated_linted_idf_x,
           updated_linted_res,
@@ -142,10 +154,10 @@ object RtLib_4_Lint {
     LintedCall1(
       linted_f.typ match {
         case Unk0(i) =>
-          replace_typ(linted_f, T_Func(linted_x.typ, new_typ)) // typed_f - legacy comment
+          linted_f.withTyp(T_Func(linted_x.typ, new_typ)) // typed_f - legacy comment
 
         case Typ2(_, t1, _) =>
-          replace_typ(linted_f, T_Func(t1, new_typ))
+          linted_f.withTyp(T_Func(t1, new_typ))
             .tapDebug(res => println(
               s"""replace_typ_call_1(
                  |  linted_f = $linted_f
@@ -162,20 +174,6 @@ object RtLib_4_Lint {
       linted_x,
       new_typ,
     )
-
-  private def replace_typ(
-    linted: Linted,
-    new_typ: Typ,
-  ): Linted =
-    linted.rtMatch(
-      case_lit = (s, typ) => LintedLit(s, typ),
-      case_idf = (s, _) => LintedIdf(s, new_typ),
-      case_call_1 = (typed_f, typed_x, _) =>
-        replace_typ_call_1(typed_f, typed_x, new_typ),
-      case_lambda_1 = (linted_idf_x, linted_res, _typ) =>
-        replace_typ_lambda_1(linted_idf_x, linted_res, new_typ),
-    )
-
 
   def get_unknowns_fot_typ(
     typ: Typ,
@@ -348,7 +346,7 @@ object RtLib_4_Lint {
         Typ2(s, increase_unk(t1), increase_unk(t2)), T_A0)
     )
 
-    val new_linted_f = replace_typ(linted_f, new_typ_f)
+    val new_linted_f = linted_f.withTyp(new_typ_f)
     LintedCall1(new_linted_f, linted_x, new_typ_f.t2)
   }
 
@@ -357,7 +355,7 @@ object RtLib_4_Lint {
     linted_x: Linted,
   ) = {
     val linted_f_typ = rt_assert_type_Typ2(linted_f.typ) // todo - try better typing
-    val new_linted_x = replace_typ(linted_x, linted_f_typ.t1)
+    val new_linted_x = linted_x.withTyp(linted_f_typ.t1)
     LintedCall1(linted_f, new_linted_x, linted_f_typ.t2)
   }
 
@@ -369,8 +367,8 @@ object RtLib_4_Lint {
     //Typ2(Func,Typ1(RIO,Typ0(Unit)),Typ1(RIO,Typ0(Unit)))
 
     val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
-    val new_linted_f = replace_typ(linted_f, new_typ2_f)
-    val new_linted_x = replace_typ(linted_x, new_typ2_f.t1)
+    val new_linted_f = linted_f.withTyp(new_typ2_f)
+    val new_linted_x = linted_x.withTyp(new_typ2_f.t1)
     LintedCall1(new_linted_f, new_linted_x, new_typ2_f.t2)
       .tapDebug(res => println(
         s"""continue_linting_call_1(
@@ -425,7 +423,7 @@ object RtLib_4_Lint {
           ) // todo - try better typing
 
         val found_typ_arg = find_idf_typ(linted_res, linted_arg_s)
-        val relinted_arg = replace_typ(linted_arg, found_typ_arg)
+        val relinted_arg = linted_arg.withTyp(found_typ_arg)
 
         //todo - likely, next Unk0 needed
         LintedLambda1.createUnlinted(relinted_arg, linted_res)
