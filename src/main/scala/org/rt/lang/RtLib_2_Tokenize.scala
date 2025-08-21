@@ -9,9 +9,9 @@ import scala.annotation.tailrec
 object RtLib_2_Tokenize {
   object Public {
     sealed trait Tok // token
-    final case class TokLitStr(s: String) extends Tok // literal string
-    final case class TokLitBint(i: String) extends Tok //literal big int
-    final case class TokIdf(s: String) extends Tok // identifier
+    case class TokLitStr(s: String) extends Tok // literal string
+    case class TokLitBint(i: String) extends Tok //literal big int
+    case class TokIdf(s: String) extends Tok // identifier
     case object TokParenOpen extends Tok // `(`
     case object TokParenClose extends Tok // `)`
     case object TokLessMinus extends Tok // `<-`
