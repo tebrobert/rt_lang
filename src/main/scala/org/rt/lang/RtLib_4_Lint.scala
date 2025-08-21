@@ -181,20 +181,14 @@ object RtLib_4_Lint {
     typ: Typ,
   ): Set[String] =
     typ.rtMatch(
-      case_typ0 = _s => Set.empty[String],
-      case_unk0 = s => Set(s.toString), // todo - try a more proper type
-      case_typ1 = (_s, t1) => get_unknowns_fot_typ(t1),
+      case_typ0 = _s =>
+        Set.empty[String],
+      case_unk0 = s =>
+        Set(s.toString), // todo - try a more proper type
+      case_typ1 = (_s, t1) =>
+        get_unknowns_fot_typ(t1),
       case_typ2 = (_s, t1, t2) =>
         get_unknowns_fot_typ(t1) ++ get_unknowns_fot_typ(t2),
-    )
-
-  def get_unknowns_for_linted(linted: Linted) =
-    linted.rtMatch(
-      case_lit = (_s, typ) => get_unknowns_fot_typ(typ),
-      case_idf = (_s, typ) => get_unknowns_fot_typ(typ),
-      case_call_1 = (_typed_f, _typed_x, typ) => get_unknowns_fot_typ(typ),
-      case_lambda_1 = (_linted_idf_x, _linted_res, typ) =>
-        get_unknowns_fot_typ(typ),
     )
 
   def find_idf_typ_call_1(
