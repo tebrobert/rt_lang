@@ -8,16 +8,25 @@ object RtLib_0_1_Types {
   sealed trait Typ
 
   final case class Typ0(s: String) extends Typ {
+    override def toString: String =
+      repr()
+
     def repr(indent: String = ""): String =
       s"$indent$s"
   }
 
   final case class Unk0(i: Int) extends Typ {
+    override def toString: String =
+      repr()
+
     def repr(indent: String = ""): String =
       s"${indent}A$i"
   }
 
   final case class Typ1(s: String, t1: Typ) extends Typ {
+    override def toString: String =
+      repr()
+
     def repr(indent: String = ""): String =
       s"$indent$s[$t1]"
 
@@ -25,6 +34,9 @@ object RtLib_0_1_Types {
   }
 
   final case class Typ2(s: String, t1: Typ, t2: Typ) extends Typ {
+    override def toString: String =
+      repr()
+
     def repr(indent: String = ""): String =
       indent + (t1 match
         case Typ2(builtin_Func, _, _) if s == builtin_Func =>
