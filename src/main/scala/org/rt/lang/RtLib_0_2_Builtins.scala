@@ -18,15 +18,15 @@ object RtLib_0_2_Builtins {
     val T_A0 = Unk0(0)
     val T_A1 = Unk0(1)
 
-    val types = Map(
-        builtin_Bint -> T_Bint,
-        builtin_Bool -> T_Bool,
-        builtin_Str -> T_Str,
-        builtin_Unit -> T_Unit,
-        builtin_List -> T_List,
-        builtin_RIO -> T_RIO,
-        builtin_Func -> T_Func,
-    )
+//    val types = Map(
+//        builtin_Bint -> T_Bint,
+//        builtin_Bool -> T_Bool,
+//        builtin_Str -> T_Str,
+//        builtin_Unit -> T_Unit,
+//        builtin_List -> T_List,
+//        builtin_RIO -> T_RIO,
+//        builtin_Func -> T_Func,
+//    )
 
     val idf_to_typ = Map[String, Set[Typ]](
         builtin_input -> Set(T_RIO(T_Str)),
