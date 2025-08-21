@@ -280,6 +280,7 @@ object RtLib_2_Tokenize {
         tokenize_rec((code_ext, current_idx + 1, tokens))
       else tokenize_rec(tokenize_first_of(lexxBundle)(all_tokenizers))
     }
+
   end Internal
 
   def tokenize(code: String): List[Tok] =
