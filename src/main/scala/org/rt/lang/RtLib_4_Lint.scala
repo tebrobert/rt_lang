@@ -243,13 +243,10 @@ object RtLib_4_Lint {
     val new_linted_x = linted_x.withTyp(new_typ2_f.t1)
     LintedCall1(new_linted_f, new_linted_x, new_typ2_f.t2)
       .tapDebug(res => println(
-        s"""continue_linting_call_1(
-           |    linted_f = $linted_f,
-           |    linted_x = $linted_x,
-           |) = {
-           |   new_typ_f = $new_typ_f
-           |   res = $res
-           |}
+        s"""continue_linting_call_1:
+           |    linted_f = $linted_f
+           |    new_typ2_f = $new_typ2_f
+           |    new_linted_f = $new_linted_f
            |""".stripMargin
       ))
   }
