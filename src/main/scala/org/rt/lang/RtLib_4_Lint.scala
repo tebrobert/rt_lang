@@ -269,6 +269,12 @@ object RtLib_4_Lint {
     used_t2
   }
 
+  def bad_type(
+    sub_fx_s: String,
+    typ_sub_x: Typ,
+  ): Nothing =
+    rtFail(s"Can't match the types $sub_fx_s vs $typ_sub_x")
+
   def concrete_f_typ2(
     typ_f: Typ,
     typ_x: Typ,
@@ -276,19 +282,15 @@ object RtLib_4_Lint {
     sub_fx_s: String,
     sub_fx_t1: Typ,
     sub_fx_t2: Typ,
-  ) = {
-    val bad_type =
-      () => rtFail(s"Can't match the types $sub_fx_s vs $typ_sub_x")
-
+  ): Typ =
     typ_sub_x.rtMatch(
       caseUnk0 = _ => wip(),
-      caseTyp0 = _ => bad_type(),
-      caseTyp1 = _ => bad_type(),
+      caseTyp0 = _ => bad_type(sub_fx_s, typ_sub_x),
+      caseTyp1 = _ => bad_type(sub_fx_s, typ_sub_x),
       caseTyp2 = typ2_sub_x => concrete_f_typ2_typ2(
         typ_f, typ_x, typ2_sub_x.s, typ2_sub_x.t1, typ2_sub_x.t2
       )(sub_fx_s, sub_fx_t1, sub_fx_t2),
     )
-  }
 
   def concrete_f_rec(
     typ_f: Typ,
@@ -321,7 +323,7 @@ object RtLib_4_Lint {
   def continue_linting_call_1_with_unknown_f(
     linted_f: Linted,
     linted_x: Linted,
-  ) = {
+  ): LintedCall1 = {
     rt_assert_type_Unk0(linted_f.typ)
 
     val new_typ_f = linted_x.typ.rtMatch(
@@ -341,7 +343,7 @@ object RtLib_4_Lint {
   def continue_linting_call_1_with_unknown_x(
     linted_f: Linted,
     linted_x: Linted,
-  ) = {
+  ): LintedCall1 = {
     val linted_f_typ = rt_assert_type_Typ2(linted_f.typ) // todo - try better typing
     val new_linted_x = linted_x.withTyp(linted_f_typ.t1)
     LintedCall1(linted_f, new_linted_x, linted_f_typ.t2)
@@ -350,7 +352,7 @@ object RtLib_4_Lint {
   def continue_linting_call_1(
     linted_f: Linted,
     linted_x: Linted,
-  ) = {
+  ): LintedCall1 = {
     val new_typ_f = concretize_f(linted_f.typ, linted_x.typ)
     //Typ2(Func,Typ1(RIO,Typ0(Unit)),Typ1(RIO,Typ0(Unit)))
 
