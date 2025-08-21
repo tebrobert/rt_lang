@@ -353,10 +353,22 @@ object RtLib_4_Lint {
     linted_x: Linted,
   ) = {
     val new_typ_f = concrete_f(linted_f.typ, linted_x.typ)
+    //Typ2(Func,Typ1(RIO,Typ0(Unit)),Typ1(RIO,Typ0(Unit)))
+
     val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
     val new_linted_f = replace_typ(linted_f, new_typ2_f)
     val new_linted_x = replace_typ(linted_x, new_typ2_f.t1)
     LintedCall1(new_linted_f, new_linted_x, new_typ2_f.t2)
+      .tapDebug(res => println(
+        s"""continue_linting_call_1(
+           |    linted_f = $linted_f,
+           |    linted_x = $linted_x,
+           |) = {
+           |   new_typ_f = $new_typ_f
+           |   res = $res
+           |}
+           |""".stripMargin
+      ))
   }
 
   def lint_set_call_1(
