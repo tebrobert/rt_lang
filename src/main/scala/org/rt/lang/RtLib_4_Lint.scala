@@ -3,7 +3,7 @@ package org.rt.lang
 import org.rt.Helpers.*
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ1, Typ2, Unk0, increase_unk}
-import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Func, T_Str, idf_to_typ}
+import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Str, idf_to_typ, tTo}
 import org.rt.lang.RtLib_3_Parse.{Expr, full_parse, match_expr}
 import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, rt_try, wip}
 
@@ -92,7 +92,7 @@ object RtLib_4_Lint {
         linted_res,
         if (typ != Unk0(-1)) // perhaps: intermediatory Unk0(-1) unneeded
           typ
-        else T_Func(linted_idf_x.typ, linted_res.typ),
+        else linted_idf_x.typ tTo linted_res.typ,
       )
     }
   }
@@ -154,10 +154,10 @@ object RtLib_4_Lint {
     LintedCall1(
       linted_f.typ match {
         case Unk0(i) =>
-          linted_f.withTyp(T_Func(linted_x.typ, new_typ)) // typed_f - legacy comment
+          linted_f.withTyp(linted_x.typ tTo new_typ) // typed_f - legacy comment
 
         case Typ2(_, t1, _) =>
-          linted_f.withTyp(T_Func(t1, new_typ))
+          linted_f.withTyp(t1 tTo new_typ)
             .tapDebug(res => println(
               s"""replace_typ_call_1(
                  |  linted_f = $linted_f
@@ -312,7 +312,7 @@ object RtLib_4_Lint {
     typ_x: Typ,
   ): Typ =
     typ_f.rtMatch(
-      caseUnk0 = _ => T_Func(typ_x, T_A0),
+      caseUnk0 = _ => typ_x tTo T_A0,
       caseTyp0 = _ => rtFail(s"Unexpected typ_f `$typ_f`."),
       caseTyp1 = _ => rtFail(s"Unexpected typ_f `$typ_f`."),
       caseTyp2 = typ2 => concrete_f_rec(typ_f, typ_x, typ2.t1, typ_x),
@@ -325,13 +325,13 @@ object RtLib_4_Lint {
     rt_assert_type_Unk0(linted_f.typ)
 
     val new_typ_f = linted_x.typ.rtMatch(
-      caseUnk0 = unk0 => T_Func(unk0, Unk0(unk0.i + 1)),
-      caseTyp0 = typ0 => T_Func(typ0, T_A0),
-      caseTyp1 = typ1 => T_Func(typ1.mapT1(increase_unk), T_A0),
-      caseTyp2 = typ2 => T_Func(
-        Typ2(typ2.s, increase_unk(typ2.t1), increase_unk(typ2.t2)),
-        T_A0,
-      )
+      caseUnk0 = unk0 => unk0 tTo Unk0(unk0.i + 1),
+      caseTyp0 = typ0 => typ0 tTo T_A0,
+      caseTyp1 = _.mapT1(increase_unk).tTo(T_A0),
+      caseTyp2 = _
+        .mapT1(increase_unk)
+        .mapT2(increase_unk)
+        .tTo(T_A0),
     )
 
     val new_linted_f = linted_f.withTyp(new_typ_f)
