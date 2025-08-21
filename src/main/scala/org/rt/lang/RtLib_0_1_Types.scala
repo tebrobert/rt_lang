@@ -1,6 +1,7 @@
 package org.rt.lang
 
 import RtLib_0_0_Lits.builtin_Func
+import org.rt.lang.RtLib_0_2_Builtins.T_Func
 import org.rt.utils.RtFail.rtFail
 
 object RtLib_0_1_Types {
@@ -50,6 +51,9 @@ object RtLib_0_1_Types {
         case typ0: Typ0 => caseTyp0(typ0)
         case typ1: Typ1 => caseTyp1(typ1)
         case typ2: Typ2 => caseTyp2(typ2)
+
+    def tTo(resultTyp: Typ) =
+      T_Func(typ, resultTyp)
 
     def clarifyUnk(
       unk_from: Unk0,

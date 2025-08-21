@@ -11,11 +11,6 @@ object TestHelpers {
 
   val T_Str_To_RIO_Unit = T_Str tTo T_RIO_Unit
 
-  extension (thisTyp: Typ) {
-    def tTo(resultTyp: Typ) =
-      T_Func(thisTyp, resultTyp)
-  }
-
   def exprAndThen(
     result: String,
     expr: Expr,
