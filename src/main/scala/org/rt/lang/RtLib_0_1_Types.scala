@@ -52,6 +52,17 @@ object RtLib_0_1_Types {
         case typ1: Typ1 => caseTyp1(typ1)
         case typ2: Typ2 => caseTyp2(typ2)
 
+    def rtMatch[A](
+      caseUnk0: Unk0 => A,
+      otherwise: () => A,
+    ): A =
+      rtMatch(
+        caseUnk0 = caseUnk0,
+        caseTyp0 = _ => otherwise(),
+        caseTyp1 = _ => otherwise(),
+        caseTyp2 = _ => otherwise(),
+      )
+
     def clarifyUnk(
       unk_from: Unk0,
       typ_to: Typ,
@@ -94,17 +105,12 @@ object RtLib_0_1_Types {
   )(
     typ_sub_x: Typ,
     sub_fx_unk0: Unk0,
-  ): Typ = {
-    val case_known =
-      () => typ_f.clarifyUnk(sub_fx_unk0, typ_sub_x).concretizeAsFunc(typ_x)
-
+  ): Typ =
     typ_sub_x.rtMatch(
       caseUnk0 = unk0 => if (unk0 == sub_fx_unk0) typ_f else wip(),
-      caseTyp0 = _ => case_known(),
-      caseTyp1 = _ => case_known(),
-      caseTyp2 = _ => case_known(),
+      otherwise = () =>
+        typ_f.clarifyUnk(sub_fx_unk0, typ_sub_x).concretizeAsFunc(typ_x),
     )
-  }
 
   def concretizeAsFuncTyp0(
     typ_f: Typ,
