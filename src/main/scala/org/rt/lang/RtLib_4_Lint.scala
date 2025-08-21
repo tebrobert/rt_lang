@@ -97,16 +97,19 @@ object RtLib_4_Lint {
     }
   }
 
-  private def match_linted[A](
-    case_lit: (String, Typ) => A,
-    case_idf: (String, Typ) => A,
-    case_call_1: (Linted, Linted, Typ) => A,
-    case_lambda_1: (Linted, Linted, Typ) => A,
-  ): Linted => A = {
-    case LintedLit(s, typ) => case_lit(s, typ)
-    case LintedIdf(s, typ) => case_idf(s, typ)
-    case LintedCall1(linted_f, linted_x, typ) => case_call_1(linted_f, linted_x, typ)
-    case LintedLambda1(linted_idf_x, linted_res, typ) => case_lambda_1(linted_idf_x, linted_res, typ)
+  extension (linted: Linted) {
+    def rtMatch[A](
+      case_lit: (String, Typ) => A,
+      case_idf: (String, Typ) => A,
+      case_call_1: (Linted, Linted, Typ) => A,
+      case_lambda_1: (Linted, Linted, Typ) => A,
+    ): A =
+      linted match {
+        case LintedLit(s, typ) => case_lit(s, typ)
+        case LintedIdf(s, typ) => case_idf(s, typ)
+        case LintedCall1(linted_f, linted_x, typ) => case_call_1(linted_f, linted_x, typ)
+        case LintedLambda1(linted_idf_x, linted_res, typ) => case_lambda_1(linted_idf_x, linted_res, typ)
+      }
   }
 
   private def replace_typ_lambda_1(
@@ -161,13 +164,13 @@ object RtLib_4_Lint {
     )
 
   private def replace_typ(linted: Linted, new_typ: Typ): Linted =
-    match_linted(
+    linted.rtMatch(
       case_lit = (s, typ) => LintedLit(s, typ),
       case_idf = (s, _) => LintedIdf(s, new_typ),
       case_call_1 = (typed_f, typed_x, _) => replace_typ_call_1(typed_f, typed_x, new_typ),
       case_lambda_1 = (linted_idf_x, linted_res, _typ) =>
         replace_typ_lambda_1(linted_idf_x, linted_res, new_typ),
-    )(linted)
+    )
 
 
   def get_unknowns_fot_typ(
@@ -182,13 +185,13 @@ object RtLib_4_Lint {
     )
 
   def get_unknowns_for_linted(linted: Linted) =
-    match_linted(
+    linted.rtMatch(
       case_lit = (_s, typ) => get_unknowns_fot_typ(typ),
       case_idf = (_s, typ) => get_unknowns_fot_typ(typ),
       case_call_1 = (_typed_f, _typed_x, typ) => get_unknowns_fot_typ(typ),
       case_lambda_1 = (_linted_idf_x, _linted_res, typ) =>
         get_unknowns_fot_typ(typ),
-    )(linted)
+    )
 
   def find_idf_typ_call_1(
     linted_f: Linted,
@@ -203,14 +206,14 @@ object RtLib_4_Lint {
   }
 
   def find_idf_typ(linted: Linted, s_to_find: String): Typ =
-    match_linted(
+    linted.rtMatch(
       case_lit = (_s, _typ) => T_A0,
       case_idf = (s, typ) => if (s == s_to_find) typ else T_A0,
       case_call_1 = (typed_f, typed_x, _typ) =>
         find_idf_typ_call_1(typed_f, typed_x, s_to_find),
       case_lambda_1 = (_t_idf_x, typed_res, _typ) =>
         find_idf_typ(typed_res, s_to_find),
-    )(linted)
+    )
 
   // hmmm
   def concrete_f_unk0(
@@ -415,12 +418,13 @@ object RtLib_4_Lint {
       linted_res <- lint_set(expr_res)
 
       mb_res = rt_try { () =>
-        val linted_arg_s = match_linted(
-          case_idf = (s, _) => s,
-          case_lit = (_, _) => rtFail(),
-          case_call_1 = (_, _, _) => rtFail(),
-          case_lambda_1 = (_, _, _) => rtFail(),
-        )(linted_arg) // todo - try better typing
+        val linted_arg_s =
+          linted_arg.rtMatch(
+            case_idf = (s, _) => s,
+            case_lit = (_, _) => rtFail(),
+            case_call_1 = (_, _, _) => rtFail(),
+            case_lambda_1 = (_, _, _) => rtFail(),
+          ) // todo - try better typing
 
         val found_typ_arg = find_idf_typ(linted_res, linted_arg_s)
         val relinted_arg = replace_typ(linted_arg, found_typ_arg)
