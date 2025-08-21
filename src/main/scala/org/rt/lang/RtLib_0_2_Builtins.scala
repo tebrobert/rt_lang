@@ -28,6 +28,11 @@ object RtLib_0_2_Builtins {
   //        builtin_Func -> T_Func,
   //    )
 
+  extension (typ: Typ) {
+    def tTo(resultTyp: Typ) =
+      T_Func(typ, resultTyp)
+  }
+
   val idf_to_typ =
     Map[String, Set[Typ]](
       builtin_input -> Set(T_RIO(T_Str)),

@@ -52,9 +52,6 @@ object RtLib_0_1_Types {
         case typ1: Typ1 => caseTyp1(typ1)
         case typ2: Typ2 => caseTyp2(typ2)
 
-    def tTo(resultTyp: Typ) =
-      T_Func(typ, resultTyp)
-
     def clarifyUnk(
       unk_from: Unk0,
       typ_to: Typ,
