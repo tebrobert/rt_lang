@@ -150,25 +150,6 @@ object RtLib_0_1_Types {
       caseTyp2 = _ => rtFail(),
     )
 
-
-  def concrete_f_typ2_typ2(
-    typ_f: Typ,
-    typ_x: Typ,
-    sub_x_s: String,
-    sub_x_t1: Typ,
-    sub_x_t2: Typ,
-  )(
-    sub_fx_s: String,
-    sub_fx_t1: Typ,
-    sub_fx_t2: Typ,
-  ): Typ = {
-    rt_assert_equal(sub_x_s, sub_fx_s)
-    val used_t1 = concretizeAsFuncRec(typ_f, typ_x, sub_fx_t1, sub_x_t1)
-    val (f1, x1) = (used_t1, rt_assert_type_Typ2(used_t1).t1) // todo - try better typing
-    val used_t2 = concretizeAsFuncRec(f1, x1, sub_fx_t2, sub_x_t2)
-    used_t2
-  }
-
   def bad_type(
     sub_fx_s: String,
     typ_sub_x: Typ,
@@ -188,9 +169,13 @@ object RtLib_0_1_Types {
       caseUnk0 = _ => wip(),
       caseTyp0 = _ => bad_type(sub_fx_s, typ_sub_x),
       caseTyp1 = _ => bad_type(sub_fx_s, typ_sub_x),
-      caseTyp2 = typ2_sub_x => concrete_f_typ2_typ2(
-        typ_f, typ_x, typ2_sub_x.s, typ2_sub_x.t1, typ2_sub_x.t2
-      )(sub_fx_s, sub_fx_t1, sub_fx_t2),
+      caseTyp2 = typ2_sub_x => {
+        rt_assert_equal(typ2_sub_x.s, sub_fx_s)
+        val used_t1 = concretizeAsFuncRec(typ_f, typ_x, sub_fx_t1, typ2_sub_x.t1)
+        val (f1, x1) = (used_t1, rt_assert_type_Typ2(used_t1).t1) // todo - try better typing
+        val used_t2 = concretizeAsFuncRec(f1, x1, sub_fx_t2, typ2_sub_x.t2)
+        used_t2
+      },
     )
 
   def concretizeAsFuncRec(
