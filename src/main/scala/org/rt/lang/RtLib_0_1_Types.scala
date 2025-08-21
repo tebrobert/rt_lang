@@ -107,7 +107,10 @@ object RtLib_0_1_Types {
     sub_fx_unk0: Unk0,
   ): Typ =
     typ_sub_x.rtMatch(
-      caseUnk0 = unk0 => if (unk0 == sub_fx_unk0) typ_f else wip(),
+      caseUnk0 = unk0 =>
+        if (unk0 == sub_fx_unk0)
+          typ_f
+        else wip(),
       otherwise = () =>
         typ_f.clarifyUnk(sub_fx_unk0, typ_sub_x).concretizeAsFunc(typ_x),
     )
