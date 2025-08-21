@@ -197,129 +197,6 @@ object RtLib_4_Lint {
         find_idf_typ(typed_res, s_to_find),
     )
 
-  // hmmm
-  def concrete_f_unk0(
-    typ_f: Typ,
-    typ_x: Typ,
-    typ_sub_x: Typ,
-    sub_fx_i: Int,
-  ): Typ = {
-    val case_known =
-      () => concretize_f(
-        typ_f.clarifyUnk(Unk0(sub_fx_i), typ_sub_x),
-        typ_x,
-      )
-
-    typ_sub_x.rtMatch(
-      caseUnk0 = unk0 => if (unk0.i == sub_fx_i) typ_f else wip(),
-      caseTyp0 = _ => case_known(),
-      caseTyp1 = _ => case_known(),
-      caseTyp2 = _ => case_known(),
-    )
-  }
-
-  def concrete_f_typ0(
-    typ_f: Typ,
-    typ_x: Typ,
-    typ_sub_x: Typ,
-    sub_fx_s: String
-  ) =
-    typ_sub_x.rtMatch(
-      caseUnk0 = unk0 => concretize_f(
-        typ_f.clarifyUnk(unk0, Typ0(sub_fx_s)),
-        typ_x.clarifyUnk(unk0, Typ0(sub_fx_s)),
-      ),
-      caseTyp0 = typ0 => if (typ0.s == sub_fx_s) typ_f else rtFail(),
-      caseTyp1 = _ => rtFail(),
-      caseTyp2 = _ => rtFail(),
-    )
-
-  def concrete_f_typ1(
-    typ_f: Typ,
-    typ_x: Typ,
-    typ_sub_x: Typ,
-    sub_fx_s: String,
-    sub_fx_t1: Typ,
-  ) =
-    typ_sub_x.rtMatch(
-      caseUnk0 = _ => typ_f,
-      caseTyp0 = _ => rtFail(),
-      caseTyp1 = typ1 => if (typ1.s == sub_fx_s) concrete_f_rec(typ_f, typ_x,
-        sub_fx_t1, typ1.t1,
-      ) else rtFail(),
-      caseTyp2 = _ => rtFail(),
-    )
-
-
-  def concrete_f_typ2_typ2(
-    typ_f: Typ,
-    typ_x: Typ,
-    sub_x_s: String,
-    sub_x_t1: Typ,
-    sub_x_t2: Typ,
-  )(
-    sub_fx_s: String,
-    sub_fx_t1: Typ,
-    sub_fx_t2: Typ,
-  ) = {
-    rt_assert_equal(sub_x_s, sub_fx_s)
-    val used_t1 = concrete_f_rec(typ_f, typ_x, sub_fx_t1, sub_x_t1)
-    val (f1, x1) = (used_t1, rt_assert_type_Typ2(used_t1).t1) // todo - try better typing
-    val used_t2 = concrete_f_rec(f1, x1, sub_fx_t2, sub_x_t2)
-    used_t2
-  }
-
-  def bad_type(
-    sub_fx_s: String,
-    typ_sub_x: Typ,
-  ): Nothing =
-    rtFail(s"Can't match the types $sub_fx_s vs $typ_sub_x")
-
-  def concrete_f_typ2(
-    typ_f: Typ,
-    typ_x: Typ,
-    typ_sub_x: Typ,
-    sub_fx_s: String,
-    sub_fx_t1: Typ,
-    sub_fx_t2: Typ,
-  ): Typ =
-    typ_sub_x.rtMatch(
-      caseUnk0 = _ => wip(),
-      caseTyp0 = _ => bad_type(sub_fx_s, typ_sub_x),
-      caseTyp1 = _ => bad_type(sub_fx_s, typ_sub_x),
-      caseTyp2 = typ2_sub_x => concrete_f_typ2_typ2(
-        typ_f, typ_x, typ2_sub_x.s, typ2_sub_x.t1, typ2_sub_x.t2
-      )(sub_fx_s, sub_fx_t1, sub_fx_t2),
-    )
-
-  def concrete_f_rec(
-    typ_f: Typ,
-    typ_x: Typ,
-    typ_sub_fx: Typ,
-    typ_sub_x: Typ,
-  ): Typ =
-    typ_sub_fx.rtMatch(
-      caseUnk0 = unk0 => concrete_f_unk0(typ_f, typ_x, typ_sub_x, unk0.i),
-      caseTyp0 = typ0 => concrete_f_typ0(typ_f, typ_x, typ_sub_x, typ0.s),
-      caseTyp1 = typ1 => concrete_f_typ1(typ_f, typ_x, typ_sub_x, typ1.s, typ1.t1),
-      caseTyp2 = typ2 => concrete_f_typ2(
-        typ_f, typ_x, typ_sub_x,
-        typ2.s, typ2.t1, typ2.t2,
-      ),
-    )
-
-  // may have sync conflicts
-  def concretize_f(
-    typ_f: Typ,
-    typ_x: Typ,
-  ): Typ =
-    typ_f.rtMatch(
-      caseUnk0 = _ => typ_x tTo T_A0,
-      caseTyp0 = _ => rtFail(s"Unexpected typ_f `$typ_f`."),
-      caseTyp1 = _ => rtFail(s"Unexpected typ_f `$typ_f`."),
-      caseTyp2 = typ2 => concrete_f_rec(typ_f, typ_x, typ2.t1, typ_x),
-    )
-
   def continue_linting_call_1_with_unknown_f(
     linted_f: Linted,
     linted_x: Linted,
@@ -353,7 +230,7 @@ object RtLib_4_Lint {
     linted_f: Linted,
     linted_x: Linted,
   ): LintedCall1 = {
-    val new_typ_f = concretize_f(linted_f.typ, linted_x.typ)
+    val new_typ_f = linted_f.typ.concretizeAsFunc(linted_x.typ)
     //Typ2(Func,Typ1(RIO,Typ0(Unit)),Typ1(RIO,Typ0(Unit)))
 
     val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
