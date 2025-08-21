@@ -2,6 +2,7 @@ package org.rt
 
 import lang.RtLib_3_Parse.{Expr, parse}
 import org.rt.lang.RtLib_0_1_Types.{Typ0, Typ1, Typ2, Unk0}
+import org.rt.lang.RtLib_0_2_Builtins.T_Unit
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, lint}
 import zio.test.*
@@ -32,7 +33,7 @@ object TestsRunner extends ZIOSpecDefault {
       )
         ++
        // */
-      Seq(a)
+      Seq(b)
 
 
     )
@@ -77,6 +78,59 @@ object TestsRunner extends ZIOSpecDefault {
                   Typ1("RIO", Typ0("Unit")),
                 ),
                 Typ2("Func", Unk0(0), Typ1("RIO", Typ0("Unit"))),
+              ),
+              typ =Typ2("Func", Typ1("RIO", Typ0("Unit")), Typ1("RIO", Typ0("Unit"))),
+            ),
+            LintedCall1(
+              LintedIdf("print", Typ2("Func", Typ0("Str"), Typ1("RIO", Typ0("Unit")))),
+              LintedIdf("s", Typ0("Str")),
+              Typ1("RIO", Typ0("Unit")),
+            ),
+            Typ1("RIO", Typ0("Unit")),
+          )
+      )
+    }
+
+  def b =
+    test("debugging good") {
+      assertTrue(
+        org.rt.lang.RtLib_4_Lint.continue_linting_call_1(
+          LintedCall1(
+            linted_f = LintedIdf(">>=", Typ2("Func",
+              Typ2("Func", Unk0(0), Typ1("RIO", Typ0("Unit"))),
+              Typ2("Func", Typ1("RIO", Unk0(0)), Typ1("RIO", Typ0("Unit"))),
+            )),
+            linted_x = LintedLambda1(
+              LintedIdf("u", Unk0(0)),
+              LintedCall1(
+                LintedIdf("print", Typ2("Func", Typ0("Str"), Typ1("RIO", Typ0("Unit")))),
+                LintedIdf("s", Typ0("Str")),
+                Typ1("RIO", Typ0("Unit")),
+              ),
+              Typ2("Func", Unk0(0), Typ1("RIO", Typ0("Unit"))),
+            ),
+            typ = Typ2("Func", Typ1("RIO", Unk0(0)), Typ1("RIO", Typ0("Unit"))),
+          ),
+          LintedCall1(
+            LintedIdf("print", Typ2("Func", Typ0("Str"), Typ1("RIO", Typ0("Unit")))),
+            LintedIdf("s", Typ0("Str")),
+            Typ1("RIO", Typ0("Unit")),
+          ),
+        ) ==
+          LintedCall1(
+            LintedCall1(
+              linted_f = LintedIdf(">>=", Typ2("Func",
+                Typ2("Func", T_Unit, Typ1("RIO", Typ0("Unit"))),
+                Typ2("Func", Typ1("RIO", Typ0("Unit")), Typ1("RIO", Typ0("Unit"))),
+              )),
+              linted_x = LintedLambda1(
+                LintedIdf("u", T_Unit),
+                LintedCall1(
+                  LintedIdf("print", Typ2("Func", Typ0("Str"), Typ1("RIO", Typ0("Unit")))),
+                  LintedIdf("s", Typ0("Str")),
+                  Typ1("RIO", Typ0("Unit")),
+                ),
+                Typ2("Func", T_Unit, Typ1("RIO", Typ0("Unit"))),
               ),
               typ =Typ2("Func", Typ1("RIO", Typ0("Unit")), Typ1("RIO", Typ0("Unit"))),
             ),
