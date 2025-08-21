@@ -159,6 +159,7 @@ object RtLib_4_Lint {
           linted_f.withTyp(linted_x.typ tTo new_typ) // typed_f - legacy comment
 
         case Typ2(_, t1, _) =>
+          val newT1 = t1
           linted_f.withTyp(t1 tTo new_typ)
             .tapDebug(res => println(
               s"""withTypCall1(
@@ -235,7 +236,8 @@ object RtLib_4_Lint {
     linted_f: Linted,
     linted_x: Linted,
   ): LintedCall1 = {
-    val new_typ_f = linted_f.typ.concretizeAsFunc(linted_x.typ)
+    val (new_typ_f, clarifications) =
+      linted_f.typ.concretizeAsFunc(linted_x.typ)
     //Typ2(Func,Typ1(RIO,Typ0(Unit)),Typ1(RIO,Typ0(Unit)))
 
     val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
@@ -244,7 +246,9 @@ object RtLib_4_Lint {
     LintedCall1(new_linted_f, new_linted_x, new_typ2_f.t2)
       .tapDebug(res => println(
         s"""continue_linting_call_1:
+           |    linted_x = $linted_x
            |    linted_f = $linted_f
+           |    clarifications = $clarifications
            |    new_typ2_f = $new_typ2_f
            |    new_linted_f = $new_linted_f
            |""".stripMargin
