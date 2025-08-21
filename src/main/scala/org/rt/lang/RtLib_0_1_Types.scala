@@ -128,7 +128,7 @@ object RtLib_0_1_Types {
           .concretizeAsFunc(
             tX.clarifyUnk(unk0, tSubArg),
           ),
-      caseTyp0 = typ0 => if (typ0.s == tSubArg.s) tF else rtFail(),
+      caseTyp0 = typ0SubX => if (typ0SubX.s == tSubArg.s) tF else rtFail(),
       caseTyp1 = _ => rtFail(),
       caseTyp2 = _ => rtFail(),
     )
