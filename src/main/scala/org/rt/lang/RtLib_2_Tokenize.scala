@@ -16,22 +16,22 @@ object RtLib_2_Tokenize {
 
     final case class TokIdf(s: String) extends Tok // identifier
 
-    case object TokParenOpen extends Tok
+    case object TokParenOpen extends Tok // `(`
 
-    case object TokParenClose extends Tok
+    case object TokParenClose extends Tok // `)`
 
-    case object TokLessMinus extends Tok
+    case object TokLessMinus extends Tok // `<-`
 
-    case object TokEq extends Tok
+    case object TokEq extends Tok // `=`
 
-    case object TokEndl extends Tok
+    case object TokEndl extends Tok // `\n`
 
-    case object TokEqGr extends Tok
+    case object TokEqGr extends Tok // `=>`
 
-    case object TokDot extends Tok
+    case object TokDot extends Tok // `.`
   }
 
-  private object Internal {
+  private object Internal:
     val end_of_code: Char = 0
 
     val char_to_latin =
@@ -280,7 +280,7 @@ object RtLib_2_Tokenize {
         tokenize_rec((code_ext, current_idx + 1, tokens))
       else tokenize_rec(tokenize_first_of(lexxBundle)(all_tokenizers))
     }
-  }
+  end Internal
 
   def tokenize(code: String): List[Tok] =
     Internal.tokenize_rec((code + Internal.end_of_code, 0, List()))
