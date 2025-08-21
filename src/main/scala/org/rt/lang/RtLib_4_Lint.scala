@@ -170,7 +170,8 @@ object RtLib_4_Lint {
     linted.rtMatch(
       case_lit = (s, typ) => LintedLit(s, typ),
       case_idf = (s, _) => LintedIdf(s, new_typ),
-      case_call_1 = (typed_f, typed_x, _) => replace_typ_call_1(typed_f, typed_x, new_typ),
+      case_call_1 = (typed_f, typed_x, _) =>
+        replace_typ_call_1(typed_f, typed_x, new_typ),
       case_lambda_1 = (linted_idf_x, linted_res, _typ) =>
         replace_typ_lambda_1(linted_idf_x, linted_res, new_typ),
     )
