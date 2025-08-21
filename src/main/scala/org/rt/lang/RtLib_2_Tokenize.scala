@@ -58,9 +58,6 @@ object RtLib_2_Tokenize {
         lexx_dot,
       )
 
-    def unexpectedToken(token: Tok) =
-      rtFail(s"Unspecified case for `$token` of type `${type value}`.")
-
     def match_token[A](
       case_lit_str: Option[String => A] = None,
       case_lit_bint: Option[String => A] = None,
