@@ -253,7 +253,7 @@ object RtLib_4_Lint {
     val (new_typ_f, clarifications) =
       linted_f.typ.concretizeAsFunc(linted_x.typ)
     //Typ2(Func,Typ1(RIO,Typ0(Unit)),Typ1(RIO,Typ0(Unit)))
-    val new_typ_f2 =
+    val new_linted_f2 =
       clarifications.foldLeft(linted_f){ (l, c) =>
         clarify(l, c)
       }
@@ -261,7 +261,7 @@ object RtLib_4_Lint {
     val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
     val new_linted_f = linted_f.withTyp(new_typ2_f)
     val new_linted_x = linted_x.withTyp(new_typ2_f.t1)
-    LintedCall1(new_linted_f, new_linted_x, new_typ2_f.t2)
+    LintedCall1(new_linted_f2, new_linted_x, new_typ2_f.t2)
       .tapDebug(res => println(
         s"""continue_linting_call_1:
            |    linted_x = $linted_x
@@ -271,7 +271,7 @@ object RtLib_4_Lint {
            |    new_linted_f = $new_linted_f
            |
            |    res = $res
-           |    new_typ_f2 = $new_typ_f2
+           |    new_linted_f2 = $new_linted_f2
            |""".stripMargin
       ))
   }
