@@ -232,6 +232,20 @@ object RtLib_4_Lint {
     LintedCall1(linted_f, new_linted_x, linted_f_typ.t2)
   }
 
+  def clarify(
+    linted: Linted,
+    clarification: Clarification,
+  ): Linted =
+    linted.rtMatch(
+      case_lit = (_, _) => linted,
+      case_idf = (s, t) =>
+        LintedIdf(s, t.clarifyUnk.tupled(clarification)),
+      case_call_1 = (linF, linX, typ) =>
+        LintedCall1(clarify(linF, clarification), clarify(linX, clarification), typ.clarifyUnk.tupled(clarification)),
+      case_lambda_1 = (linArg, linRes, typ) =>
+        LintedLambda1(clarify(linArg, clarification), clarify(linRes, clarification), typ.clarifyUnk.tupled(clarification)),
+    )
+
   def continue_linting_call_1(
     linted_f: Linted,
     linted_x: Linted,
@@ -239,6 +253,10 @@ object RtLib_4_Lint {
     val (new_typ_f, clarifications) =
       linted_f.typ.concretizeAsFunc(linted_x.typ)
     //Typ2(Func,Typ1(RIO,Typ0(Unit)),Typ1(RIO,Typ0(Unit)))
+    val new_typ_f2 =
+      clarifications.foldLeft(linted_f){ (l, c) =>
+        clarify(l, c)
+      }
 
     val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
     val new_linted_f = linted_f.withTyp(new_typ2_f)
@@ -251,6 +269,9 @@ object RtLib_4_Lint {
            |    clarifications = $clarifications
            |    new_typ2_f = $new_typ2_f
            |    new_linted_f = $new_linted_f
+           |
+           |    res = $res
+           |    new_typ_f2 = $new_typ_f2
            |""".stripMargin
       ))
   }
