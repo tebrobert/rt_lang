@@ -175,20 +175,6 @@ object RtLib_4_Lint {
       new_typ,
     )
 
-  def get_unknowns_fot_typ(
-    typ: Typ,
-  ): Set[String] =
-    typ.rtMatch(
-      case_typ0 = _s =>
-        Set.empty[String],
-      case_unk0 = s =>
-        Set(s.toString), // todo - try a more proper type
-      case_typ1 = (_s, t1) =>
-        get_unknowns_fot_typ(t1),
-      case_typ2 = (_s, t1, t2) =>
-        get_unknowns_fot_typ(t1) ++ get_unknowns_fot_typ(t2),
-    )
-
   def find_idf_typ_call_1(
     linted_f: Linted,
     linted_x: Linted,
