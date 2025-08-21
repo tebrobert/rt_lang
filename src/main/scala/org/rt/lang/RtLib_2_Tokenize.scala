@@ -25,7 +25,7 @@ object RtLib_2_Tokenize {
   }
 
   private object Internal {
-    val end_of_code: Char = 0
+    val end_of_code: Char = '\u0000'
 
     val char_to_latin =
       Map(
