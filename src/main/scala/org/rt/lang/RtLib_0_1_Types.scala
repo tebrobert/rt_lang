@@ -123,10 +123,10 @@ object RtLib_0_1_Types {
     tSubArg: Typ0
   ) =
     tSubX.rtMatch(
-      caseUnk0 = unk0 =>
-        tF.clarifyUnk(unk0, tSubArg)
+      caseUnk0 = unk0SubX =>
+        tF.clarifyUnk(unk0SubX, tSubArg)
           .concretizeAsFunc(
-            tX.clarifyUnk(unk0, tSubArg),
+            tX.clarifyUnk(unk0SubX, tSubArg),
           ),
       caseTyp0 = typ0SubX => if (typ0SubX.s == tSubArg.s) tF else rtFail(),
       caseTyp1 = _ => rtFail(),
