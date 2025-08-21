@@ -2,10 +2,10 @@ package org.rt.lang
 
 import org.rt.Helpers.*
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
-import org.rt.lang.RtLib_0_1_Types.{Typ, Typ0, Typ1, Typ2, Unk0, increase_unk}
+import org.rt.lang.RtLib_0_1_Types.*
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Str, idf_to_typ, tTo}
 import org.rt.lang.RtLib_3_Parse.{Expr, full_parse, match_expr}
-import org.rt.utils.RtFail.{rtFail, rt_assert, rt_assert_equal, rt_assert_type_Typ2, rt_assert_type_Unk0, rt_try, wip}
+import org.rt.utils.RtFail.*
 
 object RtLib_4_Lint {
   sealed trait Linted {
