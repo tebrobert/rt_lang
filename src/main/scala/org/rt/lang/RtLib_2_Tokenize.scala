@@ -32,7 +32,6 @@ object RtLib_2_Tokenize {
   }
 
 
-
   private val end_of_code: Char = 0
 
   private val char_to_latin =
@@ -51,19 +50,20 @@ object RtLib_2_Tokenize {
       "&" -> "and_",
     )
 
-  private val all_tokenizers: List[Tokenizer] = List(
-    lexx_idf,
-    lexx_integer,
-    lexx_paren_open,
-    lexx_paren_close,
-    lexx_eq_gr,
-    lexx_eq,
-    lexx_less_minus,
-    lexx_endl,
-    lexx_string,
-    lexx_operator,
-    lexx_dot,
-  )
+  private val all_tokenizers: List[Tokenizer] =
+    List(
+      lexx_idf,
+      lexx_integer,
+      lexx_paren_open,
+      lexx_paren_close,
+      lexx_eq_gr,
+      lexx_eq,
+      lexx_less_minus,
+      lexx_endl,
+      lexx_string,
+      lexx_operator,
+      lexx_dot,
+    )
 
 
   private def unexpectedToken(token: Tok) =
