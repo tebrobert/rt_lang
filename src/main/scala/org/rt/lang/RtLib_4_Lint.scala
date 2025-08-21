@@ -216,7 +216,7 @@ object RtLib_4_Lint {
     typ_x: Typ,
     typ_sub_x: Typ,
     sub_fx_i: Int,
-  ) = {
+  ): Typ = {
     val case_known =
       () => concrete_f(
         update_typ(Unk0(sub_fx_i), typ_sub_x)(typ_f),
