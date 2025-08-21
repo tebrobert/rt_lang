@@ -214,7 +214,7 @@ object RtLib_4_Lint {
       caseUnk0 = unk0 => if (unk0.i == sub_fx_i) typ_f else wip(),
       caseTyp0 = _ => case_known(),
       caseTyp1 = _ => case_known(),
-      case_typ2 = (_s, _t1, _t2) => case_known(),
+      caseTyp2 = _ => case_known(),
     )
   }
 
@@ -231,7 +231,7 @@ object RtLib_4_Lint {
       ),
       caseTyp0 = typ0 => if (typ0.s == sub_fx_s) typ_f else rtFail(),
       caseTyp1 = _ => rtFail(),
-      case_typ2 = (_s, _t1, _t2) => rtFail(),
+      caseTyp2 = _ => rtFail(),
     )
 
   def concrete_f_typ1(
@@ -247,7 +247,7 @@ object RtLib_4_Lint {
       caseTyp1 = typ1 => if (typ1.s == sub_fx_s) concrete_f_rec(typ_f, typ_x,
         sub_fx_t1, typ1.t1,
       ) else rtFail(),
-      case_typ2 = (s, t1, t2) => rtFail(),
+      caseTyp2 = _ => rtFail(),
     )
 
 
@@ -284,8 +284,8 @@ object RtLib_4_Lint {
       caseUnk0 = _ => wip(),
       caseTyp0 = _ => bad_type(),
       caseTyp1 = _ => bad_type(),
-      case_typ2 = (sub_x_s, sub_x_t1, sub_x_t2) => concrete_f_typ2_typ2(
-        typ_f, typ_x, sub_x_s, sub_x_t1, sub_x_t2
+      caseTyp2 = typ2_sub_x => concrete_f_typ2_typ2(
+        typ_f, typ_x, typ2_sub_x.s, typ2_sub_x.t1, typ2_sub_x.t2
       )(sub_fx_s, sub_fx_t1, sub_fx_t2),
     )
   }
@@ -300,9 +300,9 @@ object RtLib_4_Lint {
       caseUnk0 = unk0 => concrete_f_unk0(typ_f, typ_x, typ_sub_x, unk0.i),
       caseTyp0 = typ0 => concrete_f_typ0(typ_f, typ_x, typ_sub_x, typ0.s),
       caseTyp1 = typ1 => concrete_f_typ1(typ_f, typ_x, typ_sub_x, typ1.s, typ1.t1),
-      case_typ2 = (s, t1, t2) => concrete_f_typ2(
+      caseTyp2 = typ2 => concrete_f_typ2(
         typ_f, typ_x, typ_sub_x,
-        s, t1, t2,
+        typ2.s, typ2.t1, typ2.t2,
       ),
     )
 
@@ -315,7 +315,7 @@ object RtLib_4_Lint {
       caseUnk0 = _ => T_Func(typ_x, T_A0),
       caseTyp0 = _ => rtFail(s"Unexpected typ_f `$typ_f`."),
       caseTyp1 = _ => rtFail(s"Unexpected typ_f `$typ_f`."),
-      case_typ2 = (_s, t1, _t2) => concrete_f_rec(typ_f, typ_x, t1, typ_x),
+      caseTyp2 = typ2 => concrete_f_rec(typ_f, typ_x, typ2.t1, typ_x),
     )
 
   def continue_linting_call_1_with_unknown_f(
@@ -328,8 +328,10 @@ object RtLib_4_Lint {
       caseUnk0 = unk0 => T_Func(unk0, Unk0(unk0.i + 1)),
       caseTyp0 = typ0 => T_Func(typ0, T_A0),
       caseTyp1 = typ1 => T_Func(typ1.mapT1(increase_unk), T_A0),
-      case_typ2 = (s, t1, t2) => T_Func(
-        Typ2(s, increase_unk(t1), increase_unk(t2)), T_A0)
+      caseTyp2 = typ2 => T_Func(
+        Typ2(typ2.s, increase_unk(typ2.t1), increase_unk(typ2.t2)),
+        T_A0,
+      )
     )
 
     val new_linted_f = linted_f.withTyp(new_typ_f)

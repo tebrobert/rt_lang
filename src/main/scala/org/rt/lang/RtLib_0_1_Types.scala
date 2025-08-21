@@ -32,6 +32,10 @@ object RtLib_0_1_Types {
           s"$t1 => $t2"
         case _ => s"$s[$t1, $t2]"
         )
+
+    def mapT1(f: Typ => Typ): Typ2 = Typ2(s, f(t1), t2)
+
+    def mapT2(f: Typ => Typ): Typ2 = Typ2(s, t1, f(t2))
   }
 
   extension (typ: Typ) {
@@ -39,13 +43,13 @@ object RtLib_0_1_Types {
       caseUnk0: Unk0 => A,
       caseTyp0: Typ0 => A,
       caseTyp1: Typ1 => A,
-      case_typ2: (String, Typ, Typ) => A,
+      caseTyp2: Typ2 => A,
     ): A =
       typ match
         case unk0: Unk0 => caseUnk0(unk0)
         case typ0: Typ0 => caseTyp0(typ0)
         case typ1: Typ1 => caseTyp1(typ1)
-        case Typ2(s, t1, t2) => case_typ2(s, t1, t2)
+        case typ2: Typ2 => caseTyp2(typ2)
 
     def clarifyUnk(
       unk_from: Unk0,
@@ -55,10 +59,9 @@ object RtLib_0_1_Types {
         caseUnk0 = unk0 => if (unk0 == unk_from) typ_to else typ,
         caseTyp0 = identity,
         caseTyp1 = _.mapT1(_.clarifyUnk(unk_from, typ_to)),
-        case_typ2 = (s, t1, t2) => Typ2(s,
-          t1.clarifyUnk(unk_from, typ_to),
-          t2.clarifyUnk(unk_from, typ_to),
-        ),
+        caseTyp2 = _
+          .mapT1(_.clarifyUnk(unk_from, typ_to))
+          .mapT2(_.clarifyUnk(unk_from, typ_to)),
       )
   }
 
@@ -67,9 +70,8 @@ object RtLib_0_1_Types {
       caseUnk0 = unk0 => Unk0(unk0.i + 1),
       caseTyp0 = identity,
       caseTyp1 = _.mapT1(increase_unk),
-      case_typ2 = (s, t1, t2) => Typ2(s,
-        increase_unk(t1),
-        increase_unk(t2)
-      ),
+      caseTyp2 = _
+        .mapT1(increase_unk)
+        .mapT2(increase_unk),
     )
 }
