@@ -3,6 +3,18 @@ package org.rt.utils
 import RtFail.rtFail
 
 object RtList {
+    extension [A](list: List[A]) {
+      inline
+      def rtMatch[B](
+        inline caseEmpty: () => B,
+        inline caseAtLeast1: (A, List[A]) => B,
+      ): B =
+        list match {
+          case Nil => caseEmpty()
+          case head :: tail => caseAtLeast1(head, tail)
+        }
+    }
+
     def match_list[A, B](
         case_empty: Option[() => B] = None,
         case_at_least_1: Option[(A, List[A]) => B] = None,

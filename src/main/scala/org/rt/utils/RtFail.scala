@@ -16,16 +16,17 @@ object RtFail {
   def rt_assert(cond: Boolean, msg: String = "Assertion error."): Unit =
     fail_if(!cond, msg)
 
-  def try_and_match[A, B](
-    action: () => A,
-    ifSuccess: A => B,
-    ifFail: () => B,
-  ): B =
-    (try {
-      Right(action())
+  inline
+  def tryOrRecover[A](
+    // todo - catch only specific errors (ideally, Either.Left's)
+    inline action: () => A,
+    inline recover: () => A,
+  ): A =
+    try {
+      action()
     } catch {
-      case _: Throwable => Left(ifFail())
-    }).map(ifSuccess).merge
+      case _: Throwable => recover()
+    }
 
   def rt_assert_equal[ANY](
     actual: ANY,

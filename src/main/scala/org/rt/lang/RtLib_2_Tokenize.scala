@@ -1,8 +1,8 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_2_Tokenize.Classes.{Tok, TokDot, TokEndl, TokEq, TokEqGr, TokIdf, TokLessMinus, TokLitBint, TokLitStr, TokParenClose, TokParenOpen}
-import org.rt.utils.RtFail.{rtFail, rt_assert, try_and_match}
-import org.rt.utils.RtList.match_list
+import org.rt.utils.RtFail.{rtFail, rt_assert, tryOrRecover}
+import org.rt.utils.RtList.{match_list, rtMatch}
 
 import scala.annotation.tailrec
 
@@ -248,35 +248,28 @@ object RtLib_2_Tokenize {
   private type LexxBundle = (String, Int, List[Tok])
   private type Tokenizer = LexxBundle => LexxBundle
 
-  //@tailrec
-  private def tokenize_first_of(
-    code_ext: String,
-    current_idx: Int,
-    tokens: List[Tok],
-    tokenizers: List[Tokenizer]
-  ): LexxBundle = {
-    def try_next_tokenizer(
-      current_tokenizer: Tokenizer,
-      rest_tokenizers: List[Tokenizer]
-    ) =
-      try_and_match(
-        () => current_tokenizer(code_ext, current_idx, tokens),
-        identity,
-        () => tokenize_first_of(
-          code_ext, current_idx, tokens, rest_tokenizers
-        )
-      )
+  inline
+  def tryNextTokenizer(
+    inline lexxBundle: LexxBundle,
+  )(
+    inline current_tokenizer: Tokenizer,
+    inline rest_tokenizers: List[Tokenizer],
+  ): LexxBundle =
+    tryOrRecover(
+      () => current_tokenizer(lexxBundle),
+      () => tokenize_first_of(lexxBundle)(rest_tokenizers),
+    )
 
-    match_list(
-      case_empty = Some(() => rtFail(
-        "Can't tokenize.",
-        s"Given `$current_idx` `$code_ext`.",
-      )),
-      case_at_least_1 = Some((head, tail) =>
-        try_next_tokenizer(head, tail)
-      ),
-    )(tokenizers)
-  }
+  @tailrec
+  def tokenize_first_of(
+    lexxBundle: LexxBundle,
+  )(
+    tokenizers: List[Tokenizer],
+  ): LexxBundle =
+    tokenizers.rtMatch(
+      caseEmpty = () => rtFail("Can't tokenize.", s"Given `$lexxBundle`."),
+      caseAtLeast1 = tryNextTokenizer(lexxBundle),
+    )
 
   @tailrec
   private def tokenize_rec(
@@ -290,9 +283,9 @@ object RtLib_2_Tokenize {
     else if (current_char == ' ')
       tokenize_rec((code_ext, current_idx + 1, tokens))
     else
-      tokenize_rec(tokenize_first_of(
-        code_ext, current_idx, tokens, all_tokenizers
-      ))
+      tokenize_rec(
+        tokenize_first_of((code_ext, current_idx, tokens))(all_tokenizers),
+      )
   }
 
 
