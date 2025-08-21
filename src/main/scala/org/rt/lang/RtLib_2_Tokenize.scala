@@ -278,25 +278,24 @@ object RtLib_2_Tokenize {
     )(tokenizers)
   }
 
-  //@tailrec
+  @tailrec
   private def tokenize_rec(
-    code_ext: String,
-    current_idx: Int,
-    tokens: List[Tok],
+    lexxBundle: LexxBundle,
   ): List[Tok] = {
+    val (code_ext, current_idx, tokens) = lexxBundle
     val current_char = code_ext(current_idx)
 
     if (current_char == end_of_code)
       tokens
     else if (current_char == ' ')
-      tokenize_rec(code_ext, current_idx + 1, tokens)
+      tokenize_rec((code_ext, current_idx + 1, tokens))
     else
-      tokenize_rec.tupled(tokenize_first_of(
+      tokenize_rec(tokenize_first_of(
         code_ext, current_idx, tokens, all_tokenizers
       ))
   }
 
 
   def tokenize(code: String): List[Tok] =
-    tokenize_rec(code + end_of_code, 0, List())
+    tokenize_rec((code + end_of_code, 0, List()))
 }
