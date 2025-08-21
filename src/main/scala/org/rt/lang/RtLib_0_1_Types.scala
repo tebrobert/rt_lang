@@ -32,19 +32,6 @@ object RtLib_0_1_Types {
                 )
     }
 
-    def unsafe_match_type[A](
-        lazy_for_type0: () => A,
-        lazy_for_unk0: () => A,
-        lazy_for_type1: () => A,
-        lazy_for_type2: () => A,
-    ): Typ => A =
-        (typ: Typ) => typ match
-            case Typ0(s) => lazy_for_type0()
-            case Typ1(s, t1) => lazy_for_type1()
-            case Typ2(s, t1, t2) => lazy_for_type2()
-            case Unk0(i) => lazy_for_unk0()
-
-
     def match_typ[A](
         case_unk0: Int => A,
         case_typ0: String => A,
