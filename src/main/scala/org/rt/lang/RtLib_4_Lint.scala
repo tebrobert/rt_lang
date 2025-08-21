@@ -118,13 +118,13 @@ object RtLib_4_Lint {
         case_lit = (s, typ) => LintedLit(s, typ),
         case_idf = (s, _) => LintedIdf(s, new_typ),
         case_call_1 = (typed_f, typed_x, _) =>
-          replace_typ_call_1(typed_f, typed_x, new_typ),
+          withTypCall1(typed_f, typed_x, new_typ),
         case_lambda_1 = (linted_idf_x, linted_res, _typ) =>
-          replace_typ_lambda_1(linted_idf_x, linted_res, new_typ),
+          withTypLambda1(linted_idf_x, linted_res, new_typ),
       )
   }
 
-  private def replace_typ_lambda_1(
+  private def withTypLambda1(
     linted_idf_x: Linted,
     linted_res: Linted,
     new_typ: Typ,
@@ -146,7 +146,7 @@ object RtLib_4_Lint {
     }
   }
 
-  private def replace_typ_call_1(
+  private def withTypCall1(
     linted_f: Linted,
     linted_x: Linted,
     new_typ: Typ,
