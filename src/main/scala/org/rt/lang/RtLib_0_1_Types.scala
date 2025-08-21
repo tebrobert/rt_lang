@@ -108,7 +108,7 @@ object RtLib_0_1_Types {
   ): Typ =
     typ_sub_x.rtMatch(
       caseUnk0 = unk0 =>
-        if (unk0 == sub_fx_unk0)
+        if (unk0.i == sub_fx_unk0.i)
           typ_f
         else wip(),
       otherwise = () =>
@@ -120,14 +120,14 @@ object RtLib_0_1_Types {
     typ_x: Typ,
   )(
     typ_sub_x: Typ,
-    sub_fx_s: String
+    sub_fx_typ0: Typ0
   ) =
     typ_sub_x.rtMatch(
       caseUnk0 = unk0 =>
-        typ_f.clarifyUnk(unk0, Typ0(sub_fx_s)).concretizeAsFunc(
-          typ_x.clarifyUnk(unk0, Typ0(sub_fx_s)),
+        typ_f.clarifyUnk(unk0, sub_fx_typ0).concretizeAsFunc(
+          typ_x.clarifyUnk(unk0, sub_fx_typ0),
         ),
-      caseTyp0 = typ0 => if (typ0.s == sub_fx_s) typ_f else rtFail(),
+      caseTyp0 = typ0 => if (typ0.s == sub_fx_typ0.s) typ_f else rtFail(),
       caseTyp1 = _ => rtFail(),
       caseTyp2 = _ => rtFail(),
     )
@@ -143,9 +143,10 @@ object RtLib_0_1_Types {
     typ_sub_x.rtMatch(
       caseUnk0 = _ => typ_f,
       caseTyp0 = _ => rtFail(),
-      caseTyp1 = typ1 => if (typ1.s == sub_fx_s) concretizeAsFuncRec(typ_f, typ_x,
-        sub_fx_t1, typ1.t1,
-      ) else rtFail(),
+      caseTyp1 = typ1 =>
+        if (typ1.s == sub_fx_s)
+          concretizeAsFuncRec(typ_f, typ_x, sub_fx_t1, typ1.t1)
+        else rtFail(),
       caseTyp2 = _ => rtFail(),
     )
 
@@ -200,7 +201,7 @@ object RtLib_0_1_Types {
   ): Typ =
     typ_sub_fx.rtMatch(
       caseUnk0 = unk0 => concretizeAsFuncUnk0(typ_f, typ_x)(typ_sub_x, unk0),
-      caseTyp0 = typ0 => concretizeAsFuncTyp0(typ_f, typ_x)(typ_sub_x, typ0.s),
+      caseTyp0 = typ0 => concretizeAsFuncTyp0(typ_f, typ_x)(typ_sub_x, typ0),
       caseTyp1 = typ1 => concretizeAsFuncTyp1(typ_f, typ_x)(typ_sub_x, typ1.s, typ1.t1),
       caseTyp2 = typ2 => concretizeAsFuncTyp2(typ_f, typ_x)(
         typ_sub_x, typ2.s, typ2.t1, typ2.t2,
