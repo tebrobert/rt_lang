@@ -104,7 +104,6 @@ object RtLib_0_1_Types {
     tX: Typ,
   )(
     tSubX: Typ,
-  )(
     tSubArg: Unk0,
   ): Typ =
     tSubX.rtMatch(
@@ -121,7 +120,6 @@ object RtLib_0_1_Types {
     tX: Typ,
   )(
     tSubX: Typ,
-  )(
     tSubArg: Typ0
   ) =
     tSubX.rtMatch(
@@ -140,7 +138,6 @@ object RtLib_0_1_Types {
     tX: Typ,
   )(
     tSubX: Typ,
-  )(
     tSubArg: Typ1,
   ) =
     tSubX.rtMatch(
@@ -158,7 +155,6 @@ object RtLib_0_1_Types {
     tX: Typ,
   )(
     tSubX: Typ,
-  )(
     tSubArg: Typ2,
   ): Typ =
     tSubX.rtMatch(
@@ -182,9 +178,9 @@ object RtLib_0_1_Types {
     tSubArg: Typ,
   ): Typ =
     tSubArg.rtMatch(
-      caseUnk0 = concretizeAsFuncUnk0(tF, tX)(tSubX)(_),
-      caseTyp0 = concretizeAsFuncTyp0(tF, tX)(tSubX)(_),
-      caseTyp1 = concretizeAsFuncTyp1(tF, tX)(tSubX)(_),
-      caseTyp2 = concretizeAsFuncTyp2(tF, tX)(tSubX)(_),
+      caseUnk0 = concretizeAsFuncUnk0(tF, tX)(tSubX, _),
+      caseTyp0 = concretizeAsFuncTyp0(tF, tX)(tSubX, _),
+      caseTyp1 = concretizeAsFuncTyp1(tF, tX)(tSubX, _),
+      caseTyp2 = concretizeAsFuncTyp2(tF, tX)(tSubX, _),
     )
 }
