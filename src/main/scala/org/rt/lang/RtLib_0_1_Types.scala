@@ -104,15 +104,15 @@ object RtLib_0_1_Types {
     tX: Typ,
     tSubX: Typ,
   )(
-    tSubFx: Unk0,
+    tSubArg: Unk0,
   ): Typ =
     tSubX.rtMatch(
       caseUnk0 = unk0 =>
-        if (unk0.i == tSubFx.i)
+        if (unk0.i == tSubArg.i)
           tF
         else wip(),
       otherwise = () =>
-        tF.clarifyUnk(tSubFx, tSubX).concretizeAsFunc(tX),
+        tF.clarifyUnk(tSubArg, tSubX).concretizeAsFunc(tX),
     )
 
   def concretizeAsFuncTyp0(
@@ -120,14 +120,14 @@ object RtLib_0_1_Types {
     tX: Typ,
     tSubX: Typ,
   )(
-    tSubFx: Typ0
+    tSubArg: Typ0
   ) =
     tSubX.rtMatch(
       caseUnk0 = unk0 =>
-        tF.clarifyUnk(unk0, tSubFx).concretizeAsFunc(
-          tX.clarifyUnk(unk0, tSubFx),
+        tF.clarifyUnk(unk0, tSubArg).concretizeAsFunc(
+          tX.clarifyUnk(unk0, tSubArg),
         ),
-      caseTyp0 = typ0 => if (typ0.s == tSubFx.s) tF else rtFail(),
+      caseTyp0 = typ0 => if (typ0.s == tSubArg.s) tF else rtFail(),
       caseTyp1 = _ => rtFail(),
       caseTyp2 = _ => rtFail(),
     )
@@ -137,14 +137,14 @@ object RtLib_0_1_Types {
     tX: Typ,
     tSubX: Typ,
   )(
-    tSubFx: Typ1,
+    tSubArg: Typ1,
   ) =
     tSubX.rtMatch(
       caseUnk0 = _ => tF,
       caseTyp0 = _ => rtFail(),
       caseTyp1 = typ1 =>
-        if (typ1.s == tSubFx.s)
-          concretizeAsFuncRec(tF, tX, typ1.t1, tSubFx.t1)
+        if (typ1.s == tSubArg.s)
+          concretizeAsFuncRec(tF, tX, typ1.t1, tSubArg.t1)
         else rtFail(),
       caseTyp2 = _ => rtFail(),
     )
@@ -154,17 +154,17 @@ object RtLib_0_1_Types {
     tX: Typ,
     tSubX: Typ,
   )(
-    tSubFx: Typ2,
+    tSubArg: Typ2,
   ): Typ =
     tSubX.rtMatch(
       caseUnk0 = _ => wip(),
-      caseTyp0 = _ => rtFail(s"Can't match the types $tSubFx vs $tSubX"),
-      caseTyp1 = _ => rtFail(s"Can't match the types $tSubFx vs $tSubX"),
+      caseTyp0 = _ => rtFail(s"Can't match the types $tSubArg vs $tSubX"),
+      caseTyp1 = _ => rtFail(s"Can't match the types $tSubArg vs $tSubX"),
       caseTyp2 = typ2_sub_x => {
-        rt_assert_equal(typ2_sub_x.s, tSubFx.s)
-        val used_t1 = concretizeAsFuncRec(tF, tX, typ2_sub_x.t1, tSubFx.t1)
+        rt_assert_equal(typ2_sub_x.s, tSubArg.s)
+        val used_t1 = concretizeAsFuncRec(tF, tX, typ2_sub_x.t1, tSubArg.t1)
         val (f1, x1) = (used_t1, rt_assert_type_Typ2(used_t1).t1) // todo - try better typing
-        val used_t2 = concretizeAsFuncRec(f1, x1, typ2_sub_x.t2, tSubFx.t2)
+        val used_t2 = concretizeAsFuncRec(f1, x1, typ2_sub_x.t2, tSubArg.t2)
         used_t2
       },
     )
@@ -173,9 +173,9 @@ object RtLib_0_1_Types {
     tF: Typ,
     tX: Typ,
     tSubX: Typ,
-    tSubFx: Typ,
+    tSubArg: Typ,
   ): Typ =
-    tSubFx.rtMatch(
+    tSubArg.rtMatch(
       caseUnk0 = concretizeAsFuncUnk0(tF, tX, tSubX)(_),
       caseTyp0 = concretizeAsFuncTyp0(tF, tX, tSubX)(_),
       caseTyp1 = concretizeAsFuncTyp1(tF, tX, tSubX)(_),
