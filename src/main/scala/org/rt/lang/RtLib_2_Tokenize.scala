@@ -71,41 +71,6 @@ object RtLib_2_Tokenize {
         ))
         ()
 
-    def match_token[A](
-      case_lit_str: Option[String => A] = None,
-      case_lit_bint: Option[String => A] = None,
-      case_idf: Option[String => A] = None,
-      case_paren_open: Option[() => A] = None,
-      case_paren_close: Option[() => A] = None,
-      case_less_minus: Option[() => A] = None,
-      case_eq: Option[() => A] = None,
-      case_endl: Option[() => A] = None,
-      case_eq_gr: Option[() => A] = None,
-      case_dot: Option[() => A] = None,
-      otherwise: Option[() => A] = None,
-    ): Tok => A =
-      (token: Tok) =>
-        call_or_otherwise(otherwise, token)(token match
-          case TokLitStr(s) => case_lit_str.map(f => () => f(s))
-          case TokLitBint(i) => case_lit_bint.map(f => () => f(i))
-          case TokIdf(s) => case_idf.map(f => () => f(s))
-          case TokParenOpen => case_paren_open
-          case TokParenClose => case_paren_close
-          case TokLessMinus => case_less_minus
-          case TokEq => case_eq
-          case TokEndl => case_endl
-          case TokEqGr => case_eq_gr
-          case TokDot => case_dot
-        )
-
-    def rt_assert_token_idf(
-      token: Tok,
-    ) =
-      match_token(
-        case_idf = Some(_ => ()),
-        otherwise = Some(() => rtFail())
-      )
-
     def is_initial_idf_char(
       char: Char,
     ) =
