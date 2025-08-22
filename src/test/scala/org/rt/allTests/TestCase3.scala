@@ -43,5 +43,6 @@ object TestCase3 extends RtTestCase {
         ),
         LintedIdf("input", T_RIO(T_Str)),
         T_RIO(T_Str),
-      ))
+      )
+    )
 }
