@@ -5,11 +5,13 @@ import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.*
 
 object TestCase11 extends RtTestCase {
-  val code_0 = s"""greeting = "Hey! What is your name?"\n"""
-    + s"""print(greeting)\n"""
-    + s"""name <- input\n"""
-    + s"""print("Welcome, ...")\n"""
-    + s"""print(name)\n"""
+  val code_0 =
+    """greeting = "Hey! What is your name?"
+      |print(greeting)
+      |name <- input
+      |print("Welcome, ...")
+      |print(name)
+      |""".stripMargin
 
   val tokens_1 = List(
     TokIdf("greeting"), TokEq, TokLitStr("Hey! What is your name?"), TokEndl,
