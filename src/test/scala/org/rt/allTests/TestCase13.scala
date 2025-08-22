@@ -12,15 +12,18 @@ object TestCase13 extends RtTestCase {
       |result = +(name)("Welcome, ")
       |print(result)""".stripMargin
 
-  val tokens_1 = List(
-    TokIdf("greeting"), TokEq, TokLitStr("Hey! What is your name?"), TokEndl,
-    TokIdf("print"), TokParenOpen, TokIdf("greeting"), TokParenClose, TokEndl,
-    TokIdf("name"), TokLessMinus, TokIdf("input"), TokEndl,
-    TokIdf("result"), TokEq, TokIdf("+"),
-    TokParenOpen, TokIdf("name"), TokParenClose,
-    TokParenOpen, TokLitStr("Welcome, "), TokParenClose, TokEndl,
-    TokIdf("print"), TokParenOpen, TokIdf("result"), TokParenClose,
-  )
+  val tokens_1 =
+    List(
+      TokIdf("greeting"), TokEq, TokLitStr("Hey! What is your name?"), TokEndl,
+      TokIdf("print"), TokParenOpen, TokIdf("greeting"), TokParenClose, TokEndl,
+      TokIdf("name"), TokLessMinus, TokIdf("input"), TokEndl,
+
+      TokIdf("result"), TokEq, TokIdf("+"),
+      TokParenOpen, TokIdf("name"), TokParenClose,
+      TokParenOpen, TokLitStr("Welcome, "), TokParenClose, TokEndl,
+
+      TokIdf("print"), TokParenOpen, TokIdf("result"), TokParenClose,
+    )
 
   val expr_2 =
     ExprCall1(
