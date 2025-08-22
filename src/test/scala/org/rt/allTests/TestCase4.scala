@@ -44,5 +44,6 @@ object TestCase4 extends RtTestCase {
           T_RIO(T_Str),
         ),
         T_RIO(T_Str),
-      ))
+      )
+    )
 }
