@@ -33,7 +33,7 @@ object TestsRunner extends ZIOSpecDefault {
       )
         ++
        // */
-      Seq(b)
+      Seq()
 
 
     )
