@@ -18,6 +18,7 @@ object TestCase14 extends RtTestCase {
     TokIdf("print"), TokParenOpen, TokIdf("greeting"), TokParenClose, TokEndl,
     TokIdf("print"), TokParenOpen, TokLitStr("What is your name?"), TokParenClose, TokEndl,
     TokIdf("name"), TokLessMinus, TokIdf("input"), TokEndl,
+
     TokIdf("print"), TokParenOpen, TokLitStr("Dear "),
     TokDot, TokIdf("+"), TokParenOpen, TokIdf("name"), TokParenClose,
     TokDot, TokIdf("+"), TokParenOpen, TokLitStr(", welcome!"), TokParenClose, TokParenClose, TokEndl,
