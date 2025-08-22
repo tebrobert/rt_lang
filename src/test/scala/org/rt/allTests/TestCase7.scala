@@ -1,7 +1,8 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
-import org.rt.lang.RtLib_0_2_Builtins.{T_RIO, T_Str, T_Unit, tTo}
+import org.rt.TestHelpers.*
+import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.*
 import org.rt.lang.RtLib_4_Lint.{LintedCall1, LintedIdf, LintedLambda1}
@@ -21,86 +22,22 @@ object TestCase7 extends RtTestCase {
   )
 
   val expr_2 =
-    ExprCall1(
-      ExprCall1(
-        ExprIdf(">>="),
-        ExprLambda1(
-          ExprIdf("x"),
-          ExprCall1(
-            ExprCall1(
-              ExprIdf(">>="),
-              ExprLambda1(
-                ExprIdf("y"),
-                ExprCall1(
-                  ExprCall1(
-                    ExprIdf(">>="),
-                    ExprLambda1(
-                      ExprIdf("_"),
-                      ExprCall1(
-                        ExprIdf("print"),
-                        ExprIdf("y")
-                      )
-                    )
-                  ),
-                  ExprCall1(
-                    ExprIdf("print"),
-                    ExprIdf("x")
-                  )
-                )
-              )
-            ),
-            ExprIdf("input")
-          )
+    exprAndThen("x", ExprIdf("input"),
+      exprAndThen("y", ExprIdf("input"),
+        exprAndThen("_", ExprCall1(ExprIdf("print"), ExprIdf("x")),
+          ExprCall1(ExprIdf("print"), ExprIdf("y")),
         )
-      ),
-      ExprIdf("input")
+      )
     )
 
-  override val mb_linted_3 = Some(
-    LintedCall1(
-      LintedCall1(
-        LintedIdf(">>=", (T_Str tTo T_RIO(T_Unit)) tTo (T_RIO(T_Str) tTo T_RIO(T_Unit))),
-        LintedLambda1(
-          LintedIdf("x", T_Str),
-          LintedCall1(
-            LintedCall1(
-              LintedIdf(">>=", (T_Str tTo T_RIO(T_Unit)) tTo (T_RIO(T_Str) tTo T_RIO(T_Unit))),
-              LintedLambda1(
-                LintedIdf("y", T_Str),
-                LintedCall1(
-                  LintedCall1(
-                    LintedIdf(">>=", (T_Unit tTo T_RIO(T_Unit)) tTo (T_RIO(T_Unit) tTo T_RIO(T_Unit))),
-                    LintedLambda1(
-                      LintedIdf("_", T_Unit),
-                      LintedCall1(
-                        LintedIdf("print", T_Str tTo T_RIO(T_Unit)),
-                        LintedIdf("y", T_Str),
-                        T_RIO(T_Unit)
-                      ),
-                      T_Unit tTo T_RIO(T_Unit),
-                    ),
-                    T_RIO(T_Unit) tTo T_RIO(T_Unit),
-                  ),
-                  LintedCall1(
-                    LintedIdf("print", T_Str tTo T_RIO(T_Unit)),
-                    LintedIdf("x", T_Str),
-                    T_RIO(T_Unit),
-                  ),
-                  T_RIO(T_Unit),
-                ),
-                T_Str tTo T_RIO(T_Unit),
-              ),
-              T_RIO(T_Str) tTo T_RIO(T_Unit),
-            ),
-            LintedIdf("input", T_RIO(T_Str)),
-            T_RIO(T_Unit)
-          ),
-          T_Str tTo T_RIO(T_Unit),
-        ),
-        T_RIO(T_Str) tTo T_RIO(T_Unit),
-      ),
-      LintedIdf("input", T_RIO(T_Str)),
-      T_RIO(T_Unit),
+  override val mb_linted_3 =
+    Some(
+      lintedAndThen(("x", T_Str), LintedIdf("input", T_RIO_Str),
+        lintedAndThen(("y", T_Str), LintedIdf("input", T_RIO_Str),
+          lintedAndThen(("_", T_Unit), LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("x", T_Str), T_RIO_Unit),
+            LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("y", T_Str), T_RIO_Unit),
+          )
+        )
+      )
     )
-  )
 }
