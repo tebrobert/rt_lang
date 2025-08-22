@@ -161,16 +161,6 @@ object RtLib_4_Lint {
         case Typ2(_, t1, _) =>
           val newT1 = t1
           linted_f.withTyp(t1 tTo new_typ)
-            .tapDebug(res => println(
-              s"""withTypCall1(
-                 |  linted_f = $linted_f
-                 |  linted_x = $linted_x
-                 |  new_typ = $new_typ
-                 |) {
-                 |   t1 = $t1
-                 |   res = $res
-                 |}""".stripMargin
-            ))
 
         case _ => rtFail(s"Unexpected type `${linted_f.typ}`.")
       },
@@ -252,7 +242,7 @@ object RtLib_4_Lint {
   ): LintedCall1 = {
     val (new_typ_f, clarifications) =
       linted_f.typ.concretizeAsFunc(linted_x.typ)
-    //Typ2(Func,Typ1(RIO,Typ0(Unit)),Typ1(RIO,Typ0(Unit)))
+
     val new_linted_f2 =
       clarifications.foldLeft(linted_f){ (l, c) =>
         clarify(l, c)
@@ -262,18 +252,6 @@ object RtLib_4_Lint {
     val new_linted_f = linted_f.withTyp(new_typ2_f)
     val new_linted_x = linted_x.withTyp(new_typ2_f.t1)
     LintedCall1(new_linted_f2, new_linted_x, new_typ2_f.t2)
-      .tapDebug(res => println(
-        s"""continue_linting_call_1:
-           |    linted_x = $linted_x
-           |    linted_f = $linted_f
-           |    clarifications = $clarifications
-           |    new_typ2_f = $new_typ2_f
-           |    new_linted_f = $new_linted_f
-           |
-           |    res = $res
-           |    new_linted_f2 = $new_linted_f2
-           |""".stripMargin
-      ))
   }
 
   def lint_set_call_1(

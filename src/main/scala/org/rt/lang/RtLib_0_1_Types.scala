@@ -128,8 +128,6 @@ object RtLib_0_1_Types {
           (tF, accClarifications)
         else wip(),
       otherwise = () => {
-        println("clarie___1")
-        //replaces +: tSubArg -> tSubX
         tF.clarifyUnk(tSubArg, tSubX)
           .concretizeAsFunc(tX, accClarifications.appended(tSubArg -> tSubX))
       },
@@ -171,14 +169,7 @@ object RtLib_0_1_Types {
       caseTyp0 = _ => rtFail(),
       caseTyp1 = typ1 =>
         if (typ1.s == tSubArg.s)
-        {
-          println(
-            s"""here___
-               |  tF: $tF
-               |  tx: $tX
-               |""".stripMargin)
           concretizeAsFuncRec(tF, tX, accClarifications)(typ1.t1, tSubArg.t1)
-        }
         else rtFail(),
       caseTyp2 = _ => rtFail(),
     )
@@ -197,7 +188,6 @@ object RtLib_0_1_Types {
       caseTyp1 = _ => rtFail(s"Can't match the types $tSubArg vs $tSubX"),
       caseTyp2 = typ2_sub_x => {
         rt_assert_equal(typ2_sub_x.s, tSubArg.s)
-        println("here_stub__")
         val nilStub = Nil
         val (used_t1, accClarifications1) = concretizeAsFuncRec(tF, tX, nilStub)(typ2_sub_x.t1, tSubArg.t1)
         val (f1, x1) = (used_t1, rt_assert_type_Typ2(used_t1).t1) // todo - try better typing
@@ -214,19 +204,10 @@ object RtLib_0_1_Types {
     tSubX: Typ,
     tSubArg: Typ,
   ): (Typ, List[Clarification]) =
-  {
-    println(
-      s"""concretizeAsFuncRec:
-         |  tF $tF
-         |  tx $tX
-         |  tSubX $tSubX
-         |  tSubArg $tSubArg
-         |""".stripMargin)
     tSubArg.rtMatch(
       caseUnk0 = concretizeAsFuncUnk0(tF, tX, accClarifications)(tSubX, _),
       caseTyp0 = concretizeAsFuncTyp0(tF, tX, accClarifications)(tSubX, _),
       caseTyp1 = concretizeAsFuncTyp1(tF, tX, accClarifications)(tSubX, _),
       caseTyp2 = concretizeAsFuncTyp2(tF, tX, accClarifications)(tSubX, _),
     )
-  }
 }

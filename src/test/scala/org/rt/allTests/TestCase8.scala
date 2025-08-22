@@ -29,35 +29,9 @@ object TestCase8 extends RtTestCase {
       ),
     )
 
-  def rioHack(typResult: Typ) = // todo - FIX the cause
-    T_RIO(typResult)
-
-  def lintedAndThen(
-    resultTuple: (String, Typ),
-    linted: Linted,
-    lintedNext: Linted,
-  ) = {
-    val lintedResult = LintedIdf.apply.tupled(resultTuple)
-
-    LintedCall1(
-      LintedCall1(
-        LintedIdf(
-          ">>=",
-          (lintedResult.typ tTo lintedNext.typ)
-            tTo (rioHack(lintedResult.typ) tTo lintedNext.typ)
-        ),
-        LintedLambda1(lintedResult, lintedNext, lintedResult.typ tTo lintedNext.typ),
-        rioHack(lintedResult.typ) tTo lintedNext.typ,
-      ),
-      linted,
-      lintedNext.typ,
-    )
-  }
-
   override val mb_linted_3 =
     Some(
       lintedAndThen(("s", T_Str), LintedIdf("input", T_RIO_Str),
-        // todo - final Linted must not contain Unk
         lintedAndThen(("_", T_Unit), LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit),
           LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit)
         )
