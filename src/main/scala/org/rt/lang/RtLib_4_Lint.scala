@@ -12,7 +12,7 @@ object RtLib_4_Lint {
     val typ: Typ
   }
 
-  private final case class LintedLit(
+  final case class LintedLit(
     s: String,
     typ: Typ,
   ) extends Linted
@@ -44,7 +44,7 @@ object RtLib_4_Lint {
         case (Typ2(_, Unk0(_), _), _) => () // suspicious: what if typ_f is Unk
         case (_, Unk0(_)) => ()
         case (Typ2(_, linted_x.typ, _), x_typ) => ()
-        case _ => rtFail("can't create LintedCall1")
+        case _ => rtFail(s"Can't create LintedCall1 with `$linted_f` and `$linted_x``")
       }
 
       (linted_f.typ, typ) match {

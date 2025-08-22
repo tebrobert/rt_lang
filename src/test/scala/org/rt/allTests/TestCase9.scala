@@ -1,9 +1,11 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
-import org.rt.TestHelpers.exprAndThen
+import org.rt.TestHelpers.*
+import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.*
+import org.rt.lang.RtLib_4_Lint.*
 
 object TestCase9 extends RtTestCase {
   val code_0 =
@@ -29,4 +31,16 @@ object TestCase9 extends RtTestCase {
         ),
       ),
     )
+
+  override val mb_linted_3 = {
+    Some(
+      lintedAndThen(("_", T_Unit), LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedLit("Hey! What is your name?", T_Str), T_RIO_Unit),
+        lintedAndThen(("name", T_Str), LintedIdf("input", T_RIO_Str),
+          lintedAndThen(("_", T_Unit), LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedLit("Welcome, ...", T_Str), T_RIO_Unit),
+            LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("name", T_Str), T_RIO_Unit),
+          ),
+        ),
+      ),
+    )
+  }
 }

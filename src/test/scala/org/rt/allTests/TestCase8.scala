@@ -33,7 +33,7 @@ object TestCase8 extends RtTestCase {
     Some(
       lintedAndThen(("s", T_Str), LintedIdf("input", T_RIO_Str),
         lintedAndThen(("_", T_Unit), LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit),
-          LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit)
+          LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit),
         )
       )
     )
