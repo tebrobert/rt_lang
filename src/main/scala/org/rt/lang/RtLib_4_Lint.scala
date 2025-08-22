@@ -345,7 +345,7 @@ object RtLib_4_Lint {
     val linted_set = lint_set(expr)
     linted_set.toList match {
       case head :: Nil => head
-      case _ => rtFail(linted_set.toString)
+      case _ => rtFail(s"Can't lint `$expr` with `$linted_set`")
     }
   }
 
