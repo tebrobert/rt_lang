@@ -29,7 +29,8 @@ object TestCase2 extends RtTestCase {
     Some(
       LintedCall1(
         LintedLambda1(
-          LintedIdf("s", T_RIO_Str), LintedIdf("s", T_RIO_Str),
+          LintedIdf("s", T_RIO_Str),
+          LintedIdf("s", T_RIO_Str),
           T_RIO_Str tTo T_RIO_Str,
         ),
         LintedIdf("input", T_RIO_Str),
