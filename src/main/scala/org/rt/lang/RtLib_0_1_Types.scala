@@ -197,11 +197,12 @@ object RtLib_0_1_Types {
       caseTyp1 = _ => rtFail(s"Can't match the types $tSubArg vs $tSubX"),
       caseTyp2 = typ2_sub_x => {
         rt_assert_equal(typ2_sub_x.s, tSubArg.s)
+        println("here_stub__")
         val nilStub = Nil
         val (used_t1, accClarifications1) = concretizeAsFuncRec(tF, tX, nilStub)(typ2_sub_x.t1, tSubArg.t1)
         val (f1, x1) = (used_t1, rt_assert_type_Typ2(used_t1).t1) // todo - try better typing
         val (used_t2, accClarifications2) = concretizeAsFuncRec(f1, x1, nilStub)(typ2_sub_x.t2, tSubArg.t2)
-        (used_t2, accClarifications)
+        (used_t2, accClarifications++accClarifications1++accClarifications2)
       },
     )
 
