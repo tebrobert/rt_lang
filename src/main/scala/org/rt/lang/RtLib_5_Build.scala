@@ -9,7 +9,7 @@ object RtLib_5_Build {
   object Public {
     sealed trait Brick[A]
 
-    final case object BrickInput extends Brick[String]
+    case object BrickInput extends Brick[String]
 
     final case class BrickPrint(s: String) extends Brick[Unit]
 
@@ -22,29 +22,26 @@ object RtLib_5_Build {
 
     type Bint = Int // todo use BigInteger
 
+
     sealed trait Built
 
-    case object BuiltUnit extends Built
+    sealed trait BuiltLit extends Built
 
-    case class BuiltStr(s: String) extends Built
+    case object BuiltUnit extends BuiltLit
 
-    case class BuiltBint(i: Bint) extends Built
+    case class BuiltStr(s: String) extends BuiltLit
 
-    case class BuiltBool(b: Boolean) extends Built
+    case class BuiltBint(i: Bint) extends BuiltLit
 
-    sealed trait BuiltFunc extends Built
+    case class BuiltBool(b: Boolean) extends BuiltLit
 
-    case class BuiltFuncUnit(f: Unit => Built) extends BuiltFunc
-
-    case class BuiltFuncStr(f: String => Built) extends BuiltFunc
-
-    case class BuiltFuncBint(f: Bint => Built) extends BuiltFunc
-
-    case class BuiltFuncBool(f: Boolean => Built) extends BuiltFunc
-
-    case class BuiltFuncFunc(f: BuiltFunc => Built) extends BuiltFunc
-    // either it's not a proper type or all the types aren't, will redesign it later
-    // `BuiltFunc => _` will enforce us to accept every Func
+    case class BuiltFunc(
+      f: (Unit => Built)
+        | (String => Built)
+        | (Bint => Built)
+        | (Boolean => Built)
+        | (BuiltFunc => Built)
+    ) extends Built
   }
 
   private object Internal {
@@ -56,7 +53,7 @@ object RtLib_5_Build {
       val s = t_idf_x.s
       //val built = buildScala(typed_res, s +: lamb_arg_stack)
       t_idf_x.typ match {
-        case T_Str => BuiltFuncStr((x: String) => (??? : Built))
+        case T_Str => BuiltFunc((x: String) => (??? : Built))
 
         //            case T_Unit => BuiltFunc((x: Unit) => buildScala(typed_res, s +: lamb_arg_stack))
         //            case T_Bint => (x: Bint) => ???
