@@ -2,17 +2,17 @@ package org.rt.lang
 
 object RtLib_5_Build {
   object Public {
-    sealed trait Brick
+    sealed trait Brick[A]
 
-    final case object BrickInput extends Brick
+    final case object BrickInput extends Brick[String]
 
-    final case class BrickPrint(s: String) extends Brick
+    final case class BrickPrint(s: String) extends Brick[Unit]
 
-    final case class BrickPure[ANY](a: ANY) extends Brick
+    final case class BrickPure[A](a: A) extends Brick[A]
 
-    final case class BrickFlatmap[ANY](
-      a_fb: ANY => Brick,
-      fa: Brick,
-    ) extends Brick
+    final case class BrickFlatmap[A, B](
+      a_fb: A => Brick[B],
+      fa: Brick[A],
+    ) extends Brick[B]
   }
 }
