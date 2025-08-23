@@ -22,19 +22,24 @@ object TestHelpers {
   val vPure = builtin_pure
   val vPlus = builtin_plus
 
+  val lintedPrint = LintedIdf(builtin_print, T_Str_To_RIO_Unit)
+  val lintedInput = LintedIdf(builtin_input, T_RIO_Str)
+  val lintedPureStr = LintedIdf(builtin_pure, T_Str_To_RIO_Str)
+  val lintedPlusStr = LintedIdf(builtin_plus, T_Str_To_Str_To_Str)
+
   @tailrec
-  def exprCurrCalls(
+  def exprCalls(
     f: Expr,
     xs: Expr*,
   ): Expr =
     xs.toList.rtMatch(
       caseEmpty = () => f,
       caseAtLeast1 = (headX, tailXs) =>
-        exprCurrCalls(ExprCall1(f, headX), tailXs:_*),
+        exprCalls(ExprCall1(f, headX), tailXs:_*),
     )
 
   @tailrec
-  def lintedCurrCalls(
+  def lintedCalls(
     f: Linted,
     xs: Linted*,
   ): Linted =
@@ -42,7 +47,7 @@ object TestHelpers {
       caseEmpty = () => f,
       caseAtLeast1 = (headX, tailXs) => {
         val typ2F = rt_assert_type_Typ2(f.typ)
-        lintedCurrCalls(LintedCall1(f, headX, typ2F.t2), tailXs: _*)
+        lintedCalls(LintedCall1(f, headX, typ2F.t2), tailXs: _*)
       },
     )
 
@@ -55,7 +60,7 @@ object TestHelpers {
       caseEmpty = () => expr,
       caseAtLeast1 = (headFX, tailFXs) => {
         val (f, x) = headFX
-        exprChain(exprCurrCalls(f, x, expr), tailFXs: _*)
+        exprChain(exprCalls(f, x, expr), tailFXs: _*)
       },
     )
 
@@ -68,7 +73,7 @@ object TestHelpers {
       caseEmpty = () => linted,
       caseAtLeast1 = (headFX, tailFXs) => {
         val (f, x) = headFX
-        lintedChain(lintedCurrCalls(f, x, linted), tailFXs: _*)
+        lintedChain(lintedCalls(f, x, linted), tailFXs: _*)
       },
     )
 
@@ -77,7 +82,7 @@ object TestHelpers {
     expr: Expr,
     exprNext: Expr,
   ) =
-    exprCurrCalls(
+    exprCalls(
       ExprIdf(builtin_flatmap),
       ExprLambda1(ExprIdf(resName), exprNext),
       expr,
@@ -101,7 +106,7 @@ object TestHelpers {
   ) = {
     val resTyp = rt_assert_type_Typ1(linted.typ).t1 // todo - try better typing
 
-    lintedCurrCalls(
+    lintedCalls(
       LintedIdf(
         builtin_flatmap,
         (resTyp tTo lintedNext.typ) tTo (T_RIO(resTyp) tTo lintedNext.typ),

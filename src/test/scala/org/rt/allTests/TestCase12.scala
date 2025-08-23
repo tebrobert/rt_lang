@@ -29,7 +29,7 @@ object TestCase12 extends RtTestCase {
     exprEqAndThen("greeting", ExprLitStr("Hey! What is your name?"),
       exprAndThen("_", ExprCall1(ExprIdf("print"), ExprIdf("greeting")),
         exprAndThen("name", ExprIdf("input"),
-          ExprCall1(ExprIdf("print"), exprCurrCalls(ExprIdf("+"), ExprIdf("name"), ExprLitStr("Welcome, "))),
+          ExprCall1(ExprIdf("print"), exprCalls(ExprIdf("+"), ExprIdf("name"), ExprLitStr("Welcome, "))),
         ),
       ),
     )
@@ -39,7 +39,7 @@ object TestCase12 extends RtTestCase {
       lintedEqAndThen("greeting", LintedLit("Hey! What is your name?", T_Str),
         lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("greeting", T_Str), T_RIO_Unit),
           lintedAndThen("name", LintedIdf("input", T_RIO_Str),
-            LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), lintedCurrCalls(LintedIdf("+", T_Str tTo (T_Str tTo T_Str)), LintedIdf("name", T_Str), LintedLit("Welcome, ", T_Str)), T_RIO_Unit),
+            LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), lintedCalls(LintedIdf("+", T_Str tTo (T_Str tTo T_Str)), LintedIdf("name", T_Str), LintedLit("Welcome, ", T_Str)), T_RIO_Unit),
           ),
         ),
       )
