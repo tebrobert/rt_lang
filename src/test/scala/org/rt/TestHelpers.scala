@@ -34,7 +34,7 @@ object TestHelpers {
     )
 
   @tailrec
-  def lintedCurrCall(
+  def lintedCurrCalls(
     f: Linted,
     xs: Linted*,
   ): Linted =
@@ -42,20 +42,33 @@ object TestHelpers {
       caseEmpty = () => f,
       caseAtLeast1 = (headX, tailXs) => {
         val typ2F = rt_assert_type_Typ2(f.typ)
-        lintedCurrCall(LintedCall1(f, headX, typ2F.t2), tailXs: _*)
+        lintedCurrCalls(LintedCall1(f, headX, typ2F.t2), tailXs: _*)
       },
     )
 
   @tailrec
   def exprChain(
-    value: Expr,
+    expr: Expr,
     fxs: (Expr, Expr)*,
   ): Expr =
     fxs.toList.rtMatch(
-      caseEmpty = () => value,
+      caseEmpty = () => expr,
       caseAtLeast1 = (headFX, tailFXs) => {
         val (f, x) = headFX
-        exprChain(exprCurrCalls(f, x, value), tailFXs: _*)
+        exprChain(exprCurrCalls(f, x, expr), tailFXs: _*)
+      },
+    )
+
+  @tailrec
+  def lintedChain(
+    linted: Linted,
+    fxs: (Linted, Linted)*,
+  ): Linted =
+    fxs.toList.rtMatch(
+      caseEmpty = () => linted,
+      caseAtLeast1 = (headFX, tailFXs) => {
+        val (f, x) = headFX
+        lintedChain(lintedCurrCalls(f, x, linted), tailFXs: _*)
       },
     )
 
@@ -88,7 +101,7 @@ object TestHelpers {
   ) = {
     val resTyp = rt_assert_type_Typ1(linted.typ).t1 // todo - try better typing
 
-    lintedCurrCall(
+    lintedCurrCalls(
       LintedIdf(
         builtin_flatmap,
         (resTyp tTo lintedNext.typ) tTo (T_RIO(resTyp) tTo lintedNext.typ),

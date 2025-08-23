@@ -39,7 +39,7 @@ object TestCase12 extends RtTestCase {
       lintedEqAndThen("greeting", LintedLit("Hey! What is your name?", T_Str),
         lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("greeting", T_Str), T_RIO_Unit),
           lintedAndThen("name", LintedIdf("input", T_RIO_Str),
-            LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), lintedCurrCall(LintedIdf("+", T_Str tTo (T_Str tTo T_Str)), LintedIdf("name", T_Str), LintedLit("Welcome, ", T_Str)), T_RIO_Unit),
+            LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), lintedCurrCalls(LintedIdf("+", T_Str tTo (T_Str tTo T_Str)), LintedIdf("name", T_Str), LintedLit("Welcome, ", T_Str)), T_RIO_Unit),
           ),
         ),
       )
