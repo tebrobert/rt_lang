@@ -19,6 +19,21 @@ object RtLib_5_Build {
       a_fb: A => Brick[B],
       fa: Brick[A],
     ) extends Brick[B]
+
+    type Bint = Int // todo use BigInteger
+
+    sealed trait Built
+
+    case object BuiltUnit extends Built
+
+    case class BuiltStr(s: String) extends Built
+
+    case class BuiltBint(i: Bint) extends Built
+
+    case class BuiltBool(b: Boolean) extends Built
+
+    //case class BuiltFunc(f: Built => Built) extends Built
+    case class BuiltFunc(f: Function[Built, Built]) extends Built
   }
 
   private object Internal {
@@ -26,14 +41,15 @@ object RtLib_5_Build {
       t_idf_x: LintedIdf,
       typed_res: Linted,
       lamb_arg_stack: List[String],
-    ): Nothing => Brick[Nothing] = {
+    ): BuiltFunc = {
       val s = t_idf_x.s
       //val built = buildScala(typed_res, s +: lamb_arg_stack)
       t_idf_x.typ match {
-        case T_Unit => (x: Unit) => buildScala(typed_res, s +: lamb_arg_stack)
-        case T_Str => (x: String) => ???
-        case T_Bint => (x: Int) => ??? // todo use BigInteger
-        case T_Bool => (x: Boolean) => ???
+        case T_Str => BuiltFunc((x: BuiltStr) => (??? : Built))
+
+        //            case T_Unit => BuiltFunc((x: Unit) => buildScala(typed_res, s +: lamb_arg_stack))
+        //            case T_Bint => (x: Bint) => ???
+        //            case T_Bool => (x: Boolean) => ???
         case _ => rtFail(s"can't build: unexpected arg type `$t_idf_x`")
       }
       //f"(lambda {to_latin_idf(s)}: {built})"
@@ -42,14 +58,14 @@ object RtLib_5_Build {
     def buildScala[A](
       typed: Linted,
       lamb_arg_stack: List[String] = List.empty,
-    ): Brick[A] =
+    ): Built =
       typed match {
         case LintedLit(s, typ) => ???
         case LintedIdf(s, typ) => ???
         case LintedCall1(linted_f, linted_x, typ) => ???
         case LintedLambda1(linted_idf_x, linted_res, typ) =>
           ???
-          //buildScalaLambda_1(linted_idf_x, linted_res, lamb_arg_stack)
+        //buildScalaLambda_1(linted_idf_x, linted_res, lamb_arg_stack)
       }
   }
 
