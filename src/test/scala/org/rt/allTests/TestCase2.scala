@@ -26,14 +26,13 @@ object TestCase2 extends RtTestCase {
     )
 
   override val mb_linted_3 =
-    Some(
-      LintedCall1(
-        LintedLambda1(
-          LintedIdf("s", T_RIO_Str),
-          LintedIdf("s", T_RIO_Str),
-          T_RIO_Str tTo T_RIO_Str,
-        ),
-        LintedIdf("input", T_RIO_Str),
-        T_RIO_Str,
-      ))
+    LintedCall1(
+      LintedLambda1(
+        LintedIdf("s", T_RIO_Str),
+        LintedIdf("s", T_RIO_Str),
+        T_RIO_Str tTo T_RIO_Str,
+      ),
+      LintedIdf("input", T_RIO_Str),
+      T_RIO_Str,
+    )
 }

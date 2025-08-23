@@ -35,13 +35,11 @@ object TestCase12 extends RtTestCase {
     )
 
   override val mb_linted_3 =
-    Some(
-      lintedEqAndThen("greeting", LintedLit("Hey! What is your name?", T_Str),
-        lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("greeting", T_Str), T_RIO_Unit),
-          lintedAndThen("name", LintedIdf("input", T_RIO_Str),
-            LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), lintedCalls(LintedIdf("+", T_Str tTo (T_Str tTo T_Str)), LintedIdf("name", T_Str), LintedLit("Welcome, ", T_Str)), T_RIO_Unit),
-          ),
+    lintedEqAndThen("greeting", LintedLit("Hey! What is your name?", T_Str),
+      lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("greeting", T_Str), T_RIO_Unit),
+        lintedAndThen("name", LintedIdf("input", T_RIO_Str),
+          LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), lintedCalls(LintedIdf("+", T_Str tTo (T_Str tTo T_Str)), LintedIdf("name", T_Str), LintedLit("Welcome, ", T_Str)), T_RIO_Unit),
         ),
-      )
+      ),
     )
 }

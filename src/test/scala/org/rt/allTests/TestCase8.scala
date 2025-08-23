@@ -30,11 +30,9 @@ object TestCase8 extends RtTestCase {
     )
 
   override val mb_linted_3 =
-    Some(
-      lintedAndThen("s", LintedIdf("input", T_RIO_Str),
-        lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit),
-          LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit),
-        )
-      )
+    lintedAndThen("s", LintedIdf("input", T_RIO_Str),
+      lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit),
+        LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("s", T_Str), T_RIO_Unit),
+      ),
     )
 }

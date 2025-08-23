@@ -19,7 +19,5 @@ object TestCase1 extends RtTestCase {
     ExprIdf("input")
 
   override val mb_linted_3 =
-    Some(
-      LintedIdf("input", T_RIO(T_Str))
-    )
+    LintedIdf("input", T_RIO(T_Str))
 }

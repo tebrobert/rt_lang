@@ -12,7 +12,7 @@ trait RtTestCase {
   val code_0: String
   val tokens_1: List[Tok]
   val expr_2: Expr
-  val mb_linted_3: Some[Linted] // todo - remove Some after creating the next step
+  val mb_linted_3: Linted
 }
 
 object TestsRunner extends ZIOSpecDefault {
@@ -25,12 +25,8 @@ object TestsRunner extends ZIOSpecDefault {
         ++ allTestCases.map(testCase => test("parse " + testCase.name) {
         assertTrue(parse(testCase.tokens_1) == testCase.expr_2)
       })
-        ++ allTestCases.flatMap(testCase =>
-        testCase.mb_linted_3.map { linted_3 =>
-          test("lint " + testCase.name) {
-            assertTrue(lint(testCase.expr_2) == linted_3)
-          }
-        }
-      )
+        ++ allTestCases.map(testCase => test("lint " + testCase.name) {
+        assertTrue(lint(testCase.expr_2) == testCase.mb_linted_3)
+      })
     )
 }

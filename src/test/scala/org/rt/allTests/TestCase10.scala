@@ -40,15 +40,13 @@ object TestCase10 extends RtTestCase {
     )
 
   override val mb_linted_3 =
-    Some(
-      lintedAndThen("greeting", LintedCall1(LintedIdf(vPure, T_Str_To_RIO_Str), LintedLit("Hey! What is your name?", T_Str), T_RIO_Str),
-        lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("greeting", T_Str), T_RIO_Unit),
-          lintedAndThen("name", LintedIdf("input", T_RIO_Str),
-            lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedLit("Welcome, ...", T_Str), T_RIO_Unit),
-              LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("name", T_Str), T_RIO_Unit),
-            ),
+    lintedAndThen("greeting", LintedCall1(LintedIdf(vPure, T_Str_To_RIO_Str), LintedLit("Hey! What is your name?", T_Str), T_RIO_Str),
+      lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("greeting", T_Str), T_RIO_Unit),
+        lintedAndThen("name", LintedIdf("input", T_RIO_Str),
+          lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedLit("Welcome, ...", T_Str), T_RIO_Unit),
+            LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("name", T_Str), T_RIO_Unit),
           ),
         ),
-      )
+      ),
     )
 }
