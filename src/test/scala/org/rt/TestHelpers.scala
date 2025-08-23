@@ -1,6 +1,6 @@
 package org.rt
 
-import org.rt.lang.RtLib_0_0_Lits.builtin_flatmap
+import org.rt.lang.RtLib_0_0_Lits.*
 import org.rt.lang.RtLib_0_1_Types.*
 import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_3_Parse.*
@@ -15,6 +15,10 @@ object TestHelpers {
   val T_RIO_Str = T_RIO(T_Str)
   val T_Str_To_RIO_Unit = T_Str tTo T_RIO_Unit
   val T_Str_To_RIO_Str = T_Str tTo T_RIO_Str
+
+  val vPrint = builtin_print
+  val vInput = builtin_input
+  val vPure = builtin_pure
 
   @tailrec
   def exprCurrCall(
@@ -51,6 +55,17 @@ object TestHelpers {
       expr,
     )
 
+  def exprEqAndThen(
+    resName: String,
+    expr: Expr,
+    exprNext: Expr,
+  ) =
+    exprAndThen(
+      resName,
+      ExprCall1(ExprIdf(builtin_pure), expr),
+      exprNext,
+    )
+
   def lintedAndThen(
     resName: String,
     linted: Linted,
@@ -71,4 +86,19 @@ object TestHelpers {
       linted,
     )
   }
+
+  def lintedEqAndThen(
+    resName: String,
+    linted: Linted,
+    lintedNext: Linted,
+  ) =
+    lintedAndThen(
+      resName,
+      LintedCall1(
+        LintedIdf(builtin_pure, linted.typ tTo T_RIO(linted.typ)),
+        linted,
+        T_RIO(linted.typ),
+      ),
+      lintedNext,
+    )
 }

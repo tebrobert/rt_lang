@@ -26,7 +26,7 @@ object TestCase11 extends RtTestCase {
     )
 
   val expr_2 =
-    exprAndThen("greeting", ExprCall1(ExprIdf("pure"), ExprLitStr("Hey! What is your name?")),
+    exprEqAndThen("greeting", ExprLitStr("Hey! What is your name?"),
       exprAndThen("_", ExprCall1(ExprIdf("print"), ExprIdf("greeting")),
         exprAndThen("name", ExprIdf("input"),
           exprAndThen("_", ExprCall1(ExprIdf("print"), ExprLitStr("Welcome, ...")),
@@ -38,7 +38,7 @@ object TestCase11 extends RtTestCase {
 
   override val mb_linted_3 =
     Some(
-      lintedAndThen("greeting", LintedCall1(LintedIdf("pure", T_Str_To_RIO_Str), LintedLit("Hey! What is your name?", T_Str), T_RIO_Str),
+      lintedEqAndThen("greeting", LintedLit("Hey! What is your name?", T_Str),
         lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("greeting", T_Str), T_RIO_Unit),
           lintedAndThen("name", LintedIdf("input", T_RIO_Str),
             lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedLit("Welcome, ...", T_Str), T_RIO_Unit),
