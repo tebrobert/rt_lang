@@ -1,6 +1,6 @@
 package org.rt.utils
 
-import org.rt.lang.RtLib_0_1_Types.{Typ, Typ2, Unk0}
+import org.rt.lang.RtLib_0_1_Types.{Typ, Typ1, Typ2, Unk0}
 import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, TokEq, TokIdf, TokLessMinus}
 import org.rt.lang.RtLib_3_Parse.Expr
 
@@ -58,6 +58,12 @@ object RtFail {
     value match {
       case expected: TokLessMinus.type => expected
       case _ => rtFail(s"Expected TokenLessMinus, got `$value`")
+    }
+
+  def rt_assert_type_Typ1(value: Typ): Typ1 =
+    value match {
+      case expected: Typ1 => expected
+      case _ => rtFail(s"Expected Typ1, got `$value`")
     }
 
   def rt_assert_type_Typ2(value: Typ): Typ2 =
