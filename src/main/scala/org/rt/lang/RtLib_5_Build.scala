@@ -42,7 +42,8 @@ object RtLib_5_Build {
 
     case class BuiltFuncBool(f: Boolean => Built) extends BuiltFunc
 
-    case class BuiltFuncBuilt(f: Built => Built) extends BuiltFunc
+    case class BuiltFuncFunc(f: BuiltFunc => Built) extends BuiltFunc
+    // perhaps, it's not a proper type or all types are neither, we'll see
   }
 
   private object Internal {
@@ -50,7 +51,7 @@ object RtLib_5_Build {
       t_idf_x: LintedIdf,
       typed_res: Linted,
       lamb_arg_stack: List[String],
-    ): BuiltFunc = { //todo - can't cover all cases!
+    ): BuiltFunc = {
       val s = t_idf_x.s
       //val built = buildScala(typed_res, s +: lamb_arg_stack)
       t_idf_x.typ match {
