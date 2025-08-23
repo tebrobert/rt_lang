@@ -15,6 +15,7 @@ object TestHelpers {
   val T_RIO_Str = T_RIO(T_Str)
   val T_Str_To_RIO_Unit = T_Str tTo T_RIO_Unit
   val T_Str_To_RIO_Str = T_Str tTo T_RIO_Str
+  val T_Str_To_Str_To_Str = T_Str tTo (T_Str tTo T_Str)
 
   val vPrint = builtin_print
   val vInput = builtin_input
