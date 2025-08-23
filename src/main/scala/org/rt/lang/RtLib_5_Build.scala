@@ -1,9 +1,11 @@
 package org.rt.lang
 
+import org.rt.lang.RtLib_0_0_Lits.*
+import org.rt.lang.RtLib_0_1_Types.*
 import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, LintedLit}
 import org.rt.lang.RtLib_5_Build.Public.*
-import org.rt.utils.RtFail.rtFail
+import org.rt.utils.RtFail.{rtFail, wip}
 
 object RtLib_5_Build {
   object Public {
@@ -53,11 +55,13 @@ object RtLib_5_Build {
       val s = t_idf_x.s
       //val built = buildScala(typed_res, s +: lamb_arg_stack)
       t_idf_x.typ match {
-        case T_Str => BuiltFunc((x: String) => (??? : Built))
-
-        //            case T_Unit => BuiltFunc((x: Unit) => buildScala(typed_res, s +: lamb_arg_stack))
-        //            case T_Bint => (x: Bint) => ???
-        //            case T_Bool => (x: Boolean) => ???
+        case T_Unit => BuiltFunc((_: Unit) => ???)
+//        case T_Unit => BuiltFunc((_: Unit) => buildScala(typed_res, s +: lamb_arg_stack))
+        case T_Str => BuiltFunc((x: String) => ???)
+        case T_Bint => BuiltFunc((x: Bint) => ???)
+        case T_Bool => BuiltFunc((x: Boolean) => ???)
+        case Typ1(`builtin_RIO`, _) => wip()
+        case Typ2(`builtin_Func`, _, _) => wip()
         case _ => rtFail(s"can't build: unexpected arg type `$t_idf_x`")
       }
       //f"(lambda {to_latin_idf(s)}: {built})"
