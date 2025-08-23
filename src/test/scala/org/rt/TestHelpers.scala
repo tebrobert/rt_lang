@@ -58,18 +58,17 @@ object TestHelpers {
   ) = {
     val resTyp = rt_assert_type_Typ1(linted.typ).t1 // todo - try better typing
 
-    LintedCall1(
-      LintedCall1(
-        LintedIdf(
-          ">>=",
-          (resTyp tTo lintedNext.typ)
-            tTo (T_RIO(resTyp) tTo lintedNext.typ)
-        ),
-        LintedLambda1(LintedIdf(resName, resTyp), lintedNext, resTyp tTo lintedNext.typ),
-        T_RIO(resTyp) tTo lintedNext.typ,
+    lintedCurrCall(
+      LintedIdf(
+        builtin_flatmap,
+        (resTyp tTo lintedNext.typ) tTo (T_RIO(resTyp) tTo lintedNext.typ),
+      ),
+      LintedLambda1(
+        LintedIdf(resName, resTyp),
+        lintedNext,
+        resTyp tTo lintedNext.typ,
       ),
       linted,
-      lintedNext.typ,
     )
   }
 }
