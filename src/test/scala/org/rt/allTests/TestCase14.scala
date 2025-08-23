@@ -34,14 +34,7 @@ object TestCase14 extends RtTestCase {
       exprAndThen("_", ExprCall1(ExprIdf("print"), ExprIdf("greeting")),
         exprAndThen("_", ExprCall1(ExprIdf("print"), ExprLitStr("What is your name?")),
           exprAndThen("name", ExprIdf("input"),
-            ExprCall1(
-              ExprIdf("print"),
-              exprCurrCall(
-                ExprIdf("+"),
-                ExprLitStr(", welcome!"),
-                exprCurrCall(ExprIdf("+"), ExprIdf("name"), ExprLitStr("Dear ")),
-              )
-            ),
+            ExprCall1(ExprIdf("print"), exprChain(ExprLitStr("Dear "), (ExprIdf("+"), ExprIdf("name")), (ExprIdf("+"), ExprLitStr(", welcome!")))),
           ),
         ),
       ),

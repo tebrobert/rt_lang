@@ -23,14 +23,14 @@ object TestHelpers {
   val vPlus = builtin_plus
 
   @tailrec
-  def exprCurrCall(
+  def exprCurrCalls(
     f: Expr,
     xs: Expr*,
   ): Expr =
     xs.toList.rtMatch(
       caseEmpty = () => f,
-      caseAtLeast1 = (headX, tailX) =>
-        exprCurrCall(ExprCall1(f, headX), tailX:_*),
+      caseAtLeast1 = (headX, tailXs) =>
+        exprCurrCalls(ExprCall1(f, headX), tailXs:_*),
     )
 
   @tailrec
@@ -40,9 +40,22 @@ object TestHelpers {
   ): Linted =
     xs.toList.rtMatch(
       caseEmpty = () => f,
-      caseAtLeast1 = (headX, tailX) => {
+      caseAtLeast1 = (headX, tailXs) => {
         val typ2F = rt_assert_type_Typ2(f.typ)
-        lintedCurrCall(LintedCall1(f, headX, typ2F.t2), tailX: _*)
+        lintedCurrCall(LintedCall1(f, headX, typ2F.t2), tailXs: _*)
+      },
+    )
+
+  @tailrec
+  def exprChain(
+    value: Expr,
+    fxs: (Expr, Expr)*,
+  ): Expr =
+    fxs.toList.rtMatch(
+      caseEmpty = () => value,
+      caseAtLeast1 = (headFX, tailFXs) => {
+        val (f, x) = headFX
+        exprChain(exprCurrCalls(f, x, value), tailFXs: _*)
       },
     )
 
@@ -51,7 +64,7 @@ object TestHelpers {
     expr: Expr,
     exprNext: Expr,
   ) =
-    exprCurrCall(
+    exprCurrCalls(
       ExprIdf(builtin_flatmap),
       ExprLambda1(ExprIdf(resName), exprNext),
       expr,

@@ -29,7 +29,7 @@ object TestCase12 extends RtTestCase {
     exprEqAndThen("greeting", ExprLitStr("Hey! What is your name?"),
       exprAndThen("_", ExprCall1(ExprIdf("print"), ExprIdf("greeting")),
         exprAndThen("name", ExprIdf("input"),
-          ExprCall1(ExprIdf("print"), exprCurrCall(ExprIdf("+"), ExprIdf("name"), ExprLitStr("Welcome, "))),
+          ExprCall1(ExprIdf("print"), exprCurrCalls(ExprIdf("+"), ExprIdf("name"), ExprLitStr("Welcome, "))),
         ),
       ),
     )
