@@ -10,6 +10,7 @@ object TestHelpers {
   val T_RIO_Unit = T_RIO(T_Unit)
   val T_RIO_Str = T_RIO(T_Str)
   val T_Str_To_RIO_Unit = T_Str tTo T_RIO_Unit
+  val T_Str_To_RIO_Str = T_Str tTo T_RIO_Str
 
   def exprAndThen(
     result: String,
