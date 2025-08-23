@@ -38,12 +38,12 @@ object RtLib_5_Build {
 
     case class BuiltScLitBool(b: Bool) extends BuiltScLit
 
-    case class BuiltScLamb(
+    case class BuiltScLambda(
       f: (Unit => BuiltSc)
         | (Str => BuiltSc)
         | (Bint => BuiltSc)
         | (Bool => BuiltSc)
-        | (BuiltScLamb => BuiltSc)
+        | (BuiltScLambda => BuiltSc)
     ) extends BuiltSc
 
     def buildScala[A](
@@ -87,19 +87,19 @@ object RtLib_5_Build {
       lambArgStackStr: List[Str], // Lists will most likely turn into dicts Map[String, _]
       lambArgStackBint: List[Bint],
       lambArgStackBool: List[Bool],
-    ): BuiltScLamb =
+    ): BuiltScLambda =
       t_idf_x.typ match {
-        case T_Unit => BuiltScLamb((_: Unit) =>
+        case T_Unit => BuiltScLambda((_: Unit) =>
           //todo - beautify stacks
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, lambArgStackBool)
         )
-        case T_Str => BuiltScLamb((s: Str) =>
+        case T_Str => BuiltScLambda((s: Str) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, s +: lambArgStackStr, lambArgStackBint, lambArgStackBool)
         )
-        case T_Bint => BuiltScLamb((i: Bint) =>
+        case T_Bint => BuiltScLambda((i: Bint) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, i +: lambArgStackBint, lambArgStackBool)
         )
-        case T_Bool => BuiltScLamb((b: Bool) =>
+        case T_Bool => BuiltScLambda((b: Bool) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, b +: lambArgStackBool)
         )
 
