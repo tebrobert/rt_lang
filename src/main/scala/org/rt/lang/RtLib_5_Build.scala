@@ -80,6 +80,62 @@ object RtLib_5_Build {
       else rtFail(s"Unexpected literal: `$serializedValue`, `$typ`.")
     }
 
+    /*
+    def build_str_py_idf(s, typ, lamb_arg_stack) = {
+    return (
+        to_latin_idf(s) if s in lamb_arg_stack else
+        match_builtin_idf(
+            case_input=lambda: f"{BrickInput()}",
+            case_print=lambda: f"(lambda {_s}: {BrickPrint(_s)})",
+            case_flatmap=(
+                lambda: f"(lambda {_a_fb}: lambda {_fa}: "
+                        + f"{BrickFlatmap(_a_fb, _fa)})"
+            ),
+            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
+            case_plus=lambda: (
+                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
+                if typ == T_Func(T_Str, T_Func(T_Str, T_Str)) else
+                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
+                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+                fail(f"Unexpected typ `{typ}` for `{s}`.")
+            ),
+            case_minus=lambda: (
+                f"(lambda {_right}: lambda {_left}: {_left} - {_right})"
+                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+                f"(lambda {_num}: - {_num})"
+                if typ == T_Func(T_Bint, T_Bint) else
+                fail(f"Unexpected typ `{typ}` for `{s}`.")
+            ),
+            case_multiply=lambda: (
+                f"(lambda {_right}: lambda {_left}: {_left} * {_right})"
+                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+                fail(f"Unexpected typ `{typ}` for `{s}`.")
+            ),
+            case_str=lambda: (
+                f"(str)"
+                if typ == T_Func(T_Bint, T_Str) else
+                f"(str)"
+                if typ == T_Func(T_Str, T_Str) else
+                f"(lambda {_a}: str({_a}).lower())"
+                if typ == T_Func(T_Bool, T_Str) else
+                fail(f"Unexpected typ `{typ}` for `{s}`.")
+            ),
+            case_true=lambda: "(True)",
+            case_false=lambda: "(False)",
+            case_eq_eq=lambda: (
+                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+                if typ == T_Func(T_Str, T_Func(T_Str, T_Bool)) else
+                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bool)) else
+                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+                if typ == T_Func(T_Bool, T_Func(T_Bool, T_Bool)) else
+                fail(f"Unexpected typ `{typ}` for `{s}`.")
+            )
+        )(s)
+    )
+    }
+     */
+
     def buildScalaLambda1(
       t_idf_x: LintedIdf,
       typed_res: Linted,
