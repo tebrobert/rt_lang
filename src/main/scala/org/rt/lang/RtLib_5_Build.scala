@@ -80,7 +80,7 @@ object RtLib_5_Build {
       else rtFail(s"Unexpected literal: `$serializedValue`, `$typ`.")
     }
 
-    def buildScalaLambda_1(
+    def buildScalaLambda1(
       t_idf_x: LintedIdf,
       typed_res: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
@@ -120,7 +120,7 @@ object RtLib_5_Build {
         case LintedIdf(s, typ) => ???
         case LintedCall1(linted_f, linted_x, typ) => ???
         case LintedLambda1(linted_idf_x, linted_res, typ) =>
-          buildScalaLambda_1(
+          buildScalaLambda1(
             linted_idf_x,
             linted_res,
             lamb_arg_stack,
