@@ -12,7 +12,7 @@ trait RtTestCase {
   val code_0: String
   val tokens_1: List[Tok]
   val expr_2: Expr
-  val mb_linted_3: Option[Linted] = None
+  val mb_linted_3: Some[Linted] // todo - remove Some after creating the next step
 }
 
 object TestsRunner extends ZIOSpecDefault {
