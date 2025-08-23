@@ -11,9 +11,9 @@ object RtLib_5_Build {
   object Public {
     sealed trait Brick[A]
 
-    case object BrickInput extends Brick[String]
+    case object BrickInput extends Brick[Str]
 
-    final case class BrickPrint(s: String) extends Brick[Unit]
+    final case class BrickPrint(s: Str) extends Brick[Unit]
 
     final case class BrickPure[A](a: A) extends Brick[A]
 
@@ -22,8 +22,9 @@ object RtLib_5_Build {
       fa: Brick[A],
     ) extends Brick[B]
 
+    type Str = String
     type Bint = BigInt
-
+    type Bool = Boolean
 
     sealed trait Built
 
@@ -31,17 +32,17 @@ object RtLib_5_Build {
 
     case object BuiltUnit extends BuiltLit
 
-    case class BuiltStr(s: String) extends BuiltLit
+    case class BuiltStr(s: Str) extends BuiltLit
 
     case class BuiltBint(i: Bint) extends BuiltLit
 
-    case class BuiltBool(b: Boolean) extends BuiltLit
+    case class BuiltBool(b: Bool) extends BuiltLit
 
     case class BuiltFunc(
       f: (Unit => Built)
-        | (String => Built)
+        | (Str => Built)
         | (Bint => Built)
-        | (Boolean => Built)
+        | (Bool => Built)
         | (BuiltFunc => Built)
     ) extends Built
 
@@ -53,6 +54,7 @@ object RtLib_5_Build {
         lamb_arg_stack = List.empty, // legacy todo remove
         lambArgStackStr = List.empty,
         lambArgStackBint = List.empty,
+        lambArgStackBool = List.empty,
       )
   }
 
@@ -61,20 +63,24 @@ object RtLib_5_Build {
       t_idf_x: LintedIdf,
       typed_res: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
-      lambArgStackStr: List[String],
+      lambArgStackStr: List[Str],
       lambArgStackBint: List[Bint],
+      lambArgStackBool: List[Bool],
     ): BuiltFunc =
       t_idf_x.typ match {
         case T_Unit => BuiltFunc((_: Unit) =>
-          buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint)
+          //todo - beautify stacks
+          buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, lambArgStackBool)
         )
-        case T_Str => BuiltFunc((s: String) =>
-          buildScalaWithStacks(typed_res, lamb_arg_stack, s +: lambArgStackStr, lambArgStackBint)
+        case T_Str => BuiltFunc((s: Str) =>
+          buildScalaWithStacks(typed_res, lamb_arg_stack, s +: lambArgStackStr, lambArgStackBint, lambArgStackBool)
         )
         case T_Bint => BuiltFunc((i: Bint) =>
-          buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, i +: lambArgStackBint)
+          buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, i +: lambArgStackBint, lambArgStackBool)
         )
-        case T_Bool => BuiltFunc((b: Boolean) => ???)
+        case T_Bool => BuiltFunc((b: Bool) =>
+          buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, b +: lambArgStackBool)
+        )
 
         case Typ1(`builtin_RIO`, _) => wip()
         case Typ2(`builtin_Func`, _, _) => wip()
@@ -84,8 +90,9 @@ object RtLib_5_Build {
     def buildScalaWithStacks[A](
       typed: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
-      lambArgStackStr: List[String],
+      lambArgStackStr: List[Str],
       lambArgStackBint: List[Bint],
+      lambArgStackBool: List[Bool],
     ): Built =
       typed match {
         case LintedLit(s, typ) => ???
@@ -98,6 +105,7 @@ object RtLib_5_Build {
             lamb_arg_stack,
             lambArgStackStr,
             lambArgStackBint,
+            lambArgStackBool,
           )
       }
   }
