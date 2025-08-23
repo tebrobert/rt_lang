@@ -59,20 +59,20 @@ object RtLib_4_Lint {
   }
 
   final case class LintedLambda1 private(
-    linted_idf_x: Linted,
+    linted_idf_x: LintedIdf,
     linted_res: Linted,
     typ: Typ,
   ) extends Linted
 
   object LintedLambda1 {
     def createUnlinted(
-      linted_idf_x: Linted,
+      linted_idf_x: LintedIdf,
       linted_res: Linted,
     ): LintedLambda1 =
       apply(linted_idf_x, linted_res, Unk0(-1)) // todo mb use None
 
     def apply(
-      linted_idf_x: Linted,
+      linted_idf_x: LintedIdf,
       linted_res: Linted,
       typ: Typ,
     ): LintedLambda1 = {
@@ -102,7 +102,7 @@ object RtLib_4_Lint {
       case_lit: (String, Typ) => A,
       case_idf: (String, Typ) => A,
       case_call_1: (Linted, Linted, Typ) => A,
-      case_lambda_1: (Linted, Linted, Typ) => A,
+      case_lambda_1: (LintedIdf, Linted, Typ) => A,
     ): A =
       linted match {
         case LintedLit(s, typ) => case_lit(s, typ)
@@ -127,7 +127,7 @@ object RtLib_4_Lint {
   }
 
   private def withTypLambda1(
-    linted_idf_x: Linted,
+    linted_idf_x: LintedIdf,
     linted_res: Linted,
     new_typ: Typ,
   ): LintedLambda1 = {
@@ -136,7 +136,7 @@ object RtLib_4_Lint {
         rtFail("not implemented...?")
 
       case Typ2(`builtin_Func`, new_typ_t1, new_typ_t2) =>
-        val updated_linted_idf_x = linted_idf_x.withTyp(new_typ_t1)
+        val updated_linted_idf_x = LintedIdf(linted_idf_x.s, new_typ_t1)
         val updated_linted_res = linted_res.withTyp(new_typ_t2)
         LintedLambda1(
           updated_linted_idf_x,
@@ -233,7 +233,7 @@ object RtLib_4_Lint {
       case_call_1 = (linF, linX, typ) =>
         LintedCall1(clarify(linF, clarification), clarify(linX, clarification), typ.clarifyUnk.tupled(clarification)),
       case_lambda_1 = (linArg, linRes, typ) =>
-        LintedLambda1(clarify(linArg, clarification), clarify(linRes, clarification), typ.clarifyUnk.tupled(clarification)),
+        LintedLambda1(LintedIdf(linArg.s, linArg.typ.clarifyUnk.tupled(clarification)), clarify(linRes, clarification), typ.clarifyUnk.tupled(clarification)),
     )
 
   def continue_linting_call_1(
@@ -282,7 +282,8 @@ object RtLib_4_Lint {
     expr_res: Expr,
   ) =
     (for {
-      linted_arg <- lint_set(expr_arg)
+      linted_arg_raw <- lint_set(expr_arg)
+      linted_arg = rt_assert_type_LintedIdf(linted_arg_raw) //todo - try better typing
       linted_res <- lint_set(expr_res)
 
       mb_res = rt_try { () =>
@@ -295,7 +296,7 @@ object RtLib_4_Lint {
           ) // todo - try better typing
 
         val found_typ_arg = find_idf_typ(linted_res, linted_arg_s)
-        val relinted_arg = linted_arg.withTyp(found_typ_arg)
+        val relinted_arg = LintedIdf(linted_arg.s, found_typ_arg)
 
         //todo - likely, next Unk0 needed
         LintedLambda1.createUnlinted(relinted_arg, linted_res)

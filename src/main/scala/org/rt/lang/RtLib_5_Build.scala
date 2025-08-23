@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_0_2_Builtins.*
-import org.rt.lang.RtLib_4_Lint.{Linted, LintedIdf}
+import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, LintedLit}
 import org.rt.lang.RtLib_5_Build.Public.*
 import org.rt.utils.RtFail.rtFail
 
@@ -22,15 +22,15 @@ object RtLib_5_Build {
   }
 
   private object Internal {
-    def build_str_py_lambda_1(
+    def buildScalaLambda_1(
       t_idf_x: LintedIdf,
       typed_res: Linted,
       lamb_arg_stack: List[String],
-    ): Nothing => Nothing = {
+    ): Nothing => Brick[Nothing] = {
       val s = t_idf_x.s
-      val built = build_str_py(typed_res, s +: lamb_arg_stack)
+      //val built = buildScala(typed_res, s +: lamb_arg_stack)
       t_idf_x.typ match {
-        case T_Unit => (_: Unit) => ???
+        case T_Unit => (x: Unit) => buildScala(typed_res, s +: lamb_arg_stack)
         case T_Str => (x: String) => ???
         case T_Bint => (x: Int) => ??? // todo use BigInteger
         case T_Bool => (x: Boolean) => ???
@@ -39,11 +39,18 @@ object RtLib_5_Build {
       //f"(lambda {to_latin_idf(s)}: {built})"
     }
 
-    def build_str_py(
+    def buildScala[A](
       typed: Linted,
       lamb_arg_stack: List[String] = List.empty,
-    ): Brick[Unit] =
-      ???
+    ): Brick[A] =
+      typed match {
+        case LintedLit(s, typ) => ???
+        case LintedIdf(s, typ) => ???
+        case LintedCall1(linted_f, linted_x, typ) => ???
+        case LintedLambda1(linted_idf_x, linted_res, typ) =>
+          ???
+          //buildScalaLambda_1(linted_idf_x, linted_res, lamb_arg_stack)
+      }
   }
 
 }

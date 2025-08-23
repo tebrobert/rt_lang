@@ -3,6 +3,7 @@ package org.rt.utils
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ1, Typ2, Unk0}
 import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, TokEq, TokIdf, TokLessMinus}
 import org.rt.lang.RtLib_3_Parse.Expr
+import org.rt.lang.RtLib_4_Lint.{Linted, LintedIdf}
 
 object RtFail {
   def rtFail(msgs: String*) =
@@ -76,6 +77,12 @@ object RtFail {
     value match {
       case expected: Unk0 => expected
       case _ => rtFail(s"Expected Unk0, got `$value`")
+    }
+
+  def rt_assert_type_LintedIdf(value: Linted): LintedIdf =
+    value match {
+      case expected: LintedIdf => expected
+      case _ => rtFail(s"Expected LintedIdf, got `$value`")
     }
 
   def rt_try[A](action: () => A): Either[Throwable, A] =
