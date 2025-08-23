@@ -29,10 +29,19 @@ object TestCase12 extends RtTestCase {
     exprAndThen("greeting", ExprCall1(ExprIdf("pure"), ExprLitStr("Hey! What is your name?")),
       exprAndThen("_", ExprCall1(ExprIdf("print"), ExprIdf("greeting")),
         exprAndThen("name", ExprIdf("input"),
-          ExprCall1(ExprIdf("print"), exprCurrCall(ExprIdf("+"), ExprIdf("name"), ExprLitStr("Welcome, ")))
+          ExprCall1(ExprIdf("print"), exprCurrCall(ExprIdf("+"), ExprIdf("name"), ExprLitStr("Welcome, "))),
         ),
       ),
     )
 
-
+  override val mb_linted_3 =
+    Some(
+      lintedAndThen("greeting", LintedCall1(LintedIdf("pure", T_Str_To_RIO_Str), LintedLit("Hey! What is your name?", T_Str), T_RIO_Str),
+        lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("greeting", T_Str), T_RIO_Unit),
+          lintedAndThen("name", LintedIdf("input", T_RIO_Str),
+            LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), lintedCurrCall(LintedIdf("+", T_Str tTo (T_Str tTo T_Str)), LintedIdf("name", T_Str), LintedLit("Welcome, ", T_Str)), T_RIO_Unit),
+          ),
+        ),
+      )
+    )
 }

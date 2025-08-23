@@ -5,7 +5,7 @@ import org.rt.lang.RtLib_0_1_Types.*
 import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_3_Parse.*
 import org.rt.lang.RtLib_4_Lint.*
-import org.rt.utils.RtFail.rt_assert_type_Typ1
+import org.rt.utils.RtFail.{rt_assert_type_Typ1, rt_assert_type_Typ2}
 import org.rt.utils.RtList.rtMatch
 
 import scala.annotation.tailrec
@@ -25,6 +25,19 @@ object TestHelpers {
       caseEmpty = () => f,
       caseAtLeast1 = (headX, tailX) =>
         exprCurrCall(ExprCall1(f, headX), tailX:_*),
+    )
+
+  @tailrec
+  def lintedCurrCall(
+    f: Linted,
+    xs: Linted*,
+  ): Linted =
+    xs.toList.rtMatch(
+      caseEmpty = () => f,
+      caseAtLeast1 = (headX, tailX) => {
+        val typ2F = rt_assert_type_Typ2(f.typ)
+        lintedCurrCall(LintedCall1(f, headX, typ2F.t2), tailX: _*)
+      },
     )
 
   def exprAndThen(
