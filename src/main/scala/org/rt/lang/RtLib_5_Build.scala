@@ -43,7 +43,7 @@ object RtLib_5_Build {
     case class BuiltFuncBool(f: Boolean => Built) extends BuiltFunc
 
     case class BuiltFuncFunc(f: BuiltFunc => Built) extends BuiltFunc
-    // perhaps, it's not a proper type or all types are neither, we'll see
+    // it's not a proper type or all types are neither, will redesign it later
   }
 
   private object Internal {
