@@ -22,7 +22,7 @@ object RtLib_5_Build {
       fa: Brick[A],
     ) extends Brick[B]
 
-    type Bint = Int // todo use BigInteger
+    type Bint = BigInt
 
 
     sealed trait Built
@@ -44,40 +44,56 @@ object RtLib_5_Build {
         | (Boolean => Built)
         | (BuiltFunc => Built)
     ) extends Built
+
+    def buildScala[A](
+      typed: Linted,
+    ): Built =
+      Internal.buildScalaWithStacks(
+        typed = typed,
+        lamb_arg_stack = List.empty, // legacy todo remove
+        lambArgStackStr = List.empty,
+        lambArgStackBint = List.empty,
+      )
   }
 
   private object Internal {
     def buildScalaLambda_1(
       t_idf_x: LintedIdf,
       typed_res: Linted,
-      lamb_arg_stack: List[String],
-    ): BuiltFunc = {
-      val s = t_idf_x.s
-      //val built = buildScala(typed_res, s +: lamb_arg_stack)
+      lamb_arg_stack: List[String], // legacy todo remove
+      lambArgStackStr: List[String],
+      lambArgStackBint: List[Bint],
+    ): BuiltFunc =
       t_idf_x.typ match {
-        case T_Unit => BuiltFunc((_: Unit) => ???)
-//        case T_Unit => BuiltFunc((_: Unit) => buildScala(typed_res, s +: lamb_arg_stack))
-        case T_Str => BuiltFunc((x: String) => ???)
-        case T_Bint => BuiltFunc((x: Bint) => ???)
-        case T_Bool => BuiltFunc((x: Boolean) => ???)
+        case T_Unit => BuiltFunc((_: Unit) =>
+          buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint)
+        )
+//        case T_Str => BuiltFunc((s: String) => buildScalaWithStacks(typed_res, s +: lamb_arg_stack))
+//        case T_Bint => BuiltFunc((i: Bint) => buildScalaWithStacks(typed_res, s +: lamb_arg_stack))
+        case T_Bool => BuiltFunc((b: Boolean) => ???)
         case Typ1(`builtin_RIO`, _) => wip()
         case Typ2(`builtin_Func`, _, _) => wip()
         case _ => rtFail(s"can't build: unexpected arg type `$t_idf_x`")
       }
-      //f"(lambda {to_latin_idf(s)}: {built})"
-    }
 
-    def buildScala[A](
+    def buildScalaWithStacks[A](
       typed: Linted,
-      lamb_arg_stack: List[String] = List.empty,
+      lamb_arg_stack: List[String], // legacy todo remove
+      lambArgStackStr: List[String],
+      lambArgStackBint: List[Bint],
     ): Built =
       typed match {
         case LintedLit(s, typ) => ???
         case LintedIdf(s, typ) => ???
         case LintedCall1(linted_f, linted_x, typ) => ???
         case LintedLambda1(linted_idf_x, linted_res, typ) =>
-          ???
-        //buildScalaLambda_1(linted_idf_x, linted_res, lamb_arg_stack)
+          buildScalaLambda_1(
+            linted_idf_x,
+            linted_res,
+            lamb_arg_stack,
+            lambArgStackStr,
+            lambArgStackBint,
+          )
       }
   }
 
