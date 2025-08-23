@@ -63,7 +63,7 @@ object RtLib_5_Build {
       t_idf_x: LintedIdf,
       typed_res: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
-      lambArgStackStr: List[Str],
+      lambArgStackStr: List[Str], // Lists will most likely turn into dicts Map[String, _]
       lambArgStackBint: List[Bint],
       lambArgStackBool: List[Bool],
     ): BuiltFunc =
