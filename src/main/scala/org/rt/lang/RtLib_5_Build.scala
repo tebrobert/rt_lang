@@ -68,9 +68,14 @@ object RtLib_5_Build {
         case T_Unit => BuiltFunc((_: Unit) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint)
         )
-//        case T_Str => BuiltFunc((s: String) => buildScalaWithStacks(typed_res, s +: lamb_arg_stack))
-//        case T_Bint => BuiltFunc((i: Bint) => buildScalaWithStacks(typed_res, s +: lamb_arg_stack))
+        case T_Str => BuiltFunc((s: String) =>
+          buildScalaWithStacks(typed_res, lamb_arg_stack, s +: lambArgStackStr, lambArgStackBint)
+        )
+        case T_Bint => BuiltFunc((i: Bint) =>
+          buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, i +: lambArgStackBint)
+        )
         case T_Bool => BuiltFunc((b: Boolean) => ???)
+
         case Typ1(`builtin_RIO`, _) => wip()
         case Typ2(`builtin_Func`, _, _) => wip()
         case _ => rtFail(s"can't build: unexpected arg type `$t_idf_x`")
