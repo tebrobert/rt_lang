@@ -116,7 +116,7 @@ object RtLib_5_Build {
       lambArgStackBool: List[Bool],
     ): BuiltSc =
       typed match {
-        case LintedLit(s, typ) => ???
+        case LintedLit(s, typ) => buildScLit(s, typ)
         case LintedIdf(s, typ) => ???
         case LintedCall1(linted_f, linted_x, typ) => ???
         case LintedLambda1(linted_idf_x, linted_res, typ) =>
