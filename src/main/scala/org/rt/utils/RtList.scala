@@ -2,6 +2,9 @@ package org.rt.utils
 
 import RtFail.rtFail
 
+//todo - ensure not use Scala match outside this file
+//todo - ensure to complete using tailrec
+
 object RtList {
     extension [A](list: List[A]) {
       inline
