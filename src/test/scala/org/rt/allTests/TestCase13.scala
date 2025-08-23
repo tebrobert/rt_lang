@@ -1,84 +1,39 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
+import org.rt.TestHelpers.*
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.*
 
 object TestCase13 extends RtTestCase {
   val code_0 =
-    """greeting = "Hey! What is your name?"
-      |print(greeting)
-      |name <- input
-      |result = +(name)("Welcome, ")
-      |print(result)""".stripMargin
+    s"""greeting = "Hey! What is your name?"
+       |$vPrint(greeting)
+       |name <- $vInput
+       |result = +(name)("Welcome, ")
+       |$vPrint(result)""".stripMargin
 
   val tokens_1 =
     List(
       TokIdf("greeting"), TokEq, TokLitStr("Hey! What is your name?"), TokEndl,
-      TokIdf("print"), TokParenOpen, TokIdf("greeting"), TokParenClose, TokEndl,
-      TokIdf("name"), TokLessMinus, TokIdf("input"), TokEndl,
+      TokIdf(vPrint), TokParenOpen, TokIdf("greeting"), TokParenClose, TokEndl,
+      TokIdf("name"), TokLessMinus, TokIdf(vInput), TokEndl,
 
       TokIdf("result"), TokEq, TokIdf("+"),
       TokParenOpen, TokIdf("name"), TokParenClose,
       TokParenOpen, TokLitStr("Welcome, "), TokParenClose, TokEndl,
 
-      TokIdf("print"), TokParenOpen, TokIdf("result"), TokParenClose,
+      TokIdf(vPrint), TokParenOpen, TokIdf("result"), TokParenClose,
     )
 
   val expr_2 =
-    ExprCall1(
-      ExprCall1(
-        ExprIdf(">>="),
-        ExprLambda1(
-          ExprIdf("greeting"),
-          ExprCall1(
-            ExprCall1(
-              ExprIdf(">>="),
-              ExprLambda1(
-                ExprIdf("_"),
-                ExprCall1(
-                  ExprCall1(
-                    ExprIdf(">>="),
-                    ExprLambda1(
-                      ExprIdf("name"),
-                      ExprCall1(
-                        ExprCall1(
-                          ExprIdf(">>="),
-                          ExprLambda1(
-                            ExprIdf("result"),
-                            ExprCall1(
-                              ExprIdf("print"),
-                              ExprIdf("result")
-                            )
-                          )
-                        ),
-                        ExprCall1(
-                          ExprIdf("pure"),
-                          ExprCall1(
-                            ExprCall1(
-                              ExprIdf("+"),
-                              ExprIdf("name")
-                            ),
-                            ExprLitStr("Welcome, ")
-                          )
-                        )
-                      )
-                    )
-                  ),
-                  ExprIdf("input")
-                )
-              )
-            ),
-            ExprCall1(
-              ExprIdf("print"),
-              ExprIdf("greeting")
-            )
-          )
-        )
+    exprEqAndThen("greeting", ExprLitStr("Hey! What is your name?"),
+      exprAndThen("_", ExprCall1(ExprIdf(vPrint), ExprIdf("greeting")),
+        exprAndThen("name", ExprIdf(vInput),
+          exprEqAndThen("result", exprCurrCall(ExprIdf(vPlus), ExprIdf("name"), ExprLitStr("Welcome, ")),
+            ExprCall1(ExprIdf(vPrint), ExprIdf("result")),
+          ),
+        ),
       ),
-      ExprCall1(
-        ExprIdf("pure"),
-        ExprLitStr("Hey! What is your name?")
-      )
     )
 }

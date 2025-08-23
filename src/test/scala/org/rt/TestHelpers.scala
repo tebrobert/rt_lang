@@ -19,6 +19,7 @@ object TestHelpers {
   val vPrint = builtin_print
   val vInput = builtin_input
   val vPure = builtin_pure
+  val vPlus = builtin_plus
 
   @tailrec
   def exprCurrCall(
