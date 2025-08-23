@@ -1,6 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
+import org.rt.TestHelpers.*
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.*
 
@@ -26,53 +27,13 @@ object TestCase10 extends RtTestCase {
     )
 
   val expr_2 =
-    ExprCall1(
-      ExprCall1(
-        ExprIdf(">>="),
-        ExprLambda1(
-          ExprIdf("greeting"),
-          ExprCall1(
-            ExprCall1(
-              ExprIdf(">>="),
-              ExprLambda1(
-                ExprIdf("_"),
-                ExprCall1(
-                  ExprCall1(
-                    ExprIdf(">>="),
-                    ExprLambda1(
-                      ExprIdf("name"),
-                      ExprCall1(
-                        ExprCall1(
-                          ExprIdf(">>="),
-                          ExprLambda1(
-                            ExprIdf("_"),
-                            ExprCall1(
-                              ExprIdf("print"),
-                              ExprIdf("name")
-                            )
-                          )
-                        ),
-                        ExprCall1(
-                          ExprIdf("print"),
-                          ExprLitStr("Welcome, ...")
-                        )
-                      )
-                    )
-                  ),
-                  ExprIdf("input")
-                )
-              )
-            ),
-            ExprCall1(
-              ExprIdf("print"),
-              ExprIdf("greeting")
-            )
-          )
-        )
+    exprAndThen("greeting", ExprCall1(ExprIdf("pure"), ExprLitStr("Hey! What is your name?")),
+      exprAndThen("_", ExprCall1(ExprIdf("print"), ExprIdf("greeting")),
+        exprAndThen("name", ExprIdf("input"),
+          exprAndThen("_", ExprCall1(ExprIdf("print"), ExprLitStr("Welcome, ...")),
+            ExprCall1(ExprIdf("print"), ExprIdf("name")),
+          ),
+        ),
       ),
-      ExprCall1(
-        ExprIdf("pure"),
-        ExprLitStr("Hey! What is your name?")
-      )
     )
 }
