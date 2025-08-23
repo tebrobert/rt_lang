@@ -1,8 +1,11 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
+import org.rt.TestHelpers.*
+import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.*
+import org.rt.lang.RtLib_4_Lint.*
 
 object TestCase14 extends RtTestCase {
   val code_0 =
@@ -27,65 +30,20 @@ object TestCase14 extends RtTestCase {
     )
 
   val expr_2 =
-    ExprCall1(
-      ExprCall1(
-        ExprIdf(">>="),
-        ExprLambda1(
-          ExprIdf("greeting"),
-          ExprCall1(
-            ExprCall1(
-              ExprIdf(">>="),
-              ExprLambda1(
-                ExprIdf("_"),
-                ExprCall1(
-                  ExprCall1(
-                    ExprIdf(">>="),
-                    ExprLambda1(
-                      ExprIdf("_"),
-                      ExprCall1(
-                        ExprCall1(
-                          ExprIdf(">>="),
-                          ExprLambda1(
-                            ExprIdf("name"),
-                            ExprCall1(
-                              ExprIdf("print"),
-                              ExprCall1(
-                                ExprCall1(
-                                  ExprIdf("+"),
-                                  ExprLitStr(", welcome!")
-                                ),
-                                ExprCall1(
-                                  ExprCall1(
-                                    ExprIdf("+"),
-                                    ExprIdf("name")
-                                  ),
-                                  ExprLitStr("Dear ")
-                                )
-                              )
-                            )
-                          )
-                        ),
-                        ExprIdf("input")
-                      )
-                    )
-                  ),
-                  ExprCall1(
-                    ExprIdf("print"),
-                    ExprLitStr("What is your name?")
-                  )
-                )
-              )
-            ),
+    exprEqAndThen("greeting", ExprLitStr("Hi!"),
+      exprAndThen("_", ExprCall1(ExprIdf("print"), ExprIdf("greeting")),
+        exprAndThen("_", ExprCall1(ExprIdf("print"), ExprLitStr("What is your name?")),
+          exprAndThen("name", ExprIdf("input"),
             ExprCall1(
               ExprIdf("print"),
-              ExprIdf("greeting")
-            )
-          )
-        )
+              exprCurrCall(
+                ExprIdf("+"),
+                ExprLitStr(", welcome!"),
+                exprCurrCall(ExprIdf("+"), ExprIdf("name"), ExprLitStr("Dear ")),
+              )
+            ),
+          ),
+        ),
       ),
-      ExprCall1(
-        ExprIdf("pure"),
-        ExprLitStr("Hi!")
-      )
     )
 }
