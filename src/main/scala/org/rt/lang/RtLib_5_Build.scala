@@ -81,6 +81,7 @@ object RtLib_5_Build {
     }
 
     /*
+    // todo - shorten
     def build_str_py_idf(s, typ, lamb_arg_stack) = {
     return (
         to_latin_idf(s) if s in lamb_arg_stack else
