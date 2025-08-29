@@ -22,6 +22,8 @@ object RtLib_5_Build {
       fa: Brick[A],
     ) extends Brick[B]
 
+    case class BrickLambda[A, B](f: A => Brick[B]) extends Brick[B] //todo wth
+
     type Str = String
     type Bint = BigInt
     type Bool = Boolean
@@ -80,18 +82,24 @@ object RtLib_5_Build {
       else rtFail(s"Unexpected literal: `$serializedValue`, `$typ`.")
     }
 
-    /*
+    def to_latin_idf: String => String = ???
+
     // todo - shorten
-    def build_str_py_idf(s, typ, lamb_arg_stack) = {
-    return (
-        to_latin_idf(s) if s in lamb_arg_stack else
+    def build_str_py_idf(
+      s: String,
+      typ: Typ,
+      lamb_arg_stack: List[String],
+    ) = {
+    (
+      if (lamb_arg_stack.contains(s)) // todo - should check actual stacks
+        ??? //to_latin_idf(s) // todo - should likely return a value from a stack
+      else
         match_builtin_idf(
-            case_input=lambda: f"{BrickInput()}",
-            case_print=lambda: f"(lambda {_s}: {BrickPrint(_s)})",
+            case_input=() => BrickInput,
+            case_print=() => BrickLambda(_s => BrickPrint(_s)),
             case_flatmap=(
-                lambda: f"(lambda {_a_fb}: lambda {_fa}: "
-                        + f"{BrickFlatmap(_a_fb, _fa)})"
-            ),
+                ()=> BrickLambda(_a_fb => BrickLambda(_fa => BrickFlatmap(_a_fb, _fa)))
+            ), // todo omggggggg
             case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
             case_plus=lambda: (
                 f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
@@ -135,7 +143,6 @@ object RtLib_5_Build {
         )(s)
     )
     }
-     */
 
     def buildScalaLambda1(
       t_idf_x: LintedIdf,
