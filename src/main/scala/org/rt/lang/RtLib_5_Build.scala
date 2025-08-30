@@ -85,11 +85,11 @@ object RtLib_5_Build {
     def to_latin_idf: String => String = ???
 
     // todo - shorten
-    def build_str_py_idf(
+    def build_str_py_idf[A](
       s: String,
       typ: Typ,
       lamb_arg_stack: List[String],
-    ) = {
+    ) = { // todo - what type?
     (
       if (lamb_arg_stack.contains(s)) // todo - should check actual stacks
         ??? //to_latin_idf(s) // todo - should likely return a value from a stack
@@ -97,49 +97,56 @@ object RtLib_5_Build {
         match_builtin_idf(
             case_input=() => BrickInput,
             case_print=() => BrickLambda(_s => BrickPrint(_s)),
-            case_flatmap=(
-                ()=> BrickLambda(_a_fb => BrickLambda(_fa => BrickFlatmap(_a_fb, _fa)))
-            ), // todo omggggggg
-            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
-            case_plus=lambda: (
-                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
-                if typ == T_Func(T_Str, T_Func(T_Str, T_Str)) else
-                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
-                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
-                fail(f"Unexpected typ `{typ}` for `{s}`.")
-            ),
-            case_minus=lambda: (
-                f"(lambda {_right}: lambda {_left}: {_left} - {_right})"
-                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
-                f"(lambda {_num}: - {_num})"
-                if typ == T_Func(T_Bint, T_Bint) else
-                fail(f"Unexpected typ `{typ}` for `{s}`.")
-            ),
-            case_multiply=lambda: (
-                f"(lambda {_right}: lambda {_left}: {_left} * {_right})"
-                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
-                fail(f"Unexpected typ `{typ}` for `{s}`.")
-            ),
-            case_str=lambda: (
-                f"(str)"
-                if typ == T_Func(T_Bint, T_Str) else
-                f"(str)"
-                if typ == T_Func(T_Str, T_Str) else
-                f"(lambda {_a}: str({_a}).lower())"
-                if typ == T_Func(T_Bool, T_Str) else
-                fail(f"Unexpected typ `{typ}` for `{s}`.")
-            ),
-            case_true=lambda: "(True)",
-            case_false=lambda: "(False)",
-            case_eq_eq=lambda: (
-                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
-                if typ == T_Func(T_Str, T_Func(T_Str, T_Bool)) else
-                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
-                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bool)) else
-                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
-                if typ == T_Func(T_Bool, T_Func(T_Bool, T_Bool)) else
-                fail(f"Unexpected typ `{typ}` for `{s}`.")
-            )
+            case_flatmap=() => ???,
+              ///(()=> BrickLambda(_a_fb => BrickLambda(_fa => BrickFlatmap(_a_fb, _fa)))), // todo omggggggg
+          case_pure = () => ???,
+          case_plus = () => ???,
+//            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
+//            case_plus=lambda: (
+//                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
+//                if typ == T_Func(T_Str, T_Func(T_Str, T_Str)) else
+//                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
+//                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+//                fail(f"Unexpected typ `{typ}` for `{s}`.")
+//            ),
+          case_minus = () => ???,
+//            case_minus=lambda: (
+//                f"(lambda {_right}: lambda {_left}: {_left} - {_right})"
+//                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+//                f"(lambda {_num}: - {_num})"
+//                if typ == T_Func(T_Bint, T_Bint) else
+//                fail(f"Unexpected typ `{typ}` for `{s}`.")
+//            ),
+          case_multiply = () => ???,
+//            case_multiply=lambda: (
+//                f"(lambda {_right}: lambda {_left}: {_left} * {_right})"
+//                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+//                fail(f"Unexpected typ `{typ}` for `{s}`.")
+//            ),
+          case_str = () => ???,
+//            case_str=lambda: (
+//                f"(str)"
+//                if typ == T_Func(T_Bint, T_Str) else
+//                f"(str)"
+//                if typ == T_Func(T_Str, T_Str) else
+//                f"(lambda {_a}: str({_a}).lower())"
+//                if typ == T_Func(T_Bool, T_Str) else
+//                fail(f"Unexpected typ `{typ}` for `{s}`.")
+//            ),
+          case_true = () => ???,
+//            case_true=lambda: "(True)",
+          case_false = () => ???,
+//            case_false=lambda: "(False)",
+          case_eq_eq = () => ???,
+//            case_eq_eq=lambda: (
+//                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+//                if typ == T_Func(T_Str, T_Func(T_Str, T_Bool)) else
+//                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+//                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bool)) else
+//                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+//                if typ == T_Func(T_Bool, T_Func(T_Bool, T_Bool)) else
+//                fail(f"Unexpected typ `{typ}` for `{s}`.")
+//            )
         )(s)
     )
     }
