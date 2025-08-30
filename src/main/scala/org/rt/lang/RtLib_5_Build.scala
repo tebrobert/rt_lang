@@ -202,4 +202,44 @@ object RtLib_5_Build {
       }
   }
 
+  private val test8 = {
+    /*
+          // s <- input
+          // print(s)
+          // print(s)
+    (
+      (lambda identifier_a_fb: lambda identifier_fa: BrickFlatmap(identifier_a_fb, identifier_fa))
+      (
+        (
+          lambda identifier_s: (
+            (lambda identifier_a_fb: lambda identifier_fa: BrickFlatmap(identifier_a_fb, identifier_fa))
+            (lambda identifier__: (lambda identifier_s: BrickPrint(identifier_s))(identifier_s))
+          )((lambda identifier_s: BrickPrint(identifier_s))(identifier_s))
+        )
+      )
+    )
+    (BrickInput())
+    */
+
+    val x = (
+      ((identifier_a_fb: Str=>Brick[Unit]) => (identifier_fa: Brick[Str]) => BrickFlatmap(identifier_a_fb, identifier_fa))
+      (
+        (identifier_s: Str) => (
+          ((identifier_a_fb: Unit => Brick[Unit]) => (identifier_fa: Brick[Unit]) => BrickFlatmap(identifier_a_fb, identifier_fa))
+          ((identifier__u: Unit) => ((identifier_s: Str) => BrickPrint(identifier_s))(identifier_s))
+        )(((identifier_s: Str) => BrickPrint(identifier_s))(identifier_s))
+      )
+      (BrickInput)
+    )
+
+    def unsafe_run_built(rio: Brick[Any]): Any =
+      (rio match {
+        case BrickInput => () => scala.io.StdIn.readLine()
+        case BrickPrint(s) => () => println(s)
+        case BrickFlatmap(a_fb, fa) => () => unsafe_run_built(a_fb(unsafe_run_built(fa)))
+        case BrickPure(a) => () => a
+      })()
+
+    unsafe_run_built(x)
+  }
 }
