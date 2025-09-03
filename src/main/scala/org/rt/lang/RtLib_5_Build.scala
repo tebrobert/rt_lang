@@ -30,12 +30,13 @@ object RtLib_5_Build {
     ) extends Wrapped
 
     sealed trait WrappedLambda extends Wrapped
-    case class WrappedLambdaUnit(f: Unit => Wrapped) extends WrappedLambda
-    case class WrappedLambdaStr(f: Str => Wrapped) extends WrappedLambda
-    case class WrappedLambdaBint(f: Bint => Wrapped) extends WrappedLambda
-    case class WrappedLambdaBool(f: Bool => Wrapped) extends WrappedLambda
-    case class WrappedLambdaBrick[A](f: Brick[A] => Wrapped) extends WrappedLambda
-    case class WrappedLambdaLambda(f: WrappedLambda => Wrapped) extends WrappedLambda
+    case class WrappedLambdaA[A](f: A => Wrapped) extends WrappedLambda
+//    case class WrappedLambdaUnit(f: Unit => Wrapped) extends WrappedLambda
+//    case class WrappedLambdaStr(f: Str => Wrapped) extends WrappedLambda
+//    case class WrappedLambdaBint(f: Bint => Wrapped) extends WrappedLambda
+//    case class WrappedLambdaBool(f: Bool => Wrapped) extends WrappedLambda
+//    case class WrappedLambdaBrick[A](f: Brick[A] => Wrapped) extends WrappedLambda
+//    case class WrappedLambdaLambda(f: WrappedLambda => Wrapped) extends WrappedLambda
 
     sealed trait Brick[A] extends Wrapped
     case object BrickInput extends Brick[Str]
@@ -97,9 +98,9 @@ object RtLib_5_Build {
       else
         match_builtin_idf(
             case_input=() => BrickInput,
-            case_print=() => WrappedLambdaStr(_s => BrickPrint(_s)),
+            case_print=() => WrappedLambdaA(_s => BrickPrint(_s)),
             case_flatmap=() => ???,
-              ///(()=> BrickLambda(_a_fb => BrickLambda(_fa => BrickFlatmap(_a_fb, _fa)))), // todo omggggggg
+              //()=> WrappedLambdaA(_a_fb => WrappedLambdaA(_fa => BrickFlatmap(_a_fb, _fa))), // todo omggggggg
           case_pure = () => ???,
           case_plus = () => ???,
 //            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
@@ -161,17 +162,17 @@ object RtLib_5_Build {
       lambArgStackBool: List[Bool],
     ): WrappedLambda =
       t_idf_x.typ match {
-        case T_Unit => WrappedLambdaUnit((_: Unit) =>
+        case T_Unit => WrappedLambdaA((_: Unit) =>
           //todo - beautify stacks
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, lambArgStackBool)
         )
-        case T_Str => WrappedLambdaStr((s: Str) =>
+        case T_Str => WrappedLambdaA((s: Str) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, s +: lambArgStackStr, lambArgStackBint, lambArgStackBool)
         )
-        case T_Bint => WrappedLambdaBint((i: Bint) =>
+        case T_Bint => WrappedLambdaA((i: Bint) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, i +: lambArgStackBint, lambArgStackBool)
         )
-        case T_Bool => WrappedLambdaBool((b: Bool) =>
+        case T_Bool => WrappedLambdaA((b: Bool) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, b +: lambArgStackBool)
         )
 
