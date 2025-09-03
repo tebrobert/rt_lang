@@ -202,24 +202,23 @@ object RtLib_5_Build {
       }
   }
 
+  /*
   private val test8 = {
-    /*
           // s <- input
           // print(s)
           // print(s)
-    (
-      (lambda identifier_a_fb: lambda identifier_fa: BrickFlatmap(identifier_a_fb, identifier_fa))
-      (
-        (
-          lambda identifier_s: (
-            (lambda identifier_a_fb: lambda identifier_fa: BrickFlatmap(identifier_a_fb, identifier_fa))
-            (lambda identifier__: (lambda identifier_s: BrickPrint(identifier_s))(identifier_s))
-          )((lambda identifier_s: BrickPrint(identifier_s))(identifier_s))
-        )
-      )
-    )
-    (BrickInput())
-    */
+//    (
+//      (lambda identifier_a_fb: lambda identifier_fa: BrickFlatmap(identifier_a_fb, identifier_fa))
+//      (
+//        (
+//          lambda identifier_s: (
+//            (lambda identifier_a_fb: lambda identifier_fa: BrickFlatmap(identifier_a_fb, identifier_fa))
+//            (lambda identifier__: (lambda identifier_s: BrickPrint(identifier_s))(identifier_s))
+//          )((lambda identifier_s: BrickPrint(identifier_s))(identifier_s))
+//        )
+//      )
+//    )
+//    (BrickInput())
 
     val x = (
       ((identifier_a_fb: Str=>Brick[Unit]) => (identifier_fa: Brick[Str]) => BrickFlatmap(identifier_a_fb, identifier_fa))
@@ -242,4 +241,5 @@ object RtLib_5_Build {
 
     unsafe_run_built(x)
   }
+  // */
 }
