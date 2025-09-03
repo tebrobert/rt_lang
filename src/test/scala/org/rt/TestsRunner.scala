@@ -19,7 +19,7 @@ object TestsRunner extends ZIOSpecDefault {
   //todo - add custom tests after creating Build stage
   def spec: Spec[Any, Nothing] =
   {
-    org.rt.lang.RtLib_5_Build.test8
+    org.rt.lang.RtLib_5_Build.test8 // todo remove
 
     suite("HelloWorldSpec")(
       allTestCases.map(testCase => test("tokenize " + testCase.name) {
