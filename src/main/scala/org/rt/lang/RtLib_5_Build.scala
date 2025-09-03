@@ -207,7 +207,7 @@ object RtLib_5_Build {
   }
 
   //*
-  private val test8 = {
+  val test8 = {
           // s <- input
           // print(s)
           // print(s)
@@ -235,15 +235,18 @@ object RtLib_5_Build {
       (BrickInput)
     )
 
-//    def unsafe_run_built(rio: Brick[Any]): Any =
-//      (rio match {
-//        case BrickInput => () => scala.io.StdIn.readLine()
-//        case BrickPrint(s) => () => println(s)
-//        case BrickFlatmap(a_fb, fa) => () => unsafe_run_built(a_fb(unsafe_run_built(fa)))
-//        case BrickPure(a) => () => a
-//      })()
+    def unsafe_run_built[A](rio: Brick[A]): A = {
+      rio match {
+        case BrickInput => scala.io.StdIn.readLine()
+        case BrickPrint(s) => println(s)
+        case BrickFlatmap(a_fb, fa) => unsafe_run_built(a_fb(unsafe_run_built(fa)))
+        case BrickPure(a) => a
+      }
+    }
 
-    //unsafe_run_built(x)
+    println("HERE START")
+    unsafe_run_built(x)
+    println("HERE FINISH")
     ()
   }
   // */
