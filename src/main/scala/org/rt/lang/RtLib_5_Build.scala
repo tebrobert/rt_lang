@@ -31,6 +31,7 @@ object RtLib_5_Build {
 
     sealed trait WrappedLambda extends Wrapped
     case class WrappedLambdaA[A](f: A => Wrapped) extends WrappedLambda
+    case class WrappedLambdaABrick[A](f: A => Brick[Wrapped]) extends WrappedLambda
 //    case class WrappedLambdaUnit(f: Unit => Wrapped) extends WrappedLambda
 //    case class WrappedLambdaStr(f: Str => Wrapped) extends WrappedLambda
 //    case class WrappedLambdaBint(f: Bint => Wrapped) extends WrappedLambda
@@ -99,8 +100,9 @@ object RtLib_5_Build {
         match_builtin_idf(
             case_input=() => BrickInput,
             case_print=() => WrappedLambdaA(_s => BrickPrint(_s)),
-            case_flatmap=() => ???,
-              //()=> WrappedLambdaA(_a_fb => WrappedLambdaA(_fa => BrickFlatmap(_a_fb, _fa))), // todo omggggggg
+            case_flatmap=() => //???,
+              //WrappedLambdaA(_a_fb => WrappedLambdaA(_fa => BrickFlatmap(_a_fb, _fa))), // todo omggggggg
+              WrappedLambdaA((_a_fb: WrappedLambdaABrick[Wrapped]) => WrappedLambdaA((_fa: Brick[Wrapped]) => BrickFlatmap(_a_fb.f, _fa))),
           case_pure = () => ???,
           case_plus = () => ???,
 //            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
