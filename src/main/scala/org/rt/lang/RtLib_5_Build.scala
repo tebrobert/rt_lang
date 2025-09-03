@@ -20,14 +20,6 @@ object RtLib_5_Build {
     case class WrappedLitStr(s: Str) extends WrappedLit
     case class WrappedLitBint(i: Bint) extends WrappedLit
     case class WrappedLitBool(b: Bool) extends WrappedLit
-    case class WrappedLambdaLegacy(
-      f: (Unit => Wrapped)
-        | (Str => Wrapped)
-        | (Bint => Wrapped)
-        | (Bool => Wrapped)
-        // todo Brick?
-        | (WrappedLambdaLegacy => Wrapped)
-    ) extends Wrapped
 
     sealed trait WrappedLambda extends Wrapped
     case class WrappedLambdaA[A](f: A => Wrapped) extends WrappedLambda
