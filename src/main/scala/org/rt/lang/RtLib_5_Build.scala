@@ -97,7 +97,7 @@ object RtLib_5_Build {
       else
         match_builtin_idf(
             case_input=() => BrickInput,
-            case_print=() => ???, //BrickLambda(_s => BrickPrint(_s)),
+            case_print=() => WrappedLambdaStr(_s => BrickPrint(_s)),
             case_flatmap=() => ???,
               ///(()=> BrickLambda(_a_fb => BrickLambda(_fa => BrickFlatmap(_a_fb, _fa)))), // todo omggggggg
           case_pure = () => ???,
