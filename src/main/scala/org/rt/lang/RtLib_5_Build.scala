@@ -90,7 +90,7 @@ object RtLib_5_Build {
       s: String,
       typ: Typ,
       lamb_arg_stack: List[String],
-    ) = { // todo - what type?
+    ): Wrapped = {
     (
       if (lamb_arg_stack.contains(s)) // todo - should check actual stacks
         ??? //to_latin_idf(s) // todo - should likely return a value from a stack
@@ -159,19 +159,19 @@ object RtLib_5_Build {
       lambArgStackStr: List[Str], // Lists will most likely turn into dicts Map[String, _]
       lambArgStackBint: List[Bint],
       lambArgStackBool: List[Bool],
-    ): WrappedLambdaLegacy =
+    ): WrappedLambda =
       t_idf_x.typ match {
-        case T_Unit => WrappedLambdaLegacy((_: Unit) =>
+        case T_Unit => WrappedLambdaUnit((_: Unit) =>
           //todo - beautify stacks
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, lambArgStackBool)
         )
-        case T_Str => WrappedLambdaLegacy((s: Str) =>
+        case T_Str => WrappedLambdaStr((s: Str) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, s +: lambArgStackStr, lambArgStackBint, lambArgStackBool)
         )
-        case T_Bint => WrappedLambdaLegacy((i: Bint) =>
+        case T_Bint => WrappedLambdaBint((i: Bint) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, i +: lambArgStackBint, lambArgStackBool)
         )
-        case T_Bool => WrappedLambdaLegacy((b: Bool) =>
+        case T_Bool => WrappedLambdaBool((b: Bool) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, b +: lambArgStackBool)
         )
 
