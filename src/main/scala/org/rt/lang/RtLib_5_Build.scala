@@ -15,22 +15,17 @@ object RtLib_5_Build {
     type Bool = Boolean
 
     sealed trait Wrapped
-
     sealed trait WrappedLit extends Wrapped // Sc - Scala
-
     case object WrappedLitUnit extends WrappedLit
-
     case class WrappedLitStr(s: Str) extends WrappedLit
-
     case class WrappedLitBint(i: Bint) extends WrappedLit
-
     case class WrappedLitBool(b: Bool) extends WrappedLit
-
     case class WrappedLambdaLegacy(
       f: (Unit => Wrapped)
         | (Str => Wrapped)
         | (Bint => Wrapped)
         | (Bool => Wrapped)
+        // todo Brick?
         | (WrappedLambdaLegacy => Wrapped)
     ) extends Wrapped
 
@@ -43,18 +38,13 @@ object RtLib_5_Build {
     case class WrappedLambdaLambda(f: WrappedLambda => Wrapped) extends WrappedLambda
 
     sealed trait Brick[A] extends Wrapped
-
     case object BrickInput extends Brick[Str]
-
     final case class BrickPrint(s: Str) extends Brick[Unit]
-
     final case class BrickPure[A](a: A) extends Brick[A]
-
     final case class BrickFlatmap[A, B](
       a_fb: A => Brick[B],
       fa: Brick[A],
     ) extends Brick[B]
-
     //case class BrickLambda[A, B](f: A => Brick[B]) extends Brick[B] //todo wth
 
 
