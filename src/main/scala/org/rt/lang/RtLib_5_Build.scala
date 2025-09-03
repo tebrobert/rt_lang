@@ -39,7 +39,7 @@ object RtLib_5_Build {
     case class WrappedLambdaStr(f: Str => Wrapped) extends WrappedLambda
     case class WrappedLambdaBint(f: Bint => Wrapped) extends WrappedLambda
     case class WrappedLambdaBool(f: Bool => Wrapped) extends WrappedLambda
-    //case class WrappedLambdaBrick(f: Brick => Wrapped) extends WrappedLambda
+    case class WrappedLambdaBrick[A](f: Brick[A] => Wrapped) extends WrappedLambda
     case class WrappedLambdaLambda(f: WrappedLambda => Wrapped) extends WrappedLambda
 
     sealed trait Brick[A] extends Wrapped
