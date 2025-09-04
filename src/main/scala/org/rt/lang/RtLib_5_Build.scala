@@ -90,10 +90,9 @@ object RtLib_5_Build {
         ??? //to_latin_idf(s) // todo - should likely return a value from a stack
       else
         match_builtin_idf(
-            case_input=() => BrickInput,
-            case_print=() => WrappedLambdaA(_s => BrickPrint(_s)),
-            case_flatmap=() => //???,
-              //WrappedLambdaA(_a_fb => WrappedLambdaA(_fa => BrickFlatmap(_a_fb, _fa))), // todo omggggggg
+            case_input= () => BrickInput,
+            case_print= () => WrappedLambdaA(_s => BrickPrint(_s)),
+            case_flatmap= () =>
               WrappedLambdaA((_a_fb: WrappedLambdaABrick[Wrapped]) =>
                   WrappedLambdaABrick((_fa: Brick[Wrapped]) =>
                       BrickFlatmap(_a_fb.f, _fa)
