@@ -15,14 +15,14 @@ object RtLib_5_Build {
     type Bool = Boolean
 
     sealed trait Built
-    case class BuiltUnit(u: Unit) extends Built
+    case object BuiltUnit extends Built
     case class BuiltStr(s: Str) extends Built
     case class BuiltBint(i: Bint) extends Built
     case class BuiltBool(b: Bool) extends Built
 
     sealed trait BuiltLambda extends Built
     case class BuiltLambdaA[A](f: A => Built) extends BuiltLambda
-    case class BuiltLambdaABrick[A](f: A => BuiltBrick) extends BuiltLambda
+    case class BuiltLambdaABrick[A](f: A => BuiltBrick[Built]) extends BuiltLambda
 //    case class BuiltLambdaUnit(f: Unit => Built) extends BuiltLambda
 //    case class BuiltLambdaStr(f: Str => Built) extends BuiltLambda
 //    case class BuiltLambdaBint(f: Bint => Built) extends BuiltLambda
@@ -30,17 +30,14 @@ object RtLib_5_Build {
 //    case class BuiltLambdaBrick[A](f: Brick[A] => Built) extends BuiltLambda
 //    case class BuiltLambdaLambda(f: BuiltLambda => Built) extends BuiltLambda
 
-//    sealed trait BuiltBrick[A] extends Built
-//    case object BuiltBrickInput extends BuiltBrick[Str]
-//    final case class BuiltBrickPrint(s: Str) extends BuiltBrick[Unit]
-//    final case class BuiltBrickPure[A](a: A) extends BuiltBrick[A]
-//    final case class BuiltBrickFlatmap[A, B](
-//      a_fb: A => BuiltBrick[B],
-//      fa: BuiltBrick[A],
-//    ) extends BuiltBrick[B]
-
-    case class BuiltBrick(run: () => Built) extends Built
-
+    sealed trait BuiltBrick[A] extends Built
+    case object BuiltBrickInput extends BuiltBrick[Str]
+    final case class BuiltBrickPrint(s: Str) extends BuiltBrick[Unit]
+    final case class BuiltBrickPure[A](a: A) extends BuiltBrick[A]
+    final case class BuiltBrickFlatmap[A, B](
+      a_fb: A => BuiltBrick[B],
+      fa: BuiltBrick[A],
+    ) extends BuiltBrick[B]
 
 
 
@@ -91,17 +88,12 @@ object RtLib_5_Build {
         ??? //to_latin_idf(s) // todo - should likely return a value from a stack
       else
         match_builtin_idf(
-            case_input = () => BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())),
-            case_print = () => BuiltLambdaA((_s: Built) =>
-              _s match {
-                case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
-                case _ => rtFail("runTime") //todo - compile errors are much better
-              }
-            ),
-            case_flatmap = () =>
+            case_input= () => BuiltBrickInput,
+            case_print= () => BuiltLambdaA(_s => BuiltBrickPrint(_s)),
+            case_flatmap= () =>
               BuiltLambdaA((_a_fb: BuiltLambdaABrick[Built]) =>
-                  BuiltLambdaABrick((_fa: BuiltBrick) =>
-                      BuiltBrick(() => _a_fb.f(_fa.run()).run())
+                  BuiltLambdaABrick((_fa: BuiltBrick[Built]) =>
+                      BuiltBrickFlatmap(_a_fb.f, _fa)
                   )
               ),
           case_pure = () => ???,
@@ -226,33 +218,27 @@ object RtLib_5_Build {
 //    (BrickInput())
 
     val x = (
-      BuiltLambdaA((_a_fb: BuiltLambdaABrick[Built]) =>
-        BuiltLambdaABrick((_fa: BuiltBrick) =>
-          BuiltBrick(() => _a_fb.f(_fa.run()).run())
-        )
-      ).f
+      ((identifier_a_fb: Str=>BuiltBrick[Unit]) => (identifier_fa: BuiltBrick[Str]) => BuiltBrickFlatmap(identifier_a_fb, identifier_fa))
       (
-        BuiltLambdaABrick[Built]((identifier_s: Built) => (
-          (
-            BuiltLambdaA((_a_fb: BuiltLambdaABrick[Built]) =>
-              BuiltLambdaABrick((_fa: BuiltBrick) =>
-                BuiltBrick(() => _a_fb.f(_fa.run()).run())
-              )
-            )
-          ).f
-          (
-            BuiltLambdaABrick[Unit]((identifier__u: Unit) =>
-              BuiltLambdaA((_s: Str) => BuiltBrick(() => BuiltUnit(println(_s)))).f(identifier_s.s)
-            )
-          ).f
-          (BuiltLambdaA((_s: Str) => BuiltBrick(() => BuiltUnit(println(_s)))).f(identifier_s))
-        ))
-      )//.f
-      //(BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())))
+        (identifier_s: Str) => (
+          ((identifier_a_fb: Unit => BuiltBrick[Unit]) => (identifier_fa: BuiltBrick[Unit]) => BuiltBrickFlatmap(identifier_a_fb, identifier_fa))
+          ((identifier__u: Unit) => ((identifier_s: Str) => BuiltBrickPrint(identifier_s))(identifier_s))
+        )(((identifier_s: Str) => BuiltBrickPrint(identifier_s))(identifier_s))
+      )
+      (BuiltBrickInput)
     )
 
+    def unsafe_run_built[A](rio: BuiltBrick[A]): A = {
+      rio match {
+        case BuiltBrickInput => scala.io.StdIn.readLine()
+        case BuiltBrickPrint(s) => println(s)
+        case BuiltBrickFlatmap(a_fb, fa) => unsafe_run_built(a_fb(unsafe_run_built(fa)))
+        case BuiltBrickPure(a) => a
+      }
+    }
+
     println("HERE START")
-    x.run()
+    unsafe_run_built(x)
     println("HERE FINISH")
     ()
   }
