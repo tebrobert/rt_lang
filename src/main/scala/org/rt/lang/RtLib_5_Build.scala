@@ -15,16 +15,31 @@ object RtLib_5_Build {
     type Bool = Boolean
 
     sealed trait Built
-    sealed trait BuiltLambda extends Built
-
-    case class BuiltUnit(u: Unit) extends Built // for Scala's side effects
+    case class BuiltUnit(u: Unit) extends Built
     case class BuiltStr(s: Str) extends Built
     case class BuiltBint(i: Bint) extends Built
     case class BuiltBool(b: Bool) extends Built
-    case class BuiltBrick[A](run: () => A) extends Built
-    case class BuiltLambdaA[A](f: A => Built) extends BuiltLambda
-    case class BuiltLambdaABrick[A, B](f: A => BuiltBrick[B]) extends BuiltLambda
 
+    sealed trait BuiltLambda extends Built
+    case class BuiltLambdaA[A](f: A => Built) extends BuiltLambda
+    case class BuiltLambdaABrick[A](f: A => BuiltBrick) extends BuiltLambda
+//    case class BuiltLambdaUnit(f: Unit => Built) extends BuiltLambda
+//    case class BuiltLambdaStr(f: Str => Built) extends BuiltLambda
+//    case class BuiltLambdaBint(f: Bint => Built) extends BuiltLambda
+//    case class BuiltLambdaBool(f: Bool => Built) extends BuiltLambda
+//    case class BuiltLambdaBrick[A](f: Brick[A] => Built) extends BuiltLambda
+//    case class BuiltLambdaLambda(f: BuiltLambda => Built) extends BuiltLambda
+
+//    sealed trait BuiltBrick[A] extends Built
+//    case object BuiltBrickInput extends BuiltBrick[Str]
+//    final case class BuiltBrickPrint(s: Str) extends BuiltBrick[Unit]
+//    final case class BuiltBrickPure[A](a: A) extends BuiltBrick[A]
+//    final case class BuiltBrickFlatmap[A, B](
+//      a_fb: A => BuiltBrick[B],
+//      fa: BuiltBrick[A],
+//    ) extends BuiltBrick[B]
+
+    case class BuiltBrick(run: () => Built) extends Built
 
 
 
