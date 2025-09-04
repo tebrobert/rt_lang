@@ -251,6 +251,7 @@ object RtLib_5_Build {
               )
             ) match {
               case BuiltLambda(f) =>
+                println("debug 2")
                 f(
                   (BuiltLambda {
                     case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
@@ -261,7 +262,9 @@ object RtLib_5_Build {
             }
             ))
         ) match {
-        case BuiltLambda(f) => f(BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())))
+        case BuiltLambda(f) =>
+          println("debug 1")
+          f(BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())))
         case _ => rtFail("runtime")
       }
     )
