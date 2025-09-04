@@ -14,38 +14,37 @@ object RtLib_5_Build {
     type Bint = BigInt
     type Bool = Boolean
 
-    sealed trait Wrapped
-    sealed trait WrappedLit extends Wrapped // Sc - Scala
-    case object WrappedLitUnit extends WrappedLit
-    case class WrappedLitStr(s: Str) extends WrappedLit
-    case class WrappedLitBint(i: Bint) extends WrappedLit
-    case class WrappedLitBool(b: Bool) extends WrappedLit
+    sealed trait Built
+    case object BuiltUnit extends Built
+    case class BuiltStr(s: Str) extends Built
+    case class BuiltBint(i: Bint) extends Built
+    case class BuiltBool(b: Bool) extends Built
 
-    sealed trait WrappedLambda extends Wrapped
-    case class WrappedLambdaA[A](f: A => Wrapped) extends WrappedLambda
-    case class WrappedLambdaABrick[A](f: A => Brick[Wrapped]) extends WrappedLambda
-//    case class WrappedLambdaUnit(f: Unit => Wrapped) extends WrappedLambda
-//    case class WrappedLambdaStr(f: Str => Wrapped) extends WrappedLambda
-//    case class WrappedLambdaBint(f: Bint => Wrapped) extends WrappedLambda
-//    case class WrappedLambdaBool(f: Bool => Wrapped) extends WrappedLambda
-//    case class WrappedLambdaBrick[A](f: Brick[A] => Wrapped) extends WrappedLambda
-//    case class WrappedLambdaLambda(f: WrappedLambda => Wrapped) extends WrappedLambda
+    sealed trait BuiltLambda extends Built
+    case class BuiltLambdaA[A](f: A => Built) extends BuiltLambda
+    case class BuiltLambdaABrick[A](f: A => BuiltBrick[Built]) extends BuiltLambda
+//    case class BuiltLambdaUnit(f: Unit => Built) extends BuiltLambda
+//    case class BuiltLambdaStr(f: Str => Built) extends BuiltLambda
+//    case class BuiltLambdaBint(f: Bint => Built) extends BuiltLambda
+//    case class BuiltLambdaBool(f: Bool => Built) extends BuiltLambda
+//    case class BuiltLambdaBrick[A](f: Brick[A] => Built) extends BuiltLambda
+//    case class BuiltLambdaLambda(f: BuiltLambda => Built) extends BuiltLambda
 
-    sealed trait Brick[A] extends Wrapped
-    case object BrickInput extends Brick[Str]
-    final case class BrickPrint(s: Str) extends Brick[Unit]
-    final case class BrickPure[A](a: A) extends Brick[A]
-    final case class BrickFlatmap[A, B](
-      a_fb: A => Brick[B],
-      fa: Brick[A],
-    ) extends Brick[B]
+    sealed trait BuiltBrick[A] extends Built
+    case object BuiltBrickInput extends BuiltBrick[Str]
+    final case class BuiltBrickPrint(s: Str) extends BuiltBrick[Unit]
+    final case class BuiltBrickPure[A](a: A) extends BuiltBrick[A]
+    final case class BuiltBrickFlatmap[A, B](
+      a_fb: A => BuiltBrick[B],
+      fa: BuiltBrick[A],
+    ) extends BuiltBrick[B]
     //case class BrickLambda[A, B](f: A => Brick[B]) extends Brick[B] //todo wth
 
 
 
     def buildScala[A](
       typed: Linted,
-    ): Wrapped =
+    ): Built =
       Internal.buildScalaWithStacks(
         typed = typed,
         lamb_arg_stack = List.empty, // legacy todo remove
@@ -62,16 +61,16 @@ object RtLib_5_Build {
       val bint = rt_try(() => BigInt(serializedValue))
         .getOrElse(rtFail(s"Unexpected BigInt: `$serializedValue`."))
 
-      WrappedLitBint(bint)
+      BuiltBint(bint)
     }
 
 
     def buildScLit(
       serializedValue: String,
       typ: Typ,
-    ): WrappedLit = {
+    ): Built = {
       if (typ == T_Str)
-        WrappedLitStr(serializedValue)
+        BuiltStr(serializedValue)
       else if (typ == T_Bint)
         buildScLitBint(serializedValue)
       else rtFail(s"Unexpected literal: `$serializedValue`, `$typ`.")
@@ -84,18 +83,18 @@ object RtLib_5_Build {
       s: String,
       typ: Typ,
       lamb_arg_stack: List[String],
-    ): Wrapped = {
+    ): Built = {
     (
       if (lamb_arg_stack.contains(s)) // todo - should check actual stacks
         ??? //to_latin_idf(s) // todo - should likely return a value from a stack
       else
         match_builtin_idf(
-            case_input= () => BrickInput,
-            case_print= () => WrappedLambdaA(_s => BrickPrint(_s)),
+            case_input= () => BuiltBrickInput,
+            case_print= () => BuiltLambdaA(_s => BuiltBrickPrint(_s)),
             case_flatmap= () =>
-              WrappedLambdaA((_a_fb: WrappedLambdaABrick[Wrapped]) =>
-                  WrappedLambdaABrick((_fa: Brick[Wrapped]) =>
-                      BrickFlatmap(_a_fb.f, _fa)
+              BuiltLambdaA((_a_fb: BuiltLambdaABrick[Built]) =>
+                  BuiltLambdaABrick((_fa: BuiltBrick[Built]) =>
+                      BuiltBrickFlatmap(_a_fb.f, _fa)
                   )
               ),
           case_pure = () => ???,
@@ -157,19 +156,19 @@ object RtLib_5_Build {
       lambArgStackStr: List[Str], // Lists will most likely turn into dicts Map[String, _]
       lambArgStackBint: List[Bint],
       lambArgStackBool: List[Bool],
-    ): WrappedLambda =
+    ): BuiltLambda =
       t_idf_x.typ match {
-        case T_Unit => WrappedLambdaA((_: Unit) =>
+        case T_Unit => BuiltLambdaA((_: Unit) =>
           //todo - beautify stacks
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, lambArgStackBool)
         )
-        case T_Str => WrappedLambdaA((s: Str) =>
+        case T_Str => BuiltLambdaA((s: Str) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, s +: lambArgStackStr, lambArgStackBint, lambArgStackBool)
         )
-        case T_Bint => WrappedLambdaA((i: Bint) =>
+        case T_Bint => BuiltLambdaA((i: Bint) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, i +: lambArgStackBint, lambArgStackBool)
         )
-        case T_Bool => WrappedLambdaA((b: Bool) =>
+        case T_Bool => BuiltLambdaA((b: Bool) =>
           buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, b +: lambArgStackBool)
         )
 
@@ -184,7 +183,7 @@ object RtLib_5_Build {
       lambArgStackStr: List[Str],
       lambArgStackBint: List[Bint],
       lambArgStackBool: List[Bool],
-    ): Wrapped =
+    ): Built =
       typed match {
         case LintedLit(s, typ) => buildScLit(s, typ)
         case LintedIdf(s, typ) => ???
@@ -220,22 +219,22 @@ object RtLib_5_Build {
 //    (BrickInput())
 
     val x = (
-      ((identifier_a_fb: Str=>Brick[Unit]) => (identifier_fa: Brick[Str]) => BrickFlatmap(identifier_a_fb, identifier_fa))
+      ((identifier_a_fb: Str=>BuiltBrick[Unit]) => (identifier_fa: BuiltBrick[Str]) => BuiltBrickFlatmap(identifier_a_fb, identifier_fa))
       (
         (identifier_s: Str) => (
-          ((identifier_a_fb: Unit => Brick[Unit]) => (identifier_fa: Brick[Unit]) => BrickFlatmap(identifier_a_fb, identifier_fa))
-          ((identifier__u: Unit) => ((identifier_s: Str) => BrickPrint(identifier_s))(identifier_s))
-        )(((identifier_s: Str) => BrickPrint(identifier_s))(identifier_s))
+          ((identifier_a_fb: Unit => BuiltBrick[Unit]) => (identifier_fa: BuiltBrick[Unit]) => BuiltBrickFlatmap(identifier_a_fb, identifier_fa))
+          ((identifier__u: Unit) => ((identifier_s: Str) => BuiltBrickPrint(identifier_s))(identifier_s))
+        )(((identifier_s: Str) => BuiltBrickPrint(identifier_s))(identifier_s))
       )
-      (BrickInput)
+      (BuiltBrickInput)
     )
 
-    def unsafe_run_built[A](rio: Brick[A]): A = {
+    def unsafe_run_built[A](rio: BuiltBrick[A]): A = {
       rio match {
-        case BrickInput => scala.io.StdIn.readLine()
-        case BrickPrint(s) => println(s)
-        case BrickFlatmap(a_fb, fa) => unsafe_run_built(a_fb(unsafe_run_built(fa)))
-        case BrickPure(a) => a
+        case BuiltBrickInput => scala.io.StdIn.readLine()
+        case BuiltBrickPrint(s) => println(s)
+        case BuiltBrickFlatmap(a_fb, fa) => unsafe_run_built(a_fb(unsafe_run_built(fa)))
+        case BuiltBrickPure(a) => a
       }
     }
 
