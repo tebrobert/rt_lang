@@ -38,7 +38,6 @@ object RtLib_5_Build {
       a_fb: A => BuiltBrick[B],
       fa: BuiltBrick[A],
     ) extends BuiltBrick[B]
-    //case class BrickLambda[A, B](f: A => Brick[B]) extends Brick[B] //todo wth
 
 
 
