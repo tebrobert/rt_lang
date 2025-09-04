@@ -21,9 +21,9 @@ object RtLib_5_Build {
     case class BuiltStr(s: Str) extends Built
     case class BuiltBint(i: Bint) extends Built
     case class BuiltBool(b: Bool) extends Built
+
     case class BuiltBrick[A](run: () => A) extends Built
-    case class BuiltLambdaA[A](f: A => Built) extends BuiltLambda
-    case class BuiltLambdaABrick[A, B](f: A => BuiltBrick[B]) extends BuiltLambda
+    case class BuiltLambdaAB[A, B](f: A => B) extends BuiltLambda
 
 
 
@@ -76,16 +76,18 @@ object RtLib_5_Build {
         ??? //to_latin_idf(s) // todo - should likely return a value from a stack
       else
         match_builtin_idf(
-            case_input = () => BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())),
-            case_print = () => BuiltLambdaA((_s: Built) =>
-              _s match {
-                case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
-                case _ => rtFail("runTime") //todo - compile errors are much better
-              }
-            ),
+            case_input = () =>
+              BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())),
+
+            case_print = () =>
+              BuiltLambdaAB[Str, Unit](_s => BuiltBrick(() => BuiltUnit(println(s)))),
+
             case_flatmap = () =>
-              BuiltLambdaA((_a_fb: BuiltLambdaABrick[Built]) =>
-                  BuiltLambdaABrick((_fa: BuiltBrick) =>
+              BuiltLambdaAB[
+                BuiltLambdaAB[Built, BuiltBrick[Built]],
+                BuiltLambdaAB[BuiltBrick[Built], BuiltBrick[Built]],
+              ](_a_fb =>
+                  BuiltLambdaAB[BuiltBrick[Built], BuiltBrick[Built]](_fa =>
                       BuiltBrick(() => _a_fb.f(_fa.run()).run())
                   )
               ),
