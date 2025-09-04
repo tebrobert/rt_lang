@@ -94,7 +94,11 @@ object RtLib_5_Build {
             case_print=() => WrappedLambdaA(_s => BrickPrint(_s)),
             case_flatmap=() => //???,
               //WrappedLambdaA(_a_fb => WrappedLambdaA(_fa => BrickFlatmap(_a_fb, _fa))), // todo omggggggg
-              WrappedLambdaA((_a_fb: WrappedLambdaABrick[Wrapped]) => WrappedLambdaABrick((_fa: Brick[Wrapped]) => BrickFlatmap(_a_fb.f, _fa))),
+              WrappedLambdaA((_a_fb: WrappedLambdaABrick[Wrapped]) =>
+                  WrappedLambdaABrick((_fa: Brick[Wrapped]) =>
+                      BrickFlatmap(_a_fb.f, _fa)
+                  )
+              ),
           case_pure = () => ???,
           case_plus = () => ???,
 //            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
