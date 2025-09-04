@@ -95,7 +95,7 @@ object RtLib_5_Build {
                   BuiltLambdaABrick((_fa: BuiltBrick[Built]) =>
                       BuiltBrickFlatmap(_a_fb.f, _fa)
                   )
-              ),
+              ), //TODO - use Typ or risk having runtime errors?
           case_pure = () => ???,
           case_plus = () => ???,
 //            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
