@@ -15,15 +15,14 @@ object RtLib_5_Build {
     type Bool = Boolean
 
     sealed trait Built
-    sealed trait BuiltLambda extends Built
 
-    case class BuiltUnit(u: Unit) extends Built // for Scala's side effects
+    case class BuiltUnit(u: Unit) extends Built // convenient for Scala's side-effects
     case class BuiltStr(s: Str) extends Built
     case class BuiltBint(i: Bint) extends Built
     case class BuiltBool(b: Bool) extends Built
 
-    case class BuiltBrick[A](run: () => A) extends Built
-    case class BuiltLambdaAB[A, B](f: A => B) extends BuiltLambda
+    case class BuiltBrick(run: () => Built) extends Built
+    case class BuiltLambda(f: Built => Built) extends Built
 
 
 
@@ -80,17 +79,21 @@ object RtLib_5_Build {
               BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())),
 
             case_print = () =>
-              BuiltLambdaAB[Str, Unit](_s => BuiltBrick(() => BuiltUnit(println(s)))),
+              BuiltLambda {
+                case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
+                case _ => rtFail("runtime")
+              },
 
             case_flatmap = () =>
-              BuiltLambdaAB[
-                BuiltLambdaAB[Built, BuiltBrick[Built]],
-                BuiltLambdaAB[BuiltBrick[Built], BuiltBrick[Built]],
-              ](_a_fb =>
-                  BuiltLambdaAB[BuiltBrick[Built], BuiltBrick[Built]](_fa =>
-                      BuiltBrick(() => _a_fb.f(_fa.run()).run())
+              BuiltLambda(_a_fb =>
+                  BuiltLambda(_fa =>
+                      (_a_fb, _fa) match {
+                        case (BuiltLambda(a_fb), BuiltBrick(fa)) =>
+                          BuiltBrick(() => a_fb(fa()))
+                        case _ => rtFail("runtime")
+                      }
                   )
-              ), //TODO - use Typ or risk having runtime errors?
+              ),
           case_pure = () => ???,
           case_plus = () => ???,
 //            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
@@ -152,19 +155,27 @@ object RtLib_5_Build {
       lambArgStackBool: List[Bool],
     ): BuiltLambda =
       t_idf_x.typ match {
-        case T_Unit => BuiltLambdaA((_: Unit) =>
-          //todo - beautify stacks
-          buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, lambArgStackBool)
-        )
-        case T_Str => BuiltLambdaA((s: Str) =>
-          buildScalaWithStacks(typed_res, lamb_arg_stack, s +: lambArgStackStr, lambArgStackBint, lambArgStackBool)
-        )
-        case T_Bint => BuiltLambdaA((i: Bint) =>
-          buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, i +: lambArgStackBint, lambArgStackBool)
-        )
-        case T_Bool => BuiltLambdaA((b: Bool) =>
-          buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, b +: lambArgStackBool)
-        )
+        case T_Unit => BuiltLambda {
+          case BuiltUnit(u) =>
+            //todo - beautify stacks
+            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, lambArgStackBool)
+          case _ => rtFail("runtime")
+        }
+        case T_Str => BuiltLambda {
+          case BuiltStr(s) =>
+            buildScalaWithStacks(typed_res, lamb_arg_stack, s +: lambArgStackStr, lambArgStackBint, lambArgStackBool)
+          case _ => rtFail("runtime")
+        }
+        case T_Bint => BuiltLambda {
+          case BuiltBint(i) =>
+            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, i +: lambArgStackBint, lambArgStackBool)
+          case _ => rtFail("runtime")
+        }
+        case T_Bool => BuiltLambda {
+          case BuiltBool(b) =>
+            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, b +: lambArgStackBool)
+          case _ => rtFail("runtime")
+        }
 
         case Typ1(`builtin_RIO`, _) => wip()
         case Typ2(`builtin_Func`, _, _) => wip()
@@ -212,34 +223,55 @@ object RtLib_5_Build {
 //    )
 //    (BrickInput())
 
-    val x = (
-      BuiltLambdaA((_a_fb: BuiltLambdaABrick[Built]) =>
-        BuiltLambdaABrick((_fa: BuiltBrick) =>
-          BuiltBrick(() => _a_fb.f(_fa.run()).run())
+    val prototype = (
+      BuiltLambda(_a_fb =>
+        BuiltLambda(_fa =>
+          (_a_fb, _fa) match {
+            case (BuiltLambda(a_fb), BuiltBrick(fa)) =>
+              BuiltBrick(() => a_fb(fa()))
+            case _ => rtFail("runtime")
+          }
         )
       ).f
-      (
-        BuiltLambdaABrick[Built]((identifier_s: Built) => (
-          (
-            BuiltLambdaA((_a_fb: BuiltLambdaABrick[Built]) =>
-              BuiltLambdaABrick((_fa: BuiltBrick) =>
-                BuiltBrick(() => _a_fb.f(_fa.run()).run())
+        (
+          BuiltLambda(identifier_s => (
+            BuiltLambda(_a_fb =>
+              BuiltLambda(_fa =>
+                (_a_fb, _fa) match {
+                  case (BuiltLambda(a_fb), BuiltBrick(fa)) =>
+                    BuiltBrick(() => a_fb(fa()))
+                  case _ => rtFail("runtime")
+                }
               )
-            )
-          ).f
-          (
-            BuiltLambdaABrick[Unit]((identifier__u: Unit) =>
-              BuiltLambdaA((_s: Str) => BuiltBrick(() => BuiltUnit(println(_s)))).f(identifier_s.s)
-            )
-          ).f
-          (BuiltLambdaA((_s: Str) => BuiltBrick(() => BuiltUnit(println(_s)))).f(identifier_s))
-        ))
-      )//.f
-      //(BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())))
+            ).f.apply(
+              BuiltLambda((identifier__u) =>
+                BuiltLambda {
+                  case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
+                  case _ => rtFail("runtime")
+                }.f(identifier_s)
+              )
+            ) match {
+              case BuiltLambda(f) =>
+                f(
+                  (BuiltLambda {
+                    case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
+                    case _ => rtFail("runtime")
+                  }.f(identifier_s))
+                )
+              case _ => rtFail("runtime")
+            }
+            ))
+        ) match {
+        case BuiltLambda(f) => f(BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())))
+        case _ => rtFail("runtime")
+      }
     )
 
     println("HERE START")
-    x.run()
+    prototype match {
+      case BuiltBrick(run) => run()
+      case _ => rtFail("runtime")
+    }
     println("HERE FINISH")
     ()
   }
