@@ -232,8 +232,7 @@ object RtLib_5_Build {
             case _ => rtFail("runtime")
           }
         )
-      ).f
-        (
+      ).f.apply(
           BuiltLambda(identifier_s => (
             BuiltLambda(_a_fb =>
               BuiltLambda(_fa =>
