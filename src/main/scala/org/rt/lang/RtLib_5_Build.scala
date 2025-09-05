@@ -65,7 +65,7 @@ object RtLib_5_Build {
     def to_latin_idf: String => String = ???
 
     // todo - shorten
-    def build_str_py_idf[A](
+    def build_str_py_idf(
       s: String,
       typ: Typ,
       lamb_arg_stack: List[String],
@@ -196,7 +196,7 @@ object RtLib_5_Build {
     ): Built =
       typed match {
         case LintedLit(s, typ) => buildScLit(s, typ)
-        case LintedIdf(s, typ) => ???
+        case LintedIdf(s, typ) => build_str_py_idf(s, typ, lamb_arg_stack)
         case LintedCall1(linted_f, linted_x, typ) => ???
         case LintedLambda1(linted_idf_x, linted_res, typ) =>
           buildScalaLambda1(
