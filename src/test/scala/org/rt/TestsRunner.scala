@@ -12,7 +12,7 @@ trait RtTestCase {
   val code_0: String
   val tokens_1: List[Tok]
   val expr_2: Expr
-  val mb_linted_3: Linted
+  val linted_3: Linted
 }
 
 object TestsRunner extends ZIOSpecDefault {
@@ -26,7 +26,7 @@ object TestsRunner extends ZIOSpecDefault {
         assertTrue(parse(testCase.tokens_1) == testCase.expr_2)
       })
         ++ allTestCases.map(testCase => test("lint " + testCase.name) {
-        assertTrue(lint(testCase.expr_2) == testCase.mb_linted_3)
+        assertTrue(lint(testCase.expr_2) == testCase.linted_3)
       })
     )
 }
