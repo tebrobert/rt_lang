@@ -34,6 +34,7 @@ object RtLib_5_Build {
       Internal.buildScalaWithStacks(
         typed = typed,
         lamb_arg_stack = List.empty, // legacy todo remove
+        lambArgStack = Map.empty,
         lambArgStackStr = Map.empty,
         lambArgStackBint = Map.empty,
         lambArgStackBool = Map.empty,
@@ -72,13 +73,14 @@ object RtLib_5_Build {
       s: String,
       typ: Typ,
       lamb_arg_stack: List[String],
+      lambArgStack: Map[String, Built],
       lambArgStackStr: Map[String, Str],
       lambArgStackBint: Map[String, Bint],
       lambArgStackBool: Map[String, Bool],
     ): Built = {
     (
-      if (lamb_arg_stack.contains(s)) // todo - should check actual stacks
-        ??? //to_latin_idf(s) // todo - should likely return a value from a stack
+      if (lambArgStack.contains(s)) // todo - should check actual stacks
+        lambArgStack(s) //todo contemplate to_latin_idf(s) // todo - try a safer way
       else
         match_builtin_idf(
             case_input = () =>
@@ -161,6 +163,7 @@ object RtLib_5_Build {
       t_idf_x: LintedIdf,
       typed_res: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
+      lambArgStack: Map[String, Built],
       lambArgStackStr: Map[String, Str],
       lambArgStackBint: Map[String, Bint],
       lambArgStackBool: Map[String, Bool],
@@ -169,22 +172,22 @@ object RtLib_5_Build {
         case T_Unit => BuiltLambda {
           case BuiltUnit(u) =>
             //todo - beautify stacks
-            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, lambArgStackBool)
+            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStack.updated(t_idf_x.s, BuiltUnit(u)), lambArgStackStr, lambArgStackBint, lambArgStackBool)
           case _ => rtFail("runtime")
         }
         case T_Str => BuiltLambda {
           case BuiltStr(s) =>
-            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr.updated(t_idf_x.s, s), lambArgStackBint, lambArgStackBool)
+            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStack.updated(t_idf_x.s, BuiltStr(s)), lambArgStackStr.updated(t_idf_x.s, s), lambArgStackBint, lambArgStackBool)
           case _ => rtFail("runtime")
         }
         case T_Bint => BuiltLambda {
           case BuiltBint(i) =>
-            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint.updated(t_idf_x.s, i), lambArgStackBool)
+            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStack.updated(t_idf_x.s, BuiltBint(i)), lambArgStackStr, lambArgStackBint.updated(t_idf_x.s, i), lambArgStackBool)
           case _ => rtFail("runtime")
         }
         case T_Bool => BuiltLambda {
           case BuiltBool(b) =>
-            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, lambArgStackBool.updated(t_idf_x.s, b))
+            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStack.updated(t_idf_x.s, BuiltBool(b)), lambArgStackStr, lambArgStackBint, lambArgStackBool.updated(t_idf_x.s, b))
           case _ => rtFail("runtime")
         }
 
@@ -197,10 +200,11 @@ object RtLib_5_Build {
       typed_f: Linted,
       typed_x: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
+      lambArgStack: Map[String, Built],
     ): Built = {
       val nilStub = Map.empty[String, Nothing]
-      val shown_f = buildScalaWithStacks(typed_f, lamb_arg_stack, nilStub, nilStub, nilStub)
-      val shown_x = buildScalaWithStacks(typed_x, lamb_arg_stack, nilStub, nilStub, nilStub)
+      val shown_f = buildScalaWithStacks(typed_f, lamb_arg_stack, lambArgStack, nilStub, nilStub, nilStub)
+      val shown_x = buildScalaWithStacks(typed_x, lamb_arg_stack, lambArgStack, nilStub, nilStub, nilStub)
 
       shown_f match {
         case BuiltLambda(f) => f(shown_x)
@@ -211,6 +215,7 @@ object RtLib_5_Build {
     def buildScalaWithStacks[A](
       typed: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
+      lambArgStack: Map[String, Built],
       lambArgStackStr: Map[String, Str],
       lambArgStackBint: Map[String, Bint],
       lambArgStackBool: Map[String, Bool],
@@ -221,16 +226,18 @@ object RtLib_5_Build {
           s,
           typ,
           lamb_arg_stack,
+          lambArgStack,
           lambArgStackStr,
           lambArgStackBint,
           lambArgStackBool,
         )
-        case LintedCall1(linted_f, linted_x, typ) => buildScalaCall1(linted_f, linted_x, lamb_arg_stack)
+        case LintedCall1(linted_f, linted_x, typ) => buildScalaCall1(linted_f, linted_x, lamb_arg_stack, lambArgStack)
         case LintedLambda1(linted_idf_x, linted_res, typ) =>
           buildScalaLambda1(
             linted_idf_x,
             linted_res,
             lamb_arg_stack,
+            lambArgStack,
             lambArgStackStr,
             lambArgStackBint,
             lambArgStackBool,
