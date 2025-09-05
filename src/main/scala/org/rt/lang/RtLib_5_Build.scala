@@ -41,6 +41,80 @@ object RtLib_5_Build {
   }
 
   private object Internal {
+    object Built {
+      val input =
+        BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine()))
+
+      val print =
+        BuiltLambda {
+          case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
+          case _ => rtFail("runtime")
+        }
+
+      val flatmap =
+        BuiltLambda(_a_fb =>
+          BuiltLambda(_fa =>
+            (_a_fb, _fa) match {
+              case (BuiltLambda(a_fb), BuiltBrick(fa)) =>
+                BuiltBrick(() =>
+                  a_fb(fa()) match {
+                    case BuiltBrick(run) => run()
+                    case _ => rtFail("runtime")
+                  }
+                )
+              case _ => rtFail("runtime")
+            }
+          )
+        )
+
+      //            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
+      //            case_plus=lambda: (
+      //                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
+      //                if typ == T_Func(T_Str, T_Func(T_Str, T_Str)) else
+      //                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
+      //                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+      //                fail(f"Unexpected typ `{typ}` for `{s}`.")
+      //            ),
+
+      //            case_minus=lambda: (
+      //                f"(lambda {_right}: lambda {_left}: {_left} - {_right})"
+      //                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+      //                f"(lambda {_num}: - {_num})"
+      //                if typ == T_Func(T_Bint, T_Bint) else
+      //                fail(f"Unexpected typ `{typ}` for `{s}`.")
+      //            ),
+
+      //            case_multiply=lambda: (
+      //                f"(lambda {_right}: lambda {_left}: {_left} * {_right})"
+      //                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
+      //                fail(f"Unexpected typ `{typ}` for `{s}`.")
+      //            ),
+
+      //            case_str=lambda: (
+      //                f"(str)"
+      //                if typ == T_Func(T_Bint, T_Str) else
+      //                f"(str)"
+      //                if typ == T_Func(T_Str, T_Str) else
+      //                f"(lambda {_a}: str({_a}).lower())"
+      //                if typ == T_Func(T_Bool, T_Str) else
+      //                fail(f"Unexpected typ `{typ}` for `{s}`.")
+      //            ),
+
+      //            case_true=lambda: "(True)",
+
+      //            case_false=lambda: "(False)",
+
+      //            case_eq_eq=lambda: (
+      //                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+      //                if typ == T_Func(T_Str, T_Func(T_Str, T_Bool)) else
+      //                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+      //                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bool)) else
+      //                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
+      //                if typ == T_Func(T_Bool, T_Func(T_Bool, T_Bool)) else
+      //                fail(f"Unexpected typ `{typ}` for `{s}`.")
+      //            )
+    }
+
     def buildScLitBint(
       serializedValue: String
     ) = {
@@ -69,85 +143,23 @@ object RtLib_5_Build {
       s: String,
       typ: Typ,
       lambArgStack: Map[String, Built],
-    ): Built = {
+    ): Built =
       lambArgStack.getOrElse(
         s, //todo contemplate to_latin_idf(s)
         match_builtin_idf(
-          case_input = () =>
-            BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())),
-
-          case_print = () =>
-            BuiltLambda {
-              case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
-              case _ => rtFail("runtime")
-            },
-
-          case_flatmap = () =>
-            BuiltLambda(_a_fb =>
-              BuiltLambda(_fa =>
-                (_a_fb, _fa) match {
-                  case (BuiltLambda(a_fb), BuiltBrick(fa)) =>
-                    BuiltBrick(() =>
-                      a_fb(fa()) match {
-                        case BuiltBrick(run) => run()
-                        case _ => rtFail("runtime")
-                      }
-                    )
-                  case _ => rtFail("runtime")
-                }
-              )
-            ),
+          case_input = () => Built.input,
+          case_print = () => Built.print,
+          case_flatmap = () => Built.flatmap,
           case_pure = () => ???,
           case_plus = () => ???,
-//            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
-//            case_plus=lambda: (
-//                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
-//                if typ == T_Func(T_Str, T_Func(T_Str, T_Str)) else
-//                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
-//                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
-//                fail(f"Unexpected typ `{typ}` for `{s}`.")
-//            ),
           case_minus = () => ???,
-//            case_minus=lambda: (
-//                f"(lambda {_right}: lambda {_left}: {_left} - {_right})"
-//                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
-//                f"(lambda {_num}: - {_num})"
-//                if typ == T_Func(T_Bint, T_Bint) else
-//                fail(f"Unexpected typ `{typ}` for `{s}`.")
-//            ),
           case_multiply = () => ???,
-//            case_multiply=lambda: (
-//                f"(lambda {_right}: lambda {_left}: {_left} * {_right})"
-//                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
-//                fail(f"Unexpected typ `{typ}` for `{s}`.")
-//            ),
           case_str = () => ???,
-//            case_str=lambda: (
-//                f"(str)"
-//                if typ == T_Func(T_Bint, T_Str) else
-//                f"(str)"
-//                if typ == T_Func(T_Str, T_Str) else
-//                f"(lambda {_a}: str({_a}).lower())"
-//                if typ == T_Func(T_Bool, T_Str) else
-//                fail(f"Unexpected typ `{typ}` for `{s}`.")
-//            ),
           case_true = () => ???,
-//            case_true=lambda: "(True)",
           case_false = () => ???,
-//            case_false=lambda: "(False)",
           case_eq_eq = () => ???,
-//            case_eq_eq=lambda: (
-//                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
-//                if typ == T_Func(T_Str, T_Func(T_Str, T_Bool)) else
-//                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
-//                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bool)) else
-//                f"(lambda {_right}: lambda {_left}: {_left} == {_right})"
-//                if typ == T_Func(T_Bool, T_Func(T_Bool, T_Bool)) else
-//                fail(f"Unexpected typ `{typ}` for `{s}`.")
-//            )
         )(s),
       )
-    }
 
     def buildScalaLambda1(
       t_idf_x: LintedIdf,
