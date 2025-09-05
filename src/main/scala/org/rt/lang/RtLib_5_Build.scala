@@ -3,7 +3,7 @@ package org.rt.lang
 import org.rt.lang.RtLib_0_0_Lits.*
 import org.rt.lang.RtLib_0_1_Types.*
 import org.rt.lang.RtLib_0_2_Builtins.*
-import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, LintedLit}
+import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, LintedLit, full_lint}
 import org.rt.lang.RtLib_5_Build.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_try, wip}
 
@@ -38,6 +38,9 @@ object RtLib_5_Build {
         lambArgStackBint = List.empty,
         lambArgStackBool = List.empty,
       )
+
+    def fullBuildScala(code: String) =
+      buildScala(full_lint(code))
   }
 
   private object Internal {
@@ -301,11 +304,24 @@ object RtLib_5_Build {
       }
     )
 
+    def run(
+      built: Built,
+    ): Unit =
+      built match {
+        case BuiltBrick(run) => run()
+        case _ => rtFail("runtime")
+      }
+
     println("HERE START")
-    prototype match {
-      case BuiltBrick(run) => run()
-      case _ => rtFail("runtime")
-    }
+    //run(prototype)
+    val b = fullBuildScala(
+      """s <- input
+        |print(s)
+        |print(s)
+        |""".stripMargin
+    )
+    run(b)
+
     println("HERE FINISH")
     ()
   }
