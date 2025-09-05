@@ -72,6 +72,9 @@ object RtLib_5_Build {
       s: String,
       typ: Typ,
       lamb_arg_stack: List[String],
+      lambArgStackStr: Map[String, Str],
+      lambArgStackBint: Map[String, Bint],
+      lambArgStackBool: Map[String, Bool],
     ): Built = {
     (
       if (lamb_arg_stack.contains(s)) // todo - should check actual stacks
@@ -214,7 +217,14 @@ object RtLib_5_Build {
     ): Built =
       typed match {
         case LintedLit(s, typ) => buildScLit(s, typ)
-        case LintedIdf(s, typ) => build_str_py_idf(s, typ, lamb_arg_stack)
+        case LintedIdf(s, typ) => build_str_py_idf(
+          s,
+          typ,
+          lamb_arg_stack,
+          lambArgStackStr,
+          lambArgStackBint,
+          lambArgStackBool,
+        )
         case LintedCall1(linted_f, linted_x, typ) => buildScalaCall1(linted_f, linted_x, lamb_arg_stack)
         case LintedLambda1(linted_idf_x, linted_res, typ) =>
           buildScalaLambda1(
