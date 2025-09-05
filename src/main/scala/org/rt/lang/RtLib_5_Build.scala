@@ -86,13 +86,18 @@ object RtLib_5_Build {
 
             case_flatmap = () =>
               BuiltLambda(_a_fb =>
-                  BuiltLambda(_fa =>
-                      (_a_fb, _fa) match {
-                        case (BuiltLambda(a_fb), BuiltBrick(fa)) =>
-                          BuiltBrick(() => a_fb(fa()))
-                        case _ => rtFail("runtime")
-                      }
-                  )
+                BuiltLambda(_fa =>
+                  (_a_fb, _fa) match {
+                    case (BuiltLambda(a_fb), BuiltBrick(fa)) =>
+                      BuiltBrick(() =>
+                        a_fb(fa()) match {
+                          case BuiltBrick(run) => run()
+                          case _ => rtFail("runtime")
+                        }
+                      )
+                    case _ => rtFail("runtime")
+                  }
+                )
               ),
           case_pure = () => ???,
           case_plus = () => ???,
@@ -228,39 +233,51 @@ object RtLib_5_Build {
         BuiltLambda(_fa =>
           (_a_fb, _fa) match {
             case (BuiltLambda(a_fb), BuiltBrick(fa)) =>
-              BuiltBrick(() => a_fb(fa()))
+              BuiltBrick(() =>
+                a_fb(fa()) match {
+                  case BuiltBrick(run) => run()
+                  case _ => rtFail("runtime")
+                }
+              )
             case _ => rtFail("runtime")
           }
         )
-      ).f.apply(
+      )
+        .f(
           BuiltLambda(identifier_s => (
             BuiltLambda(_a_fb =>
               BuiltLambda(_fa =>
                 (_a_fb, _fa) match {
                   case (BuiltLambda(a_fb), BuiltBrick(fa)) =>
-                    BuiltBrick(() => a_fb(fa()))
+                    BuiltBrick(() =>
+                      a_fb(fa()) match {
+                        case BuiltBrick(run) => run()
+                        case _ => rtFail("runtime")
+                      }
+                    )
                   case _ => rtFail("runtime")
                 }
               )
-            ).f.apply(
-              BuiltLambda((identifier__u) =>
-                BuiltLambda {
-                  case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
-                  case _ => rtFail("runtime")
-                }.f(identifier_s)
-              )
-            ) match {
-              case BuiltLambda(f) =>
-                println("debug 2")
-                f(
-                  (BuiltLambda {
+            )
+              .f.apply(
+                BuiltLambda((identifier__u) =>
+                  BuiltLambda {
                     case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
                     case _ => rtFail("runtime")
-                  }.f(identifier_s))
+                  }.f(identifier_s)
                 )
-              case _ => rtFail("runtime")
-            }
-            ))
+              ) match {
+                case BuiltLambda(f) =>
+                  println("debug 2")
+                  f(
+                    (BuiltLambda {
+                      case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
+                      case _ => rtFail("runtime")
+                    }.f(identifier_s))
+                  )
+                case _ => rtFail("runtime")
+              }
+          ))
         ) match {
         case BuiltLambda(f) =>
           println("debug 1")
