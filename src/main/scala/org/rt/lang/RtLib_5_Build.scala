@@ -169,7 +169,6 @@ object RtLib_5_Build {
       t_idf_x.typ match {
         case T_Unit => BuiltLambda {
           case BuiltUnit(u) =>
-            //todo - beautify stacks
             buildScalaWithStacks(typed_res, lambArgStack.updated(t_idf_x.s, BuiltUnit(u)))
           case _ => rtFail("runtime")
         }
