@@ -187,6 +187,21 @@ object RtLib_5_Build {
         case _ => rtFail(s"can't build: unexpected arg type `$t_idf_x`")
       }
 
+    def buildScalaCall1(
+      typed_f: Linted,
+      typed_x: Linted,
+      lamb_arg_stack: List[String], // legacy todo remove
+    ): Built = {
+      val nilStub = Nil
+      val shown_f = buildScalaWithStacks(typed_f, lamb_arg_stack, nilStub, nilStub, nilStub)
+      val shown_x = buildScalaWithStacks(typed_x, lamb_arg_stack, nilStub, nilStub, nilStub)
+
+      shown_f match {
+        case BuiltLambda(f) => f(shown_x)
+        case _ => rtFail("runtime")
+      }
+    }
+
     def buildScalaWithStacks[A](
       typed: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
@@ -197,7 +212,7 @@ object RtLib_5_Build {
       typed match {
         case LintedLit(s, typ) => buildScLit(s, typ)
         case LintedIdf(s, typ) => build_str_py_idf(s, typ, lamb_arg_stack)
-        case LintedCall1(linted_f, linted_x, typ) => ???
+        case LintedCall1(linted_f, linted_x, typ) => buildScalaCall1(linted_f, linted_x, lamb_arg_stack)
         case LintedLambda1(linted_idf_x, linted_res, typ) =>
           buildScalaLambda1(
             linted_idf_x,
