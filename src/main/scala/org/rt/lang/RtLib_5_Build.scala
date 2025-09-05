@@ -34,9 +34,9 @@ object RtLib_5_Build {
       Internal.buildScalaWithStacks(
         typed = typed,
         lamb_arg_stack = List.empty, // legacy todo remove
-        lambArgStackStr = List.empty,
-        lambArgStackBint = List.empty,
-        lambArgStackBool = List.empty,
+        lambArgStackStr = Map.empty,
+        lambArgStackBint = Map.empty,
+        lambArgStackBool = Map.empty,
       )
 
     def fullBuildScala(code: String) =
@@ -158,9 +158,9 @@ object RtLib_5_Build {
       t_idf_x: LintedIdf,
       typed_res: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
-      lambArgStackStr: List[Str], // Lists will most likely turn into dicts Map[String, _]
-      lambArgStackBint: List[Bint],
-      lambArgStackBool: List[Bool],
+      lambArgStackStr: Map[String, Str],
+      lambArgStackBint: Map[String, Bint],
+      lambArgStackBool: Map[String, Bool],
     ): BuiltLambda =
       t_idf_x.typ match {
         case T_Unit => BuiltLambda {
@@ -171,17 +171,17 @@ object RtLib_5_Build {
         }
         case T_Str => BuiltLambda {
           case BuiltStr(s) =>
-            buildScalaWithStacks(typed_res, lamb_arg_stack, s +: lambArgStackStr, lambArgStackBint, lambArgStackBool)
+            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr.updated(t_idf_x.s, s), lambArgStackBint, lambArgStackBool)
           case _ => rtFail("runtime")
         }
         case T_Bint => BuiltLambda {
           case BuiltBint(i) =>
-            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, i +: lambArgStackBint, lambArgStackBool)
+            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint.updated(t_idf_x.s, i), lambArgStackBool)
           case _ => rtFail("runtime")
         }
         case T_Bool => BuiltLambda {
           case BuiltBool(b) =>
-            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, b +: lambArgStackBool)
+            buildScalaWithStacks(typed_res, lamb_arg_stack, lambArgStackStr, lambArgStackBint, lambArgStackBool.updated(t_idf_x.s, b))
           case _ => rtFail("runtime")
         }
 
@@ -195,7 +195,7 @@ object RtLib_5_Build {
       typed_x: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
     ): Built = {
-      val nilStub = Nil
+      val nilStub = Map.empty[String, Nothing]
       val shown_f = buildScalaWithStacks(typed_f, lamb_arg_stack, nilStub, nilStub, nilStub)
       val shown_x = buildScalaWithStacks(typed_x, lamb_arg_stack, nilStub, nilStub, nilStub)
 
@@ -208,9 +208,9 @@ object RtLib_5_Build {
     def buildScalaWithStacks[A](
       typed: Linted,
       lamb_arg_stack: List[String], // legacy todo remove
-      lambArgStackStr: List[Str],
-      lambArgStackBint: List[Bint],
-      lambArgStackBool: List[Bool],
+      lambArgStackStr: Map[String, Str],
+      lambArgStackBint: Map[String, Bint],
+      lambArgStackBool: Map[String, Bool],
     ): Built =
       typed match {
         case LintedLit(s, typ) => buildScLit(s, typ)
