@@ -63,6 +63,6 @@ object RtLib_0_0_Lits {
     builtin_eq_eq -> case_eq_eq,
     ).getOrElse(
       idf,
-      () => rtFail(s"Value $idf is not a built-in identifier")
+      () => rtFail(s"Value `$idf` is not a built-in identifier")
     )()
 }
