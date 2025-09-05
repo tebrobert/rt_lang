@@ -12,14 +12,6 @@ object Main extends ZIOAppDefault:
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] = {
     ZIO.succeed{
-      def run(
-        built: Built,
-      ): Unit =
-        built match {
-          case BuiltBrick(run) => run()
-          case _ => rtFail("runtime")
-        }
-
       println("HERE START")
 
       val b = fullBuildScala(
@@ -28,9 +20,8 @@ object Main extends ZIOAppDefault:
           |print(s)
           |""".stripMargin
       )
-      run(b)
+      org.rt.lang.RtLib_6_Run.run(b)
 
       println("HERE FINISH")
-      ()
     }
   }
