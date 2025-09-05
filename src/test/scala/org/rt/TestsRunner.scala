@@ -1,9 +1,9 @@
 package org.rt
 
+import org.rt.RunMock.RunMock
 import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, tokenize}
 import org.rt.lang.RtLib_3_Parse.{Expr, parse}
 import org.rt.lang.RtLib_4_Lint.{Linted, lint}
-
 import zio.test.*
 
 trait RtTestCase {
@@ -13,7 +13,7 @@ trait RtTestCase {
   val tokens_1: List[Tok]
   val expr_2: Expr
   val linted_3: Linted
-  val mb_mock_4: Option[]
+  val mb_mock_4: Option[List[RunMock]]
 }
 
 object TestsRunner extends ZIOSpecDefault {
