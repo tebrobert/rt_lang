@@ -43,7 +43,7 @@ object RtLib_5_Build {
   private object Internal {
     object Built {
       val input =
-        BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine()))
+        BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())) // todo - move out to `run` for ability to mock
 
       val print =
         BuiltLambda {
