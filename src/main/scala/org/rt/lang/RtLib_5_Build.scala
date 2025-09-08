@@ -21,7 +21,7 @@ object RtLib_5_Build {
     case class BuiltBint(i: Bint) extends Built
     case class BuiltBool(b: Bool) extends Built
 
-    case class BuiltBrick(run: () => Built) extends Built
+    case class BuiltRio(run: () => Built) extends Built
     case class BuiltLambda(f: Built => Built) extends Built
 
 
@@ -43,11 +43,11 @@ object RtLib_5_Build {
   private object Internal {
     object Built {
       val input =
-        BuiltBrick(() => BuiltStr(scala.io.StdIn.readLine())) // todo - move out to `run` for ability to mock
+        BuiltRio(() => BuiltStr(scala.io.StdIn.readLine())) // todo - move out to `run` for ability to mock
 
       val print =
         BuiltLambda {
-          case BuiltStr(s) => BuiltBrick(() => BuiltUnit(println(s)))
+          case BuiltStr(s) => BuiltRio(() => BuiltUnit(println(s)))
           case _ => rtFail("runtime")
         }
 
@@ -55,10 +55,10 @@ object RtLib_5_Build {
         BuiltLambda(_a_fb =>
           BuiltLambda(_fa =>
             (_a_fb, _fa) match {
-              case (BuiltLambda(a_fb), BuiltBrick(fa)) =>
-                BuiltBrick(() =>
+              case (BuiltLambda(a_fb), BuiltRio(fa)) =>
+                BuiltRio(() =>
                   a_fb(fa()) match {
-                    case BuiltBrick(run) => run()
+                    case BuiltRio(run) => run()
                     case _ => rtFail("runtime")
                   }
                 )
