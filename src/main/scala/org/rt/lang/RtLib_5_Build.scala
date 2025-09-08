@@ -18,15 +18,21 @@ object RtLib_5_Build {
     sealed trait Built
 
     case class BuiltUnit(u: Unit) extends Built // convenient for Scala's side-effects
+
     case class BuiltStr(s: Str) extends Built
+
     case class BuiltBint(i: Bint) extends Built
+
     case class BuiltBool(b: Bool) extends Built
 
     case class BuiltRio(run: UIO[Built]) extends Built
+
     case class BuiltLambda(f: Built => Built) extends Built
 
     sealed trait Brick
+
     case object BrickInput extends Brick
+
     case class BrickPrint(s: Str) extends Brick
 
     type BRICK_RUNNER = Brick => BuiltRio
@@ -210,14 +216,12 @@ object RtLib_5_Build {
             case _ => rtFail("runtime")
           }
 
-        case Typ2(`builtin_Func`, _, _) => wip()
-        /*
-        BuiltLambda {
-          case BuiltBool(b) =>
-            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBool(b)), brickRunner)
-          case _ => rtFail("runtime")
-        }
-         */
+        case Typ2(`builtin_Func`, _, _) =>
+          BuiltLambda {
+            case BuiltLambda(f) =>
+              buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltLambda(f)), brickRunner)
+            case _ => rtFail("runtime")
+          }
 
         case _ => rtFail(s"can't build: unexpected arg type `$t_idf_x`")
       }
