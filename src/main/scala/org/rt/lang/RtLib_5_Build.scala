@@ -24,30 +24,41 @@ object RtLib_5_Build {
     case class BuiltRio(run: () => Built) extends Built
     case class BuiltLambda(f: Built => Built) extends Built
 
+    sealed trait Brick
+    case object BrickInput extends Brick
+    case class BrickPrint(s: Str) extends Brick
 
-
-
+    type BRICK_RUNNER = Brick => BuiltRio
 
     def build[A](
       typed: Linted,
+      brickRunner: BRICK_RUNNER,
     ): Built =
       Internal.buildWithArgStack(
-        typed = typed,
+        typed,
         lambArgStack = Map.empty,
+        brickRunner,
       )
 
-    def fullBuild(code: String) =
-      build(full_lint(code))
+    def fullBuild(
+      code: String,
+      brickRunner: BRICK_RUNNER,
+    ) =
+      build(full_lint(code), brickRunner)
   }
 
   private object Internal {
     object Built {
-      val input =
-        BuiltRio(() => BuiltStr(scala.io.StdIn.readLine())) // todo - move out to `run` for ability to mock
+      def input(
+        brickRunner: BRICK_RUNNER,
+      ) =
+        brickRunner(BrickInput)
 
-      val print =
+      def print(
+        brickRunner: BRICK_RUNNER,
+      ) =
         BuiltLambda {
-          case BuiltStr(s) => BuiltRio(() => BuiltUnit(println(s)))
+          case BuiltStr(s) => brickRunner(BrickPrint(s))
           case _ => rtFail("runtime")
         }
 
@@ -138,17 +149,17 @@ object RtLib_5_Build {
 
     def to_latin_idf: String => String = ???
 
-    // todo - shorten
     def build_str_py_idf(
       s: String,
       typ: Typ,
       lambArgStack: Map[String, Built],
+      brickRunner: BRICK_RUNNER,
     ): Built =
       lambArgStack.getOrElse(
         s, //todo contemplate to_latin_idf(s)
         match_builtin_idf(
-          case_input = () => Built.input,
-          case_print = () => Built.print,
+          case_input = () => Built.input(brickRunner),
+          case_print = () => Built.print(brickRunner),
           case_flatmap = () => Built.flatmap,
           case_pure = () => ???,
           case_plus = () => ???,
@@ -165,26 +176,27 @@ object RtLib_5_Build {
       t_idf_x: LintedIdf,
       typed_res: Linted,
       lambArgStack: Map[String, Built],
+      brickRunner: BRICK_RUNNER,
     ): BuiltLambda =
       t_idf_x.typ match {
         case T_Unit => BuiltLambda {
           case BuiltUnit(u) =>
-            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltUnit(u)))
+            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltUnit(u)), brickRunner)
           case _ => rtFail("runtime")
         }
         case T_Str => BuiltLambda {
           case BuiltStr(s) =>
-            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltStr(s)))
+            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltStr(s)), brickRunner)
           case _ => rtFail("runtime")
         }
         case T_Bint => BuiltLambda {
           case BuiltBint(i) =>
-            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBint(i)))
+            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBint(i)), brickRunner)
           case _ => rtFail("runtime")
         }
         case T_Bool => BuiltLambda {
           case BuiltBool(b) =>
-            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBool(b)))
+            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBool(b)), brickRunner)
           case _ => rtFail("runtime")
         }
 
@@ -197,9 +209,10 @@ object RtLib_5_Build {
       typed_f: Linted,
       typed_x: Linted,
       lambArgStack: Map[String, Built],
+      brickRunner: BRICK_RUNNER,
     ): Built = {
-      val shown_f = buildWithArgStack(typed_f, lambArgStack)
-      val shown_x = buildWithArgStack(typed_x, lambArgStack)
+      val shown_f = buildWithArgStack(typed_f, lambArgStack, brickRunner)
+      val shown_x = buildWithArgStack(typed_x, lambArgStack, brickRunner)
 
       shown_f match {
         case BuiltLambda(f) => f(shown_x)
@@ -210,21 +223,20 @@ object RtLib_5_Build {
     def buildWithArgStack[A](
       typed: Linted,
       lambArgStack: Map[String, Built],
+      brickRunner: BRICK_RUNNER,
     ): Built =
       typed match {
-        case LintedLit(s, typ) => buildScLit(s, typ)
-        case LintedIdf(s, typ) => build_str_py_idf(
-          s,
-          typ,
-          lambArgStack,
-        )
-        case LintedCall1(linted_f, linted_x, typ) => buildScalaCall1(linted_f, linted_x, lambArgStack)
+        case LintedLit(s, typ) =>
+          buildScLit(s, typ)
+
+        case LintedIdf(s, typ) =>
+          build_str_py_idf(s, typ, lambArgStack, brickRunner)
+
+        case LintedCall1(linted_f, linted_x, typ) =>
+          buildScalaCall1(linted_f, linted_x, lambArgStack, brickRunner)
+
         case LintedLambda1(linted_idf_x, linted_res, typ) =>
-          buildScalaLambda1(
-            linted_idf_x,
-            linted_res,
-            lambArgStack,
-          )
+          buildScalaLambda1(linted_idf_x, linted_res, lambArgStack, brickRunner)
       }
   }
 }
