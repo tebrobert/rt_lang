@@ -1,6 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
+import org.rt.RunMock.InputMock
 import org.rt.lang.RtLib_0_2_Builtins.{T_RIO, T_Str}
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.*
@@ -20,4 +21,9 @@ object TestCase1_2 extends RtTestCase {
 
   val linted_3 =
     LintedIdf("input", T_RIO(T_Str))
+
+  override val mb_mock_4 =
+    Some(
+      List(InputMock(""))
+    )
 }
