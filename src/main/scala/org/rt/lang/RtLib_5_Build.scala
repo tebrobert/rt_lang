@@ -6,7 +6,7 @@ import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, LintedLit, full_lint}
 import org.rt.lang.RtLib_5_Build.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_try, wip}
-import zio.UIO
+import zio.{UIO, ZIO}
 
 object RtLib_5_Build {
   object Public {
@@ -87,7 +87,8 @@ object RtLib_5_Build {
           )
         )
 
-      //            case_pure=lambda: f"(lambda {_a}: {BrickPure(_a)})",
+      val pure = BuiltLambda(a => BuiltRio(ZIO.succeed(a)))
+
       //            case_plus=lambda: (
       //                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
       //                if typ == T_Func(T_Str, T_Func(T_Str, T_Str)) else
@@ -170,7 +171,7 @@ object RtLib_5_Build {
           case_input = () => Built.input(brickRunner),
           case_print = () => Built.print(brickRunner),
           case_flatmap = () => Built.flatmap,
-          case_pure = () => ???,
+          case_pure = () => Built.pure,
           case_plus = () => ???,
           case_minus = () => ???,
           case_multiply = () => ???,
