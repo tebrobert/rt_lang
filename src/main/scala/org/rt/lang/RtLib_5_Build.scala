@@ -28,16 +28,16 @@ object RtLib_5_Build {
 
 
 
-    def buildScala[A](
+    def build[A](
       typed: Linted,
     ): Built =
-      Internal.buildScalaWithStacks(
+      Internal.buildWithArgStack(
         typed = typed,
         lambArgStack = Map.empty,
       )
 
-    def fullBuildScala(code: String) =
-      buildScala(full_lint(code))
+    def fullBuild(code: String) =
+      build(full_lint(code))
   }
 
   private object Internal {
@@ -169,22 +169,22 @@ object RtLib_5_Build {
       t_idf_x.typ match {
         case T_Unit => BuiltLambda {
           case BuiltUnit(u) =>
-            buildScalaWithStacks(typed_res, lambArgStack.updated(t_idf_x.s, BuiltUnit(u)))
+            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltUnit(u)))
           case _ => rtFail("runtime")
         }
         case T_Str => BuiltLambda {
           case BuiltStr(s) =>
-            buildScalaWithStacks(typed_res, lambArgStack.updated(t_idf_x.s, BuiltStr(s)))
+            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltStr(s)))
           case _ => rtFail("runtime")
         }
         case T_Bint => BuiltLambda {
           case BuiltBint(i) =>
-            buildScalaWithStacks(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBint(i)))
+            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBint(i)))
           case _ => rtFail("runtime")
         }
         case T_Bool => BuiltLambda {
           case BuiltBool(b) =>
-            buildScalaWithStacks(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBool(b)))
+            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBool(b)))
           case _ => rtFail("runtime")
         }
 
@@ -198,8 +198,8 @@ object RtLib_5_Build {
       typed_x: Linted,
       lambArgStack: Map[String, Built],
     ): Built = {
-      val shown_f = buildScalaWithStacks(typed_f, lambArgStack)
-      val shown_x = buildScalaWithStacks(typed_x, lambArgStack)
+      val shown_f = buildWithArgStack(typed_f, lambArgStack)
+      val shown_x = buildWithArgStack(typed_x, lambArgStack)
 
       shown_f match {
         case BuiltLambda(f) => f(shown_x)
@@ -207,7 +207,7 @@ object RtLib_5_Build {
       }
     }
 
-    def buildScalaWithStacks[A](
+    def buildWithArgStack[A](
       typed: Linted,
       lambArgStack: Map[String, Built],
     ): Built =
