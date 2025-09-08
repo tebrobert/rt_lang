@@ -6,6 +6,7 @@ import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, LintedLit, full_lint}
 import org.rt.lang.RtLib_5_Build.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_try, wip}
+import zio.UIO
 
 object RtLib_5_Build {
   object Public {
@@ -21,7 +22,7 @@ object RtLib_5_Build {
     case class BuiltBint(i: Bint) extends Built
     case class BuiltBool(b: Bool) extends Built
 
-    case class BuiltRio(run: () => Built) extends Built
+    case class BuiltRio(run: UIO[Built]) extends Built
     case class BuiltLambda(f: Built => Built) extends Built
 
     sealed trait Brick
@@ -67,10 +68,12 @@ object RtLib_5_Build {
           BuiltLambda(_fa =>
             (_a_fb, _fa) match {
               case (BuiltLambda(a_fb), BuiltRio(fa)) =>
-                BuiltRio(() =>
-                  a_fb(fa()) match {
-                    case BuiltRio(run) => run()
-                    case _ => rtFail("runtime")
+                BuiltRio(
+                  fa.flatMap { a =>
+                    a_fb(a) match {
+                      case BuiltRio(run) => run
+                      case _ => rtFail("runtime")
+                    }
                   }
                 )
               case _ => rtFail("runtime")

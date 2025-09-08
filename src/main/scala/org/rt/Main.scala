@@ -12,24 +12,24 @@ import java.io.IOException
 object Main extends ZIOAppDefault:
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] = {
-    ZIO.succeed{
-      println("HERE START")
+    for {
+      _ <- ZIO.succeed(println("HERE START"))
 
-      def brickRunner(brick: Brick): BuiltRio =
+      brickRunner = (brick: Brick) =>
           brick match {
-            case BrickInput => BuiltRio(() => BuiltStr(scala.io.StdIn.readLine()))
-            case BrickPrint(s) => BuiltRio(() => BuiltUnit(println(s)))
+            case BrickInput => BuiltRio(ZIO.succeed(BuiltStr(scala.io.StdIn.readLine())))
+            case BrickPrint(s) => BuiltRio(ZIO.succeed(BuiltUnit(println(s))))
           }
 
-      val code =
+      code =
         """s <- input
           |print(s)
           |print(s)
           |""".stripMargin
 
-      val b = fullBuild(code, brickRunner)
-      org.rt.lang.RtLib_6_Run.run(b)
+      b = fullBuild(code, brickRunner)
+      _ <- org.rt.lang.RtLib_6_Run.run(b)
 
-      println("HERE FINISH")
-    }
+      _ <- ZIO.succeed(println("HERE FINISH"))
+    } yield ()
   }
