@@ -4,6 +4,8 @@ import org.rt.RunMock.RunMock
 import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, tokenize}
 import org.rt.lang.RtLib_3_Parse.{Expr, parse}
 import org.rt.lang.RtLib_4_Lint.{Linted, lint}
+import org.rt.lang.RtLib_5_Build.Public.Brick
+import zio.Ref
 import zio.test.*
 
 trait RtTestCase {
@@ -30,4 +32,13 @@ object TestsRunner extends ZIOSpecDefault {
         assertTrue(lint(testCase.expr_2) == testCase.linted_3)
       })
     )
+}
+
+private object BrickRunner {
+  def test(
+    mockedCalls: Ref[List[RunMock]]
+  )(
+    brick: Brick,
+  ) =
+    ???
 }
