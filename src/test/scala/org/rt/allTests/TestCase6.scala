@@ -82,7 +82,7 @@ object TestCase6 extends RtTestCase {
       T_RIO(T_Unit)
     )
 
-  override val mb_mock_4 =
+  val mb_mock_4 =
     List(
       RunMocks(List(InputMock("s"), PrintMock("s"), PrintMock("s"))),
     )

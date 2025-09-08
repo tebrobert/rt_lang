@@ -51,7 +51,7 @@ object TestCase10 extends RtTestCase {
       ),
     )
 
-  override val mb_mock_4 =
+  val mb_mock_4 =
     List(
       RunMocks(List(
         PrintMock("Hey! What is your name?"),
