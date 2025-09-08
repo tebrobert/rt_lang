@@ -4,7 +4,8 @@ import org.rt.RunMock.{InputMock, PrintMock, RunMock}
 import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, tokenize}
 import org.rt.lang.RtLib_3_Parse.{Expr, parse}
 import org.rt.lang.RtLib_4_Lint.{Linted, lint}
-import org.rt.lang.RtLib_5_Build.Public.{Brick, BrickInput, BrickPrint, Built, BuiltStr, BuiltUnit}
+import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
+import org.rt.lang.RtLib_5_Build.Public.{Brick, BrickInput, BrickPrint, Built, BuiltRio, BuiltStr, BuiltUnit}
 import org.rt.utils.RtFail.rtFail
 import zio.{Ref, UIO, ZIO}
 import zio.test.*
@@ -32,6 +33,17 @@ object TestsRunner extends ZIOSpecDefault {
         ++ allTestCases.map(testCase => test("lint " + testCase.name) {
         assertTrue(lint(testCase.expr_2) == testCase.linted_3)
       })
+        ++ allTestCases.flatMap(testCase =>
+        testCase.mb_mock_4.map(mock_4 => test("run " + testCase.name) {
+          for {
+            ref <- Ref.make(mock_4)
+            brickRunner = BrickRunner.test(ref)(_)
+            built = RtLib_5_Build.Public.build(testCase.linted_3, brickRunner)
+            _ <- RtLib_6_Run.run(built)
+            leftMockedCalls <- ref.get
+          } yield assertTrue(leftMockedCalls.isEmpty)
+        })
+      )
     )
 }
 
@@ -40,20 +52,22 @@ private object BrickRunner {
     mockedCallsRef: Ref[List[RunMock]]
   )(
     brick: Brick,
-  ): UIO[Built] =
-    for {
-      mockedCalls <- mockedCallsRef.get
-      (result, restMockedCalls) =
-        (brick, mockedCalls) match {
-          case (BrickInput, InputMock(value) :: restMockedCalls) =>
-            (BuiltStr(value), restMockedCalls)
+  ): BuiltRio =
+    BuiltRio(
+      for {
+        mockedCalls <- mockedCallsRef.get
+        (result, restMockedCalls) =
+          (brick, mockedCalls) match {
+            case (BrickInput, InputMock(value) :: restMockedCalls) =>
+              (BuiltStr(value), restMockedCalls)
 
-          case (BrickPrint(s), PrintMock(value) :: restMockedCalls)
-            if s == value =>
-            (BuiltUnit(()), restMockedCalls)
+            case (BrickPrint(s), PrintMock(value) :: restMockedCalls)
+              if s == value =>
+              (BuiltUnit(()), restMockedCalls)
 
-          case _ => rtFail("runtime")
-        }
-      _ <- mockedCallsRef.set(restMockedCalls)
-    } yield result
+            case _ => rtFail("runtime")
+          }
+        _ <- mockedCallsRef.set(restMockedCalls)
+      } yield result
+    )
 }
