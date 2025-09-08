@@ -1,6 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
+import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
 import org.rt.TestHelpers.*
 import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_2_Tokenize.Public.*
@@ -39,5 +40,21 @@ object TestCase9 extends RtTestCase {
           LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("name", T_Str), T_RIO_Unit),
         ),
       ),
+    )
+
+  override val mb_mock_4 =
+    List(
+      RunMocks(List(
+        PrintMock("Hey! What is your name?"),
+        InputMock("Tester"),
+        PrintMock("Welcome, ..."),
+        PrintMock("Tester"),
+      )),
+      RunMocks(List(
+        PrintMock("Hey! What is your name?"),
+        InputMock(""),
+        PrintMock("Welcome, ..."),
+        PrintMock(""),
+      )),
     )
 }

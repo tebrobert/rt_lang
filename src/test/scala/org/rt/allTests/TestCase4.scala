@@ -1,6 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
+import org.rt.RunMock.{InputMock, RunMocks}
 import org.rt.lang.RtLib_0_2_Builtins.{T_RIO, T_Str, tTo}
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.*
@@ -43,5 +44,11 @@ object TestCase4 extends RtTestCase {
         T_RIO(T_Str),
       ),
       T_RIO(T_Str),
+    )
+
+  override val mb_mock_4 =
+    List(
+      RunMocks(List(InputMock(""))),
+      RunMocks(List(InputMock("s"))),
     )
 }
