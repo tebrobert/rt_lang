@@ -24,6 +24,6 @@ object TestCase1 extends RtTestCase {
 
   override val mb_mock_4 =
     Some(
-      List(InputMock(""))
+      RunMocks(List(InputMock("")))
     )
 }

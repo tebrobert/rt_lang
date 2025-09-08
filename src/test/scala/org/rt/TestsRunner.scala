@@ -1,6 +1,6 @@
 package org.rt
 
-import org.rt.RunMock.{InputMock, PrintMock, RunMock}
+import org.rt.RunMock.{InputMock, PrintMock, RunMock, RunMocks}
 import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, tokenize}
 import org.rt.lang.RtLib_3_Parse.{Expr, parse}
 import org.rt.lang.RtLib_4_Lint.{Linted, lint}
@@ -17,7 +17,7 @@ trait RtTestCase {
   val tokens_1: List[Tok]
   val expr_2: Expr
   val linted_3: Linted
-  val mb_mock_4: Option[List[RunMock]] = None
+  val mb_mock_4: Option[RunMocks] = None
 }
 
 object TestsRunner extends ZIOSpecDefault {
@@ -41,7 +41,7 @@ object TestsRunner extends ZIOSpecDefault {
             built = RtLib_5_Build.Public.build(testCase.linted_3, brickRunner)
             _ <- RtLib_6_Run.run(built)
             leftMockedCalls <- ref.get
-          } yield assertTrue(leftMockedCalls.isEmpty)
+          } yield assertTrue(leftMockedCalls.mockedCalls.isEmpty)
         })
       )
     )
@@ -49,7 +49,7 @@ object TestsRunner extends ZIOSpecDefault {
 
 private object BrickRunner {
   def test(
-    mockedCallsRef: Ref[List[RunMock]]
+    mockedCallsRef: Ref[RunMocks]
   )(
     brick: Brick,
   ): BuiltRio =
@@ -57,7 +57,7 @@ private object BrickRunner {
       for {
         mockedCalls <- mockedCallsRef.get
         (result, restMockedCalls) =
-          (brick, mockedCalls) match {
+          (brick, mockedCalls.mockedCalls) match {
             case (BrickInput, InputMock(value) :: restMockedCalls) =>
               (BuiltStr(value), restMockedCalls)
 
@@ -67,7 +67,7 @@ private object BrickRunner {
 
             case _ => rtFail("runtime")
           }
-        _ <- mockedCallsRef.set(restMockedCalls)
+        _ <- mockedCallsRef.set(RunMocks(restMockedCalls))
       } yield result
     )
 }
