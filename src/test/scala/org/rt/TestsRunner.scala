@@ -21,7 +21,7 @@ trait RtTestCase {
 }
 
 object TestsRunner extends ZIOSpecDefault {
-  //todo - add custom tests after creating Build stage
+  //todo - add custom tests
   def spec: Spec[Any, Nothing] =
     suite("HelloWorldSpec")(
       allTestCases.map(testCase => test("tokenize " + testCase.name) {
