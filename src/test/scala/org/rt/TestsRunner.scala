@@ -34,7 +34,7 @@ object TestsRunner extends ZIOSpecDefault {
         assertTrue(lint(testCase.expr_2) == testCase.linted_3)
       })
         ++ allTestCases.flatMap(testCase =>
-        testCase.mb_mock_4.map(mock_4 => test("run " + testCase.name) {
+        testCase.mb_mock_4.zipWithIndex.map((mock_4, i) => test(s"run ${testCase.name} $i") {
           for {
             ref <- Ref.make(mock_4)
             brickRunner = BrickRunner.test(ref)(_)
