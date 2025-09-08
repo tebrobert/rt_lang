@@ -1,11 +1,12 @@
 package org.rt
 
-import org.rt.RunMock.RunMock
+import org.rt.RunMock.{InputMock, PrintMock, RunMock}
 import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, tokenize}
 import org.rt.lang.RtLib_3_Parse.{Expr, parse}
 import org.rt.lang.RtLib_4_Lint.{Linted, lint}
-import org.rt.lang.RtLib_5_Build.Public.Brick
-import zio.Ref
+import org.rt.lang.RtLib_5_Build.Public.{Brick, BrickInput, BrickPrint, Built, BuiltStr, BuiltUnit}
+import org.rt.utils.RtFail.rtFail
+import zio.{Ref, UIO, ZIO}
 import zio.test.*
 
 trait RtTestCase {
@@ -36,9 +37,23 @@ object TestsRunner extends ZIOSpecDefault {
 
 private object BrickRunner {
   def test(
-    mockedCalls: Ref[List[RunMock]]
+    mockedCallsRef: Ref[List[RunMock]]
   )(
     brick: Brick,
-  ) =
-    ???
+  ): UIO[Built] =
+    for {
+      mockedCalls <- mockedCallsRef.get
+      (result, restMockedCalls) =
+        (brick, mockedCalls) match {
+          case (BrickInput, InputMock(value) :: restMockedCalls) =>
+            (BuiltStr(value), restMockedCalls)
+
+          case (BrickPrint(s), PrintMock(value) :: restMockedCalls)
+            if s == value =>
+            (BuiltUnit(()), restMockedCalls)
+
+          case _ => rtFail("runtime")
+        }
+      _ <- mockedCallsRef.set(restMockedCalls)
+    } yield result
 }
