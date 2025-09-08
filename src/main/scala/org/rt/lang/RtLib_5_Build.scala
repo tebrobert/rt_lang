@@ -203,8 +203,22 @@ object RtLib_5_Build {
           case _ => rtFail("runtime")
         }
 
-        case Typ1(`builtin_RIO`, _) => wip()
+        case Typ1(`builtin_RIO`, _) =>
+          BuiltLambda {
+            case BuiltRio(run) =>
+              buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltRio(run)), brickRunner)
+            case _ => rtFail("runtime")
+          }
+
         case Typ2(`builtin_Func`, _, _) => wip()
+        /*
+        BuiltLambda {
+          case BuiltBool(b) =>
+            buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBool(b)), brickRunner)
+          case _ => rtFail("runtime")
+        }
+         */
+
         case _ => rtFail(s"can't build: unexpected arg type `$t_idf_x`")
       }
 
