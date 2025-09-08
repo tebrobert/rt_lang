@@ -89,6 +89,19 @@ object RtLib_5_Build {
 
       val pure = BuiltLambda(a => BuiltRio(ZIO.succeed(a)))
 
+      def plus(
+        typ: Typ,
+      ) =
+        if (typ == (T_Str tTo (T_Str tTo T_Str)))
+          BuiltLambda(_right => BuiltLambda(_left =>
+            (_left, _right) match {
+              case (BuiltStr(leftS), BuiltStr(rightS)) => BuiltStr(leftS + rightS)
+              case _ => rtFail("runtime")
+            }
+          ))
+        else if (typ == (T_Bint tTo (T_Bint tTo T_Bint)))
+          ???
+        else rtFail("runtime", s"Unexpected typ `$typ` for `+`.")
       //            case_plus=lambda: (
       //                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
       //                if typ == T_Func(T_Str, T_Func(T_Str, T_Str)) else
@@ -172,7 +185,7 @@ object RtLib_5_Build {
           case_print = () => Built.print(brickRunner),
           case_flatmap = () => Built.flatmap,
           case_pure = () => Built.pure,
-          case_plus = () => ???,
+          case_plus = () => Built.plus(typ),
           case_minus = () => ???,
           case_multiply = () => ???,
           case_str = () => ???,
