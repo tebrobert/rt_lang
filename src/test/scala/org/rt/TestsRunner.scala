@@ -50,7 +50,22 @@ object TestsRunner extends ZIOSpecDefault {
   def customTests =
     List(
       test("method_syntax_1") {
-        assertTrue(fullParse("a.b") == fullParse("b(a)"))
+        assertTrue(
+          fullParse("a.b")
+            == fullParse("b(a)")
+        )
+      },
+      test("method_syntax_2") {
+        assertTrue(
+          fullParse("a.+(b).+(c).+(d)")
+            == fullParse("+(d)(+(c)(+(b)(a)))")
+        )
+      },
+      test("method_syntax_3") {
+        assertTrue(
+          fullParse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)")
+            == fullParse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))")
+        )
       },
     )
 }
