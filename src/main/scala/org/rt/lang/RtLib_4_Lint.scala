@@ -4,7 +4,7 @@ import org.rt.Helpers.*
 import org.rt.lang.RtLib_0_0_Lits.builtin_Func
 import org.rt.lang.RtLib_0_1_Types.*
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Str, idf_to_typ, tTo}
-import org.rt.lang.RtLib_3_Parse.{Expr, full_parse, match_expr}
+import org.rt.lang.RtLib_3_Parse.{Expr, fullParse, match_expr}
 import org.rt.utils.RtFail.*
 
 object RtLib_4_Lint {
@@ -329,5 +329,5 @@ object RtLib_4_Lint {
   }
 
   def full_lint(code: String) =
-    lint(full_parse(code))
+    lint(fullParse(code))
 }

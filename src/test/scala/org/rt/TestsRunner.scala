@@ -2,7 +2,7 @@ package org.rt
 
 import org.rt.RunMock.{InputMock, PrintMock, RunMock, RunMocks}
 import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, tokenize}
-import org.rt.lang.RtLib_3_Parse.{Expr, parse}
+import org.rt.lang.RtLib_3_Parse.{Expr, fullParse, parse}
 import org.rt.lang.RtLib_4_Lint.{Linted, lint}
 import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
 import org.rt.lang.RtLib_5_Build.Public.{Brick, BrickInput, BrickPrint, Built, BuiltRio, BuiltStr, BuiltUnit}
@@ -49,9 +49,9 @@ object TestsRunner extends ZIOSpecDefault {
   //todo - add custom tests
   def customTests =
     List(
-      test("...") {
-        assertTrue(true)
-      }
+      test("method_syntax_1") {
+        assertTrue(fullParse("a.b") == fullParse("b(a)"))
+      },
     )
 }
 
