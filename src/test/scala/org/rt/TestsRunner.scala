@@ -21,7 +21,6 @@ trait RtTestCase {
 }
 
 object TestsRunner extends ZIOSpecDefault {
-  //todo - add custom tests
   def spec: Spec[Any, Nothing] =
     suite("HelloWorldSpec")(
       allTestCases.map(testCase => test("tokenize " + testCase.name) {
@@ -44,6 +43,15 @@ object TestsRunner extends ZIOSpecDefault {
           } yield assertTrue(leftMockedCalls.mockedCalls.isEmpty)
         })
       )
+        ++ customTests
+    )
+
+  //todo - add custom tests
+  def customTests =
+    List(
+      test("...") {
+        assertTrue(true)
+      }
     )
 }
 
