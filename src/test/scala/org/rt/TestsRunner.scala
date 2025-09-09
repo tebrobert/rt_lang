@@ -1,6 +1,7 @@
 package org.rt
 
 import org.rt.RunMock.{InputMock, PrintMock, RunMock, RunMocks}
+import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, tokenize}
 import org.rt.lang.RtLib_3_Parse.{Expr, fullParse, parse}
 import org.rt.lang.RtLib_4_Lint.{Linted, lint}
@@ -49,23 +50,21 @@ object TestsRunner extends ZIOSpecDefault {
   //todo - add custom tests
   def customTests =
     List(
+      test("sync_typs"){
+        val (fC, _) = (T_A0 tTo T_Unit).concretizeAsFunc(T_Str)
+        assertTrue(fC == (T_Str tTo T_Unit))
+      },
       test("method_syntax_1") {
-        assertTrue(
-          fullParse("a.b")
-            == fullParse("b(a)")
-        )
+        val parsedAsMethod = fullParse("a.b")
+        assertTrue(parsedAsMethod == fullParse("b(a)"))
       },
       test("method_syntax_2") {
-        assertTrue(
-          fullParse("a.+(b).+(c).+(d)")
-            == fullParse("+(d)(+(c)(+(b)(a)))")
-        )
+        val parsedAsMethod = fullParse("a.+(b).+(c).+(d)")
+        assertTrue(parsedAsMethod == fullParse("+(d)(+(c)(+(b)(a)))"))
       },
       test("method_syntax_3") {
-        assertTrue(
-          fullParse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)")
-            == fullParse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))")
-        )
+        val parsedAsMethod = fullParse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)")
+        assertTrue(parsedAsMethod == fullParse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))"))
       },
     )
 }
