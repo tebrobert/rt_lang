@@ -101,6 +101,7 @@ object TestsRunner extends ZIOSpecDefault {
         val actual = preparse_braced(List(TokParenOpen, TokIdf("+"), TokParenClose), Nil)
         assertTrue(actual == List(ExprBraced(ExprIdf("+"))))
       },
+      // todo - to not bind to Scala's `match`
       //test("test_match_token_1"){
       //  //str_idf = "idf"
       //  //str_otherwise = "otherwise"
@@ -125,9 +126,12 @@ object TestsRunner extends ZIOSpecDefault {
           RunMocks(List(PrintMock("hi"))),
         )
       },
-      /* todo - failing now with `Can't lint`
+      //* todo - failing now with `Can't lint`
       test("flatmap_input 1"){
-        runMocking(
+        val t = fullParse(s"""p = print("b")\np""")
+        println(s"t `$t`")
+
+        fullRunMocking(
           s"""p = print("b")\np""",
           RunMocks(List(PrintMock("b"))),
         )
