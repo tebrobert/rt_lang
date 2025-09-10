@@ -13,7 +13,7 @@ object Main extends ZIOAppDefault:
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] = {
     for {
-      _ <- ZIO.succeed(println("HERE START"))
+      _ <- ZIO.unit
 
       brickRunner = (brick: Brick) =>
           brick match {
@@ -22,14 +22,13 @@ object Main extends ZIOAppDefault:
           }
 
       code =
-        """s <- input
-          |print(s)
-          |print(s)
+        """nameRequest = "What is your name?"
+          |print(nameRequest)
+          |name <- input
+          |print("Dear " + name + ", welcome!")
           |""".stripMargin
 
       b = fullBuild(code, brickRunner)
       _ <- org.rt.lang.RtLib_6_Run.run(b)
-
-      _ <- ZIO.succeed(println("HERE FINISH"))
     } yield ()
   }
