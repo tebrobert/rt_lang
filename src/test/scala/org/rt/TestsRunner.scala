@@ -7,7 +7,8 @@ import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprIdf, fullParse, get_line
 import org.rt.lang.RtLib_4_Lint.{Linted, fullLint, lint}
 import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
 import org.rt.lang.RtLib_5_Build.Public.*
-import org.rt.utils.RtFail.rtFail
+import org.rt.utils.RtFail.{rtFail, rt_try}
+import org.rt.utils.RtList.rt_assert_at_least_1
 import zio.Ref
 import zio.test.*
 
@@ -131,6 +132,15 @@ object TestsRunner extends ZIOSpecDefault {
           s"""p = print("b")\np""",
           RunMocks(List(PrintMock("b"))),
         )
+      },
+      test("operator_naming 1"){
+        fullRunMocking(
+          s"""<<<~~~>>> = "Hello"\nprint(<<<~~~>>>)""",
+          RunMocks(List(PrintMock("Hello"))),
+        )
+      },
+      test("rt_assert_at_least_1"){
+        assertTrue(rt_try(() => rt_assert_at_least_1(List(()))).isRight)
       },
     )
 
