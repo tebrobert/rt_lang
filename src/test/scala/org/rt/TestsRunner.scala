@@ -4,7 +4,7 @@ import org.rt.RunMock.{InputMock, PrintMock, RunMock, RunMocks}
 import org.rt.allTests.TestCase11
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, TokDot, TokEndl, TokEq, TokEqGr, TokIdf, TokLessMinus, TokLitStr, TokParenClose, TokParenOpen, tokenize}
-import org.rt.lang.RtLib_3_Parse.{Expr, fullParse, get_lines_reversed, parse, preparse_braced}
+import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprIdf, fullParse, get_lines_reversed, parse, preparse_braced}
 import org.rt.lang.RtLib_4_Lint.{Linted, lint}
 import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
 import org.rt.lang.RtLib_5_Build.Public.{Brick, BrickInput, BrickPrint, Built, BuiltRio, BuiltStr, BuiltUnit}
@@ -103,6 +103,10 @@ object TestsRunner extends ZIOSpecDefault {
       },
       test("preparse_braced 1.3"){
         assertTrue(preparse_braced(List(TokDot, TokEqGr), Nil) == List(TokDot, TokEqGr))
+      },
+      test("preparse_braced 2"){
+        val actual = preparse_braced(List(TokParenOpen, TokIdf("+"), TokParenClose), Nil)
+        assertTrue(actual == List(ExprBraced(ExprIdf("+"))))
       },
     )
 }
