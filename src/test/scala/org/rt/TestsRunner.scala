@@ -126,17 +126,12 @@ object TestsRunner extends ZIOSpecDefault {
           RunMocks(List(PrintMock("hi"))),
         )
       },
-      //* todo - failing now with `Can't lint`
       test("flatmap_input 1"){
-        val t = fullLint(s"""p = print("b")\np""")
-        println(s"t `$t`")
-
         fullRunMocking(
           s"""p = print("b")\np""",
           RunMocks(List(PrintMock("b"))),
         )
       },
-      // */
     )
 
   def fullRunMocking(
