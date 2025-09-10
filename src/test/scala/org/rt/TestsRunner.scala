@@ -156,6 +156,22 @@ object TestsRunner extends ZIOSpecDefault {
           ),
         ))
       },
+      test("parse_with_preparse_4 - 1"){
+        val tokens =
+          List(
+            TokIdf("f"),
+            TokParenOpen, TokLitStr("x"), TokParenClose,
+            TokParenOpen, TokLitStr("y"), TokParenClose,
+          )
+
+        assertTrue(rt_try(() => parse(tokens)).isRight)
+      },
+      test("parse_with_preparse_4 - 2"){
+        assertTrue(rt_try(() => fullParse("""f("y")""")).isRight)
+      },
+      test("parse_with_preparse_4 - 3"){
+        assertTrue(rt_try(() => fullParse("""print(+("y")("x"))""")).isRight)
+      },
     )
 
   def fullRunMocking(
