@@ -181,6 +181,12 @@ object TestsRunner extends ZIOSpecDefault {
       test("parse_with_preparse_4 - 3") {
         assertTrue(rt_try(() => fullParse("""print(+("y")("x"))""")).isRight)
       },
+      test("assignment_lambdas 1") {
+        fullRunMocking(
+          s"""f1 <- pure(+("1"))\nprint("0".f1)""",
+          RunMocks(List(PrintMock("01"))),
+        )
+      },
     )
 
   def fullRunMocking(
