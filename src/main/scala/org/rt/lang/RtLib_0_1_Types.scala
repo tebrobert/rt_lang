@@ -76,9 +76,10 @@ object RtLib_0_1_Types {
       )
 
     def clarifyUnk(
-      unk_from: Unk0,
-      typ_to: Typ,
-    ): Typ =
+      clarification: (Unk0, Typ),
+    ): Typ = {
+      val (unk_from, typ_to) = clarification
+
       typ.rtMatch(
         caseUnk0 = unk0 => if (unk0 == unk_from) typ_to else typ,
         caseTyp0 = identity,
@@ -87,6 +88,7 @@ object RtLib_0_1_Types {
           .mapT1(_.clarifyUnk(unk_from, typ_to))
           .mapT2(_.clarifyUnk(unk_from, typ_to)),
       )
+    }
 
     def concretizeAsFunc( // may have sync conflicts
       typ_x: Typ,

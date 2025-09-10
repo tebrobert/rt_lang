@@ -229,11 +229,11 @@ object RtLib_4_Lint {
     linted.rtMatch(
       case_lit = (_, _) => linted,
       case_idf = (s, t) =>
-        LintedIdf(s, t.clarifyUnk.tupled(clarification)),
+        LintedIdf(s, t.clarifyUnk(clarification)),
       case_call_1 = (linF, linX, typ) =>
-        LintedCall1(clarify(linF, clarification), clarify(linX, clarification), typ.clarifyUnk.tupled(clarification)),
+        LintedCall1(clarify(linF, clarification), clarify(linX, clarification), typ.clarifyUnk(clarification)),
       case_lambda_1 = (linArg, linRes, typ) =>
-        LintedLambda1(LintedIdf(linArg.s, linArg.typ.clarifyUnk.tupled(clarification)), clarify(linRes, clarification), typ.clarifyUnk.tupled(clarification)),
+        LintedLambda1(LintedIdf(linArg.s, linArg.typ.clarifyUnk(clarification)), clarify(linRes, clarification), typ.clarifyUnk(clarification)),
     )
 
   def continue_linting_call_1(
