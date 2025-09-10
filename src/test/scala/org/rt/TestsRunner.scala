@@ -7,7 +7,7 @@ import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, TokDot, TokEndl, TokEq, TokEqGr
 import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprIdf, fullParse, get_lines_reversed, parse, preparse_braced}
 import org.rt.lang.RtLib_4_Lint.{Linted, lint}
 import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
-import org.rt.lang.RtLib_5_Build.Public.{Brick, BrickInput, BrickPrint, Built, BuiltRio, BuiltStr, BuiltUnit}
+import org.rt.lang.RtLib_5_Build.Public.{Brick, BrickInput, BrickPrint, Built, BuiltRio, BuiltStr, BuiltUnit, fullBuild}
 import org.rt.utils.RtFail.rtFail
 import zio.{Ref, UIO, ZIO}
 import zio.test.*
@@ -38,7 +38,7 @@ object TestsRunner extends ZIOSpecDefault {
         testCase.mb_mock_4.zipWithIndex.map((mock_4, i) => test(s"run ${testCase.name} $i") {
           for {
             ref <- Ref.make(mock_4)
-            brickRunner = BrickRunner.test(ref)(_)
+            brickRunner = BrickRunner.mocking(ref)(_)
             built = RtLib_5_Build.Public.build(testCase.linted_3, brickRunner)
             _ <- RtLib_6_Run.run(built)
             leftMockedCalls <- ref.get
@@ -108,11 +108,38 @@ object TestsRunner extends ZIOSpecDefault {
         val actual = preparse_braced(List(TokParenOpen, TokIdf("+"), TokParenClose), Nil)
         assertTrue(actual == List(ExprBraced(ExprIdf("+"))))
       },
+      //test("test_match_token_1"){
+      //  //str_idf = "idf"
+      //  //str_otherwise = "otherwise"
+      //  //token_s = match_token(
+      //  //  case_idf=lambda s: s,
+      //  //  otherwise=lambda: str_otherwise,
+      //  //)(TokenIdf(str_idf))
+      //  //rt_assert_equal(token_s, str_idf)
+      //},
+      //test("test_match_token_2"){
+      //  //str_idf = "idf"
+      //  //str_otherwise = "otherwise"
+      //  //token_s = match_token(
+      //  //  case_idf=lambda s: s,
+      //  //  otherwise=lambda: str_otherwise,
+      //  //)(TokenLitStr(str_idf))
+      //  //rt_assert_equal(token_s, str_otherwise)
+      //},
+      test("assignment"){
+        for {
+          ref <- Ref.make(RunMocks(List(PrintMock("hi"))))
+          brickRunner = BrickRunner.mocking(ref)(_)
+          built = fullBuild(s"""msg = "hi"\nprint(msg)""", brickRunner)
+          _ <- RtLib_6_Run.run(built)
+          leftMockedCalls <- ref.get
+        } yield assertTrue(leftMockedCalls.mockedCalls.isEmpty)
+      },
     )
 }
 
 private object BrickRunner {
-  def test(
+  def mocking(
     mockedCallsRef: Ref[RunMocks]
   )(
     brick: Brick,
