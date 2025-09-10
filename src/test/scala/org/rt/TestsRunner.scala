@@ -214,9 +214,27 @@ object TestsRunner extends ZIOSpecDefault {
           RunMocks(List(PrintMock("The number is 3"))),
         )
       },
+      test("integers_unary_minus") {
+        fullRunMocking(
+          s"""print(str(-2))""",
+          RunMocks(List(PrintMock("-2"))),
+        )
+      },
       test("lint_set") {
         assertTrue(rt_try(() => lint_set(ExprIdf("num"))).isRight)
       },
+      //test("test_match_list_10") { // todo - to not bind to Scala's `match`
+      //  //match_list(
+      //  //    case_at_least_1=lambda head, _tail: head,
+      //  //    case_empty=lambda: 0,
+      //  //)([])
+      //},
+      //test("test_match_list_2o") { // todo - to not bind to Scala's `match`
+      //  //match_list(
+      //  //  case_at_least_2=lambda head0, head1, tail1: head0 + head1,
+      //  //  otherwise=lambda: 0,
+      //  //)([])
+      //},
     )
 
   def fullRunMocking(

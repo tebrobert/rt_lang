@@ -108,13 +108,22 @@ object RtLib_5_Build {
           ))
         else rtFail("runtime", s"Unexpected typ `$typ` for `+`.")
 
-      //            case_minus=lambda: (
-      //                f"(lambda {_right}: lambda {_left}: {_left} - {_right})"
-      //                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
-      //                f"(lambda {_num}: - {_num})"
-      //                if typ == T_Func(T_Bint, T_Bint) else
-      //                fail(f"Unexpected typ `{typ}` for `{s}`.")
-      //            ),
+      def minus(
+        typ: Typ,
+      ) =
+        if (typ == (T_Bint tTo (T_Bint tTo T_Bint)))
+          BuiltLambda(_right => BuiltLambda(_left =>
+            (_left, _right) match {
+              case (BuiltBint(leftI), BuiltBint(rightI)) => BuiltBint(leftI - rightI)
+              case _ => rtFail("runtime")
+            }
+          ))
+        else if (typ == (T_Bint tTo T_Bint))
+          BuiltLambda{
+            case BuiltBint(i) => BuiltBint(-i)
+            case _ => rtFail("runtime")
+          }
+        else rtFail("runtime", s"Unexpected typ `$typ` for `-`.")
 
       //            case_multiply=lambda: (
       //                f"(lambda {_right}: lambda {_left}: {_left} * {_right})"
@@ -195,7 +204,7 @@ object RtLib_5_Build {
           case_flatmap = () => Built.flatmap,
           case_pure = () => Built.pure,
           case_plus = () => Built.plus(typ),
-          case_minus = () => ???,
+          case_minus = () => Built.minus(typ),
           case_multiply = () => ???,
           case_str = () => Built.str(typ),
           case_true = () => ???,
