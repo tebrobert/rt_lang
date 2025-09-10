@@ -100,15 +100,13 @@ object RtLib_5_Build {
             }
           ))
         else if (typ == (T_Bint tTo (T_Bint tTo T_Bint)))
-          ???
+          BuiltLambda(_right => BuiltLambda(_left =>
+            (_left, _right) match {
+              case (BuiltBint(leftI), BuiltBint(rightI)) => BuiltBint(leftI + rightI)
+              case _ => rtFail("runtime")
+            }
+          ))
         else rtFail("runtime", s"Unexpected typ `$typ` for `+`.")
-      //            case_plus=lambda: (
-      //                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
-      //                if typ == T_Func(T_Str, T_Func(T_Str, T_Str)) else
-      //                f"(lambda {_right}: lambda {_left}: {_left} + {_right})"
-      //                if typ == T_Func(T_Bint, T_Func(T_Bint, T_Bint)) else
-      //                fail(f"Unexpected typ `{typ}` for `{s}`.")
-      //            ),
 
       //            case_minus=lambda: (
       //                f"(lambda {_right}: lambda {_left}: {_left} - {_right})"

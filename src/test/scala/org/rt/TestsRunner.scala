@@ -4,7 +4,7 @@ import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprCall1, ExprIdf, ExprLitBint, ExprLitStr, fullParse, get_lines_reversed, parse, preparse_braced, preparse_call}
-import org.rt.lang.RtLib_4_Lint.{Linted, fullLint, lint}
+import org.rt.lang.RtLib_4_Lint.{Linted, fullLint, lint, lint_set}
 import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
 import org.rt.lang.RtLib_5_Build.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_try}
@@ -207,6 +207,15 @@ object TestsRunner extends ZIOSpecDefault {
           s"""num = 1\nprint("The number is " + str(num))""",
           RunMocks(List(PrintMock("The number is 1"))),
         )
+      },
+      test("integers_plus") {
+        fullRunMocking(
+          s"""num = 1 + 2\nprint("The number is " + str(num))""",
+          RunMocks(List(PrintMock("The number is 3"))),
+        )
+      },
+      test("lint_set") {
+        assertTrue(rt_try(() => lint_set(ExprIdf("num"))).isRight)
       },
     )
 
