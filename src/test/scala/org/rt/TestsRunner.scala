@@ -50,9 +50,13 @@ object TestsRunner extends ZIOSpecDefault {
   //todo - add custom tests
   def customTests =
     List(
-      test("sync_typs"){
+      test("sync_typs 1"){
         val (fC, _) = (T_A0 tTo T_Unit).concretizeAsFunc(T_Str)
         assertTrue(fC == (T_Str tTo T_Unit))
+      },
+      test("sync_typs 2"){
+        val (fC, _) = T_A0.concretizeAsFunc(T_Str)
+        assertTrue(fC == (T_Str tTo T_A0))
       },
       test("method_syntax_1") {
         val parsedAsMethod = fullParse("a.b")
