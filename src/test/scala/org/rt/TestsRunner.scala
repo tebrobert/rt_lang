@@ -4,7 +4,7 @@ import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprIdf, fullParse, get_lines_reversed, parse, preparse_braced}
-import org.rt.lang.RtLib_4_Lint.{Linted, full_lint, lint}
+import org.rt.lang.RtLib_4_Lint.{Linted, fullLint, lint}
 import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
 import org.rt.lang.RtLib_5_Build.Public.*
 import org.rt.utils.RtFail.rtFail
@@ -128,7 +128,7 @@ object TestsRunner extends ZIOSpecDefault {
       },
       //* todo - failing now with `Can't lint`
       test("flatmap_input 1"){
-        val t = fullParse(s"""p = print("b")\np""")
+        val t = fullLint(s"""p = print("b")\np""")
         println(s"t `$t`")
 
         fullRunMocking(
@@ -143,7 +143,7 @@ object TestsRunner extends ZIOSpecDefault {
     code: String,
     mockedCalls: RunMocks,
   ) = {
-    val linted = full_lint(code)
+    val linted = fullLint(code)
     buildRunMocking(linted, mockedCalls)
   }
 

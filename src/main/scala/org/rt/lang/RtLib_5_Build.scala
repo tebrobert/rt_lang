@@ -3,7 +3,7 @@ package org.rt.lang
 import org.rt.lang.RtLib_0_0_Lits.*
 import org.rt.lang.RtLib_0_1_Types.*
 import org.rt.lang.RtLib_0_2_Builtins.*
-import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, LintedLit, full_lint}
+import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, LintedLit, fullLint}
 import org.rt.lang.RtLib_5_Build.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_try, wip}
 import zio.{UIO, ZIO}
@@ -51,7 +51,7 @@ object RtLib_5_Build {
       code: String,
       brickRunner: BRICK_RUNNER,
     ) =
-      build(full_lint(code), brickRunner)
+      build(fullLint(code), brickRunner)
   }
 
   private object Internal {

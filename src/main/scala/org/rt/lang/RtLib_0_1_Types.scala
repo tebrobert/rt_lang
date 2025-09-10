@@ -128,7 +128,7 @@ object RtLib_0_1_Types {
       caseUnk0 = unk0 =>
         if (unk0.i == tSubArg.i)
           (tF, accClarifications)
-        else wip(),
+        else wip("concretizeAsFuncUnk0"),
       otherwise = () => {
         tF.clarifyUnk(tSubArg, tSubX)
           .concretizeAsFunc(tX, accClarifications.appended(tSubArg -> tSubX))
@@ -167,7 +167,7 @@ object RtLib_0_1_Types {
     tSubArg: Typ1,
   ): (Typ, List[Clarification]) =
     tSubX.rtMatch(
-      caseUnk0 = _ => wip(),
+      caseUnk0 = _ => wip("concretizeAsFuncTyp1"), //todo - getting here on `p=print("b")\np`
       caseTyp0 = _ => rtFail(),
       caseTyp1 = typ1 =>
         if (typ1.s == tSubArg.s)
@@ -185,7 +185,7 @@ object RtLib_0_1_Types {
     tSubArg: Typ2,
   ): (Typ, List[Clarification]) =
     tSubX.rtMatch(
-      caseUnk0 = _ => wip(),
+      caseUnk0 = _ => wip("concretizeAsFuncTyp2"),
       caseTyp0 = _ => rtFail(s"Can't match the types $tSubArg vs $tSubX"),
       caseTyp1 = _ => rtFail(s"Can't match the types $tSubArg vs $tSubX"),
       caseTyp2 = typ2_sub_x => {

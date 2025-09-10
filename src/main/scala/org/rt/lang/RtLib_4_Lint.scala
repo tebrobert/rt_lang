@@ -240,19 +240,27 @@ object RtLib_4_Lint {
     linted_f: Linted,
     linted_x: Linted,
   ): LintedCall1 = {
+    println(s"continue_linting_call_1(\n`$linted_f`,\n`$linted_x`\n)")
+    println("here 0")
     val (new_typ_f, clarifications) =
       linted_f.typ.concretizeAsFunc(linted_x.typ)
+    println("here 1")
 
     val new_linted_f2 =
       clarifications.foldLeft(linted_f){ (l, c) =>
         clarify(l, c)
       }
+    println("here 2")
 
     val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
+    println("here 3")
     val new_linted_f = linted_f.withTyp(new_typ2_f)
+    println("here 4")
     val new_linted_x = linted_x.withTyp(new_typ2_f.t1)
+    println("here 5")
     LintedCall1(new_linted_f2, new_linted_x, new_typ2_f.t2)
   }
+    .tapPrint(res => s"continue_linting_call_1(\n`$linted_f`,\n`$linted_x`\n)=`$res`")
 
   def lint_set_call_1(
     expr_f: Expr,
@@ -266,6 +274,7 @@ object RtLib_4_Lint {
           ) || linted_f.typ.isInstanceOf[Unk0]
       )
       linted_x <- lint_set(expr_x)
+      //_ = println(s"linted_f=`$linted_f`, linted_x=`$linted_x`")
 
       mb_current_linted_call1 = rt_try(() =>
         if (linted_f.typ.isInstanceOf[Unk0])
@@ -274,9 +283,12 @@ object RtLib_4_Lint {
           continue_linting_call_1_with_unknown_x(linted_f, linted_x)
         else continue_linting_call_1(linted_f, linted_x)
       )
+      _ = println(s"mb_current_linted_call1=`$mb_current_linted_call1`")
     } yield mb_current_linted_call1)
       .collect { case Right(linted) => linted }
+      .tapPrint(res => s"lint_set_call_1(\n`$expr_f`,\n`$expr_x`\n)=`$res`")
 
+  //todo - shorten
   def lint_set_lambda_1(
     expr_arg: Expr,
     expr_res: Expr,
@@ -303,6 +315,7 @@ object RtLib_4_Lint {
       }
     } yield mb_res)
       .collect { case Right(linted) => linted }
+      .tapPrint(res => s"lint_set_lambda_1(\n`$expr_arg`,\n`$expr_res`\n)=`$res`")
 
   def lint_set_idf(s: String) =
     idf_to_typ.getOrElse(s, Set(T_A0))
@@ -317,6 +330,7 @@ object RtLib_4_Lint {
       case_lambda_1 = lint_set_lambda_1,
       case_braced = lint_set,
     )(expr).toSet
+    //.tapPrint(res => s"lint_set(\n`$expr`\n)=`$res`")
 
   def lint(
     expr: Expr,
@@ -328,6 +342,6 @@ object RtLib_4_Lint {
     }
   }
 
-  def full_lint(code: String) =
+  def fullLint(code: String) =
     lint(fullParse(code))
 }
