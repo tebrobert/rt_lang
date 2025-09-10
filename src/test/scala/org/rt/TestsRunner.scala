@@ -127,22 +127,31 @@ object TestsRunner extends ZIOSpecDefault {
           RunMocks(List(PrintMock("hi"))),
         )
       },
-      test("flatmap_input 1"){
+      test("flatmap_input 1") {
         fullRunMocking(
           s"""p = print("b")\np""",
           RunMocks(List(PrintMock("b"))),
         )
       },
-      test("operator_naming 1"){
+      test("operator_naming 1") {
         fullRunMocking(
           s"""<<<~~~>>> = "Hello"\nprint(<<<~~~>>>)""",
           RunMocks(List(PrintMock("Hello"))),
         )
       },
-      test("rt_assert_at_least_1"){
+      test("operator_naming 2") {
+        fullRunMocking("" +
+          s"""|||+++||| = "Hi!"\n""" +
+          s"""print(|||+++|||)\n""" +
+          s"""~~~ = name => "Welcome, ".+(name).+("!")\n""" +
+          s"""print("Joe".~~~)""",
+          RunMocks(List(PrintMock("Hi!"), PrintMock("Welcome, Joe!"))),
+        )
+      },
+      test("rt_assert_at_least_1") {
         assertTrue(rt_try(() => rt_assert_at_least_1(List(()))).isRight)
       },
-      test("new_preparse_call"){
+      test("new_preparse_call") {
         val exprs = List(
           ExprIdf("f"),
           ExprBraced(ExprLitStr("x")),
@@ -151,12 +160,12 @@ object TestsRunner extends ZIOSpecDefault {
         val res = preparse_call(exprs, Nil) // todo - remove Nils after resignaturing
         assertTrue(res == List(
           ExprCall1(
-            ExprCall1(ExprIdf("f"),ExprBraced(ExprLitStr("x"))),
+            ExprCall1(ExprIdf("f"), ExprBraced(ExprLitStr("x"))),
             ExprBraced(ExprLitStr("y"))
           ),
         ))
       },
-      test("parse_with_preparse_4 - 1"){
+      test("parse_with_preparse_4 - 1") {
         val tokens =
           List(
             TokIdf("f"),
@@ -166,10 +175,10 @@ object TestsRunner extends ZIOSpecDefault {
 
         assertTrue(rt_try(() => parse(tokens)).isRight)
       },
-      test("parse_with_preparse_4 - 2"){
+      test("parse_with_preparse_4 - 2") {
         assertTrue(rt_try(() => fullParse("""f("y")""")).isRight)
       },
-      test("parse_with_preparse_4 - 3"){
+      test("parse_with_preparse_4 - 3") {
         assertTrue(rt_try(() => fullParse("""print(+("y")("x"))""")).isRight)
       },
     )
