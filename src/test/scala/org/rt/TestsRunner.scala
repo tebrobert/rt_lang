@@ -3,8 +3,8 @@ package org.rt
 import org.rt.RunMock.{InputMock, PrintMock, RunMock, RunMocks}
 import org.rt.allTests.TestCase11
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Str, T_Unit, tTo}
-import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, TokEndl, TokEq, TokIdf, TokLessMinus, TokLitStr, TokParenClose, TokParenOpen, tokenize}
-import org.rt.lang.RtLib_3_Parse.{Expr, fullParse, get_lines_reversed, parse}
+import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, TokDot, TokEndl, TokEq, TokEqGr, TokIdf, TokLessMinus, TokLitStr, TokParenClose, TokParenOpen, tokenize}
+import org.rt.lang.RtLib_3_Parse.{Expr, fullParse, get_lines_reversed, parse, preparse_braced}
 import org.rt.lang.RtLib_4_Lint.{Linted, lint}
 import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
 import org.rt.lang.RtLib_5_Build.Public.{Brick, BrickInput, BrickPrint, Built, BuiltRio, BuiltStr, BuiltUnit}
@@ -94,6 +94,15 @@ object TestsRunner extends ZIOSpecDefault {
       test("method_syntax_3") {
         val parsedAsMethod = fullParse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)")
         assertTrue(parsedAsMethod == fullParse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))"))
+      },
+      test("preparse_braced 1.1"){
+        assertTrue(preparse_braced(List.empty, Nil) == List.empty)
+      },
+      test("preparse_braced 1.2"){
+        assertTrue(preparse_braced(List(TokDot), Nil) == List(TokDot))
+      },
+      test("preparse_braced 1.3"){
+        assertTrue(preparse_braced(List(TokDot, TokEqGr), Nil) == List(TokDot, TokEqGr))
       },
     )
 }
