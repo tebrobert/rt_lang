@@ -3,7 +3,7 @@ package org.rt
 import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_2_Tokenize.Public.*
-import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprCall1, ExprIdf, ExprLitStr, fullParse, get_lines_reversed, parse, preparse_braced, preparse_call}
+import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprCall1, ExprIdf, ExprLitBint, ExprLitStr, fullParse, get_lines_reversed, parse, preparse_braced, preparse_call}
 import org.rt.lang.RtLib_4_Lint.{Linted, fullLint, lint}
 import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
 import org.rt.lang.RtLib_5_Build.Public.*
@@ -197,6 +197,15 @@ object TestsRunner extends ZIOSpecDefault {
         fullRunMocking(
           s"""f1 = +("1")\nprint("0".f1)""",
           RunMocks(List(PrintMock("01"))),
+        )
+      },
+      test("integers") {
+        assertTrue(fullParse("\n1\n") == ExprLitBint("1"))
+      },
+      test("integers_printing") {
+        fullRunMocking(
+          s"""num = 1\nprint("The number is " + str(num))""",
+          RunMocks(List(PrintMock("The number is 1"))),
         )
       },
     )

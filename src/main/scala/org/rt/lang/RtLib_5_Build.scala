@@ -124,15 +124,26 @@ object RtLib_5_Build {
       //                fail(f"Unexpected typ `{typ}` for `{s}`.")
       //            ),
 
-      //            case_str=lambda: (
-      //                f"(str)"
-      //                if typ == T_Func(T_Bint, T_Str) else
-      //                f"(str)"
-      //                if typ == T_Func(T_Str, T_Str) else
-      //                f"(lambda {_a}: str({_a}).lower())"
-      //                if typ == T_Func(T_Bool, T_Str) else
-      //                fail(f"Unexpected typ `{typ}` for `{s}`.")
-      //            ),
+      def str(
+        typ: Typ,
+      ) =
+        if (typ == (T_Bint tTo T_Str))
+          BuiltLambda {
+            case BuiltBint(i) => BuiltStr(i.toString)
+            case _ => rtFail("runtime")
+          }
+        else if (typ == (T_Str tTo T_Str))
+          BuiltLambda {
+            case BuiltStr(s) => BuiltStr(s)
+            case _ => rtFail("runtime")
+          }
+        else if (typ == (T_Bool tTo T_Str))
+          BuiltLambda {
+            case BuiltBool(b) => BuiltStr(b.toString)
+            case _ => rtFail("runtime")
+          }
+        else rtFail("runtime", s"Unexpected typ `$typ` for `str`.")
+
 
       //            case_true=lambda: "(True)",
 
@@ -188,7 +199,7 @@ object RtLib_5_Build {
           case_plus = () => Built.plus(typ),
           case_minus = () => ???,
           case_multiply = () => ???,
-          case_str = () => ???,
+          case_str = () => Built.str(typ),
           case_true = () => ???,
           case_false = () => ???,
           case_eq_eq = () => ???,
