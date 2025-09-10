@@ -175,10 +175,10 @@ object RtLib_3_Parse {
             case_empty=Some(() => acc),
         )(tokens_and_exprs)
 
-    //@tailrec
-    private def preparse_call(
+    //@tailrec todo
+    def preparse_call(
         tokens_and_exprs: List[Tok | Expr],
-        acc: List[Tok | Expr],
+        acc: List[Tok | Expr], // todo = List.empty
     ): List[Tok | Expr] =
         match_list[Tok | Expr, List[Tok | Expr]](
             case_at_least_3=Some((head0, head1, head2, tail2) =>

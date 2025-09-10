@@ -3,7 +3,7 @@ package org.rt
 import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_2_Tokenize.Public.*
-import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprIdf, fullParse, get_lines_reversed, parse, preparse_braced}
+import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprCall1, ExprIdf, ExprLitStr, fullParse, get_lines_reversed, parse, preparse_braced, preparse_call}
 import org.rt.lang.RtLib_4_Lint.{Linted, fullLint, lint}
 import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
 import org.rt.lang.RtLib_5_Build.Public.*
@@ -141,6 +141,20 @@ object TestsRunner extends ZIOSpecDefault {
       },
       test("rt_assert_at_least_1"){
         assertTrue(rt_try(() => rt_assert_at_least_1(List(()))).isRight)
+      },
+      test("new_preparse_call"){
+        val exprs = List(
+          ExprIdf("f"),
+          ExprBraced(ExprLitStr("x")),
+          ExprBraced(ExprLitStr("y")),
+        )
+        val res = preparse_call(exprs, Nil) // todo - remove Nils after resignaturing
+        assertTrue(res == List(
+          ExprCall1(
+            ExprCall1(ExprIdf("f"),ExprBraced(ExprLitStr("x"))),
+            ExprBraced(ExprLitStr("y"))
+          ),
+        ))
       },
     )
 
