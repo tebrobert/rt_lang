@@ -187,6 +187,18 @@ object TestsRunner extends ZIOSpecDefault {
           RunMocks(List(PrintMock("01"))),
         )
       },
+      test("assignment_lambdas 2") {
+        fullRunMocking(
+          s"""f1 = x => x.+("1")\nprint("0".f1)""",
+          RunMocks(List(PrintMock("01"))),
+        )
+      },
+      test("assignment_lambdas 3") {
+        fullRunMocking(
+          s"""f1 = +("1")\nprint("0".f1)""",
+          RunMocks(List(PrintMock("01"))),
+        )
+      },
     )
 
   def fullRunMocking(
