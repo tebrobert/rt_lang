@@ -280,6 +280,43 @@ object TestsRunner extends ZIOSpecDefault {
       test("tokenize"){
         assertTrue(tokenize("==") == List(TokIdf("==")))
       },
+      test("apply 1") {
+        fullRunMocking(
+          s"""f = x => x + ""\nprint(f(""))""",
+          RunMocks(List(PrintMock(""))),
+        )
+      },
+      test("apply 2") {
+        fullRunMocking(
+          s"""f = x => x + ""\nprint(f(f("")))""",
+          RunMocks(List(PrintMock(""))),
+        )
+      },
+      test("apply 3") {
+        fullRunMocking(
+          s"""f = +("")\nprint("".f.f)""",
+          RunMocks(List(PrintMock(""))),
+        )
+      },
+      test("apply 4") {
+        fullRunMocking(
+          s"""f = +("")\nprint("".f.f.f)""",
+          RunMocks(List(PrintMock(""))),
+        )
+      },
+      test("flatmap_input 2") {
+        fullRunMocking(
+          s"""doAskName = print("What your name?").>>=(_ => input)
+             |doGreet = name => "Hi, ".+(name).+("!").print
+             |doAskName.>>=(doGreet)
+             |""".stripMargin,
+          RunMocks(List(
+            PrintMock("What your name?"),
+            InputMock("Tester"),
+            PrintMock("Hi, Tester!"),
+          )),
+        )
+      },
     )
 
   def fullRunMocking(
