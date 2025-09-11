@@ -255,7 +255,7 @@ object RtLib_5_Build {
             case _ => rtFail("runtime")
           }
 
-        case Unk0(_i) =>
+        case Unk0(_) =>
           BuiltLambda { built =>
               buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, built), brickRunner)
           }
