@@ -254,6 +254,12 @@ object TestsRunner extends ZIOSpecDefault {
           RunMocks(List(PrintMock(""))),
         )
       },
+      test("funcs 3") {
+        fullRunMocking(
+          s"""f = x => x + 1\nprint("The result is " + str(f(5)))""",
+          RunMocks(List(PrintMock("The result is 6"))),
+        )
+      },
     )
 
   def fullRunMocking(
