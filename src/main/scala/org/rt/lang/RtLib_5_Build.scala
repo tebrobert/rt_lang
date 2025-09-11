@@ -255,7 +255,10 @@ object RtLib_5_Build {
             case _ => rtFail("runtime")
           }
 
-        case _ => rtFail(s"can't build: unexpected arg type `$t_idf_x`")
+        case Unk0(_i) =>
+          wip("Can't build generic yet")
+
+        case _ => rtFail(s"can't build: arg `$t_idf_x` has unexpected type `${t_idf_x.typ}`")
       }
 
     def buildScalaCall1(

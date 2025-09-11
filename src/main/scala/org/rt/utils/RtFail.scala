@@ -7,7 +7,7 @@ import org.rt.lang.RtLib_4_Lint.{Linted, LintedIdf}
 
 object RtFail {
   def rtFail(msgs: String*) =
-    throw new Exception(msgs.mkString)
+    throw new Exception(msgs.mkString(" "))
 
   def fail_if(cond: Boolean, msg: String*) =
     if (cond)
