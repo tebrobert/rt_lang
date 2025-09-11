@@ -1,10 +1,10 @@
 package org.rt
 
 import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
-import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_RIO, T_Str, T_Unit, tTo}
+import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Bool, T_RIO, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprCall1, ExprIdf, ExprLitBint, ExprLitStr, fullParse, get_lines_reversed, parse, preparse_braced, preparse_call}
-import org.rt.lang.RtLib_4_Lint.{Linted, fullLint, lint, lint_set}
+import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLit, fullLint, lint, lint_set}
 import org.rt.lang.{RtLib_5_Build, RtLib_6_Run}
 import org.rt.lang.RtLib_5_Build.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_try}
@@ -259,6 +259,23 @@ object TestsRunner extends ZIOSpecDefault {
           s"""f = x => x + 1\nprint("The result is " + str(f(5)))""",
           RunMocks(List(PrintMock("The result is 6"))),
         )
+      },
+      test("lint_set 2") {
+        val actual = lint_set(fullParse("str(f(5))"))
+        val expected =
+          Set(
+            LintedCall1(
+              LintedIdf("str",T_Bint tTo T_Str),
+              LintedCall1(LintedIdf("f",T_Bint tTo T_Bint), LintedLit("5",T_Bint),T_Bint),
+              T_Str
+            ),
+            LintedCall1(
+              LintedIdf("str",T_Bool tTo T_Str),
+              LintedCall1(LintedIdf("f",T_Bint tTo T_Bool),LintedLit("5",T_Bint),T_Bool),
+              T_Str
+            ),
+          )
+        assertTrue(actual == expected)
       },
     )
 
