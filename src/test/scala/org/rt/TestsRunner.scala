@@ -317,6 +317,19 @@ object TestsRunner extends ZIOSpecDefault {
           )),
         )
       },
+//      test("flatmap_input 3") {
+//        fullRunMocking(
+//          s"""doAskName = print("What your name?").>>=(_ => input)
+//             |doGreet = name => ("Hi, " + name + "!").print
+//             |doAskName >>= (doGreet)  //todo - fails as operator
+//             |""".stripMargin,
+//          RunMocks(List(
+//            PrintMock("What your name?"),
+//            InputMock("Tester"),
+//            PrintMock("Hi, Tester!"),
+//          )),
+//        )
+//      },
     )
 
   def fullRunMocking(
