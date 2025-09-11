@@ -277,6 +277,9 @@ object TestsRunner extends ZIOSpecDefault {
           )
         assertTrue(actual == expected)
       },
+      test("tokenize"){
+        assertTrue(tokenize("==") == List(TokIdf("==")))
+      },
     )
 
   def fullRunMocking(
