@@ -298,7 +298,7 @@ object TestsRunner extends ZIOSpecDefault {
           RunMocks(List(PrintMock(""))),
         )
       },
-      test("apply 4") {
+      test("apply 4") { // todo - `Can't lint`
         fullRunMocking(
           s"""f = +("")\nprint("".f.f.f)""",
           RunMocks(List(PrintMock(""))),
