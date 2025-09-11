@@ -256,7 +256,9 @@ object RtLib_5_Build {
           }
 
         case Unk0(_i) =>
-          wip("Can't build generic yet")
+          BuiltLambda { built =>
+              buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, built), brickRunner)
+          }
 
         case _ => rtFail(s"can't build: arg `$t_idf_x` has unexpected type `${t_idf_x.typ}`")
       }
