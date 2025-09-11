@@ -1,7 +1,7 @@
 package org.rt
 
 import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
-import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Str, T_Unit, tTo}
+import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_RIO, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_2_Tokenize.Public.*
 import org.rt.lang.RtLib_3_Parse.{Expr, ExprBraced, ExprCall1, ExprIdf, ExprLitBint, ExprLitStr, fullParse, get_lines_reversed, parse, preparse_braced, preparse_call}
 import org.rt.lang.RtLib_4_Lint.{Linted, fullLint, lint, lint_set}
@@ -235,6 +235,25 @@ object TestsRunner extends ZIOSpecDefault {
       //  //  otherwise=lambda: 0,
       //  //)([])
       //},
+      test("funcs 1") {
+        fullRunMocking(
+          s"""identity = (x => x)("")\nprint(identity)""",
+          RunMocks(List(PrintMock(""))),
+        )
+      },
+      test("funcs 2.1") {
+        val (actual, _) =
+          (T_RIO(T_Str tTo T_A0) tTo T_RIO(T_Unit))
+            .concretizeAsFunc(T_RIO(T_A0 tTo T_A0))
+        val expected = T_RIO(T_Str tTo T_Str) tTo T_RIO(T_Unit)
+        assertTrue(actual == expected)
+      },
+      test("funcs 2.2") {
+        fullRunMocking(
+          s"""identity = (x => x)\nprint(identity(""))""",
+          RunMocks(List(PrintMock(""))),
+        )
+      },
     )
 
   def fullRunMocking(
