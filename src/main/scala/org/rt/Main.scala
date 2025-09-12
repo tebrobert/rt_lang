@@ -29,6 +29,9 @@ object Main extends ZIOAppDefault:
           |""".stripMargin
 
       b = fullBuild(code, brickRunner)
-      _ <- org.rt.lang.RtLib_5_Run.run(b)
+      _ <- b match {
+        case Left(fail) => ZIO.succeed(println(fail))
+        case Right(built) => org.rt.lang.RtLib_5_Run.run(built)
+      }
     } yield ()
   }

@@ -20,7 +20,7 @@ object RtLib_1_Tokenize {
     case object TokEqGr extends Tok // `=>`
     case object TokDot extends Tok // `.`
 
-    def tokenize(code: String): List[Tok] =
+    def tokenize(code: String): Either[Throwable, List[Tok]] =
       Internal.tokenize_rec((code + Internal.end_of_code, 0, List()))
   }
 
@@ -265,12 +265,12 @@ object RtLib_1_Tokenize {
     @tailrec
     def tokenize_rec(
       lexxBundle: LexxBundle,
-    ): List[Tok] = {
+    ): Either[Throwable, List[Tok]] = {
       val (code_ext, current_idx, tokens) = lexxBundle
       val current_char = code_ext(current_idx)
 
       if (current_char == end_of_code)
-        tokens
+        Right(tokens)
       else if (current_char == ' ')
         tokenize_rec((code_ext, current_idx + 1, tokens))
       else tokenize_rec(tokenize_first_of(lexxBundle)(all_tokenizers))

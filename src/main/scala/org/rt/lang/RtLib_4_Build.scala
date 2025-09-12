@@ -51,7 +51,7 @@ object RtLib_4_Build {
       code: String,
       brickRunner: BRICK_RUNNER,
     ) =
-      build(fullLint(code), brickRunner)
+      fullLint(code).map(build(_, brickRunner))
   }
 
   private object Internal {

@@ -9,7 +9,7 @@ import org.rt.lang.{RtLib_4_Build, RtLib_5_Run}
 import org.rt.lang.RtLib_4_Build.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_try}
 import org.rt.utils.RtList.rt_assert_at_least_1
-import zio.Ref
+import zio.{Ref, ZIO}
 import zio.test.*
 
 trait RtTestCase {
@@ -26,7 +26,7 @@ object TestsRunner extends ZIOSpecDefault {
   def spec: Spec[Any, Nothing] =
     suite("HelloWorldSpec")(
       allTestCases.map(testCase => test("tokenize " + testCase.name) {
-        assertTrue(tokenize(testCase.code_0) == testCase.tokens_1)
+        assertTrue(tokenize(testCase.code_0) == Right(testCase.tokens_1))
       })
         ++ allTestCases.map(testCase => test("parse " + testCase.name) {
         assertTrue(parse(testCase.tokens_1) == testCase.expr_2)
@@ -62,20 +62,25 @@ object TestsRunner extends ZIOSpecDefault {
             |print(name)
             |""".stripMargin
 
-        val tokens = tokenize(code)
-        val ext_tokens_reversed = (TokEndl +: tokens).reverse
-        val raw_lines_reversed = get_lines_reversed(ext_tokens_reversed, Nil, Nil)
-        val actual_lines_reversed = raw_lines_reversed.filter(_.nonEmpty)
-        val expected_lines_reversed =
-          List(
-            List(TokIdf("print"), TokParenOpen, TokIdf("name"), TokParenClose),
-            List(TokIdf("print"), TokParenOpen, TokLitStr("Welcome, ..."), TokParenClose),
-            List(TokIdf("name"), TokLessMinus, TokIdf("input")),
-            List(TokIdf("print"), TokParenOpen, TokIdf("greeting"), TokParenClose),
-            List(TokIdf("greeting"), TokEq, TokLitStr("Hey! What is your name?")),
-          )
+        val eiTokens = tokenize(code)
 
-        assertTrue(actual_lines_reversed == expected_lines_reversed)
+        eiTokens match {
+          case Left(fail) => assertTrue(false)
+          case Right(tokens) =>
+            val ext_tokens_reversed = (TokEndl +: tokens).reverse
+            val raw_lines_reversed = get_lines_reversed(ext_tokens_reversed, Nil, Nil)
+            val actual_lines_reversed = raw_lines_reversed.filter(_.nonEmpty)
+            val expected_lines_reversed =
+              List(
+                List(TokIdf("print"), TokParenOpen, TokIdf("name"), TokParenClose),
+                List(TokIdf("print"), TokParenOpen, TokLitStr("Welcome, ..."), TokParenClose),
+                List(TokIdf("name"), TokLessMinus, TokIdf("input")),
+                List(TokIdf("print"), TokParenOpen, TokIdf("greeting"), TokParenClose),
+                List(TokIdf("greeting"), TokEq, TokLitStr("Hey! What is your name?")),
+              )
+
+            assertTrue(actual_lines_reversed == expected_lines_reversed)
+        }
       },
       test("method_syntax_1") {
         val parsedAsMethod = fullParse("a.b")
@@ -212,7 +217,7 @@ object TestsRunner extends ZIOSpecDefault {
         )
       },
       test("integers") {
-        assertTrue(fullParse("\n1\n") == ExprLitBint("1"))
+        assertTrue(fullParse("\n1\n") == Right(ExprLitBint("1")))
       },
       test("integers_printing") {
         fullRunMocking(
@@ -273,24 +278,29 @@ object TestsRunner extends ZIOSpecDefault {
         )
       },
       test("lint_set 2") {
-        val actual = lint_set(fullParse("str(f(5))"))
-        val expected =
-          Set(
-            LintedCall1(
-              LintedIdf("str",T_Bint tTo T_Str),
-              LintedCall1(LintedIdf("f",T_Bint tTo T_Bint), LintedLit("5",T_Bint),T_Bint),
-              T_Str
-            ),
-            LintedCall1(
-              LintedIdf("str",T_Bool tTo T_Str),
-              LintedCall1(LintedIdf("f",T_Bint tTo T_Bool),LintedLit("5",T_Bint),T_Bool),
-              T_Str
-            ),
-          )
-        assertTrue(actual == expected)
+        val eiExpr = fullParse("str(f(5))")
+        eiExpr match {
+          case Left(_) => assertTrue(false)
+          case Right(expr) =>
+            val actual = lint_set(expr)
+            val expected =
+              Set(
+                LintedCall1(
+                  LintedIdf("str",T_Bint tTo T_Str),
+                  LintedCall1(LintedIdf("f",T_Bint tTo T_Bint), LintedLit("5",T_Bint),T_Bint),
+                  T_Str
+                ),
+                LintedCall1(
+                  LintedIdf("str",T_Bool tTo T_Str),
+                  LintedCall1(LintedIdf("f",T_Bint tTo T_Bool),LintedLit("5",T_Bint),T_Bool),
+                  T_Str
+                ),
+              )
+            assertTrue(actual == expected)
+        }
       },
       test("tokenize"){
-        assertTrue(tokenize("==") == List(TokIdf("==")))
+        assertTrue(tokenize("==") == Right(List(TokIdf("=="))))
       },
       test("apply 1") {
         fullRunMocking(
@@ -348,8 +358,15 @@ object TestsRunner extends ZIOSpecDefault {
     code: String,
     mockedCalls: RunMocks,
   ) = {
-    val linted = fullLint(code)
-    buildRunMocking(linted, mockedCalls)
+    val eiLinted = fullLint(code)
+
+    eiLinted match {
+      case Left(fail) => ZIO.succeed{
+        print(fail)
+        assertTrue(false)
+      }
+      case Right(linted) => buildRunMocking(linted, mockedCalls)
+    }
   }
 
   def buildRunMocking(

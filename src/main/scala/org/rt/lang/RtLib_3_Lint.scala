@@ -76,11 +76,6 @@ object RtLib_3_Lint {
       linted_res: Linted,
       typ: Typ,
     ): LintedLambda1 = {
-      linted_idf_x match {
-        case LintedIdf(_, _) => () // perhaps: specify arg type
-        case _ => rtFail("can't create LintedLambda1")
-      }
-
       typ match {
         case Unk0(-1) => () // maybe typ is always Func2
         case Typ2(`builtin_Func`, _, _) => ()
@@ -329,6 +324,6 @@ object RtLib_3_Lint {
     }
   }
 
-  def fullLint(code: String) =
-    lint(fullParse(code))
+  def fullLint(code: String): Either[Throwable, Linted] =
+    fullParse(code).map(lint)
 }
