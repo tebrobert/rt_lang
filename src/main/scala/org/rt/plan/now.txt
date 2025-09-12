@@ -1,8 +1,41 @@
-# String - Arr[Char], Vec20[Char] ? # no idea whether we need it 231110
+MOTIVATION:
+"""
+1. FP - more robustness (Machines should help people and not vice versa):
+no null pointer, effect types with requirements for better testability
+
+2. Simple static types with rememberable names (Vect, Struct)
+and also implement anonymous structs for more compiler awareness
+
+3. To take responsibility for numeric types and values
+and make usage of values like inf and nan more clear
+
+4. Simple lib importing and versioning (importing at a single file)
+also it's possible to somehow use dates instead (or with) the versions numbers
+"""
+
+PLAN:
 
 ? implement one argument functions
 
 implement list type
+
+or:
+    refactor typification
+        #### add "_FX" "_X" to type params on both sides before sync
+
+    list literals
+
+    dict vs named tuple (name: Str, salary: Bint, permitted: Bool)
+
+    (not blocking) implement better error locating
+    (not blocking) implement escape-characters
+    (not blocking) implement comments
+    (not blocking) string interpolation
+    (not blocking) implement map, bind
+
+    # ? remove endOfCode
+
+
 ?implement structs/tuples/named tuples
     implement functions
 implement dict type
@@ -60,6 +93,8 @@ Defer:
     end Typeclasses
 
 
+# String - Arr[Char], Vec20[Char] ? # no idea whether we need it 231110
+
 Handling errors:
     # list access
         #1
@@ -92,3 +127,4 @@ Handling errors:
         # runtime error
         # None
         # doesn't compile
+
