@@ -1,9 +1,9 @@
 package org.rt.utils
 
 import org.rt.lang.RtLib_0_1_Types.{Typ, Typ1, Typ2, Unk0}
-import org.rt.lang.RtLib_2_Tokenize.Public.{Tok, TokEq, TokIdf, TokLessMinus}
-import org.rt.lang.RtLib_3_Parse.Expr
-import org.rt.lang.RtLib_4_Lint.{Linted, LintedIdf}
+import org.rt.lang.RtLib_1_Tokenize.Public.{Tok, TokEq, TokIdf, TokLessMinus}
+import org.rt.lang.RtLib_2_Parse.Expr
+import org.rt.lang.RtLib_3_Lint.{Linted, LintedIdf}
 
 object RtFail {
   def rtFail(msgs: String*) =

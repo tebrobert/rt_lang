@@ -3,9 +3,9 @@ package org.rt.allTests
 import org.rt.RtTestCase
 import org.rt.RunMock.{InputMock, RunMocks}
 import org.rt.lang.RtLib_0_2_Builtins.{T_RIO, T_Str}
-import org.rt.lang.RtLib_2_Tokenize.Public.*
-import org.rt.lang.RtLib_3_Parse.*
-import org.rt.lang.RtLib_4_Lint.LintedIdf
+import org.rt.lang.RtLib_1_Tokenize.Public.*
+import org.rt.lang.RtLib_2_Parse.*
+import org.rt.lang.RtLib_3_Lint.LintedIdf
 
 object TestCase1_2 extends RtTestCase {
   val code_0 =

@@ -1,12 +1,12 @@
 package org.rt.lang
 
-import org.rt.lang.RtLib_2_Tokenize.Public.*
+import org.rt.lang.RtLib_1_Tokenize.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_assert, tryOrRecover}
 import org.rt.utils.RtList.rtMatch
 
 import scala.annotation.tailrec
 
-object RtLib_2_Tokenize {
+object RtLib_1_Tokenize {
   object Public {
     sealed trait Tok // token
     case class TokLitStr(s: String) extends Tok // literal string

@@ -5,9 +5,9 @@ import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
 import org.rt.TestHelpers.*
 import org.rt.lang.RtLib_0_1_Types.Typ
 import org.rt.lang.RtLib_0_2_Builtins.{T_RIO, T_Str, T_Unit, tTo}
-import org.rt.lang.RtLib_2_Tokenize.Public.*
-import org.rt.lang.RtLib_3_Parse.*
-import org.rt.lang.RtLib_4_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1}
+import org.rt.lang.RtLib_1_Tokenize.Public.*
+import org.rt.lang.RtLib_2_Parse.*
+import org.rt.lang.RtLib_3_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1}
 
 object TestCase8 extends RtTestCase {
   val code_0 =
