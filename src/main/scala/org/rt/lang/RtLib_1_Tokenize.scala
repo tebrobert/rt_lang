@@ -21,7 +21,7 @@ object RtLib_1_Tokenize {
     case object TokDot extends Tok // `.`
 
     def tokenize(code: String): Either[Throwable, List[Tok]] =
-      Internal.tokenize_rec((code + Internal.end_of_code, 0, List()))
+      Internal.tokenize_rec(Right(code + Internal.end_of_code, 0, List()))
   }
 
   private object Internal {
@@ -264,16 +264,20 @@ object RtLib_1_Tokenize {
 
     @tailrec
     def tokenize_rec(
-      lexxBundle: LexxBundle,
+      eiLexxBundle: Either[Throwable, LexxBundle],
     ): Either[Throwable, List[Tok]] = {
-      val (code_ext, current_idx, tokens) = lexxBundle
-      val current_char = code_ext(current_idx)
+      eiLexxBundle match {
+        case Left(fail) => Left(fail)
+        case Right(lexxBundle) =>
+          val (code_ext, current_idx, tokens) = lexxBundle
+          val current_char = code_ext(current_idx)
 
-      if (current_char == end_of_code)
-        Right(tokens)
-      else if (current_char == ' ')
-        tokenize_rec((code_ext, current_idx + 1, tokens))
-      else tokenize_rec(tokenize_first_of(lexxBundle)(all_tokenizers))
+          if (current_char == end_of_code)
+            Right(tokens)
+          else if (current_char == ' ')
+            tokenize_rec(Right(code_ext, current_idx + 1, tokens))
+          else tokenize_rec(Right(tokenize_first_of(lexxBundle)(all_tokenizers)))
+      }
     }
   }
 }
