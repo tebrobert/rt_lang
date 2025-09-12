@@ -121,6 +121,18 @@ object TestsRunner extends ZIOSpecDefault {
       //  //)(TokenLitStr(str_idf))
       //  //rt_assert_equal(token_s, str_otherwise)
       //},
+      test("simple print") {
+        fullRunMocking(
+          s"""print("q")""",
+          RunMocks(List(PrintMock("q"))),
+        )
+      },
+      test("simple input-print") {
+        fullRunMocking(
+          s"""x <- input\nprint(x)""",
+          RunMocks(List(InputMock("q"),PrintMock("q"))),
+        )
+      },
       test("assignment") {
         fullRunMocking(
           s"""msg = "hi"\nprint(msg)""",
@@ -241,7 +253,7 @@ object TestsRunner extends ZIOSpecDefault {
           RunMocks(List(PrintMock(""))),
         )
       },
-      test("funcs 2.1") {
+      test("funcs 2.1") { // sync types actually
         val (actual, _) =
           (T_RIO(T_Str tTo T_A0) tTo T_RIO(T_Unit))
             .concretizeAsFunc(T_RIO(T_A0 tTo T_A0))

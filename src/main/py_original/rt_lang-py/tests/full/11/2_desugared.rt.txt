@@ -1,1 +1,0 @@
->>=(greeting   => >>=(_ => >>=(name  => >>=(_ => print(name))(print("Welcome, ...")))( input))(print(greeting)))( pure( "Hey! What is your name?"))

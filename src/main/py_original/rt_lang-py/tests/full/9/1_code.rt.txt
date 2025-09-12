@@ -1,4 +1,0 @@
-print("Hey! What is your name?")
-name <- input
-print("Welcome, ...")
-print(name)
