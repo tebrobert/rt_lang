@@ -6,7 +6,7 @@ import zio.*
 
 import java.io.IOException
 
-object Main extends ZIOAppDefault:
+object MainSandbox extends ZIOAppDefault:
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] =
     ZIO.fromEither(fullBuild(
