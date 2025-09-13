@@ -10,10 +10,10 @@ object MainSandbox extends ZIOAppDefault:
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] =
     ZIO.fromEither(fullBuild(
-      """nameRequest = "What is your name?"
-        |print(nameRequest)
-        |name <- input
-        |print("Dear " + name + ", welcome!")
+      """inputRequest = "Type anything:"
+        |print(inputRequest)
+        |input
+        |print("Thank you!")
         |""".stripMargin,
       liveBrickRunner,
     ))

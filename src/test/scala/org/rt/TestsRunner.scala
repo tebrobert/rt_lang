@@ -356,6 +356,32 @@ object TestsRunner extends ZIOSpecDefault {
       test("bad build") {
         assertTrue(fullBuild("", BrickRunner.empty).isLeft)
       },
+      test("input as unit - 1") {
+        fullRunMocking(
+          s"""print("Type anything:")
+             |_ <- input
+             |print("Thank you!")
+             |""".stripMargin,
+          RunMocks(List(
+            PrintMock("Type anything:"),
+            InputMock("..."),
+            PrintMock("Thank you!"),
+          )),
+        ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
+      },
+      test("input as unit - 2") {
+        fullRunMocking(
+          s"""print("Type anything:")
+             |input
+             |print("Thank you!")
+             |""".stripMargin,
+          RunMocks(List(
+            PrintMock("Type anything:"),
+            InputMock("..."),
+            PrintMock("Thank you!"),
+          )),
+        ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
+      },
     )
 
   def fullRunMocking(
