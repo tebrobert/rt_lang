@@ -15,7 +15,7 @@ object Main extends ZIOAppDefault:
         |name <- input
         |print("Dear " + name + ", welcome!")
         |""".stripMargin,
-      liveBrickRunner
+      liveBrickRunner,
     ) match {
       case Left(fail) => ZIO.succeed(println(fail))
       case Right(built) => org.rt.lang.RtLib_5_Run.run(built).unit
