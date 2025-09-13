@@ -12,6 +12,7 @@ object MainSandbox extends ZIOAppDefault:
     ZIO.fromEither(fullBuild(
       """print("Type anything:")
         |input
+        |inputo
         |print("Thank you!")
         |""".stripMargin,
       liveBrickRunner,

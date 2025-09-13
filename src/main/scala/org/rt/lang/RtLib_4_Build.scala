@@ -196,8 +196,6 @@ object RtLib_4_Build {
       else rtFail(s"Unexpected literal: `$serializedValue`, `$typ`.")
     }
 
-    def to_latin_idf: String => String = ???
-
     def build_str_py_idf(
       s: String,
       typ: Typ,
@@ -205,7 +203,7 @@ object RtLib_4_Build {
       brickRunner: BRICK_RUNNER,
     ): Built =
       lambArgStack.getOrElse(
-        s, //todo contemplate to_latin_idf(s)
+        s,
         match_builtin_idf(
           case_input = () => Built.input(brickRunner),
           case_print = () => Built.print(brickRunner),
