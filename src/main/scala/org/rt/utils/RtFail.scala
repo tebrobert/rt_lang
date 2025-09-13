@@ -6,8 +6,10 @@ import org.rt.lang.RtLib_2_Parse.Expr
 import org.rt.lang.RtLib_3_Lint.{Linted, LintedIdf}
 
 object RtFail {
+  case class RtFail(messages: Vector[String]) extends Throwable
+
   def rtFail(msgs: String*) =
-    throw new Exception(msgs.mkString(" "))
+    throw RtFail(msgs.toVector)
 
   def fail_if(cond: Boolean, msg: String*) =
     if (cond)
@@ -26,7 +28,7 @@ object RtFail {
     try {
       action()
     } catch {
-      case _: Throwable => recover()
+      case _: RtFail => recover()
     }
 
   def rt_assert_equal[ANY](
@@ -85,11 +87,11 @@ object RtFail {
       case _ => rtFail(s"Expected LintedIdf, got `$value`")
     }
 
-  def rt_try[A](action: () => A): Either[Throwable, A] =
+  def rt_try[A](action: () => A): Either[RtFail, A] =
       try {
           Right(action())
       } catch {
-        case e: Throwable =>
+        case e: RtFail =>
           Left(e)
         // traceback.format_exc()
         // RtError

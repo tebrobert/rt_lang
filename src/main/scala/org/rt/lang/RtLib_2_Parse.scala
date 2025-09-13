@@ -410,6 +410,6 @@ object RtLib_2_Parse {
         )(nonempty_lines_reversed)
     }
 
-    def fullParse(code: String): Either[Throwable, Expr] =
+    def fullParse(code: String): Either[RtFail, Expr] =
         tokenize(code).map(parse)
 }

@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_1_Tokenize.Public.*
-import org.rt.utils.RtFail.{rtFail, rt_assert, tryOrRecover}
+import org.rt.utils.RtFail.{RtFail, rtFail, rt_assert, tryOrRecover}
 import org.rt.utils.RtList.rtMatch
 
 import scala.annotation.tailrec
@@ -20,7 +20,7 @@ object RtLib_1_Tokenize {
     case object TokEqGr extends Tok // `=>`
     case object TokDot extends Tok // `.`
 
-    def tokenize(code: String): Either[Throwable, List[Tok]] =
+    def tokenize(code: String): Either[RtFail, List[Tok]] =
       Internal.tokenize_rec(Right(code + Internal.end_of_code, 0, List()))
   }
 
@@ -264,8 +264,8 @@ object RtLib_1_Tokenize {
 
     @tailrec
     def tokenize_rec(
-      eiLexxBundle: Either[Throwable, LexxBundle],
-    ): Either[Throwable, List[Tok]] = {
+      eiLexxBundle: Either[RtFail, LexxBundle],
+    ): Either[RtFail, List[Tok]] = {
       eiLexxBundle match {
         case Left(fail) => Left(fail)
         case Right(lexxBundle) =>

@@ -324,6 +324,6 @@ object RtLib_3_Lint {
     }
   }
 
-  def fullLint(code: String): Either[Throwable, Linted] =
+  def fullLint(code: String): Either[RtFail, Linted] =
     fullParse(code).map(lint)
 }
