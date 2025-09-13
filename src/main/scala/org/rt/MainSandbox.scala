@@ -10,8 +10,7 @@ object MainSandbox extends ZIOAppDefault:
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] =
     ZIO.fromEither(fullBuild(
-      """inputRequest = "Type anything:"
-        |print(inputRequest)
+      """print("Type anything:")
         |input
         |print("Thank you!")
         |""".stripMargin,
