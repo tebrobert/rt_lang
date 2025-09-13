@@ -55,7 +55,11 @@ object RtLib_4_Build {
       code: String,
       brickRunner: BRICK_RUNNER,
     ) =
-      fullLint(code).flatMap(build(_, brickRunner))
+      try { //todo - try better typing
+        fullLint(code).flatMap(build(_, brickRunner))
+      } catch {
+        case fail: RtFail => Left(fail)
+      }
   }
 
   private object Internal {

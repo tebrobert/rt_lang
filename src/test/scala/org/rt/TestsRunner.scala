@@ -353,6 +353,9 @@ object TestsRunner extends ZIOSpecDefault {
 //          )),
 //        )
 //      },
+      test("bad build") {
+        assertTrue(fullBuild("", BrickRunner.empty).isLeft)
+      },
     )
 
   def fullRunMocking(
@@ -387,6 +390,14 @@ object TestsRunner extends ZIOSpecDefault {
 }
 
 private object BrickRunner {
+  def empty(
+    brick: Brick,
+  ): BuiltRio =
+    BuiltRio(ZIO.succeed(brick match {
+      case BrickInput => BuiltStr("")
+      case BrickPrint(s) => BuiltUnit(())
+    }))
+
   def mocking(
     mockedCallsRef: Ref[RunMocks]
   )(
