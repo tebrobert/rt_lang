@@ -5,7 +5,7 @@ import org.rt.lang.RtLib_0_1_Types.*
 import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_3_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, LintedLit, fullLint}
 import org.rt.lang.RtLib_4_Build.Public.*
-import org.rt.utils.RtFail.{rtFail, rt_try, wip}
+import org.rt.utils.RtFail.{RtFail, rtFail, rt_try, wip}
 import zio.{UIO, ZIO}
 
 object RtLib_4_Build {
@@ -40,18 +40,22 @@ object RtLib_4_Build {
     def build[A](
       typed: Linted,
       brickRunner: BRICK_RUNNER,
-    ): Built =
-      Internal.buildWithArgStack(
-        typed,
-        lambArgStack = Map.empty,
-        brickRunner,
-      )
+    ): Either[RtFail, Built] =
+      try { // todo - try better typing
+        Right(Internal.buildWithArgStack(
+          typed,
+          lambArgStack = Map.empty,
+          brickRunner,
+        ))
+      } catch {
+        case fail: RtFail => Left(fail)
+      }
 
     def fullBuild(
       code: String,
       brickRunner: BRICK_RUNNER,
     ) =
-      fullLint(code).map(build(_, brickRunner))
+      fullLint(code).flatMap(build(_, brickRunner))
   }
 
   private object Internal {

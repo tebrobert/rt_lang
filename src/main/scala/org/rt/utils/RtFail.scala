@@ -8,6 +8,11 @@ import org.rt.lang.RtLib_3_Lint.{Linted, LintedIdf}
 object RtFail {
   case class RtFail(messages: Vector[String]) extends Throwable
 
+  object RtFail {
+    def apply(msgs: String*): RtFail =
+      RtFail(msgs.toVector)
+  }
+
   def rtFail(msgs: String*) =
     throw RtFail(msgs.toVector)
 
