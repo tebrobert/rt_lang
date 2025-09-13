@@ -6,7 +6,8 @@ import org.rt.lang.RtLib_2_Parse.Expr
 import org.rt.lang.RtLib_3_Lint.{Linted, LintedIdf}
 
 object RtFail {
-  case class RtFail(messages: Vector[String]) extends Throwable
+  case class RtFail(messages: Vector[String])
+    extends Exception(messages.mkString(" "))
 
   object RtFail {
     def apply(msgs: String*): RtFail =
