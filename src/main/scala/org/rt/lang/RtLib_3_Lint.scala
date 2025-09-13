@@ -119,6 +119,16 @@ object RtLib_3_Lint {
         case_lambda_1 = (linted_idf_x, linted_res, _typ) =>
           withTypLambda1(linted_idf_x, linted_res, new_typ),
       )
+
+    def hasUnk: Boolean =
+      linted.rtMatch(
+        case_lit = (s, typ) => typ.hasUnk,
+        case_idf = (s, typ) => typ.hasUnk,
+        case_call_1 = (typed_f, typed_x, typ) =>
+          typ.hasUnk || typed_f.hasUnk || typed_x.hasUnk,
+        case_lambda_1 = (linted_idf_x, linted_res, typ) =>
+          typ.hasUnk || linted_idf_x.hasUnk || linted_res.hasUnk,
+      )
   }
 
   private def withTypLambda1(
@@ -319,7 +329,9 @@ object RtLib_3_Lint {
   ): Linted = {
     val linted_set = lint_set(expr)
     linted_set.toList match {
-      case head :: Nil => head
+      case head :: Nil if !head.hasUnk => head
+        println(s"here! $head")
+        head
       case _ => rtFail(s"Can't lint `$expr` with `$linted_set`")
     }
   }

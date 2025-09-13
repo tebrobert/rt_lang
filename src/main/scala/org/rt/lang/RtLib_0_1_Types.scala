@@ -101,6 +101,14 @@ object RtLib_0_1_Types {
         caseTyp2 = typ2 =>
           concretizeAsFuncRec(typ, typ_x, accClarifications)(typ_x, typ2.t1),
       )
+
+    def hasUnk: Boolean =
+      typ.rtMatch(
+        caseUnk0 = _ => true,
+        caseTyp0 = _ => false,
+        caseTyp1 = _.t1.hasUnk,
+        caseTyp2 = typ2 => typ2.t1.hasUnk || typ2.t2.hasUnk,
+      )
   }
 
   def increase_unk(typ: Typ): Typ =
