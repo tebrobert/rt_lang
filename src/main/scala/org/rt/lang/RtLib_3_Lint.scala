@@ -329,9 +329,7 @@ object RtLib_3_Lint {
   ): Linted = {
     val linted_set = lint_set(expr)
     linted_set.toList match {
-      case head :: Nil if !head.hasUnk => head
-        println(s"here! $head")
-        head
+      case head :: Nil /*if !head.hasUnk*/ => head
       case _ => rtFail(s"Can't lint `$expr` with `$linted_set`")
     }
   }
