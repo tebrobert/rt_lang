@@ -19,8 +19,6 @@ object Main extends ZIOAppDefault:
     ) match {
       case Left(fail) => ZIO.succeed(println(fail))
       case Right(built) => org.rt.lang.RtLib_5_Run.run(built).unit
-        .catchAll {
-          fail => ZIO.succeed(println(fail))
-        }
+        .catchAll { fail => ZIO.succeed(println(fail)) }
     }
   }
