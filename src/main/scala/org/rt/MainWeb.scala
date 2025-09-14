@@ -4,7 +4,6 @@ import org.rt.lang.RtLib_5_Run.{fullRun, interactive}
 import zio.*
 import zio.http.*
 
-import java.io.IOException
 import java.time.temporal.ChronoUnit.SECONDS
 
 type Code = String
@@ -22,18 +21,26 @@ case class TaskState(
 
 object MainWeb extends ZIOAppDefault:
 
-  override def run: ZIO[ZIOAppArgs, IOException, Unit] =
+  def run =
     for {
       runningTasks <- Ref.make(Map.empty[TaskId, TaskState])
+      _ <- cleanForever(runningTasks).fork
+
+      routes =
+        Routes(
+          Method.GET / "hello" -> handler { (req: Request) =>
+            val name = req.queryOrElse("name", "World")
+            Response.text(s"Hello $name!")
+          },
+          Method.GET / "hi" -> handler { (req: Request) =>
+            val name = req.queryOrElse("name", "World")
+            Response.text(s"Hi $name!")
+          },
+        )
+
+      _ <- Server.serve(routes).provide(Server.defaultWithPort(8080))
     } yield ()
 
-  def routes =
-    Routes(
-      Method.GET / "greet" -> handler { (req: Request) =>
-        val name = req.queryOrElse("name", "World")
-        Response.text(s"Hello $name!")
-      }
-    )
 
   def runThenFetchConsole(
     runningTasks: Ref[Map[TaskId, TaskState]],
@@ -81,7 +88,7 @@ object MainWeb extends ZIOAppDefault:
       console <- taskState.consoleRef.get
     } yield console
 
-  def cleaningDaemon(
+  def cleanForever(
     runningTasksRef: Ref[Map[TaskId, TaskState]],
   ): UIO[Nothing] =
     (for {
