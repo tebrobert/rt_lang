@@ -31,8 +31,6 @@ object RtLib_5_Run {
       case BrickPrint(s) => BuiltRio(ZIO.succeed(BuiltUnit(println(s))))
     }
 
-
-
   def interactive(
     consoleRef: Ref[Vector[Line]],
     inputQueue: Queue[Line],
