@@ -9,6 +9,8 @@ type Code = String
 type TaskId = java.util.UUID
 type Line = String
 
+type Message = String
+
 case class TaskState(
   consoleRef: Ref[Vector[Line]],
   inputQueue: Queue[Line],
@@ -22,11 +24,11 @@ object MainWeb extends ZIOAppDefault:
       runningTasks <- Ref.make(Map.empty[TaskId, TaskState])
     } yield ()
 
-  def apiRun(
+  def runThenFetchConsole(
     runningTasks: Ref[Map[TaskId, TaskState]],
   )(
     code: Code,
-  ): UIO[TaskId] =
+  ): UIO[(TaskId, Vector[Line])] =
     for {
       taskId <- ZIO.succeed(java.util.UUID.randomUUID())
       consoleRef <- Ref.make(Vector.empty[Line])
@@ -39,16 +41,30 @@ object MainWeb extends ZIOAppDefault:
       _ <- runningTasks.update(
         _.updated(taskId, TaskState(consoleRef, inputQueue, task))
       )
-    } yield taskId
+      console <- consoleRef.get
+    } yield (taskId, console)
 
-  // todo - design api
+  def fetchConsole(
+    runningTasks: Ref[Map[TaskId, TaskState]],
+  )(
+    taskId: TaskId,
+  ): IO[Message, Vector[Line]] =
+    for {
+      mbTaskState <- runningTasks.get.map(_.get(taskId))
+      taskState <- ZIO.fromOption(mbTaskState).orElseFail(s"No such task by given taskId: `$taskId`")
+      console <- taskState.consoleRef.get
+    } yield console
 
-  /**   /run_then_fetch_console
-   *      : Code => (TaskId, List[Line])
-   *
-   *    /fetch_console
-   *      : TaskId => List[Line]
-   *
-   *    /feed_input_then_fetch_console
-   *      : (TaskId, Line) => List[Line]
-   */
+  def feedInputThenFetchConsole(
+    runningTasks: Ref[Map[TaskId, TaskState]],
+  )(
+    taskId: TaskId,
+    inputLine: Line,
+  ): IO[Message, Vector[Line]] =
+    for {
+      mbTaskState <- runningTasks.get.map(_.get(taskId))
+      taskState <- ZIO.fromOption(mbTaskState).orElseFail(s"No such task by given taskId: `$taskId`")
+      succeed <- taskState.inputQueue.offer(inputLine)
+      _ <- ZIO.unless(succeed)(ZIO.fail("Could not provide input line."))
+      console <- taskState.consoleRef.get
+    } yield console
