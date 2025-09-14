@@ -64,6 +64,18 @@ object MainWeb extends ZIOAppDefault:
                   console => s"""{"console": "$console"}""",
                 ).merge
             ),
+          Endpoint(RoutePattern.GET / "feed_input_then_fetch_console")
+            // http://localhost:8080/feed_input_then_fetch_console?task_id=f45eb1c25a6b4813b64263dd833d5397&input_line=12
+            .query(HttpCodec.query[TaskId]("task_id"))
+            .query(HttpCodec.query[Line]("input_line"))
+            .out[MyResponse]
+            .implement((taskId, inputLine) =>
+              feedInputThenFetchConsole(runningTasks)(taskId, inputLine)
+                .mapBoth(
+                  error => s"""{"error": "$error"}""",
+                  console => s"""{"console": "$console"}""",
+                ).merge
+            ),
         )
 
       _ <- Server.serve(routes).provide(Server.defaultWithPort(myPort))
