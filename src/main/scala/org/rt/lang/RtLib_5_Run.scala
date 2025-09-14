@@ -1,8 +1,9 @@
 package org.rt.lang
 
+import org.rt.Line
 import org.rt.lang.RtLib_4_Build.Public.{Brick, BrickInput, BrickPrint, Built, BuiltRio, BuiltStr, BuiltUnit}
 import org.rt.utils.RtFail.RtFail
-import zio.{IO, ZIO}
+import zio.{IO, Queue, Ref, ZIO}
 
 object RtLib_5_Run {
   def run(
@@ -19,4 +20,25 @@ object RtLib_5_Run {
       case BrickPrint(s) => BuiltRio(ZIO.succeed(BuiltUnit(println(s))))
     }
 
+
+
+  def interactive(
+    consoleRef: Ref[Vector[Line]],
+    inputQueue: Queue[Line],
+  )(
+    brick: Brick,
+  ): BuiltRio =
+    BuiltRio(
+      brick match {
+        case BrickInput =>
+          for {
+            s <- inputQueue.take
+            _ <- consoleRef.update(_.appended(s))
+          } yield BuiltStr(s)
+
+        case BrickPrint(s) =>
+          consoleRef.update(_.appended(s))
+            .as(BuiltUnit(()))
+      }
+    )
 }

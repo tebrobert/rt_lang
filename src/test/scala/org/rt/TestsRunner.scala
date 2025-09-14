@@ -5,7 +5,7 @@ import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Bool, T_RIO, T_Str, T_Uni
 import org.rt.lang.RtLib_1_Tokenize.Public.*
 import org.rt.lang.RtLib_2_Parse.{Expr, ExprBraced, ExprCall1, ExprIdf, ExprLitBint, ExprLitStr, fullParse, get_lines_reversed, parse, preparse_braced, preparse_call}
 import org.rt.lang.RtLib_3_Lint.{Linted, LintedCall1, LintedIdf, LintedLit, fullLint, lint, lint_set}
-import org.rt.lang.{RtLib_4_Build, RtLib_5_Run}
+import org.rt.lang.RtLib_5_Run
 import org.rt.lang.RtLib_4_Build.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_try}
 import org.rt.utils.RtList.rt_assert_at_least_1
@@ -136,7 +136,7 @@ object TestsRunner extends ZIOSpecDefault {
       test("simple input-print") {
         fullRunMocking(
           s"""x <- input\nprint(x)""",
-          RunMocks(List(InputMock("q"),PrintMock("q"))),
+          RunMocks(List(InputMock("q"), PrintMock("q"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("assignment") {
@@ -287,20 +287,20 @@ object TestsRunner extends ZIOSpecDefault {
             val expected =
               Set(
                 LintedCall1(
-                  LintedIdf("str",T_Bint tTo T_Str),
-                  LintedCall1(LintedIdf("f",T_Bint tTo T_Bint), LintedLit("5",T_Bint),T_Bint),
+                  LintedIdf("str", T_Bint tTo T_Str),
+                  LintedCall1(LintedIdf("f", T_Bint tTo T_Bint), LintedLit("5", T_Bint), T_Bint),
                   T_Str
                 ),
                 LintedCall1(
-                  LintedIdf("str",T_Bool tTo T_Str),
-                  LintedCall1(LintedIdf("f",T_Bint tTo T_Bool),LintedLit("5",T_Bint),T_Bool),
+                  LintedIdf("str", T_Bool tTo T_Str),
+                  LintedCall1(LintedIdf("f", T_Bint tTo T_Bool), LintedLit("5", T_Bint), T_Bool),
                   T_Str
                 ),
               )
             assertTrue(actual == expected)
         }
       },
-      test("tokenize"){
+      test("tokenize") {
         assertTrue(tokenize("==") == Right(List(TokIdf("=="))))
       },
       test("apply 1") {
@@ -340,19 +340,19 @@ object TestsRunner extends ZIOSpecDefault {
           )),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
-//      test("flatmap_input 3") {
-//        fullRunMocking(
-//          s"""doAskName = print("What your name?").>>=(_ => input)
-//             |doGreet = name => ("Hi, " + name + "!").print
-//             |doAskName >>= (doGreet)  //todo - fails as operator
-//             |""".stripMargin,
-//          RunMocks(List(
-//            PrintMock("What your name?"),
-//            InputMock("Tester"),
-//            PrintMock("Hi, Tester!"),
-//          )),
-//        )
-//      },
+      //      test("flatmap_input 3") {
+      //        fullRunMocking(
+      //          s"""doAskName = print("What your name?").>>=(_ => input)
+      //             |doGreet = name => ("Hi, " + name + "!").print
+      //             |doAskName >>= (doGreet)  //todo - fails as operator
+      //             |""".stripMargin,
+      //          RunMocks(List(
+      //            PrintMock("What your name?"),
+      //            InputMock("Tester"),
+      //            PrintMock("Hi, Tester!"),
+      //          )),
+      //        )
+      //      },
       test("bad build") {
         assertTrue(fullBuild("", BrickRunner.empty).isLeft)
       },
@@ -391,7 +391,7 @@ object TestsRunner extends ZIOSpecDefault {
     val eiLinted = fullLint(code)
 
     eiLinted match {
-      case Left(fail) => ZIO.succeed{
+      case Left(fail) => ZIO.succeed {
         print(fail)
         assertTrue(false)
       }
