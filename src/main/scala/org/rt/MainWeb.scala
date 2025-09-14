@@ -2,8 +2,10 @@ package org.rt
 
 import org.rt.lang.RtLib_5_Run.{fullRun, interactive}
 import zio.*
+import zio.Duration.fromSeconds
 
 import java.io.IOException
+import java.time.temporal.ChronoUnit.SECONDS
 
 type Code = String
 type TaskId = java.util.UUID
@@ -15,6 +17,7 @@ case class TaskState(
   consoleRef: Ref[Vector[Line]],
   inputQueue: Queue[Line],
   task: Fiber[Nothing, Unit],
+  created: java.time.Instant,
 )
 
 object MainWeb extends ZIOAppDefault:
@@ -36,10 +39,11 @@ object MainWeb extends ZIOAppDefault:
       interactiveBrickRunner = interactive(consoleRef, inputQueue)(_)
       task <- fullRun(code, interactiveBrickRunner)
         .unit
-        .catchAll{fail => ZIO.succeed(println(s"task $taskId failed: $fail"))}
+        .catchAll { fail => ZIO.succeed(println(s"task $taskId failed: $fail")) }
         .fork
+      now <- ZIO.clock.flatMap(_.instant)
       _ <- runningTasks.update(
-        _.updated(taskId, TaskState(consoleRef, inputQueue, task))
+        _.updated(taskId, TaskState(consoleRef, inputQueue, task, now))
       )
       console <- consoleRef.get
     } yield (taskId, console)
@@ -68,3 +72,22 @@ object MainWeb extends ZIOAppDefault:
       _ <- ZIO.unless(succeed)(ZIO.fail("Could not provide input line."))
       console <- taskState.consoleRef.get
     } yield console
+
+  def cleaningDaemon(
+    runningTasksRef: Ref[Map[TaskId, TaskState]],
+  ): UIO[Nothing] =
+    (for {
+      runningTasks <- runningTasksRef.get
+      shuffledKeys <- ZIO.random.flatMap(_.shuffle(runningTasks.toSeq))
+      now <- ZIO.clock.flatMap(_.instant)
+      _ <- ZIO.foreachDiscard(shuffledKeys.headOption) { (taskId, taskState) =>
+        ZIO.when(now.until(taskState.created, SECONDS) > 100){
+            for {
+              _ <- taskState.task.interrupt
+              _ <- runningTasksRef.update(_.removed(taskId))
+            } yield ()
+        }
+      }
+      _ <- ZIO.clock.flatMap(_.sleep(10.seconds))
+    } yield ()).forever
+
