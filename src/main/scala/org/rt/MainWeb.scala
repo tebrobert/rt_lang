@@ -10,7 +10,7 @@ val myPort = 8080
 val myTaskTimeToLive = 100.seconds
 
 type Code = String
-type TaskId = java.util.UUID
+type TaskId = String
 type Line = String
 type Console = Vector[Line]
 
@@ -37,22 +37,24 @@ object MainWeb extends ZIOAppDefault:
   def run =
     for {
       runningTasks <- Ref.make(Map.empty[TaskId, TaskState])
-      _ <- cleanForever(runningTasks).fork
+      _ <- cleanForever(runningTasks).forkDaemon
 
       routes =
         Routes(
           Endpoint(RoutePattern.GET / "run_then_fetch_console")
             // http://localhost:8080/run_then_fetch_console?code=input
+            // http://localhost:8080/run_then_fetch_console?code=print(%221%22)
             .query(HttpCodec.query[Code]("code"))
             .out[MyResponse]
             .implement(code =>
+              log(s"Code: `$code`") *>
               runThenFetchConsole(runningTasks)(code)
                 .map(
                   (taskId, console) => s"""{"taskId": "$taskId", "console": "$console"}""",
                 )
             ),
           Endpoint(RoutePattern.GET / "fetch_console")
-            // http://localhost:8080/fetch_console?task_id=ae017c62-14b7-496d-95ae-b0c09a11c6b4
+            // http://localhost:8080/fetch_console?task_id=f45eb1c25a6b4813b64263dd833d5397
             .query(HttpCodec.query[TaskId]("task_id"))
             .out[MyResponse]
             .implement(taskId =>
@@ -74,14 +76,14 @@ object MainWeb extends ZIOAppDefault:
     code: Code,
   ): UIO[(TaskId, Console)] =
     for {
-      taskId <- ZIO.succeed(java.util.UUID.randomUUID())
+      taskId <- ZIO.succeed(java.util.UUID.randomUUID().toString.replace("-",""))
       consoleRef <- Ref.make(Vector.empty[Line])
       inputQueue <- Queue.unbounded[Line]
       interactiveBrickRunner = interactive(consoleRef, inputQueue)(_)
       task <- fullRun(code, interactiveBrickRunner)
         .unit
-        .catchAll { fail => ZIO.succeed(println(s"task $taskId failed: $fail")) }
-        .fork
+        .catchAll { fail => log(s"task $taskId failed: $fail") }
+        .forkDaemon
       now <- ZIO.clock.flatMap(_.instant)
       _ <- runningTasks.update(
         _.updated(taskId, TaskState(consoleRef, inputQueue, task, now.plus(myTaskTimeToLive)))
