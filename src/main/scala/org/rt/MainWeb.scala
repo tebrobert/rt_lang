@@ -5,9 +5,9 @@ import zio.*
 import zio.http.*
 import zio.http.codec.HttpCodec
 import zio.http.endpoint.Endpoint
-import zio.http.endpoint.openapi.OpenAPI.SecurityScheme.Http
 
-import java.time.temporal.ChronoUnit.SECONDS
+val myPort = 8080
+val myTaskTimeToLive = 100.seconds
 
 type Code = String
 type TaskId = java.util.UUID
@@ -22,7 +22,7 @@ case class TaskState(
   consoleRef: Ref[Console],
   inputQueue: Queue[Line],
   task: Fiber[Nothing, Unit],
-  created: java.time.Instant,
+  expiredAt: java.time.Instant,
 )
 
 object MainWeb extends ZIOAppDefault:
@@ -67,7 +67,7 @@ object MainWeb extends ZIOAppDefault:
             ),
         )
 
-      _ <- Server.serve(routes).provide(Server.defaultWithPort(8080))
+      _ <- Server.serve(routes).provide(Server.defaultWithPort(myPort))
     } yield ()
 
 
@@ -87,7 +87,7 @@ object MainWeb extends ZIOAppDefault:
         .fork
       now <- ZIO.clock.flatMap(_.instant)
       _ <- runningTasks.update(
-        _.updated(taskId, TaskState(consoleRef, inputQueue, task, now))
+        _.updated(taskId, TaskState(consoleRef, inputQueue, task, now.plus(myTaskTimeToLive)))
       )
       _ <- log(s"Created task $taskId")
       console <- consoleRef.get
@@ -123,16 +123,17 @@ object MainWeb extends ZIOAppDefault:
   ): UIO[Nothing] =
     (for {
       runningTasks <- runningTasksRef.get
+      _ <- log(s"Currently `${runningTasks.size}` tasks.")
       shuffledKeys <- ZIO.random.flatMap(_.shuffle(runningTasks.toSeq))
       now <- ZIO.clock.flatMap(_.instant)
       _ <- ZIO.foreachDiscard(shuffledKeys.headOption) { (taskId, taskState) =>
-        ZIO.when(now.until(taskState.created, SECONDS) > 100) {
+        ZIO.when(now.isAfter(taskState.expiredAt)) {
           for {
             _ <- taskState.task.interrupt
             _ <- runningTasksRef.update(_.removed(taskId))
           } yield ()
         }
       }
-      _ <- ZIO.clock.flatMap(_.sleep(10.seconds))
+      _ <- ZIO.clock.flatMap(_.sleep(myTaskTimeToLive))
     } yield ()).forever
 
