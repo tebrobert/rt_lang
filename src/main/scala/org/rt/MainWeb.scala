@@ -31,9 +31,6 @@ object MainWeb extends ZIOAppDefault:
     message: String,
   ): UIO[Unit] =
     for {
-//      now <- ZIO.clock.flatMap(_.instant)
-//      _ <- ZIO.succeed(println(s"$now: $message"))
-
       _ <- ZIO.log(message)
     } yield ()
 
