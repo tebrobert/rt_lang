@@ -8,6 +8,7 @@ lazy val root = (project in file("."))
     name := "rt_lang",
     libraryDependencies ++= Seq(
       "dev.zio" %% "zio" % "2.1.1",
+      "dev.zio" %% "zio-http" % "3.3.3",
       "dev.zio" %% "zio-test" % "2.1.1" % Test
     ),
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")

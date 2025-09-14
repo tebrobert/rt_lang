@@ -2,7 +2,7 @@ package org.rt
 
 import org.rt.lang.RtLib_5_Run.{fullRun, interactive}
 import zio.*
-import zio.Duration.fromSeconds
+import zio.http.*
 
 import java.io.IOException
 import java.time.temporal.ChronoUnit.SECONDS
@@ -26,6 +26,14 @@ object MainWeb extends ZIOAppDefault:
     for {
       runningTasks <- Ref.make(Map.empty[TaskId, TaskState])
     } yield ()
+
+  def routes =
+    Routes(
+      Method.GET / "greet" -> handler { (req: Request) =>
+        val name = req.queryOrElse("name", "World")
+        Response.text(s"Hello $name!")
+      }
+    )
 
   def runThenFetchConsole(
     runningTasks: Ref[Map[TaskId, TaskState]],
