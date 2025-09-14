@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.Line
-import org.rt.lang.RtLib_4_Build.Public.{BRICK_RUNNER, Brick, BrickInput, BrickPrint, Built, BuiltRio, BuiltStr, BuiltUnit, fullBuild}
+import org.rt.lang.RtLib_4_Build.Public.*
 import org.rt.utils.RtFail.RtFail
 import zio.{IO, Queue, Ref, ZIO}
 
