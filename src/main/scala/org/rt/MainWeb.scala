@@ -12,17 +12,30 @@ import java.time.temporal.ChronoUnit.SECONDS
 type Code = String
 type TaskId = java.util.UUID
 type Line = String
+type Console = Vector[Line]
 
 type Message = String
 
+type MyResponse = String
+
 case class TaskState(
-  consoleRef: Ref[Vector[Line]],
+  consoleRef: Ref[Console],
   inputQueue: Queue[Line],
   task: Fiber[Nothing, Unit],
   created: java.time.Instant,
 )
 
 object MainWeb extends ZIOAppDefault:
+
+  def log(
+    message: String,
+  ): UIO[Unit] =
+    for {
+//      now <- ZIO.clock.flatMap(_.instant)
+//      _ <- ZIO.succeed(println(s"$now: $message"))
+
+      _ <- ZIO.log(message)
+    } yield ()
 
   def run =
     for {
@@ -31,17 +44,27 @@ object MainWeb extends ZIOAppDefault:
 
       routes =
         Routes(
+          Endpoint(RoutePattern.GET / "run_then_fetch_console")
+            // http://localhost:8080/run_then_fetch_console?code=input
+            .query(HttpCodec.query[Code]("code"))
+            .out[MyResponse]
+            .implement(code =>
+              runThenFetchConsole(runningTasks)(code)
+                .map(
+                  (taskId, console) => s"""{"taskId": "$taskId", "console": "$console"}""",
+                )
+            ),
           Endpoint(RoutePattern.GET / "fetch_console")
             // http://localhost:8080/fetch_console?task_id=ae017c62-14b7-496d-95ae-b0c09a11c6b4
             .query(HttpCodec.query[TaskId]("task_id"))
-            .out[String]
+            .out[MyResponse]
             .implement(taskId =>
               fetchConsole(runningTasks)(taskId)
                 .mapBoth(
                   error => s"""{"error": "$error"}""",
                   console => s"""{"console": "$console"}""",
                 ).merge
-            )
+            ),
         )
 
       _ <- Server.serve(routes).provide(Server.defaultWithPort(8080))
@@ -52,7 +75,7 @@ object MainWeb extends ZIOAppDefault:
     runningTasks: Ref[Map[TaskId, TaskState]],
   )(
     code: Code,
-  ): UIO[(TaskId, Vector[Line])] =
+  ): UIO[(TaskId, Console)] =
     for {
       taskId <- ZIO.succeed(java.util.UUID.randomUUID())
       consoleRef <- Ref.make(Vector.empty[Line])
@@ -66,6 +89,7 @@ object MainWeb extends ZIOAppDefault:
       _ <- runningTasks.update(
         _.updated(taskId, TaskState(consoleRef, inputQueue, task, now))
       )
+      _ <- log(s"Created task $taskId")
       console <- consoleRef.get
     } yield (taskId, console)
 
@@ -73,7 +97,7 @@ object MainWeb extends ZIOAppDefault:
     runningTasks: Ref[Map[TaskId, TaskState]],
   )(
     taskId: TaskId,
-  ): IO[Message, Vector[Line]] =
+  ): IO[Message, Console] =
     for {
       mbTaskState <- runningTasks.get.map(_.get(taskId))
       taskState <- ZIO.fromOption(mbTaskState).orElseFail(s"No such task by given taskId: `$taskId`")
@@ -85,7 +109,7 @@ object MainWeb extends ZIOAppDefault:
   )(
     taskId: TaskId,
     inputLine: Line,
-  ): IO[Message, Vector[Line]] =
+  ): IO[Message, Console] =
     for {
       mbTaskState <- runningTasks.get.map(_.get(taskId))
       taskState <- ZIO.fromOption(mbTaskState).orElseFail(s"No such task by given taskId: `$taskId`")
