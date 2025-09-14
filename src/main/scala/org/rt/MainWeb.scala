@@ -3,6 +3,9 @@ package org.rt
 import org.rt.lang.RtLib_5_Run.{fullRun, interactive}
 import zio.*
 import zio.http.*
+import zio.http.codec.HttpCodec
+import zio.http.endpoint.Endpoint
+import zio.http.endpoint.openapi.OpenAPI.SecurityScheme.Http
 
 import java.time.temporal.ChronoUnit.SECONDS
 
@@ -28,14 +31,17 @@ object MainWeb extends ZIOAppDefault:
 
       routes =
         Routes(
-          Method.GET / "hello" -> handler { (req: Request) =>
-            val name = req.queryOrElse("name", "World")
-            Response.text(s"Hello $name!")
-          },
-          Method.GET / "hi" -> handler { (req: Request) =>
-            val name = req.queryOrElse("name", "World")
-            Response.text(s"Hi $name!")
-          },
+          Endpoint(RoutePattern.GET / "fetch_console")
+            // http://localhost:8080/fetch_console?task_id=ae017c62-14b7-496d-95ae-b0c09a11c6b4
+            .query(HttpCodec.query[TaskId]("task_id"))
+            .out[String]
+            .implement(taskId =>
+              fetchConsole(runningTasks)(taskId)
+                .mapBoth(
+                  error => s"""{"error": "$error"}""",
+                  console => s"""{"console": "$console"}""",
+                ).merge
+            )
         )
 
       _ <- Server.serve(routes).provide(Server.defaultWithPort(8080))
@@ -96,11 +102,11 @@ object MainWeb extends ZIOAppDefault:
       shuffledKeys <- ZIO.random.flatMap(_.shuffle(runningTasks.toSeq))
       now <- ZIO.clock.flatMap(_.instant)
       _ <- ZIO.foreachDiscard(shuffledKeys.headOption) { (taskId, taskState) =>
-        ZIO.when(now.until(taskState.created, SECONDS) > 100){
-            for {
-              _ <- taskState.task.interrupt
-              _ <- runningTasksRef.update(_.removed(taskId))
-            } yield ()
+        ZIO.when(now.until(taskState.created, SECONDS) > 100) {
+          for {
+            _ <- taskState.task.interrupt
+            _ <- runningTasksRef.update(_.removed(taskId))
+          } yield ()
         }
       }
       _ <- ZIO.clock.flatMap(_.sleep(10.seconds))
