@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.Line
-import org.rt.lang.RtLib_4_Build.Public.{Brick, BrickInput, BrickPrint, Built, BuiltRio, BuiltStr, BuiltUnit}
+import org.rt.lang.RtLib_4_Build.Public.{BRICK_RUNNER, Brick, BrickInput, BrickPrint, Built, BuiltRio, BuiltStr, BuiltUnit, fullBuild}
 import org.rt.utils.RtFail.RtFail
 import zio.{IO, Queue, Ref, ZIO}
 
@@ -12,6 +12,17 @@ object RtLib_5_Run {
     built match {
       case BuiltRio(run) => run
       case _ => ZIO.fail(RtFail("runtime"))
+    }
+
+  def fullRun(
+    code: String,
+    brickRunner: BRICK_RUNNER,
+  ): IO[RtFail, Built] =
+    try { //todo - try better typing
+      ZIO.fromEither(fullBuild(code, brickRunner))
+        .flatMap(run)
+    } catch {
+      case fail: RtFail => ZIO.fail(fail)
     }
 
   val liveBrickRunner = (brick: Brick) =>

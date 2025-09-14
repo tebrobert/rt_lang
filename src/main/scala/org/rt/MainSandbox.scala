@@ -1,7 +1,6 @@
 package org.rt
 
-import org.rt.lang.RtLib_4_Build.Public.*
-import org.rt.lang.RtLib_5_Run.liveBrickRunner
+import org.rt.lang.RtLib_5_Run.{fullRun, liveBrickRunner}
 import zio.*
 
 import java.io.IOException
@@ -9,13 +8,13 @@ import java.io.IOException
 object MainSandbox extends ZIOAppDefault:
 
   override def run: ZIO[ZIOAppArgs, IOException, Unit] =
-    ZIO.fromEither(fullBuild(
+    fullRun(
       """print("Type anything:")
         |input
         |inputo
         |print("Thank you!")
         |""".stripMargin,
       liveBrickRunner,
-    ))
-      .flatMap(org.rt.lang.RtLib_5_Run.run(_).unit)
+    )
+      .unit
       .catchAll { fail => ZIO.succeed(println(fail)) }
