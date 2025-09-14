@@ -44,6 +44,7 @@ object MainWeb extends ZIOAppDefault:
           Endpoint(RoutePattern.GET / "run_then_fetch_console")
             // http://localhost:8080/run_then_fetch_console?code=input
             // http://localhost:8080/run_then_fetch_console?code=print(%221%22)
+            // http://localhost:8080/run_then_fetch_console?code=print(%22Enter%22)%0An%3C%2Dinput%0Aprint(%22Got%20%22%2Bn)
             .query(HttpCodec.query[Code]("code"))
             .out[MyResponse]
             .implement(code =>
@@ -54,7 +55,7 @@ object MainWeb extends ZIOAppDefault:
                 )
             ),
           Endpoint(RoutePattern.GET / "fetch_console")
-            // http://localhost:8080/fetch_console?task_id=f45eb1c25a6b4813b64263dd833d5397
+            // http://localhost:8080/fetch_console?task_id=eea1acac8e024c5ea0b95ec64633dd98
             .query(HttpCodec.query[TaskId]("task_id"))
             .out[MyResponse]
             .implement(taskId =>
@@ -65,7 +66,7 @@ object MainWeb extends ZIOAppDefault:
                 ).merge
             ),
           Endpoint(RoutePattern.GET / "feed_input_then_fetch_console")
-            // http://localhost:8080/feed_input_then_fetch_console?task_id=f45eb1c25a6b4813b64263dd833d5397&input_line=12
+            // http://localhost:8080/feed_input_then_fetch_console?task_id=eea1acac8e024c5ea0b95ec64633dd98&input_line=12
             .query(HttpCodec.query[TaskId]("task_id"))
             .query(HttpCodec.query[Line]("input_line"))
             .out[MyResponse]
