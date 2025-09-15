@@ -36,6 +36,9 @@ object MainWeb extends ZIOAppDefault:
       _ <- ZIO.log(message)
     } yield ()
 
+  def renderConsole(console: Console) =
+    console.mkString("\\n")
+
   def run =
     for {
       runningTasks <- Ref.make(Map.empty[TaskId, TaskState])
@@ -57,18 +60,18 @@ object MainWeb extends ZIOAppDefault:
               log(s"Code: `$code`") *>
               runThenFetchConsole(runningTasks)(code)
                 .map(
-                  (taskId, console) => s"""{"taskId": "$taskId", "console": "$console"}""",
+                  (taskId, console) => s"""{"task_id": "$taskId", "console": "${renderConsole(console)}"}""",
                 )
             ),
           Endpoint(RoutePattern.GET / "fetch_console")
-            // http://localhost:8080/fetch_console?task_id=eea1acac8e024c5ea0b95ec64633dd98
+            // http://localhost:8080/fetch_console?task_id=237b422f948a425792d9653185cd840d
             .query(HttpCodec.query[TaskId]("task_id"))
             .out[MyResponse]
             .implement(taskId =>
               fetchConsole(runningTasks)(taskId)
                 .mapBoth(
                   error => s"""{"error": "$error"}""",
-                  console => s"""{"console": "$console"}""",
+                  console => s"""{"console": "${renderConsole(console)}"}""",
                 ).merge
             ),
           Endpoint(RoutePattern.GET / "feed_input_then_fetch_console")
@@ -80,7 +83,7 @@ object MainWeb extends ZIOAppDefault:
               feedInputThenFetchConsole(runningTasks)(taskId, inputLine)
                 .mapBoth(
                   error => s"""{"error": "$error"}""",
-                  console => s"""{"console": "$console"}""",
+                  console => s"""{"console": "${renderConsole(console)}"}""",
                 ).merge
             ),
         )
