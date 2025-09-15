@@ -44,6 +44,7 @@ object MainWeb extends ZIOAppDefault:
       routes =
         Routes(
           Method.GET / Root -> handler { (_: Request) =>
+            // http://localhost:8080
             Response.html(Html.raw(Index.page))
           },
           Endpoint(RoutePattern.GET / "run_then_fetch_console")

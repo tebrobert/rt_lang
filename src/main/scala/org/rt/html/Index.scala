@@ -33,7 +33,7 @@ object Index {
     }
 
     .top-right {
-      height: 61vh;
+      height: 64vh;
       padding: 10px;
       box-sizing: border-box;
     }
@@ -74,7 +74,7 @@ print(message)
 name &lt- input
 print("Dear " + name + ", welcome!")
 </textarea>
-      <button>Left Button</button>
+      <button>Run</button>
     </div>
     <div class="right">
       <div class="top-right">
@@ -84,9 +84,9 @@ print("Dear " + name + ", welcome!")
       <div class="middle-right">
       </div>
       <div class="bottom-right">
-        <label for="left-textarea">Left Text Area</label>
-        <textarea placeholder=""></textarea>
-        <button>Right Bottom Button</button>
+        <label for="left-textarea">Input</label>
+        <textarea></textarea>
+        <button>Enter</button>
       </div>
     </div>
   </div>
