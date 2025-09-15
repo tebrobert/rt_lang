@@ -11,12 +11,12 @@ object Index {
       button { padding:10px; width:45%; background-color:darkblue; color:lightgray}
     </style>
   </head>
-  <body style="background-color:gray;">
+  <body style="background-color:gray;" onload="clear()">
     <div class="container" style="display:flex; height:98%;">
       <div style="width:45%; padding:10px; box-sizing:border-box; display:flex; flex-direction:column;">
         <div style="height: 90%; padding:10px; box-sizing:border-box;">
           <b style="color:darkred;">Your code</b>
-          <textarea id="code" style="color:darkblue; background-color:white;">message = "What is your name?"&#10;print(message)&#10;name &lt- input&#10;print("Dear " + name + ", welcome!")&#10;</textarea>
+          <textarea id="code" style="color:darkblue; background-color:white;"></textarea>
         </div>
         <div style="height:1%; padding:10px; box-sizing:border-box;">
         </div>
@@ -85,6 +85,12 @@ object Index {
 
       function render_console(console) {
           document.getElementById("console").value = console
+      }
+
+      function clear() {
+          document.getElementById("code").value = 'message = "What is your name?"\nprint(message)\nname <- input\nprint("Dear " + name + ", welcome!")\n'
+          document.getElementById("console").value = ""
+          document.getElementById("input_line").value = ""
       }
 
       async function main() {
