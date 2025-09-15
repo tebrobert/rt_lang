@@ -1,10 +1,12 @@
 package org.rt
 
+import org.rt.html.Index
 import org.rt.lang.RtLib_5_Run.{fullRun, interactive}
 import zio.*
 import zio.http.*
 import zio.http.codec.HttpCodec
 import zio.http.endpoint.Endpoint
+import zio.http.template.Html
 
 val myPort = 8080
 val myTaskTimeToLive = 100.seconds
@@ -41,6 +43,9 @@ object MainWeb extends ZIOAppDefault:
 
       routes =
         Routes(
+          Method.GET / Root -> handler { (_: Request) =>
+            Response.html(Html.raw(Index.page))
+          },
           Endpoint(RoutePattern.GET / "run_then_fetch_console")
             // http://localhost:8080/run_then_fetch_console?code=input
             // http://localhost:8080/run_then_fetch_console?code=print(%221%22)
