@@ -28,13 +28,13 @@ object Index {
         <div style="height: 90%; padding:10px; box-sizing:border-box; display:flex; flex-direction:column;">
           <div style="height: 75%; display:flex; flex-direction:column;">
             <b style="color:darkred;">Console</b>
-            <textarea readonly style="background-color:black; color:lime;">sd</textarea>
+            <textarea readonly style="background-color:black; color:lime;">What is your name?&#10;Robert&#10;Dear Robert, welcome!</textarea>
           </div>
           <div style="height:5%; display:flex; flex-direction:column;">
           </div>
           <div style="height: 20%;">
             <b style="color: darkred;">Input</b>
-            <textarea style="background-color:black; color:lime;">sd</textarea>
+            <textarea style="background-color:black; color:lime;">Robert</textarea>
           </div>
         </div>
         <div style="height:1%; padding:10px; box-sizing:border-box;">
