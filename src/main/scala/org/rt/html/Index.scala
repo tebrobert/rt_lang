@@ -28,7 +28,7 @@ object Index {
         <div style="height: 90%; padding:10px; box-sizing:border-box; display:flex; flex-direction:column;">
           <div style="height: 75%; display:flex; flex-direction:column;">
             <b style="color:darkred;">Console</b>
-            <textarea readonly style="background-color:black; color:lime;">What is your name?&#10;Robert&#10;Dear Robert, welcome!</textarea>
+            <textarea readonly style="background-color:black; color:lime;">What is your name?&#10;Robert&#10;Dear Robert, welcome!&#10;</textarea>
           </div>
           <div style="height:5%; display:flex; flex-direction:column;">
           </div>
