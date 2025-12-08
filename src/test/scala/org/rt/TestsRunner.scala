@@ -1,10 +1,38 @@
 package org.rt
 
 import org.rt.RuntimeMock.{InputMock, PrintMock, RuntimeMocks}
-import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Bool, T_RIO, T_Str, T_Unit, tTo}
+import org.rt.lang.RtLib_0_2_Builtins.{
+  T_A0,
+  T_Bint,
+  T_Bool,
+  T_RIO,
+  T_Str,
+  T_Unit,
+  tTo,
+}
 import org.rt.lang.RtLib_1_Tokenize.Public.*
-import org.rt.lang.RtLib_2_Parse.{Expr, ExprBraced, ExprCall1, ExprIdf, ExprLitBint, ExprLitStr, fullParse, get_lines_reversed, parse, preparse_braced, preparse_call}
-import org.rt.lang.RtLib_3_Lint.{Linted, LintedCall1, LintedIdf, LintedLit, fullLint, lint, lint_set}
+import org.rt.lang.RtLib_2_Parse.{
+  Expr,
+  ExprBraced,
+  ExprCall1,
+  ExprIdf,
+  ExprLitBint,
+  ExprLitStr,
+  fullParse,
+  get_lines_reversed,
+  parse,
+  preparse_braced,
+  preparse_call,
+}
+import org.rt.lang.RtLib_3_Lint.{
+  Linted,
+  LintedCall1,
+  LintedIdf,
+  LintedLit,
+  fullLint,
+  lint,
+  lint_set,
+}
 import org.rt.lang.RtLib_5_Run
 import org.rt.lang.RtLib_4_Build.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_try}
@@ -25,22 +53,32 @@ trait RtTestCase {
 object TestsRunner extends ZIOSpecDefault {
   def spec: Spec[Any, Nothing] =
     suite("HelloWorldSpec")(
-      allTestCases.map(testCase => test("tokenize " + testCase.name) {
-        assertTrue(tokenize(testCase.code_0) == Right(testCase.tokens_1))
-      })
-        ++ allTestCases.map(testCase => test("parse " + testCase.name) {
-        assertTrue(parse(testCase.tokens_1) == testCase.expr_2)
-      })
-        ++ allTestCases.map(testCase => test("lint " + testCase.name) {
-        assertTrue(lint(testCase.expr_2) == testCase.linted_3)
-      })
-        ++ allTestCases.flatMap(testCase =>
-        testCase.mb_mock_4.zipWithIndex.map((mock_4, i) => test(s"run ${testCase.name} $i") {
-          buildRunMocking(testCase.linted_3, mock_4)
-            .catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
-        })
+      allTestCases.map(testCase =>
+        test("tokenize " + testCase.name) {
+          assertTrue(tokenize(testCase.code_0) == Right(testCase.tokens_1))
+        },
       )
-        ++ customTests
+        ++ allTestCases.map(testCase =>
+          test("parse " + testCase.name) {
+            assertTrue(parse(testCase.tokens_1) == testCase.expr_2)
+          },
+        )
+        ++ allTestCases.map(testCase =>
+          test("lint " + testCase.name) {
+            assertTrue(lint(testCase.expr_2) == testCase.linted_3)
+          },
+        )
+        ++ allTestCases.flatMap(testCase =>
+          testCase.mb_mock_4.zipWithIndex.map((mock_4, i) =>
+            test(s"run ${testCase.name} $i") {
+              buildRunMocking(testCase.linted_3, mock_4)
+                .catchAll(fail =>
+                  ZIO.succeed(println(fail)).as(assertTrue(false)),
+                )
+            },
+          ),
+        )
+        ++ customTests,
     )
 
   //todo - add custom tests
@@ -69,15 +107,35 @@ object TestsRunner extends ZIOSpecDefault {
           case Left(fail) => assertTrue(false)
           case Right(tokens) =>
             val ext_tokens_reversed = (TokEndl +: tokens).reverse
-            val raw_lines_reversed = get_lines_reversed(ext_tokens_reversed, Nil, Nil)
+            val raw_lines_reversed =
+              get_lines_reversed(ext_tokens_reversed, Nil, Nil)
             val actual_lines_reversed = raw_lines_reversed.filter(_.nonEmpty)
             val expected_lines_reversed =
               List(
-                List(TokIdf("print"), TokParenOpen, TokIdf("name"), TokParenClose),
-                List(TokIdf("print"), TokParenOpen, TokLitStr("Welcome, ..."), TokParenClose),
+                List(
+                  TokIdf("print"),
+                  TokParenOpen,
+                  TokIdf("name"),
+                  TokParenClose,
+                ),
+                List(
+                  TokIdf("print"),
+                  TokParenOpen,
+                  TokLitStr("Welcome, ..."),
+                  TokParenClose,
+                ),
                 List(TokIdf("name"), TokLessMinus, TokIdf("input")),
-                List(TokIdf("print"), TokParenOpen, TokIdf("greeting"), TokParenClose),
-                List(TokIdf("greeting"), TokEq, TokLitStr("Hey! What is your name?")),
+                List(
+                  TokIdf("print"),
+                  TokParenOpen,
+                  TokIdf("greeting"),
+                  TokParenClose,
+                ),
+                List(
+                  TokIdf("greeting"),
+                  TokEq,
+                  TokLitStr("Hey! What is your name?"),
+                ),
               )
 
             assertTrue(actual_lines_reversed == expected_lines_reversed)
@@ -93,7 +151,9 @@ object TestsRunner extends ZIOSpecDefault {
       },
       test("method_syntax_3") {
         val parsedAsMethod = fullParse("f0(r0)(l0).f1(r1)(l1).f2(r2)(l2)")
-        assertTrue(parsedAsMethod == fullParse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))"))
+        assertTrue(
+          parsedAsMethod == fullParse("f2(r2)(l2)(f1(r1)(l1)(f0(r0)(l0)))"),
+        )
       },
       test("preparse_braced 1.1") {
         assertTrue(preparse_braced(List.empty, Nil) == List.empty)
@@ -102,10 +162,13 @@ object TestsRunner extends ZIOSpecDefault {
         assertTrue(preparse_braced(List(TokDot), Nil) == List(TokDot))
       },
       test("preparse_braced 1.3") {
-        assertTrue(preparse_braced(List(TokDot, TokEqGr), Nil) == List(TokDot, TokEqGr))
+        assertTrue(
+          preparse_braced(List(TokDot, TokEqGr), Nil) == List(TokDot, TokEqGr),
+        )
       },
       test("preparse_braced 2") {
-        val actual = preparse_braced(List(TokParenOpen, TokIdf("+"), TokParenClose), Nil)
+        val actual =
+          preparse_braced(List(TokParenOpen, TokIdf("+"), TokParenClose), Nil)
         assertTrue(actual == List(ExprBraced(ExprIdf("+"))))
       },
       // todo - to not bind to Scala's `match`
@@ -158,11 +221,12 @@ object TestsRunner extends ZIOSpecDefault {
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("operator_naming 2") {
-        fullRunMocking("" +
-          s"""|||+++||| = "Hi!"\n""" +
-          s"""print(|||+++|||)\n""" +
-          s"""~~~ = name => "Welcome, ".+(name).+("!")\n""" +
-          s"""print("Joe".~~~)""",
+        fullRunMocking(
+          "" +
+            s"""|||+++||| = "Hi!"\n""" +
+            s"""print(|||+++|||)\n""" +
+            s"""~~~ = name => "Welcome, ".+(name).+("!")\n""" +
+            s"""print("Joe".~~~)""",
           RuntimeMocks(List(PrintMock("Hi!"), PrintMock("Welcome, Joe!"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
@@ -175,20 +239,27 @@ object TestsRunner extends ZIOSpecDefault {
           ExprBraced(ExprLitStr("x")),
           ExprBraced(ExprLitStr("y")),
         )
-        val res = preparse_call(exprs, Nil) // todo - remove Nils after resignaturing
-        assertTrue(res == List(
-          ExprCall1(
-            ExprCall1(ExprIdf("f"), ExprBraced(ExprLitStr("x"))),
-            ExprBraced(ExprLitStr("y"))
+        val res =
+          preparse_call(exprs, Nil) // todo - remove Nils after resignaturing
+        assertTrue(
+          res == List(
+            ExprCall1(
+              ExprCall1(ExprIdf("f"), ExprBraced(ExprLitStr("x"))),
+              ExprBraced(ExprLitStr("y")),
+            ),
           ),
-        ))
+        )
       },
       test("parse_with_preparse_4 - 1") {
         val tokens =
           List(
             TokIdf("f"),
-            TokParenOpen, TokLitStr("x"), TokParenClose,
-            TokParenOpen, TokLitStr("y"), TokParenClose,
+            TokParenOpen,
+            TokLitStr("x"),
+            TokParenClose,
+            TokParenOpen,
+            TokLitStr("y"),
+            TokParenClose,
           )
 
         assertTrue(rt_try(() => parse(tokens)).isRight)
@@ -288,13 +359,21 @@ object TestsRunner extends ZIOSpecDefault {
               Set(
                 LintedCall1(
                   LintedIdf("str", T_Bint tTo T_Str),
-                  LintedCall1(LintedIdf("f", T_Bint tTo T_Bint), LintedLit("5", T_Bint), T_Bint),
-                  T_Str
+                  LintedCall1(
+                    LintedIdf("f", T_Bint tTo T_Bint),
+                    LintedLit("5", T_Bint),
+                    T_Bint,
+                  ),
+                  T_Str,
                 ),
                 LintedCall1(
                   LintedIdf("str", T_Bool tTo T_Str),
-                  LintedCall1(LintedIdf("f", T_Bint tTo T_Bool), LintedLit("5", T_Bint), T_Bool),
-                  T_Str
+                  LintedCall1(
+                    LintedIdf("f", T_Bint tTo T_Bool),
+                    LintedLit("5", T_Bint),
+                    T_Bool,
+                  ),
+                  T_Str,
                 ),
               )
             assertTrue(actual == expected)
@@ -333,11 +412,13 @@ object TestsRunner extends ZIOSpecDefault {
              |doGreet = name => "Hi, ".+(name).+("!").print
              |doAskName.>>=(doGreet)
              |""".stripMargin,
-          RuntimeMocks(List(
-            PrintMock("What your name?"),
-            InputMock("Tester"),
-            PrintMock("Hi, Tester!"),
-          )),
+          RuntimeMocks(
+            List(
+              PrintMock("What your name?"),
+              InputMock("Tester"),
+              PrintMock("Hi, Tester!"),
+            ),
+          ),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       //      test("flatmap_input 3") {
@@ -362,11 +443,13 @@ object TestsRunner extends ZIOSpecDefault {
              |_ <- input
              |print("Thank you!")
              |""".stripMargin,
-          RuntimeMocks(List(
-            PrintMock("Type anything:"),
-            InputMock("..."),
-            PrintMock("Thank you!"),
-          )),
+          RuntimeMocks(
+            List(
+              PrintMock("Type anything:"),
+              InputMock("..."),
+              PrintMock("Thank you!"),
+            ),
+          ),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("input as unit - 2") {
@@ -375,40 +458,43 @@ object TestsRunner extends ZIOSpecDefault {
              |input
              |print("Thank you!")
              |""".stripMargin,
-          RuntimeMocks(List(
-            PrintMock("Type anything:"),
-            InputMock("..."),
-            PrintMock("Thank you!"),
-          )),
+          RuntimeMocks(
+            List(
+              PrintMock("Type anything:"),
+              InputMock("..."),
+              PrintMock("Thank you!"),
+            ),
+          ),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
     )
 
   def fullRunMocking(
-                      code: String,
-                      mockedCalls: RuntimeMocks,
+      code: String,
+      mockedCalls: RuntimeMocks,
   ) = {
     val eiLinted = fullLint(code)
 
     eiLinted match {
-      case Left(fail) => ZIO.succeed {
-        print(fail)
-        assertTrue(false)
-      }
+      case Left(fail) =>
+        ZIO.succeed {
+          print(fail)
+          assertTrue(false)
+        }
       case Right(linted) => buildRunMocking(linted, mockedCalls)
     }
   }
 
   def buildRunMocking(
-                       linted: Linted,
-                       mockedCalls: RuntimeMocks,
+      linted: Linted,
+      mockedCalls: RuntimeMocks,
   ) =
     for {
       ref <- Ref.make(mockedCalls)
       brickRunner = BrickRunner.mocking(ref)(_)
       eiBuilt = build(linted, brickRunner)
       _ <- eiBuilt match {
-        case Left(fail) => ZIO.fail(fail)
+        case Left(fail)   => ZIO.fail(fail)
         case Right(built) => RtLib_5_Run.run(built)
       }
       leftMockedCalls <- ref.get
@@ -417,17 +503,17 @@ object TestsRunner extends ZIOSpecDefault {
 
 private object BrickRunner {
   def empty(
-    brick: Brick,
+      brick: Brick,
   ): BuiltRio =
     BuiltRio(ZIO.succeed(brick match {
-      case BrickInput => BuiltStr("")
+      case BrickInput    => BuiltStr("")
       case BrickPrint(s) => BuiltUnit(())
     }))
 
   def mocking(
-    mockedCallsRef: Ref[RuntimeMocks]
+      mockedCallsRef: Ref[RuntimeMocks],
   )(
-    brick: Brick,
+      brick: Brick,
   ): BuiltRio =
     BuiltRio(
       for {
@@ -438,12 +524,12 @@ private object BrickRunner {
               (BuiltStr(value), restMockedCalls)
 
             case (BrickPrint(s), PrintMock(value) :: restMockedCalls)
-              if s == value =>
+                if s == value =>
               (BuiltUnit(()), restMockedCalls)
 
             case _ => rtFail("runtime")
           }
         _ <- mockedCallsRef.set(RuntimeMocks(restMockedCalls))
-      } yield result
+      } yield result,
     )
 }

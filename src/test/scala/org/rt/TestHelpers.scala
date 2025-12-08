@@ -29,19 +29,19 @@ object TestHelpers {
 
   @tailrec
   def exprCalls(
-    f: Expr,
-    xs: Expr*,
+      f: Expr,
+      xs: Expr*,
   ): Expr =
     xs.toList.rtMatch(
       caseEmpty = () => f,
-      caseAtLeast1 = (headX, tailXs) =>
-        exprCalls(ExprCall1(f, headX), tailXs:_*),
+      caseAtLeast1 =
+        (headX, tailXs) => exprCalls(ExprCall1(f, headX), tailXs: _*),
     )
 
   @tailrec
   def lintedCalls(
-    f: Linted,
-    xs: Linted*,
+      f: Linted,
+      xs: Linted*,
   ): Linted =
     xs.toList.rtMatch(
       caseEmpty = () => f,
@@ -53,8 +53,8 @@ object TestHelpers {
 
   @tailrec
   def exprChain(
-    expr: Expr,
-    fxs: (Expr, Expr)*,
+      expr: Expr,
+      fxs: (Expr, Expr)*,
   ): Expr =
     fxs.toList.rtMatch(
       caseEmpty = () => expr,
@@ -66,8 +66,8 @@ object TestHelpers {
 
   @tailrec
   def lintedChain(
-    linted: Linted,
-    fxs: (Linted, Linted)*,
+      linted: Linted,
+      fxs: (Linted, Linted)*,
   ): Linted =
     fxs.toList.rtMatch(
       caseEmpty = () => linted,
@@ -78,9 +78,9 @@ object TestHelpers {
     )
 
   def exprAndThen(
-    resName: String,
-    expr: Expr,
-    exprNext: Expr,
+      resName: String,
+      expr: Expr,
+      exprNext: Expr,
   ) =
     exprCalls(
       ExprIdf(builtin_flatmap),
@@ -89,9 +89,9 @@ object TestHelpers {
     )
 
   def exprEqAndThen(
-    resName: String,
-    expr: Expr,
-    exprNext: Expr,
+      resName: String,
+      expr: Expr,
+      exprNext: Expr,
   ) =
     exprAndThen(
       resName,
@@ -100,9 +100,9 @@ object TestHelpers {
     )
 
   def lintedAndThen(
-    resName: String,
-    linted: Linted,
-    lintedNext: Linted,
+      resName: String,
+      linted: Linted,
+      lintedNext: Linted,
   ) = {
     val resTyp = rt_assert_type_Typ1(linted.typ).t1 // todo - try better typing
 
@@ -121,9 +121,9 @@ object TestHelpers {
   }
 
   def lintedEqAndThen(
-    resName: String,
-    linted: Linted,
-    lintedNext: Linted,
+      resName: String,
+      linted: Linted,
+      lintedNext: Linted,
   ) =
     lintedAndThen(
       resName,
