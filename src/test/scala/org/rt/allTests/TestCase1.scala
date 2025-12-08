@@ -13,7 +13,7 @@ object TestCase1 extends RtTestCase {
 
   val tokens_1 =
     List(
-      TokIdf("input")
+      TokIdf("input"),
     )
 
   val expr_2 =
@@ -24,7 +24,7 @@ object TestCase1 extends RtTestCase {
 
   val mb_mock_4 =
     List(
-      RuntimeMocks(List(InputMock(""))),
-      RuntimeMocks(List(InputMock("s")))
+      List(InputMock("")),
+      List(InputMock("s")),
     )
 }

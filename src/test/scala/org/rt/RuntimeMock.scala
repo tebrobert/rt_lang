@@ -6,6 +6,4 @@ object RuntimeMock {
   case class InputMock(value: String) extends RuntimeMock
 
   case class PrintMock(value: String) extends RuntimeMock
-
-  case class RuntimeMocks(mockedCalls: List[RuntimeMock])
 }

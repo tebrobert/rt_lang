@@ -1,7 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
-import org.rt.RuntimeMock.{InputMock, RuntimeMocks}
+import org.rt.RuntimeMock.InputMock
 import org.rt.lang.RtLib_0_2_Builtins.{T_RIO, T_Str, tTo}
 import org.rt.lang.RtLib_1_Tokenize.Public.*
 import org.rt.lang.RtLib_2_Parse.*
@@ -11,11 +11,22 @@ object TestCase4 extends RtTestCase {
   val code_0 = "(s => s)((s => s)(input))\n"
 
   val tokens_1 = List(
-    TokParenOpen, TokIdf("s"), TokEqGr, TokIdf("s"), TokParenClose,
     TokParenOpen,
-    TokParenOpen, TokIdf("s"), TokEqGr, TokIdf("s"), TokParenClose,
-    TokParenOpen, TokIdf("input"), TokParenClose,
-    TokParenClose, TokEndl,
+    TokIdf("s"),
+    TokEqGr,
+    TokIdf("s"),
+    TokParenClose,
+    TokParenOpen,
+    TokParenOpen,
+    TokIdf("s"),
+    TokEqGr,
+    TokIdf("s"),
+    TokParenClose,
+    TokParenOpen,
+    TokIdf("input"),
+    TokParenClose,
+    TokParenClose,
+    TokEndl,
   )
 
   val expr_2 =
@@ -23,8 +34,8 @@ object TestCase4 extends RtTestCase {
       ExprLambda1(ExprIdf("s"), ExprIdf("s")),
       ExprCall1(
         ExprLambda1(ExprIdf("s"), ExprIdf("s")),
-        ExprIdf("input")
-      )
+        ExprIdf("input"),
+      ),
     )
 
   val linted_3 =
@@ -48,7 +59,7 @@ object TestCase4 extends RtTestCase {
 
   val mb_mock_4 =
     List(
-      RuntimeMocks(List(InputMock(""))),
-      RuntimeMocks(List(InputMock("s"))),
+      List(InputMock("")),
+      List(InputMock("s")),
     )
 }

@@ -1,7 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
-import org.rt.RuntimeMock.{InputMock, PrintMock, RuntimeMocks}
+import org.rt.RuntimeMock.{InputMock, PrintMock}
 import org.rt.TestHelpers.*
 import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_1_Tokenize.Public.*
@@ -19,21 +19,47 @@ object TestCase10 extends RtTestCase {
 
   val tokens_1 =
     List(
-      TokIdf("greeting"), TokLessMinus, TokIdf(vPure), TokParenOpen,
+      TokIdf("greeting"),
+      TokLessMinus,
+      TokIdf(vPure),
+      TokParenOpen,
       TokLitStr("Hey! What is your name?"),
-      TokParenClose, TokEndl,
-
-      TokIdf("print"), TokParenOpen, TokIdf("greeting"), TokParenClose, TokEndl,
-      TokIdf("name"), TokLessMinus, TokIdf("input"), TokEndl,
-      TokIdf("print"), TokParenOpen, TokLitStr("Welcome, ..."), TokParenClose, TokEndl,
-      TokIdf("print"), TokParenOpen, TokIdf("name"), TokParenClose, TokEndl,
+      TokParenClose,
+      TokEndl,
+      TokIdf("print"),
+      TokParenOpen,
+      TokIdf("greeting"),
+      TokParenClose,
+      TokEndl,
+      TokIdf("name"),
+      TokLessMinus,
+      TokIdf("input"),
+      TokEndl,
+      TokIdf("print"),
+      TokParenOpen,
+      TokLitStr("Welcome, ..."),
+      TokParenClose,
+      TokEndl,
+      TokIdf("print"),
+      TokParenOpen,
+      TokIdf("name"),
+      TokParenClose,
+      TokEndl,
     )
 
   val expr_2 =
-    exprAndThen("greeting", ExprCall1(ExprIdf(vPure), ExprLitStr("Hey! What is your name?")),
-      exprAndThen("_", ExprCall1(ExprIdf("print"), ExprIdf("greeting")),
-        exprAndThen("name", ExprIdf("input"),
-          exprAndThen("_", ExprCall1(ExprIdf("print"), ExprLitStr("Welcome, ...")),
+    exprAndThen(
+      "greeting",
+      ExprCall1(ExprIdf(vPure), ExprLitStr("Hey! What is your name?")),
+      exprAndThen(
+        "_",
+        ExprCall1(ExprIdf("print"), ExprIdf("greeting")),
+        exprAndThen(
+          "name",
+          ExprIdf("input"),
+          exprAndThen(
+            "_",
+            ExprCall1(ExprIdf("print"), ExprLitStr("Welcome, ...")),
             ExprCall1(ExprIdf("print"), ExprIdf("name")),
           ),
         ),
@@ -41,11 +67,35 @@ object TestCase10 extends RtTestCase {
     )
 
   val linted_3 =
-    lintedAndThen("greeting", LintedCall1(LintedIdf(vPure, T_Str_To_RIO_Str), LintedLit("Hey! What is your name?", T_Str), T_RIO_Str),
-      lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("greeting", T_Str), T_RIO_Unit),
-        lintedAndThen("name", LintedIdf("input", T_RIO_Str),
-          lintedAndThen("_", LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedLit("Welcome, ...", T_Str), T_RIO_Unit),
-            LintedCall1(LintedIdf("print", T_Str_To_RIO_Unit), LintedIdf("name", T_Str), T_RIO_Unit),
+    lintedAndThen(
+      "greeting",
+      LintedCall1(
+        LintedIdf(vPure, T_Str_To_RIO_Str),
+        LintedLit("Hey! What is your name?", T_Str),
+        T_RIO_Str,
+      ),
+      lintedAndThen(
+        "_",
+        LintedCall1(
+          LintedIdf("print", T_Str_To_RIO_Unit),
+          LintedIdf("greeting", T_Str),
+          T_RIO_Unit,
+        ),
+        lintedAndThen(
+          "name",
+          LintedIdf("input", T_RIO_Str),
+          lintedAndThen(
+            "_",
+            LintedCall1(
+              LintedIdf("print", T_Str_To_RIO_Unit),
+              LintedLit("Welcome, ...", T_Str),
+              T_RIO_Unit,
+            ),
+            LintedCall1(
+              LintedIdf("print", T_Str_To_RIO_Unit),
+              LintedIdf("name", T_Str),
+              T_RIO_Unit,
+            ),
           ),
         ),
       ),
@@ -53,17 +103,17 @@ object TestCase10 extends RtTestCase {
 
   val mb_mock_4 =
     List(
-      RuntimeMocks(List(
+      List(
         PrintMock("Hey! What is your name?"),
         InputMock("Tester"),
         PrintMock("Welcome, ..."),
         PrintMock("Tester"),
-      )),
-      RuntimeMocks(List(
+      ),
+      List(
         PrintMock("Hey! What is your name?"),
         InputMock(""),
         PrintMock("Welcome, ..."),
         PrintMock(""),
-      )),
+      ),
     )
 }

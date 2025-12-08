@@ -1,7 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
-import org.rt.RuntimeMock.{InputMock, PrintMock, RuntimeMocks}
+import org.rt.RuntimeMock.{InputMock, PrintMock}
 import org.rt.lang.RtLib_0_2_Builtins.{T_RIO, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_1_Tokenize.Public.*
 import org.rt.lang.RtLib_2_Parse.*
@@ -12,12 +12,29 @@ object TestCase6 extends RtTestCase {
 
   val tokens_1 = List(
     TokIdf(">>="),
-    TokParenOpen, TokIdf("s"), TokEqGr,
+    TokParenOpen,
+    TokIdf("s"),
+    TokEqGr,
     TokIdf(">>="),
-    TokParenOpen, TokIdf("u"), TokEqGr, TokIdf("print"),
-    TokParenOpen, TokIdf("s"), TokParenClose, TokParenClose,
-    TokParenOpen, TokIdf("print"), TokParenOpen, TokIdf("s"), TokParenClose, TokParenClose,
-    TokParenClose, TokParenOpen, TokIdf("input"), TokParenClose, TokEndl,
+    TokParenOpen,
+    TokIdf("u"),
+    TokEqGr,
+    TokIdf("print"),
+    TokParenOpen,
+    TokIdf("s"),
+    TokParenClose,
+    TokParenClose,
+    TokParenOpen,
+    TokIdf("print"),
+    TokParenOpen,
+    TokIdf("s"),
+    TokParenClose,
+    TokParenClose,
+    TokParenClose,
+    TokParenOpen,
+    TokIdf("input"),
+    TokParenClose,
+    TokEndl,
   )
 
   val expr_2 =
@@ -33,35 +50,41 @@ object TestCase6 extends RtTestCase {
                 ExprIdf("u"),
                 ExprCall1(
                   ExprIdf("print"),
-                  ExprIdf("s")
-                )
-              )
+                  ExprIdf("s"),
+                ),
+              ),
             ),
             ExprCall1(
               ExprIdf("print"),
-              ExprIdf("s")
-            )
-          )
-        )
+              ExprIdf("s"),
+            ),
+          ),
+        ),
       ),
-      ExprIdf("input")
+      ExprIdf("input"),
     )
 
   val linted_3 =
     LintedCall1(
       LintedCall1(
-        LintedIdf(">>=", (T_Str tTo T_RIO(T_Unit)) tTo (T_RIO(T_Str) tTo T_RIO(T_Unit))),
+        LintedIdf(
+          ">>=",
+          (T_Str tTo T_RIO(T_Unit)) tTo (T_RIO(T_Str) tTo T_RIO(T_Unit)),
+        ),
         LintedLambda1(
           LintedIdf("s", T_Str),
           LintedCall1(
             LintedCall1(
-              LintedIdf(">>=", (T_Unit tTo T_RIO(T_Unit)) tTo (T_RIO(T_Unit) tTo T_RIO(T_Unit))),
+              LintedIdf(
+                ">>=",
+                (T_Unit tTo T_RIO(T_Unit)) tTo (T_RIO(T_Unit) tTo T_RIO(T_Unit)),
+              ),
               LintedLambda1(
                 LintedIdf("u", T_Unit),
                 LintedCall1(
                   LintedIdf("print", T_Str tTo T_RIO(T_Unit)),
                   LintedIdf("s", T_Str),
-                  T_RIO(T_Unit)
+                  T_RIO(T_Unit),
                 ),
                 T_Unit tTo T_RIO(T_Unit),
               ),
@@ -70,20 +93,20 @@ object TestCase6 extends RtTestCase {
             LintedCall1(
               LintedIdf("print", T_Str tTo T_RIO(T_Unit)),
               LintedIdf("s", T_Str),
-              T_RIO(T_Unit)
+              T_RIO(T_Unit),
             ),
-            T_RIO(T_Unit)
+            T_RIO(T_Unit),
           ),
           T_Str tTo T_RIO(T_Unit),
         ),
         T_RIO(T_Str) tTo T_RIO(T_Unit),
       ),
       LintedIdf("input", T_RIO(T_Str)),
-      T_RIO(T_Unit)
+      T_RIO(T_Unit),
     )
 
   val mb_mock_4 =
     List(
-      RuntimeMocks(List(InputMock("s"), PrintMock("s"), PrintMock("s"))),
+      List(InputMock("s"), PrintMock("s"), PrintMock("s")),
     )
 }

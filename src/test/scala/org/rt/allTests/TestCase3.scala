@@ -1,7 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
-import org.rt.RuntimeMock.{InputMock, RuntimeMocks}
+import org.rt.RuntimeMock.InputMock
 import org.rt.lang.RtLib_0_2_Builtins.{T_RIO, T_Str, tTo}
 import org.rt.lang.RtLib_1_Tokenize.Public.*
 import org.rt.lang.RtLib_2_Parse.*
@@ -11,9 +11,19 @@ object TestCase3 extends RtTestCase {
   val code_0 = "(s => s)(s => s)(input)\n"
 
   val tokens_1 = List(
-    TokParenOpen, TokIdf("s"), TokEqGr, TokIdf("s"), TokParenClose,
-    TokParenOpen, TokIdf("s"), TokEqGr, TokIdf("s"), TokParenClose,
-    TokParenOpen, TokIdf("input"), TokParenClose,
+    TokParenOpen,
+    TokIdf("s"),
+    TokEqGr,
+    TokIdf("s"),
+    TokParenClose,
+    TokParenOpen,
+    TokIdf("s"),
+    TokEqGr,
+    TokIdf("s"),
+    TokParenClose,
+    TokParenOpen,
+    TokIdf("input"),
+    TokParenClose,
     TokEndl,
   )
 
@@ -47,7 +57,7 @@ object TestCase3 extends RtTestCase {
 
   val mb_mock_4 =
     List(
-      RuntimeMocks(List(InputMock(""))),
-      RuntimeMocks(List(InputMock("s"))),
+      List(InputMock("")),
+      List(InputMock("s")),
     )
 }
