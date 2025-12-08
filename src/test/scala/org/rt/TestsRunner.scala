@@ -10,7 +10,19 @@ import org.rt.lang.RtLib_0_2_Builtins.{
   T_Unit,
   tTo,
 }
-import org.rt.lang.RtLib_1_Tokenize.Public.*
+import org.rt.lang.RtLib_1_Tokenize.Public.{
+  Tok,
+  TokDot,
+  TokEndl,
+  TokEq,
+  TokEqGr,
+  TokIdf,
+  TokLessMinus,
+  TokLitStr,
+  TokParenClose,
+  TokParenOpen,
+  tokenize,
+}
 import org.rt.lang.RtLib_2_Parse.{
   Expr,
   ExprBraced,
@@ -33,12 +45,21 @@ import org.rt.lang.RtLib_3_Lint.{
   lint,
   lint_set,
 }
+import org.rt.lang.RtLib_4_Build.Public.{
+  Brick,
+  BrickInput,
+  BrickPrint,
+  BuiltRio,
+  BuiltStr,
+  BuiltUnit,
+  build,
+  fullBuild,
+}
 import org.rt.lang.RtLib_5_Run
-import org.rt.lang.RtLib_4_Build.Public.*
 import org.rt.utils.RtFail.{rtFail, rt_try}
 import org.rt.utils.RtList.rt_assert_at_least_1
+import zio.test.{Spec, ZIOSpecDefault, assertTrue}
 import zio.{Ref, ZIO}
-import zio.test.*
 
 trait RtTestCase {
   final val name = this.getClass.getSimpleName
