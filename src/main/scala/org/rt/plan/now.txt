@@ -1,116 +1,117 @@
+TODO:
+    - Ensure that code is compiled fully in compile time and not partially in runtime
 
-PLAN:
+BACKLOG:
+    ? implement one argument functions
 
-? implement one argument functions
+    implement list type
 
-implement list type
+    or:
+        refactor typification
+            #### add "_FX" "_X" to type params on both sides before sync
 
-or:
-    refactor typification
-        #### add "_FX" "_X" to type params on both sides before sync
+        list literals
 
-    list literals
+        dict vs named tuple (name: Str, salary: Bint, permitted: Bool)
 
-    dict vs named tuple (name: Str, salary: Bint, permitted: Bool)
+        (not blocking) implement better error locating
+        (not blocking) implement escape-characters
+        (not blocking) implement comments
+        (not blocking) string interpolation
+        (not blocking) implement map, bind
 
-    (not blocking) implement better error locating
-    (not blocking) implement escape-characters
-    (not blocking) implement comments
-    (not blocking) string interpolation
-    (not blocking) implement map, bind
-
-    # ? remove endOfCode
-
-
-?implement structs/tuples/named tuples
-    implement functions
-implement dict type
-implement json type
-
-implement flags:
-	validate
-	build
-	run (default)
-
-Defer:
-    anonymous functions
-    anonymous structs
-    "has" - anonymous trait
-
-    Typeclasses
-        def float(x: Int): Float
-
-        def str(x: Int): Str
-        def str(x: Float): Str
-        def str(x: Bool): Str
-        def str(x: Str): Str = id
-
-        def +(y: Int)(x: Int): Int
-        def +(y: has[float])(x: has[float]): Float
-        def +(y: has[str])(x: has[str]): Str
-
-        trait Plus[A, B]:
-            def +(x: A, y: B): A
-        trait Multiply[A, B]:
-            def *(x: A, y: B): A
-
-        impl Plus[Str, Str]:
-            def +(x, y) = ...
-        impl Multiply[Str, Int]:
-            def *(x, y) = ...
-
-        impl Plus[Int, Int]:
-            def +(x, y) = ...
-        impl Multiply[Int, Int]:
-            def *(x, y) = ...
+        # ? remove endOfCode
 
 
-        impl Plus[Float, Int]:
-            def +(x, y) = ...
-        impl Multiply[Float, Int]:
-            def *(x, y) = ...
+    ?implement structs/tuples/named tuples
+        implement functions
+    implement dict type
+    implement json type
+
+    implement flags:
+        validate
+        build
+        run (default)
+
+    Defer:
+        anonymous functions
+        anonymous structs
+        "has" - anonymous trait
+
+        Typeclasses
+            def float(x: Int): Float
+
+            def str(x: Int): Str
+            def str(x: Float): Str
+            def str(x: Bool): Str
+            def str(x: Str): Str = id
+
+            def +(y: Int)(x: Int): Int
+            def +(y: has[float])(x: has[float]): Float
+            def +(y: has[str])(x: has[str]): Str
+
+            trait Plus[A, B]:
+                def +(x: A, y: B): A
+            trait Multiply[A, B]:
+                def *(x: A, y: B): A
+
+            impl Plus[Str, Str]:
+                def +(x, y) = ...
+            impl Multiply[Str, Int]:
+                def *(x, y) = ...
+
+            impl Plus[Int, Int]:
+                def +(x, y) = ...
+            impl Multiply[Int, Int]:
+                def *(x, y) = ...
 
 
-        impl Plus[Int, Float]:
-            def +(x, y): Float = ... ###############
-        impl Multiply[Int, Float]:
-            def *(x, y): Float = ... ###############
-
-    end Typeclasses
+            impl Plus[Float, Int]:
+                def +(x, y) = ...
+            impl Multiply[Float, Int]:
+                def *(x, y) = ...
 
 
-# String - Arr[Char], Vec20[Char] ? # no idea whether we need it 231110
+            impl Plus[Int, Float]:
+                def +(x, y): Float = ... ###############
+            impl Multiply[Int, Float]:
+                def *(x, y): Float = ... ###############
 
-Handling errors:
-    # list access
-        #1
-        [][0]   # Left(IdxOutOfRangErr)
-        myEither.getOrDie("")
+        end Typeclasses
 
-        #2
-        [][0]   # RUNTIME ERROR!      # TRADITIONALLY, relying on a programmer
 
-        #3
-        [][0]   # doesn't compile
-        xs[i]   # somehow requires the fact 0 <= i < xs.len, seems too hard to do
+    # String - Arr[Char], Vec20[Char] ? # no idea whether we need it 231110
 
-    # division
-        #1
-        1 // 0  # Left(ZeroDivErr)
+    Handling errors:
+        # list access
+            #1
+            [][0]   # Left(IdxOutOfRangErr)
+            myEither.getOrDie("")
 
-        #2
-        1 // 0  # doesn't compile
-        1 // x  # somehow requires the fact x!=0   # seems efforts won't worth it
+            #2
+            [][0]   # RUNTIME ERROR!      # TRADITIONALLY, relying on a programmer
 
-        #
-        1 // 0  # RUNTIME ERROR!  # TRADITIONALLY, relying on a programmer
+            #3
+            [][0]   # doesn't compile
+            xs[i]   # somehow requires the fact 0 <= i < xs.len, seems too hard to do
 
-        #
-        1 // 0  # inf    # values of the Int type are also "inf", "-inf", "nan"
+        # division
+            #1
+            1 // 0  # Left(ZeroDivErr)
 
-    # Memory issues
-        [0] * (1_000 ** 100)
-        # runtime error
-        # None
-        # doesn't compile
+            #2
+            1 // 0  # doesn't compile
+            1 // x  # somehow requires the fact x!=0   # seems efforts won't worth it
+
+            #
+            1 // 0  # RUNTIME ERROR!  # TRADITIONALLY, relying on a programmer
+
+            #
+            1 // 0  # inf    # values of the Int type are also "inf", "-inf", "nan"
+
+        # Memory issues
+            [0] * (1_000 ** 100)
+            # runtime error
+            # None
+            # doesn't compile
 
