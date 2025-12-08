@@ -1,7 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
-import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
+import org.rt.RuntimeMock.{InputMock, PrintMock, RuntimeMocks}
 import org.rt.lang.RtLib_0_2_Builtins.{T_RIO, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_1_Tokenize.Public.*
 import org.rt.lang.RtLib_2_Parse.*
@@ -52,6 +52,6 @@ object TestCase5 extends RtTestCase {
 
   val mb_mock_4 =
     List(
-      RunMocks(List(InputMock("s"), PrintMock("s"))),
+      RuntimeMocks(List(InputMock("s"), PrintMock("s"))),
     )
 }

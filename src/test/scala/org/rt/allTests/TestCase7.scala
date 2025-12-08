@@ -1,7 +1,7 @@
 package org.rt.allTests
 
 import org.rt.RtTestCase
-import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
+import org.rt.RuntimeMock.{InputMock, PrintMock, RuntimeMocks}
 import org.rt.TestHelpers.*
 import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_1_Tokenize.Public.*
@@ -42,7 +42,7 @@ object TestCase7 extends RtTestCase {
 
   val mb_mock_4 =
     List(
-      RunMocks(List(InputMock("x"), InputMock("y"), PrintMock("x"), PrintMock("y"))),
-      RunMocks(List(InputMock("s"), InputMock("s"), PrintMock("s"), PrintMock("s"))),
+      RuntimeMocks(List(InputMock("x"), InputMock("y"), PrintMock("x"), PrintMock("y"))),
+      RuntimeMocks(List(InputMock("s"), InputMock("s"), PrintMock("s"), PrintMock("s"))),
     )
 }

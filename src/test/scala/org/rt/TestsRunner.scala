@@ -1,6 +1,6 @@
 package org.rt
 
-import org.rt.RunMock.{InputMock, PrintMock, RunMocks}
+import org.rt.RuntimeMock.{InputMock, PrintMock, RuntimeMocks}
 import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Bool, T_RIO, T_Str, T_Unit, tTo}
 import org.rt.lang.RtLib_1_Tokenize.Public.*
 import org.rt.lang.RtLib_2_Parse.{Expr, ExprBraced, ExprCall1, ExprIdf, ExprLitBint, ExprLitStr, fullParse, get_lines_reversed, parse, preparse_braced, preparse_call}
@@ -19,7 +19,7 @@ trait RtTestCase {
   val tokens_1: List[Tok]
   val expr_2: Expr
   val linted_3: Linted
-  val mb_mock_4: List[RunMocks]
+  val mb_mock_4: List[RuntimeMocks]
 }
 
 object TestsRunner extends ZIOSpecDefault {
@@ -130,31 +130,31 @@ object TestsRunner extends ZIOSpecDefault {
       test("simple print") {
         fullRunMocking(
           s"""print("q")""",
-          RunMocks(List(PrintMock("q"))),
+          RuntimeMocks(List(PrintMock("q"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("simple input-print") {
         fullRunMocking(
           s"""x <- input\nprint(x)""",
-          RunMocks(List(InputMock("q"), PrintMock("q"))),
+          RuntimeMocks(List(InputMock("q"), PrintMock("q"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("assignment") {
         fullRunMocking(
           s"""msg = "hi"\nprint(msg)""",
-          RunMocks(List(PrintMock("hi"))),
+          RuntimeMocks(List(PrintMock("hi"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("flatmap_input 1") {
         fullRunMocking(
           s"""p = print("b")\np""",
-          RunMocks(List(PrintMock("b"))),
+          RuntimeMocks(List(PrintMock("b"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("operator_naming 1") {
         fullRunMocking(
           s"""<<<~~~>>> = "Hello"\nprint(<<<~~~>>>)""",
-          RunMocks(List(PrintMock("Hello"))),
+          RuntimeMocks(List(PrintMock("Hello"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("operator_naming 2") {
@@ -163,7 +163,7 @@ object TestsRunner extends ZIOSpecDefault {
           s"""print(|||+++|||)\n""" +
           s"""~~~ = name => "Welcome, ".+(name).+("!")\n""" +
           s"""print("Joe".~~~)""",
-          RunMocks(List(PrintMock("Hi!"), PrintMock("Welcome, Joe!"))),
+          RuntimeMocks(List(PrintMock("Hi!"), PrintMock("Welcome, Joe!"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("rt_assert_at_least_1") {
@@ -202,19 +202,19 @@ object TestsRunner extends ZIOSpecDefault {
       test("assignment_lambdas 1") {
         fullRunMocking(
           s"""f1 <- pure(+("1"))\nprint("0".f1)""",
-          RunMocks(List(PrintMock("01"))),
+          RuntimeMocks(List(PrintMock("01"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("assignment_lambdas 2") {
         fullRunMocking(
           s"""f1 = x => x.+("1")\nprint("0".f1)""",
-          RunMocks(List(PrintMock("01"))),
+          RuntimeMocks(List(PrintMock("01"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("assignment_lambdas 3") {
         fullRunMocking(
           s"""f1 = +("1")\nprint("0".f1)""",
-          RunMocks(List(PrintMock("01"))),
+          RuntimeMocks(List(PrintMock("01"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("integers") {
@@ -223,19 +223,19 @@ object TestsRunner extends ZIOSpecDefault {
       test("integers_printing") {
         fullRunMocking(
           s"""num = 1\nprint("The number is " + str(num))""",
-          RunMocks(List(PrintMock("The number is 1"))),
+          RuntimeMocks(List(PrintMock("The number is 1"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("integers_plus") {
         fullRunMocking(
           s"""num = 1 + 2\nprint("The number is " + str(num))""",
-          RunMocks(List(PrintMock("The number is 3"))),
+          RuntimeMocks(List(PrintMock("The number is 3"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("integers_unary_minus") {
         fullRunMocking(
           s"""print(str(-2))""",
-          RunMocks(List(PrintMock("-2"))),
+          RuntimeMocks(List(PrintMock("-2"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("lint_set") {
@@ -256,7 +256,7 @@ object TestsRunner extends ZIOSpecDefault {
       test("funcs 1") {
         fullRunMocking(
           s"""identity = (x => x)("")\nprint(identity)""",
-          RunMocks(List(PrintMock(""))),
+          RuntimeMocks(List(PrintMock(""))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("funcs 2.1") { // sync types actually
@@ -269,13 +269,13 @@ object TestsRunner extends ZIOSpecDefault {
       test("funcs 2.2") {
         fullRunMocking(
           s"""identity = (x => x)\nprint(identity(""))""",
-          RunMocks(List(PrintMock(""))),
+          RuntimeMocks(List(PrintMock(""))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("funcs 3") {
         fullRunMocking(
           s"""f = x => x + 1\nprint("The result is " + str(f(5)))""",
-          RunMocks(List(PrintMock("The result is 6"))),
+          RuntimeMocks(List(PrintMock("The result is 6"))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("lint_set 2") {
@@ -306,19 +306,19 @@ object TestsRunner extends ZIOSpecDefault {
       test("apply 1") {
         fullRunMocking(
           s"""f = x => x + ""\nprint(f(""))""",
-          RunMocks(List(PrintMock(""))),
+          RuntimeMocks(List(PrintMock(""))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("apply 2") {
         fullRunMocking(
           s"""f = x => x + ""\nprint(f(f("")))""",
-          RunMocks(List(PrintMock(""))),
+          RuntimeMocks(List(PrintMock(""))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("apply 3") {
         fullRunMocking(
           s"""f = +("")\nprint("".f.f)""",
-          RunMocks(List(PrintMock(""))),
+          RuntimeMocks(List(PrintMock(""))),
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       //test("apply 4") { // todo - `Can't lint`
@@ -333,7 +333,7 @@ object TestsRunner extends ZIOSpecDefault {
              |doGreet = name => "Hi, ".+(name).+("!").print
              |doAskName.>>=(doGreet)
              |""".stripMargin,
-          RunMocks(List(
+          RuntimeMocks(List(
             PrintMock("What your name?"),
             InputMock("Tester"),
             PrintMock("Hi, Tester!"),
@@ -362,7 +362,7 @@ object TestsRunner extends ZIOSpecDefault {
              |_ <- input
              |print("Thank you!")
              |""".stripMargin,
-          RunMocks(List(
+          RuntimeMocks(List(
             PrintMock("Type anything:"),
             InputMock("..."),
             PrintMock("Thank you!"),
@@ -375,7 +375,7 @@ object TestsRunner extends ZIOSpecDefault {
              |input
              |print("Thank you!")
              |""".stripMargin,
-          RunMocks(List(
+          RuntimeMocks(List(
             PrintMock("Type anything:"),
             InputMock("..."),
             PrintMock("Thank you!"),
@@ -385,8 +385,8 @@ object TestsRunner extends ZIOSpecDefault {
     )
 
   def fullRunMocking(
-    code: String,
-    mockedCalls: RunMocks,
+                      code: String,
+                      mockedCalls: RuntimeMocks,
   ) = {
     val eiLinted = fullLint(code)
 
@@ -400,8 +400,8 @@ object TestsRunner extends ZIOSpecDefault {
   }
 
   def buildRunMocking(
-    linted: Linted,
-    mockedCalls: RunMocks,
+                       linted: Linted,
+                       mockedCalls: RuntimeMocks,
   ) =
     for {
       ref <- Ref.make(mockedCalls)
@@ -425,7 +425,7 @@ private object BrickRunner {
     }))
 
   def mocking(
-    mockedCallsRef: Ref[RunMocks]
+    mockedCallsRef: Ref[RuntimeMocks]
   )(
     brick: Brick,
   ): BuiltRio =
@@ -443,7 +443,7 @@ private object BrickRunner {
 
             case _ => rtFail("runtime")
           }
-        _ <- mockedCallsRef.set(RunMocks(restMockedCalls))
+        _ <- mockedCallsRef.set(RuntimeMocks(restMockedCalls))
       } yield result
     )
 }
