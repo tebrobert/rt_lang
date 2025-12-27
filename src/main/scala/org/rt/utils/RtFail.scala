@@ -14,19 +14,26 @@ object RtFail {
       RtFail(msgs.toVector)
   }
 
-  def rtFail(msgs: String*) =
-    Left(RtFail(msgs.toVector))
-
   def rtFailUnsafe(msgs: String*) =
     throw RtFail(msgs.toVector)
+
+  def rtFail(msgs: String*) =
+    Left(RtFail(msgs.toVector))
 
   def rtFailIfUnsafe(cond: Boolean, msg: String*) =
     if (cond)
       rtFailUnsafe(msg: _*)
 
-  // todo - either
+  def rtFailIf(cond: Boolean, msg: String*) =
+    if (cond)
+      rtFail(msg: _*)
+    else Right(())
+
   def rtAssertUnsafe(cond: Boolean, msg: String = "Assertion error."): Unit =
     rtFailIfUnsafe(!cond, msg)
+
+  def rtAssert(cond: Boolean, msg: String = "Assertion error.") =
+    rtFailIf(!cond, msg)
 
   inline
   def tryOrRecoverUnsafe[A](
