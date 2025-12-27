@@ -273,16 +273,12 @@ object RtLib_1_Tokenize {
         inline current_tokenizer: Tokenizer,
         inline rest_tokenizers: List[Tokenizer],
     ): Either[RtFail, LexxBundle] =
-      try {
-        current_tokenizer(lexxBundle) match {
-          case Right(value) => Right(value)
-          case _            => tokenize_first_of(lexxBundle)(rest_tokenizers)
-        }
-      } catch {
-        case _ => tokenize_first_of(lexxBundle)(rest_tokenizers)
+      current_tokenizer(lexxBundle) match {
+        case Right(value) => Right(value)
+        case _            => tokenize_first_of(lexxBundle)(rest_tokenizers)
       }
 
-    // @tailrec //commented out because of an unsafe
+    @tailrec
     def tokenize_first_of(
         lexxBundle: LexxBundle,
     )(
