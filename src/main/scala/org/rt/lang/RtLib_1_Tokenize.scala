@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_1_Tokenize.Public.*
-import org.rt.utils.RtFail.{RtFail, rtFail, rt_assert, tryOrRecover}
+import org.rt.utils.RtFail.{RtFail, rt_assert, tryOrRecover}
 import org.rt.utils.RtList.rtMatch
 
 import scala.annotation.tailrec
@@ -136,7 +136,7 @@ object RtLib_1_Tokenize {
       current_idx: Int,
       tokens: List[Tok],
     ) = {
-      rt_assert(is_initial_idf_char(code_ext(current_idx))) // rtFail
+      rt_assert(is_initial_idf_char(code_ext(current_idx))) // rtFail rt_assert
 
       val idx_idf_start = current_idx
       val idx_idf_end = get_idx_idf_end_rec(code_ext, idx_idf_start + 1)
