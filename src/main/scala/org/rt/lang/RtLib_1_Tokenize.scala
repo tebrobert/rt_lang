@@ -58,18 +58,17 @@ object RtLib_1_Tokenize {
         lexx_dot,
       )
 
-    def call_or_otherwise[A](
-      otherwise: Option[() => A],
-      token: Tok,
-    )(
-      funcCalled: Option[() => A],
-    ): A =
-      funcCalled
-        .orElse(otherwise)
-        .getOrElse(rtFail(
-          s"Unspecified case for `$token` of type `${type value}`.",
-        ))
-        ()
+//    def call_or_otherwise[A](
+//      otherwise: Option[() => A],
+//      token: Tok,
+//    )(
+//      funcCalled: Option[() => A],
+//    ): Either[RtFail, A] =
+//      (funcCalled orElse otherwise)
+//        .toRight(RtFail(
+//          s"Unspecified case for `$token` of type `${type value}`.",
+//        ))
+//        .map(_())
 
     def is_initial_idf_char(
       char: Char,
@@ -221,7 +220,7 @@ object RtLib_1_Tokenize {
     def lexx_string(code_ext: String, token_idx_end: Int, tokens: List[Tok]) = {
       rt_assert(code_ext(token_idx_end) == '\"')
       val idx_string_start = token_idx_end + 1
-      
+
       for {
         idx_string_end <- get_idx_string_end_rec(code_ext, idx_string_start)
       } yield (code_ext, idx_string_end + 1, tokens.appended(TokLitStr(
