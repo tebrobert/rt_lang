@@ -145,21 +145,6 @@ object RtLib_1_Tokenize {
       )))
     }
 
-    def lexx_idf111(
-      code_ext: String,
-      current_idx: Int,
-      tokens: List[Tok],
-    ) = {
-      rtAssertUnsafe(is_initial_idf_char(code_ext(current_idx))) // rtFail rt_assert
-
-      val idx_idf_start = current_idx
-      val idx_idf_end = get_idx_idf_end_rec(code_ext, idx_idf_start + 1)
-
-      Right(code_ext, idx_idf_end, tokens.appended(TokIdf(
-        code_ext.substring(idx_idf_start, idx_idf_end)
-      )))
-    }
-
     @tailrec
     def get_idx_integer_end_rec(
       code_ext: String,
