@@ -251,21 +251,18 @@ object RtLib_1_Tokenize {
         code_ext: String,
         token_idx_end: Int,
         tokens: List[Tok],
-    ) = {
-      rtAssertUnsafe(is_operator_char(code_ext(token_idx_end)))
-      val idx_operator_start = token_idx_end
-      val idx_operator_end =
-        get_idx_operator_end_rec(code_ext, idx_operator_start)
-      Right(
-        code_ext,
-        idx_operator_end,
-        tokens.appended(
-          TokIdf(
-            code_ext.substring(idx_operator_start, idx_operator_end),
-          ),
-        ),
-      )
-    }
+    ) =
+      for {
+        _ <- rtAssert(is_operator_char(code_ext(token_idx_end)))
+        idx_operator_start = token_idx_end
+        idx_operator_end = get_idx_operator_end_rec(
+          code_ext,
+          idx_operator_start,
+        )
+        newToken = TokIdf(
+          code_ext.substring(idx_operator_start, idx_operator_end),
+        )
+      } yield (code_ext, idx_operator_end, tokens.appended(newToken))
 
     type LexxBundle = (String, Int, List[Tok])
     type Tokenizer = LexxBundle => Either[RtFail, LexxBundle]
