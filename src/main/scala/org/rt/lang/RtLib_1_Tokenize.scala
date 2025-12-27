@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_1_Tokenize.Public.*
-import org.rt.utils.RtFail.{RtFail, rtAssertUnsafe, rtFail, tryOrRecoverUnsafe}
+import org.rt.utils.RtFail.{RtFail, rtAssert, rtAssertUnsafe, rtFail, tryOrRecoverUnsafe}
 import org.rt.utils.RtList.rtMatch
 
 import scala.annotation.tailrec
@@ -131,6 +131,20 @@ object RtLib_1_Tokenize {
       else operator_current_idx
     }
 
+//    def lexx_idf22222(
+//                  code_ext: String,
+//                  current_idx: Int,
+//                  tokens: List[Tok],
+//                ) = {
+//      for {
+//        _ <- rtAssert(is_initial_idf_char(code_ext(current_idx)))
+//        idx_idf_start = current_idx
+//        idx_idf_end = get_idx_idf_end_rec(code_ext, idx_idf_start + 1)
+//      } yield (code_ext, idx_idf_end, tokens.appended(TokIdf(
+//        code_ext.substring(idx_idf_start, idx_idf_end)
+//      )))
+//    }
+
     def lexx_idf(
       code_ext: String,
       current_idx: Int,
@@ -247,12 +261,16 @@ object RtLib_1_Tokenize {
       inline current_tokenizer: Tokenizer,
       inline rest_tokenizers: List[Tokenizer],
     ): Either[RtFail, LexxBundle] =
-      tryOrRecoverUnsafe(
-        () => current_tokenizer(lexxBundle),
-        () => tokenize_first_of(lexxBundle)(rest_tokenizers),
-      )
+      try {
+        current_tokenizer(lexxBundle) match {
+          case Right(value) => Right(value)
+          case _ => tokenize_first_of(lexxBundle)(rest_tokenizers)
+        }
+      } catch {
+        case _ => tokenize_first_of(lexxBundle)(rest_tokenizers)
+      }
 
-    @tailrec
+    //@tailrec //commented out because of an unsafe
     def tokenize_first_of(
       lexxBundle: LexxBundle,
     )(
