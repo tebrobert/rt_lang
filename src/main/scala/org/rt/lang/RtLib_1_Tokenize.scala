@@ -131,21 +131,21 @@ object RtLib_1_Tokenize {
       else operator_current_idx
     }
 
-//    def lexx_idf22222(
-//                  code_ext: String,
-//                  current_idx: Int,
-//                  tokens: List[Tok],
-//                ) = {
-//      for {
-//        _ <- rtAssert(is_initial_idf_char(code_ext(current_idx)))
-//        idx_idf_start = current_idx
-//        idx_idf_end = get_idx_idf_end_rec(code_ext, idx_idf_start + 1)
-//      } yield (code_ext, idx_idf_end, tokens.appended(TokIdf(
-//        code_ext.substring(idx_idf_start, idx_idf_end)
-//      )))
-//    }
-
     def lexx_idf(
+      code_ext: String,
+      current_idx: Int,
+      tokens: List[Tok],
+    ) = {
+      for {
+        _ <- rtAssert(is_initial_idf_char(code_ext(current_idx)))
+        idx_idf_start = current_idx
+        idx_idf_end = get_idx_idf_end_rec(code_ext, idx_idf_start + 1)
+      } yield (code_ext, idx_idf_end, tokens.appended(TokIdf(
+        code_ext.substring(idx_idf_start, idx_idf_end)
+      )))
+    }
+
+    def lexx_idf111(
       code_ext: String,
       current_idx: Int,
       tokens: List[Tok],
