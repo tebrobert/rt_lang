@@ -69,7 +69,7 @@ object RtLib_1_Tokenize {
 //        .toRight(RtFail(
 //          s"Unspecified case for `$token` of type `${type value}`.",
 //        ))
-//        .map(_())
+//        .map(_()) // commented out at 2025-12-28
 
     def is_initial_idf_char(
         char: Char,
