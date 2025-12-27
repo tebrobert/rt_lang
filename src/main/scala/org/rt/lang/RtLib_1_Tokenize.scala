@@ -3,6 +3,7 @@ package org.rt.lang
 import org.rt.lang.RtLib_1_Tokenize.Public.*
 import org.rt.utils.RtFail.{RtFail, rtAssert, rtFail}
 import org.rt.utils.RtList.rtMatch
+import org.rt.utils.Either.rtMatchEither
 
 import scala.annotation.tailrec
 
@@ -267,10 +268,10 @@ object RtLib_1_Tokenize {
         inline current_tokenizer: Tokenizer,
         inline rest_tokenizers: List[Tokenizer],
     ): Either[RtFail, LexxBundle] =
-      current_tokenizer(lexxBundle) match {
-        case Right(value) => Right(value)
-        case _            => tokenize_first_of(lexxBundle)(rest_tokenizers)
-      }
+      current_tokenizer(lexxBundle).rtMatchEither(
+        caseRight = Right(_),
+        caseLeft = _ => tokenize_first_of(lexxBundle)(rest_tokenizers),
+      )
 
     @tailrec
     def tokenize_first_of(
@@ -287,9 +288,9 @@ object RtLib_1_Tokenize {
     def tokenize_rec(
         eiLexxBundle: Either[RtFail, LexxBundle],
     ): Either[RtFail, List[Tok]] = {
-      eiLexxBundle match {
-        case Left(fail)        => Left(fail)
-        case Right(lexxBundle) =>
+      eiLexxBundle.rtMatchEither(
+        caseLeft = fail => Left(fail),
+        caseRight = lexxBundle => {
           val (code_ext, current_idx, tokens) = lexxBundle
           val current_char = code_ext(current_idx)
 
@@ -298,7 +299,8 @@ object RtLib_1_Tokenize {
           else if (current_char == ' ')
             tokenize_rec(Right(code_ext, current_idx + 1, tokens))
           else tokenize_rec(tokenize_first_of(lexxBundle)(all_tokenizers))
-      }
+        },
+      )
     }
   }
 }
