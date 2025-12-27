@@ -192,33 +192,33 @@ object RtLib_1_Tokenize {
         code_ext: String,
         current_idx: Int,
         tokens: List[Tok],
-    ) = {
-      rtAssertUnsafe(code_ext(current_idx) == '(')
-      Right(code_ext, current_idx + 1, tokens.appended(TokParenOpen))
-    }
+    ) =
+      for {
+        _ <- rtAssert(code_ext(current_idx) == '(')
+      } yield (code_ext, current_idx + 1, tokens.appended(TokParenOpen))
 
     def lexx_paren_close(
         code_ext: String,
         current_idx: Int,
         tokens: List[Tok],
-    ) = {
-      rtAssertUnsafe(code_ext(current_idx) == ')')
-      Right(code_ext, current_idx + 1, tokens.appended(TokParenClose))
-    }
+    ) =
+      for {
+        _ <- rtAssert(code_ext(current_idx) == ')')
+      } yield (code_ext, current_idx + 1, tokens.appended(TokParenClose))
 
-    def lexx_eq_gr(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
-      rtAssertUnsafe(code_ext.substring(current_idx).startsWith("=>"))
-      Right(code_ext, current_idx + 2, tokens.appended(TokEqGr))
-    }
+    def lexx_eq_gr(code_ext: String, current_idx: Int, tokens: List[Tok]) =
+      for {
+        _ <- rtAssert(code_ext.substring(current_idx).startsWith("=>"))
+      } yield (code_ext, current_idx + 2, tokens.appended(TokEqGr))
 
     def lexx_less_minus(
         code_ext: String,
         current_idx: Int,
         tokens: List[Tok],
-    ) = {
-      rtAssertUnsafe(code_ext.substring(current_idx).startsWith("<-"))
-      Right(code_ext, current_idx + 2, tokens.appended(TokLessMinus))
-    }
+    ) =
+      for {
+        _ <- rtAssert(code_ext.substring(current_idx).startsWith("<-"))
+      } yield (code_ext, current_idx + 2, tokens.appended(TokLessMinus))
 
     def lexx_eq(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
       rtAssertUnsafe(code_ext.substring(current_idx).startsWith("="))
