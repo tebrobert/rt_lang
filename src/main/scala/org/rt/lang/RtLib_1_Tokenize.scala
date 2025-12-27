@@ -245,9 +245,9 @@ object RtLib_1_Tokenize {
     )(
       inline current_tokenizer: Tokenizer,
       inline rest_tokenizers: List[Tokenizer],
-    ): LexxBundle =
+    ): Either[RtFail, LexxBundle] =
       tryOrRecover(
-        () => current_tokenizer(lexxBundle),
+        () => Right(current_tokenizer(lexxBundle)),
         () => tokenize_first_of(lexxBundle)(rest_tokenizers),
       )
 
@@ -256,9 +256,9 @@ object RtLib_1_Tokenize {
       lexxBundle: LexxBundle,
     )(
       tokenizers: List[Tokenizer],
-    ): LexxBundle =
+    ): Either[RtFail, LexxBundle] =
       tokenizers.rtMatch(
-        caseEmpty = () => rtFail("Can't tokenize.", s"Given `$lexxBundle`."),
+        caseEmpty = () => Left(RtFail("Can't tokenize.", s"Given `$lexxBundle`.")),
         caseAtLeast1 = tryNextTokenizer(lexxBundle),
       )
 
@@ -276,7 +276,7 @@ object RtLib_1_Tokenize {
             Right(tokens)
           else if (current_char == ' ')
             tokenize_rec(Right(code_ext, current_idx + 1, tokens))
-          else tokenize_rec(Right(tokenize_first_of(lexxBundle)(all_tokenizers)))
+          else tokenize_rec(tokenize_first_of(lexxBundle)(all_tokenizers))
       }
     }
   }
