@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_1_Tokenize.Public.*
-import org.rt.utils.RtFail.{RtFail, rt_assert, tryOrRecover}
+import org.rt.utils.RtFail.{RtFail, rtAssertUnsafe, tryOrRecoverUnsafe}
 import org.rt.utils.RtList.rtMatch
 
 import scala.annotation.tailrec
@@ -136,7 +136,7 @@ object RtLib_1_Tokenize {
       current_idx: Int,
       tokens: List[Tok],
     ) = {
-      rt_assert(is_initial_idf_char(code_ext(current_idx))) // rtFail rt_assert
+      rtAssertUnsafe(is_initial_idf_char(code_ext(current_idx))) // rtFail rt_assert
 
       val idx_idf_start = current_idx
       val idx_idf_end = get_idx_idf_end_rec(code_ext, idx_idf_start + 1)
@@ -163,7 +163,7 @@ object RtLib_1_Tokenize {
       current_idx: Int,
       tokens: List[Tok],
     ) = {
-      rt_assert(is_digit(code_ext(current_idx)))
+      rtAssertUnsafe(is_digit(code_ext(current_idx)))
 
       val idx_idf_start = current_idx
       val idx_idf_end = get_idx_integer_end_rec(code_ext, idx_idf_start + 1)
@@ -178,7 +178,7 @@ object RtLib_1_Tokenize {
       current_idx: Int,
       tokens: List[Tok],
     ) = {
-      rt_assert(code_ext(current_idx) == '(')
+      rtAssertUnsafe(code_ext(current_idx) == '(')
       Right(code_ext, current_idx + 1, tokens.appended(TokParenOpen))
     }
 
@@ -187,38 +187,38 @@ object RtLib_1_Tokenize {
       current_idx: Int,
       tokens: List[Tok],
     ) = {
-      rt_assert(code_ext(current_idx) == ')')
+      rtAssertUnsafe(code_ext(current_idx) == ')')
       Right(code_ext, current_idx + 1, tokens.appended(TokParenClose))
     }
 
     def lexx_eq_gr(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
-      rt_assert(code_ext.substring(current_idx).startsWith("=>"))
+      rtAssertUnsafe(code_ext.substring(current_idx).startsWith("=>"))
       Right(code_ext, current_idx + 2, tokens.appended(TokEqGr))
     }
 
     def lexx_less_minus(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
-      rt_assert(code_ext.substring(current_idx).startsWith("<-"))
+      rtAssertUnsafe(code_ext.substring(current_idx).startsWith("<-"))
       Right(code_ext, current_idx + 2, tokens.appended(TokLessMinus))
     }
 
     def lexx_eq(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
-      rt_assert(code_ext.substring(current_idx).startsWith("="))
-      rt_assert(!is_operator_char(code_ext(current_idx + 1)))
+      rtAssertUnsafe(code_ext.substring(current_idx).startsWith("="))
+      rtAssertUnsafe(!is_operator_char(code_ext(current_idx + 1)))
       Right(code_ext, current_idx + 1, tokens.appended(TokEq))
     }
 
     def lexx_endl(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
-      rt_assert(code_ext.substring(current_idx).startsWith("\n"))
+      rtAssertUnsafe(code_ext.substring(current_idx).startsWith("\n"))
       Right(code_ext, current_idx + 1, tokens.appended(TokEndl))
     }
 
     def lexx_dot(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
-      rt_assert(code_ext(current_idx) == '.')
+      rtAssertUnsafe(code_ext(current_idx) == '.')
       Right(code_ext, current_idx + 1, tokens.appended(TokDot))
     }
 
     def lexx_string(code_ext: String, token_idx_end: Int, tokens: List[Tok]) = {
-      rt_assert(code_ext(token_idx_end) == '\"')
+      rtAssertUnsafe(code_ext(token_idx_end) == '\"')
       val idx_string_start = token_idx_end + 1
 
       for {
@@ -229,7 +229,7 @@ object RtLib_1_Tokenize {
     }
 
     def lexx_operator(code_ext: String, token_idx_end: Int, tokens: List[Tok]) = {
-      rt_assert(is_operator_char(code_ext(token_idx_end)))
+      rtAssertUnsafe(is_operator_char(code_ext(token_idx_end)))
       val idx_operator_start = token_idx_end
       val idx_operator_end = get_idx_operator_end_rec(code_ext, idx_operator_start)
       Right(code_ext, idx_operator_end, tokens.appended(TokIdf(
@@ -247,7 +247,7 @@ object RtLib_1_Tokenize {
       inline current_tokenizer: Tokenizer,
       inline rest_tokenizers: List[Tokenizer],
     ): Either[RtFail, LexxBundle] =
-      tryOrRecover(
+      tryOrRecoverUnsafe(
         () => current_tokenizer(lexxBundle),
         () => tokenize_first_of(lexxBundle)(rest_tokenizers),
       )

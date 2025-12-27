@@ -56,7 +56,7 @@ import org.rt.lang.RtLib_4_Build.Public.{
   fullBuild,
 }
 import org.rt.lang.RtLib_5_Run
-import org.rt.utils.RtFail.{rtFail, rt_try}
+import org.rt.utils.RtFail.{rtFailUnsafe, rt_try}
 import org.rt.utils.RtList.rt_assert_at_least_1
 import zio.test.{Spec, ZIOSpecDefault, assertTrue}
 import zio.{Ref, ZIO}
@@ -542,7 +542,7 @@ private object BrickRunner {
                 if s == value =>
               (BuiltUnit(()), restMockedCalls)
 
-            case _ => rtFail("runtime")
+            case _ => rtFailUnsafe("runtime")
           }
         _ <- mockedCallsRef.set(restMockedCalls)
       } yield result,

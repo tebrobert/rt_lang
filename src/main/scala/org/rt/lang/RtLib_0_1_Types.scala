@@ -96,8 +96,8 @@ object RtLib_0_1_Types {
     ): (Typ, List[Clarification]) =
       typ.rtMatch(
         caseUnk0 = _ => (typ_x tTo T_A0, accClarifications),
-        caseTyp0 = _ => rtFail(s"Unexpected typ_f `$typ`."),
-        caseTyp1 = _ => rtFail(s"Unexpected typ_f `$typ`."),
+        caseTyp0 = _ => rtFailUnsafe(s"Unexpected typ_f `$typ`."),
+        caseTyp1 = _ => rtFailUnsafe(s"Unexpected typ_f `$typ`."),
         caseTyp2 = typ2 =>
           concretizeAsFuncRec(typ, typ_x, accClarifications)(typ_x, typ2.t1),
       )
@@ -136,7 +136,7 @@ object RtLib_0_1_Types {
       caseUnk0 = unk0 =>
         if (unk0.i == tSubArg.i)
           (tF, accClarifications)
-        else wip("concretizeAsFuncUnk0"),
+        else wipUnsafe("concretizeAsFuncUnk0"),
       otherwise = () => {
         tF.clarifyUnk(tSubArg, tSubX)
           .concretizeAsFunc(tX, accClarifications.appended(tSubArg -> tSubX))
@@ -161,9 +161,9 @@ object RtLib_0_1_Types {
       caseTyp0 = typ0SubX =>
         if (typ0SubX.s == tSubArg.s)
           (tF, accClarifications)
-        else rtFail(),
-      caseTyp1 = _ => rtFail(),
-      caseTyp2 = _ => rtFail(),
+        else rtFailUnsafe(),
+      caseTyp1 = _ => rtFailUnsafe(),
+      caseTyp2 = _ => rtFailUnsafe(),
     )
 
   def concretizeAsFuncTyp1(
@@ -176,12 +176,12 @@ object RtLib_0_1_Types {
   ): (Typ, List[Clarification]) =
     tSubX.rtMatch(
       caseUnk0 = _ => (tF, accClarifications),
-      caseTyp0 = _ => rtFail(),
+      caseTyp0 = _ => rtFailUnsafe(),
       caseTyp1 = typ1 =>
         if (typ1.s == tSubArg.s)
           concretizeAsFuncRec(tF, tX, accClarifications)(typ1.t1, tSubArg.t1)
-        else rtFail(),
-      caseTyp2 = _ => rtFail(),
+        else rtFailUnsafe(),
+      caseTyp2 = _ => rtFailUnsafe(),
     )
 
   def concretizeAsFuncTyp2(
@@ -193,14 +193,14 @@ object RtLib_0_1_Types {
     tSubArg: Typ2,
   ): (Typ, List[Clarification]) =
     tSubX.rtMatch(
-      caseUnk0 = _ => wip("concretizeAsFuncTyp2"),
-      caseTyp0 = _ => rtFail(s"Can't match the types $tSubArg vs $tSubX"),
-      caseTyp1 = _ => rtFail(s"Can't match the types $tSubArg vs $tSubX"),
+      caseUnk0 = _ => wipUnsafe("concretizeAsFuncTyp2"),
+      caseTyp0 = _ => rtFailUnsafe(s"Can't match the types $tSubArg vs $tSubX"),
+      caseTyp1 = _ => rtFailUnsafe(s"Can't match the types $tSubArg vs $tSubX"),
       caseTyp2 = typ2_sub_x => {
-        rt_assert_equal(typ2_sub_x.s, tSubArg.s)
+        rtAssertEqualUnsafe(typ2_sub_x.s, tSubArg.s)
         val nilStub = Nil
         val (used_t1, accClarifications1) = concretizeAsFuncRec(tF, tX, nilStub)(typ2_sub_x.t1, tSubArg.t1)
-        val (f1, x1) = (used_t1, rt_assert_type_Typ2(used_t1).t1) // todo - try better typing
+        val (f1, x1) = (used_t1, rt_assert_type_Typ2Unsafe(used_t1).t1) // todo - try better typing
         val (used_t2, accClarifications2) = concretizeAsFuncRec(f1, x1, nilStub)(typ2_sub_x.t2, tSubArg.t2)
         (used_t2, accClarifications++accClarifications1++accClarifications2)
       },

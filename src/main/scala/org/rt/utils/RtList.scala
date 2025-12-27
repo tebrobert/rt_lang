@@ -1,6 +1,6 @@
 package org.rt.utils
 
-import RtFail.rtFail
+import RtFail.rtFailUnsafe
 
 //todo - ensure not use Scala match outside this file
 //todo - ensure to complete using tailrec
@@ -40,13 +40,13 @@ object RtList {
                 list match
                     case head1::head2::tail => at_least_2(head1, head2, tail)
                     case _ => otherwise()
-            case _ => rtFail("ni")
+            case _ => rtFailUnsafe("ni")
         }
 
     def rt_assert_at_least_1[A](vals: List[A], msg: String*): (A, List[A]) =
         vals match {
             case head::tail => (head, tail)
-            case Nil => rtFail(msg*)
+            case Nil => rtFailUnsafe(msg*)
         }
 
     def rt_assert_at_least_2[A](vals: List[A], msg: String*): (A, A, List[A]) =
@@ -56,7 +56,7 @@ object RtList {
 
     def rt_assert_empty[A](vals: List[A], msg: String*): Unit =
         vals match {
-            case head::tail => rtFail(s"The list is not empty, `$vals`." +: msg.toList*)
+            case head::tail => rtFailUnsafe(s"The list is not empty, `$vals`." +: msg.toList*)
             case Nil => ()
         }
 }

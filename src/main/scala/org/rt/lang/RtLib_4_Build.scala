@@ -5,7 +5,7 @@ import org.rt.lang.RtLib_0_1_Types.*
 import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_3_Lint.{Linted, LintedCall1, LintedIdf, LintedLambda1, LintedLit, fullLint}
 import org.rt.lang.RtLib_4_Build.Public.*
-import org.rt.utils.RtFail.{RtFail, rtFail, rt_try, wip}
+import org.rt.utils.RtFail.{RtFail, rtFailUnsafe, rt_try, wipUnsafe}
 import zio.{UIO, ZIO}
 
 object RtLib_4_Build {
@@ -74,7 +74,7 @@ object RtLib_4_Build {
       ) =
         BuiltLambda {
           case BuiltStr(s) => brickRunner(BrickPrint(s))
-          case _ => rtFail("runtime")
+          case _ => rtFailUnsafe("runtime")
         }
 
       val flatmap =
@@ -86,11 +86,11 @@ object RtLib_4_Build {
                   fa.flatMap { a =>
                     a_fb(a) match {
                       case BuiltRio(run) => run
-                      case _ => rtFail("runtime")
+                      case _ => rtFailUnsafe("runtime")
                     }
                   }
                 )
-              case _ => rtFail("runtime")
+              case _ => rtFailUnsafe("runtime")
             }
           )
         )
@@ -104,17 +104,17 @@ object RtLib_4_Build {
           BuiltLambda(_right => BuiltLambda(_left =>
             (_left, _right) match {
               case (BuiltStr(leftS), BuiltStr(rightS)) => BuiltStr(leftS + rightS)
-              case _ => rtFail("runtime")
+              case _ => rtFailUnsafe("runtime")
             }
           ))
         else if (typ == (T_Bint tTo (T_Bint tTo T_Bint)))
           BuiltLambda(_right => BuiltLambda(_left =>
             (_left, _right) match {
               case (BuiltBint(leftI), BuiltBint(rightI)) => BuiltBint(leftI + rightI)
-              case _ => rtFail("runtime")
+              case _ => rtFailUnsafe("runtime")
             }
           ))
-        else rtFail("runtime", s"Unexpected typ `$typ` for `+`.")
+        else rtFailUnsafe("runtime", s"Unexpected typ `$typ` for `+`.")
 
       def minus(
         typ: Typ,
@@ -123,15 +123,15 @@ object RtLib_4_Build {
           BuiltLambda(_right => BuiltLambda(_left =>
             (_left, _right) match {
               case (BuiltBint(leftI), BuiltBint(rightI)) => BuiltBint(leftI - rightI)
-              case _ => rtFail("runtime")
+              case _ => rtFailUnsafe("runtime")
             }
           ))
         else if (typ == (T_Bint tTo T_Bint))
           BuiltLambda{
             case BuiltBint(i) => BuiltBint(-i)
-            case _ => rtFail("runtime")
+            case _ => rtFailUnsafe("runtime")
           }
-        else rtFail("runtime", s"Unexpected typ `$typ` for `-`.")
+        else rtFailUnsafe("runtime", s"Unexpected typ `$typ` for `-`.")
 
       //            case_multiply=lambda: (
       //                f"(lambda {_right}: lambda {_left}: {_left} * {_right})"
@@ -145,19 +145,19 @@ object RtLib_4_Build {
         if (typ == (T_Bint tTo T_Str))
           BuiltLambda {
             case BuiltBint(i) => BuiltStr(i.toString)
-            case _ => rtFail("runtime")
+            case _ => rtFailUnsafe("runtime")
           }
         else if (typ == (T_Str tTo T_Str))
           BuiltLambda {
             case BuiltStr(s) => BuiltStr(s)
-            case _ => rtFail("runtime")
+            case _ => rtFailUnsafe("runtime")
           }
         else if (typ == (T_Bool tTo T_Str))
           BuiltLambda {
             case BuiltBool(b) => BuiltStr(b.toString)
-            case _ => rtFail("runtime")
+            case _ => rtFailUnsafe("runtime")
           }
-        else rtFail("runtime", s"Unexpected typ `$typ` for `str`.")
+        else rtFailUnsafe("runtime", s"Unexpected typ `$typ` for `str`.")
 
 
       //            case_true=lambda: "(True)",
@@ -179,7 +179,7 @@ object RtLib_4_Build {
       serializedValue: String
     ) = {
       val bint = rt_try(() => BigInt(serializedValue))
-        .getOrElse(rtFail(s"Unexpected BigInt: `$serializedValue`."))
+        .getOrElse(rtFailUnsafe(s"Unexpected BigInt: `$serializedValue`."))
 
       BuiltBint(bint)
     }
@@ -193,7 +193,7 @@ object RtLib_4_Build {
         BuiltStr(serializedValue)
       else if (typ == T_Bint)
         buildScLitBint(serializedValue)
-      else rtFail(s"Unexpected literal: `$serializedValue`, `$typ`.")
+      else rtFailUnsafe(s"Unexpected literal: `$serializedValue`, `$typ`.")
     }
 
     def build_str_py_idf(
@@ -229,36 +229,36 @@ object RtLib_4_Build {
         case T_Unit => BuiltLambda {
           case BuiltUnit(u) =>
             buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltUnit(u)), brickRunner)
-          case _ => rtFail("runtime")
+          case _ => rtFailUnsafe("runtime")
         }
         case T_Str => BuiltLambda {
           case BuiltStr(s) =>
             buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltStr(s)), brickRunner)
-          case _ => rtFail("runtime")
+          case _ => rtFailUnsafe("runtime")
         }
         case T_Bint => BuiltLambda {
           case BuiltBint(i) =>
             buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBint(i)), brickRunner)
-          case _ => rtFail("runtime")
+          case _ => rtFailUnsafe("runtime")
         }
         case T_Bool => BuiltLambda {
           case BuiltBool(b) =>
             buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltBool(b)), brickRunner)
-          case _ => rtFail("runtime")
+          case _ => rtFailUnsafe("runtime")
         }
 
         case Typ1(`builtin_RIO`, _) =>
           BuiltLambda {
             case BuiltRio(run) =>
               buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltRio(run)), brickRunner)
-            case _ => rtFail("runtime")
+            case _ => rtFailUnsafe("runtime")
           }
 
         case Typ2(`builtin_Func`, _, _) =>
           BuiltLambda {
             case BuiltLambda(f) =>
               buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, BuiltLambda(f)), brickRunner)
-            case _ => rtFail("runtime")
+            case _ => rtFailUnsafe("runtime")
           }
 
         case Unk0(_) =>
@@ -266,7 +266,7 @@ object RtLib_4_Build {
               buildWithArgStack(typed_res, lambArgStack.updated(t_idf_x.s, built), brickRunner)
           }
 
-        case _ => rtFail(s"can't build: arg `$t_idf_x` has unexpected type `${t_idf_x.typ}`")
+        case _ => rtFailUnsafe(s"can't build: arg `$t_idf_x` has unexpected type `${t_idf_x.typ}`")
       }
 
     def buildScalaCall1(
@@ -280,7 +280,7 @@ object RtLib_4_Build {
 
       shown_f match {
         case BuiltLambda(f) => f(shown_x)
-        case _ => rtFail("runtime")
+        case _ => rtFailUnsafe("runtime")
       }
     }
 

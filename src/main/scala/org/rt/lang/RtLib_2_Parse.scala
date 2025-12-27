@@ -65,13 +65,13 @@ object RtLib_2_Parse {
             current_parser: (List[Tok], Expr) => Expr,
             rest_parsers: List[(List[Tok], Expr) => Expr],
         ): Expr =
-            tryOrRecover(
+            tryOrRecoverUnsafe(
                 () => current_parser.tupled(parser_args),
                 () => get_first_success(rest_parsers, parser_args, fails = fails /*+[either_result]*/)
             )
 
         match_list(
-            case_empty = Some(() => rtFail(
+            case_empty = Some(() => rtFailUnsafe(
                 f"Can't parse Expr given `{parser_args}`.",
                 //s"Fails - `{fails}`."
             )),
@@ -118,7 +118,7 @@ object RtLib_2_Parse {
         unclosed_parens_count: Int,
     ): (List[Tok | Expr], List[Tok | Expr]) =
         match_list[Tok | Expr, (List[Tok | Expr], List[Tok | Expr])](
-            case_empty=Some(() => rtFail("`)` expected.")),
+            case_empty=Some(() => rtFailUnsafe("`)` expected.")),
             case_at_least_1=Some((head, tail) =>
                   if (head == TokParenClose) {
                     if (unclosed_parens_count > 1)
@@ -301,7 +301,7 @@ object RtLib_2_Parse {
 
         head_preparsed match {
             case expr: Expr => expr
-            case _: Tok => rtFail(s"got token `$head_preparsed`")
+            case _: Tok => rtFailUnsafe(s"got token `$head_preparsed`")
         }
     }
 
@@ -311,8 +311,8 @@ object RtLib_2_Parse {
     ): ExprCall1 = {
         val (head0, head1, tail2) = rt_assert_at_least_2(current_line)
 
-        val idf = rt_assert_type_TokenIdf(head0)
-        rt_assert_type_TokenLessMinus(head1)
+        val idf = rtAssertTypeTokenIdfUnsafe(head0)
+        rtAssertTypeTokenLessMinusUnsafe(head1)
 
         val right_expr = parse_full_expr(tail2)
 
@@ -331,8 +331,8 @@ object RtLib_2_Parse {
     ): ExprCall1 = {
         val (head0, head1, tail2) = rt_assert_at_least_2(current_line)
 
-        val idf = rt_assert_type_TokenIdf(head0)
-        rt_assert_type_TokenEq(head1)
+        val idf = rtAssertTypeTokenIdfUnsafe(head0)
+        rtAssertTypeTokenEqUnsafe(head1)
 
         val right_expr = parse_full_expr(tail2)
 
@@ -403,7 +403,7 @@ object RtLib_2_Parse {
         val lines_reversed = get_lines_reversed(tokens_reversed, List(), List())
         val nonempty_lines_reversed = lines_reversed.filter(_.nonEmpty)
         match_list[List[Tok], Expr](
-            case_empty=Some(() => rtFail("Yet empty file is unsupported.")),
+            case_empty=Some(() => rtFailUnsafe("Yet empty file is unsupported.")),
             case_at_least_1=Some((head, tail) => parse_previous_lines(
                 tail, parse_full_expr(head)
             )),

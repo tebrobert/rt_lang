@@ -37,21 +37,21 @@ object RtLib_3_Lint {
       linted_f.typ match {
         case Unk0(_) => ()
         case Typ2(`builtin_Func`, _, _) => ()
-        case _ => rtFail()
+        case _ => rtFailUnsafe()
       }
 
       (linted_f.typ, linted_x.typ) match {
         case (Typ2(_, Unk0(_), _), _) => () // suspicious: what if typ_f is Unk
         case (_, Unk0(_)) => ()
         case (Typ2(_, linted_x.typ, _), x_typ) => ()
-        case _ => rtFail(s"Can't create LintedCall1 with `$linted_f` and `$linted_x``")
+        case _ => rtFailUnsafe(s"Can't create LintedCall1 with `$linted_f` and `$linted_x``")
       }
 
       (linted_f.typ, typ) match {
         case (Typ2(_, _, Unk0(_)), _) => () // suspicious: what if typ_f is Unk
         case (_, Unk0(_)) => ()
         case (Typ2(_, _, `typ`), _) => ()
-        case _ => rtFail("can't create LintedCall1")
+        case _ => rtFailUnsafe("can't create LintedCall1")
       }
 
       new LintedCall1(linted_f, linted_x, typ)
@@ -79,7 +79,7 @@ object RtLib_3_Lint {
       typ match {
         case Unk0(-1) => () // maybe typ is always Func2
         case Typ2(`builtin_Func`, _, _) => ()
-        case _ => rtFail("can't create LintedLambda1")
+        case _ => rtFailUnsafe("can't create LintedLambda1")
       }
 
       new LintedLambda1(
@@ -138,7 +138,7 @@ object RtLib_3_Lint {
   ): LintedLambda1 = {
     new_typ match {
       case Unk0(_) =>
-        rtFail("not implemented...?")
+        rtFailUnsafe("not implemented...?")
 
       case Typ2(`builtin_Func`, new_typ_t1, new_typ_t2) =>
         val updated_linted_idf_x = LintedIdf(linted_idf_x.s, new_typ_t1)
@@ -149,7 +149,7 @@ object RtLib_3_Lint {
           new_typ,
         )
 
-      case _ => rtFail(s"Unexpected type `$new_typ`.")
+      case _ => rtFailUnsafe(s"Unexpected type `$new_typ`.")
     }
   }
 
@@ -167,7 +167,7 @@ object RtLib_3_Lint {
           val newT1 = t1
           linted_f.withTyp(t1 tTo new_typ)
 
-        case _ => rtFail(s"Unexpected type `${linted_f.typ}`.")
+        case _ => rtFailUnsafe(s"Unexpected type `${linted_f.typ}`.")
       },
       linted_x,
       new_typ,
@@ -202,7 +202,7 @@ object RtLib_3_Lint {
     linted_f: Linted,
     linted_x: Linted,
   ): LintedCall1 = {
-    rt_assert_type_Unk0(linted_f.typ)
+    rt_assert_type_Unk0_Unsafe(linted_f.typ)
 
     val new_typ_f = linted_x.typ.rtMatch(
       caseUnk0 = unk0 => unk0 tTo Unk0(unk0.i + 1),
@@ -222,7 +222,7 @@ object RtLib_3_Lint {
     linted_f: Linted,
     linted_x: Linted,
   ): LintedCall1 = {
-    val linted_f_typ = rt_assert_type_Typ2(linted_f.typ) // todo - try better typing
+    val linted_f_typ = rt_assert_type_Typ2Unsafe(linted_f.typ) // todo - try better typing
     val new_linted_x = linted_x.withTyp(linted_f_typ.t1)
     LintedCall1(linted_f, new_linted_x, linted_f_typ.t2)
   }
@@ -253,7 +253,7 @@ object RtLib_3_Lint {
         clarify(l, c)
       }
 
-    val new_typ2_f = rt_assert_type_Typ2(new_typ_f) // todo - try better typing
+    val new_typ2_f = rt_assert_type_Typ2Unsafe(new_typ_f) // todo - try better typing
     val new_linted_f = linted_f.withTyp(new_typ2_f)
     val new_linted_x = linted_x.withTyp(new_typ2_f.t1)
     LintedCall1(new_linted_f2, new_linted_x, new_typ2_f.t2)
@@ -265,7 +265,7 @@ object RtLib_3_Lint {
   ) =
     (for {
       linted_f <- lint_set(expr_f)
-      _ = rt_assert(
+      _ = rtAssertUnsafe(
         (linted_f.typ.isInstanceOf[Typ2]
           && linted_f.typ.asInstanceOf[Typ2].s == builtin_Func // todo - try better typing
           ) || linted_f.typ.isInstanceOf[Unk0]
@@ -289,16 +289,16 @@ object RtLib_3_Lint {
   ) =
     (for {
       linted_arg_raw <- lint_set(expr_arg)
-      linted_arg = rt_assert_type_LintedIdf(linted_arg_raw) //todo - try better typing
+      linted_arg = rt_assert_type_LintedIdf_Unsafe(linted_arg_raw) //todo - try better typing
       linted_res <- lint_set(expr_res)
 
       mb_res = rt_try { () =>
         val linted_arg_s =
           linted_arg.rtMatch(
             case_idf = (s, _) => s,
-            case_lit = (_, _) => rtFail(),
-            case_call_1 = (_, _, _) => rtFail(),
-            case_lambda_1 = (_, _, _) => rtFail(),
+            case_lit = (_, _) => rtFailUnsafe(),
+            case_call_1 = (_, _, _) => rtFailUnsafe(),
+            case_lambda_1 = (_, _, _) => rtFailUnsafe(),
           ) // todo - try better typing
 
         val found_typ_arg = find_idf_typ(linted_res, linted_arg_s)
@@ -330,7 +330,7 @@ object RtLib_3_Lint {
     val linted_set = lint_set(expr)
     linted_set.toList match {
       case head :: Nil /*if !head.hasUnk*/ => head
-      case _ => rtFail(s"Can't lint `$expr` with `$linted_set`")
+      case _ => rtFailUnsafe(s"Can't lint `$expr` with `$linted_set`")
     }
   }
 

@@ -14,19 +14,19 @@ object RtFail {
       RtFail(msgs.toVector)
   }
 
-  def rtFail(msgs: String*) =
+  def rtFailUnsafe(msgs: String*) =
     throw RtFail(msgs.toVector)
 
-  def fail_if(cond: Boolean, msg: String*) =
+  def rtFailIfUnsafe(cond: Boolean, msg: String*) =
     if (cond)
-      rtFail(msg: _*)
+      rtFailUnsafe(msg: _*)
 
   // todo - either
-  def rt_assert(cond: Boolean, msg: String = "Assertion error."): Unit =
-    fail_if(!cond, msg)
+  def rtAssertUnsafe(cond: Boolean, msg: String = "Assertion error."): Unit =
+    rtFailIfUnsafe(!cond, msg)
 
   inline
-  def tryOrRecover[A](
+  def tryOrRecoverUnsafe[A](
     // todo - catch only specific errors (ideally, Either.Left's)
     inline action: () => A,
     inline recover: () => A,
@@ -37,12 +37,12 @@ object RtFail {
       case _: RtFail => recover()
     }
 
-  def rt_assert_equal[ANY](
+  def rtAssertEqualUnsafe[ANY](
     actual: ANY,
     expected: ANY,
     label: String = "",
   ): ANY = {
-    rt_assert(
+    rtAssertUnsafe(
       expected.toString == actual.toString,
       s"Not equal `$label`: "
         + s"actual - `$actual`, expected - `$expected`.",
@@ -51,46 +51,46 @@ object RtFail {
   }
 
 
-  def rt_assert_type_TokenEq(value: Tok | Expr): TokEq.type =
+  def rtAssertTypeTokenEqUnsafe(value: Tok | Expr): TokEq.type =
     value match {
       case expected: TokEq.type => expected
-      case _ => rtFail(s"Expected TokenEq, got `$value`")
+      case _ => rtFailUnsafe(s"Expected TokenEq, got `$value`")
     }
 
-  def rt_assert_type_TokenIdf(value: Tok | Expr): TokIdf =
+  def rtAssertTypeTokenIdfUnsafe(value: Tok | Expr): TokIdf =
     value match {
       case expected: TokIdf => expected
-      case _ => rtFail(s"Expected TokenIdf, got `$value`")
+      case _ => rtFailUnsafe(s"Expected TokenIdf, got `$value`")
     }
 
-  def rt_assert_type_TokenLessMinus(value: Tok | Expr): TokLessMinus.type =
+  def rtAssertTypeTokenLessMinusUnsafe(value: Tok | Expr): TokLessMinus.type =
     value match {
       case expected: TokLessMinus.type => expected
-      case _ => rtFail(s"Expected TokenLessMinus, got `$value`")
+      case _ => rtFailUnsafe(s"Expected TokenLessMinus, got `$value`")
     }
 
-  def rt_assert_type_Typ1(value: Typ): Typ1 =
+  def rtAssertTypeTyp1Unsafe(value: Typ): Typ1 =
     value match {
       case expected: Typ1 => expected
-      case _ => rtFail(s"Expected Typ1, got `$value`")
+      case _ => rtFailUnsafe(s"Expected Typ1, got `$value`")
     }
 
-  def rt_assert_type_Typ2(value: Typ): Typ2 =
+  def rt_assert_type_Typ2Unsafe(value: Typ): Typ2 =
     value match {
       case expected: Typ2 => expected
-      case _ => rtFail(s"Expected Typ2, got `$value`")
+      case _ => rtFailUnsafe(s"Expected Typ2, got `$value`")
     }
 
-  def rt_assert_type_Unk0(value: Typ): Unk0 =
+  def rt_assert_type_Unk0_Unsafe(value: Typ): Unk0 =
     value match {
       case expected: Unk0 => expected
-      case _ => rtFail(s"Expected Unk0, got `$value`")
+      case _ => rtFailUnsafe(s"Expected Unk0, got `$value`")
     }
 
-  def rt_assert_type_LintedIdf(value: Linted): LintedIdf =
+  def rt_assert_type_LintedIdf_Unsafe(value: Linted): LintedIdf =
     value match {
       case expected: LintedIdf => expected
-      case _ => rtFail(s"Expected LintedIdf, got `$value`")
+      case _ => rtFailUnsafe(s"Expected LintedIdf, got `$value`")
     }
 
   def rt_try[A](action: () => A): Either[RtFail, A] =
@@ -103,10 +103,10 @@ object RtFail {
         // RtError
       }
 
-  def wip(msgs: String*): Nothing = {
+  def wipUnsafe(msgs: String*): Nothing = {
     //caller_func_name = inspect.getouterframes (inspect.currentframe (), 2)[1][3]
     //print ("wip", caller_func_name)
 
-    rtFail(msgs.prepended("The feature was not implemented. Work in progress..."): _*)
+    rtFailUnsafe(msgs.prepended("The feature was not implemented. Work in progress..."): _*)
   }
 }

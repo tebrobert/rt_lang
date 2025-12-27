@@ -1,6 +1,6 @@
 package org.rt.lang
 
-import org.rt.utils.RtFail.rtFail
+import org.rt.utils.RtFail.rtFailUnsafe
 
 object RtLib_0_0_Lits {
   val builtin_Bint = "Bint"
@@ -63,6 +63,6 @@ object RtLib_0_0_Lits {
     builtin_eq_eq -> case_eq_eq,
     ).getOrElse(
       idf,
-      () => rtFail(s"Value `$idf` is not a built-in identifier")
+      () => rtFailUnsafe(s"Value `$idf` is not a built-in identifier")
     )()
 }

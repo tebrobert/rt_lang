@@ -5,7 +5,7 @@ import org.rt.lang.RtLib_0_1_Types.*
 import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_2_Parse.*
 import org.rt.lang.RtLib_3_Lint.*
-import org.rt.utils.RtFail.{rt_assert_type_Typ1, rt_assert_type_Typ2}
+import org.rt.utils.RtFail.{rtAssertTypeTyp1Unsafe, rt_assert_type_Typ2Unsafe}
 import org.rt.utils.RtList.rtMatch
 
 import scala.annotation.tailrec
@@ -46,7 +46,7 @@ object TestHelpers {
     xs.toList.rtMatch(
       caseEmpty = () => f,
       caseAtLeast1 = (headX, tailXs) => {
-        val typ2F = rt_assert_type_Typ2(f.typ)
+        val typ2F = rt_assert_type_Typ2Unsafe(f.typ)
         lintedCalls(LintedCall1(f, headX, typ2F.t2), tailXs: _*)
       },
     )
@@ -104,7 +104,7 @@ object TestHelpers {
       linted: Linted,
       lintedNext: Linted,
   ) = {
-    val resTyp = rt_assert_type_Typ1(linted.typ).t1 // todo - try better typing
+    val resTyp = rtAssertTypeTyp1Unsafe(linted.typ).t1 // todo - try better typing
 
     lintedCalls(
       LintedIdf(
