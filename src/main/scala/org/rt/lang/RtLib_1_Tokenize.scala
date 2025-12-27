@@ -98,13 +98,13 @@ object RtLib_1_Tokenize {
     def get_idx_string_end_rec(
       code_ext: String,
       idx_string_end: Int,
-    ): Int = {
+    ): Either[RtFail, Int] = {
       val current_string_char = code_ext(idx_string_end)
 
       if (current_string_char == '\"')
-        idx_string_end
+        Right(idx_string_end)
       else if (current_string_char == end_of_code)
-        rtFail(f"""No closing `"` for string literal.""")
+        Left(RtFail(f"""No closing `"` for string literal."""))
       else get_idx_string_end_rec(code_ext, idx_string_end + 1)
     }
 
@@ -221,8 +221,10 @@ object RtLib_1_Tokenize {
     def lexx_string(code_ext: String, token_idx_end: Int, tokens: List[Tok]) = {
       rt_assert(code_ext(token_idx_end) == '\"')
       val idx_string_start = token_idx_end + 1
-      val idx_string_end = get_idx_string_end_rec(code_ext, idx_string_start)
-      Right(code_ext, idx_string_end + 1, tokens.appended(TokLitStr(
+      
+      for {
+        idx_string_end <- get_idx_string_end_rec(code_ext, idx_string_start)
+      } yield (code_ext, idx_string_end + 1, tokens.appended(TokLitStr(
         code_ext.substring(idx_string_start, idx_string_end)
       )))
     }
