@@ -14,6 +14,9 @@ object RtFail {
       RtFail(msgs.toVector)
   }
 
+  def rtFail(msgs: String*) =
+    Left(RtFail(msgs.toVector))
+
   def rtFailUnsafe(msgs: String*) =
     throw RtFail(msgs.toVector)
 

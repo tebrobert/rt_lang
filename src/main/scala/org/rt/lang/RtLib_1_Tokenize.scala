@@ -1,7 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_1_Tokenize.Public.*
-import org.rt.utils.RtFail.{RtFail, rtAssertUnsafe, tryOrRecoverUnsafe}
+import org.rt.utils.RtFail.{RtFail, rtAssertUnsafe, rtFail, tryOrRecoverUnsafe}
 import org.rt.utils.RtList.rtMatch
 
 import scala.annotation.tailrec
@@ -103,7 +103,7 @@ object RtLib_1_Tokenize {
       if (current_string_char == '\"')
         Right(idx_string_end)
       else if (current_string_char == end_of_code)
-        Left(RtFail(f"""No closing `"` for string literal."""))
+        rtFail(f"""No closing `"` for string literal.""")
       else get_idx_string_end_rec(code_ext, idx_string_end + 1)
     }
 
@@ -259,7 +259,7 @@ object RtLib_1_Tokenize {
       tokenizers: List[Tokenizer],
     ): Either[RtFail, LexxBundle] =
       tokenizers.rtMatch(
-        caseEmpty = () => Left(RtFail("Can't tokenize.", s"Given `$lexxBundle`.")),
+        caseEmpty = () => rtFail("Can't tokenize.", s"Given `$lexxBundle`."),
         caseAtLeast1 = tryNextTokenizer(lexxBundle),
       )
 
