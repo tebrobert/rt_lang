@@ -1,13 +1,7 @@
 package org.rt.lang
 
 import org.rt.lang.RtLib_1_Tokenize.Public.*
-import org.rt.utils.RtFail.{
-  RtFail,
-  rtAssert,
-  rtAssertUnsafe,
-  rtFail,
-  tryOrRecoverUnsafe,
-}
+import org.rt.utils.RtFail.{RtFail, rtAssert, rtFail}
 import org.rt.utils.RtList.rtMatch
 
 import scala.annotation.tailrec
