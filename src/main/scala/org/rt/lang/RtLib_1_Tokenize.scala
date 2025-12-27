@@ -173,13 +173,12 @@ object RtLib_1_Tokenize {
         code_ext: String,
         current_idx: Int,
         tokens: List[Tok],
-    ) = {
-      rtAssertUnsafe(is_digit(code_ext(current_idx)))
-
-      val idx_idf_start = current_idx
-      val idx_idf_end = get_idx_integer_end_rec(code_ext, idx_idf_start + 1)
-
-      Right(
+    ) =
+      for {
+        _ <- rtAssert(is_digit(code_ext(current_idx)))
+        idx_idf_start = current_idx
+        idx_idf_end = get_idx_integer_end_rec(code_ext, idx_idf_start + 1)
+      } yield (
         code_ext,
         idx_idf_end,
         tokens.appended(
@@ -188,7 +187,6 @@ object RtLib_1_Tokenize {
           ),
         ),
       )
-    }
 
     def lexx_paren_open(
         code_ext: String,
