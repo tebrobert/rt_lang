@@ -220,37 +220,31 @@ object RtLib_1_Tokenize {
         _ <- rtAssert(code_ext.substring(current_idx).startsWith("<-"))
       } yield (code_ext, current_idx + 2, tokens.appended(TokLessMinus))
 
-    def lexx_eq(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
-      rtAssertUnsafe(code_ext.substring(current_idx).startsWith("="))
-      rtAssertUnsafe(!is_operator_char(code_ext(current_idx + 1)))
-      Right(code_ext, current_idx + 1, tokens.appended(TokEq))
-    }
+    def lexx_eq(code_ext: String, current_idx: Int, tokens: List[Tok]) =
+      for {
+        _ <- rtAssert(code_ext.substring(current_idx).startsWith("="))
+        _ <- rtAssert(!is_operator_char(code_ext(current_idx + 1)))
+      } yield (code_ext, current_idx + 1, tokens.appended(TokEq))
 
-    def lexx_endl(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
-      rtAssertUnsafe(code_ext.substring(current_idx).startsWith("\n"))
-      Right(code_ext, current_idx + 1, tokens.appended(TokEndl))
-    }
+    def lexx_endl(code_ext: String, current_idx: Int, tokens: List[Tok]) =
+      for {
+        _ <- rtAssert(code_ext.substring(current_idx).startsWith("\n"))
+      } yield (code_ext, current_idx + 1, tokens.appended(TokEndl))
 
-    def lexx_dot(code_ext: String, current_idx: Int, tokens: List[Tok]) = {
-      rtAssertUnsafe(code_ext(current_idx) == '.')
-      Right(code_ext, current_idx + 1, tokens.appended(TokDot))
-    }
+    def lexx_dot(code_ext: String, current_idx: Int, tokens: List[Tok]) =
+      for {
+        _ <- rtAssert(code_ext(current_idx) == '.')
+      } yield (code_ext, current_idx + 1, tokens.appended(TokDot))
 
     def lexx_string(code_ext: String, token_idx_end: Int, tokens: List[Tok]) = {
-      rtAssertUnsafe(code_ext(token_idx_end) == '\"')
-      val idx_string_start = token_idx_end + 1
-
       for {
+        _ <- rtAssert(code_ext(token_idx_end) == '\"')
+        idx_string_start = token_idx_end + 1
         idx_string_end <- get_idx_string_end_rec(code_ext, idx_string_start)
-      } yield (
-        code_ext,
-        idx_string_end + 1,
-        tokens.appended(
-          TokLitStr(
-            code_ext.substring(idx_string_start, idx_string_end),
-          ),
-        ),
-      )
+        newToken = TokLitStr(
+          code_ext.substring(idx_string_start, idx_string_end),
+        )
+      } yield (code_ext, idx_string_end + 1, tokens.appended(newToken))
     }
 
     def lexx_operator(
