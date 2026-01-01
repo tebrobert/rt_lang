@@ -29,12 +29,8 @@ case class TaskState(
 
 object MainWeb extends ZIOAppDefault:
 
-  def log(
-    message: String,
-  ): UIO[Unit] =
-    for {
-      _ <- ZIO.log(message)
-    } yield ()
+  def log(message: String): UIO[Unit] =
+    ZIO.log(message)
 
   def renderConsole(console: Console) =
     console.mkString("\\n")

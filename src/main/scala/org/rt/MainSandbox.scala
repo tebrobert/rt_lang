@@ -15,6 +15,5 @@ object MainSandbox extends ZIOAppDefault:
         |print("Thank you!")
         |""".stripMargin,
       liveBrickRunner,
-    )
-      .unit
+    ).unit
       .catchAll { fail => ZIO.succeed(println(fail)) }
