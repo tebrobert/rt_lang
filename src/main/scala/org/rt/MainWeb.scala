@@ -32,8 +32,16 @@ object MainWeb extends ZIOAppDefault:
   def log(message: String): UIO[Unit] =
     ZIO.log(message)
 
-  def renderConsole(console: Console) =
+  def renderConsole(console: Console): String =
     console.mkString("\\n")
+
+  // the comments have been moved here on 2026-01-02
+  // http://localhost:8080
+  // http://localhost:8080/run_then_fetch_console?code=input
+  // http://localhost:8080/run_then_fetch_console?code=print(%221%22)
+  // http://localhost:8080/run_then_fetch_console?code=print(%22Enter%22)%0An%3C%2Dinput%0Aprint(%22Got%20%22%2Bn)
+  // http://localhost:8080/fetch_console?task_id=237b422f948a425792d9653185cd840d
+  // http://localhost:8080/feed_input_then_fetch_console?task_id=eea1acac8e024c5ea0b95ec64633dd98&input_line=12
 
   def run =
     for {
@@ -43,13 +51,9 @@ object MainWeb extends ZIOAppDefault:
       routes =
         Routes(
           Method.GET / Root -> handler { (_: Request) =>
-            // http://localhost:8080
             Response.html(Html.raw(Index.page))
           },
           Endpoint(RoutePattern.GET / "run_then_fetch_console")
-            // http://localhost:8080/run_then_fetch_console?code=input
-            // http://localhost:8080/run_then_fetch_console?code=print(%221%22)
-            // http://localhost:8080/run_then_fetch_console?code=print(%22Enter%22)%0An%3C%2Dinput%0Aprint(%22Got%20%22%2Bn)
             .query(HttpCodec.query[Code]("code"))
             .out[MyResponse]
             .implement(code =>
@@ -60,7 +64,6 @@ object MainWeb extends ZIOAppDefault:
                 )
             ),
           Endpoint(RoutePattern.GET / "fetch_console")
-            // http://localhost:8080/fetch_console?task_id=237b422f948a425792d9653185cd840d
             .query(HttpCodec.query[TaskId]("task_id"))
             .out[MyResponse]
             .implement(taskId =>
@@ -71,7 +74,6 @@ object MainWeb extends ZIOAppDefault:
                 ).merge
             ),
           Endpoint(RoutePattern.GET / "feed_input_then_fetch_console")
-            // http://localhost:8080/feed_input_then_fetch_console?task_id=eea1acac8e024c5ea0b95ec64633dd98&input_line=12
             .query(HttpCodec.query[TaskId]("task_id"))
             .query(HttpCodec.query[Line]("input_line"))
             .out[MyResponse]
