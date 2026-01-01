@@ -45,28 +45,27 @@ object MainWeb extends ZIOAppDefault:
 
   def runThenFetchConsoleEndpoint(
       runningTasks: Ref[Map[TaskId, TaskState]],
-  ) =
+  ): Route[Any, Nothing] =
     Endpoint(RoutePattern.GET / "run_then_fetch_console")
       .query(HttpCodec.query[Code]("code"))
       .out[MyResponse]
       .implement(code =>
         log(s"Code: `$code`") *>
-          runThenFetchConsole(runningTasks)(code)
-            .map((taskId, console) =>
-              s"""{"task_id": "$taskId", "console": "${renderConsole(
-                  console,
-                )}"}""",
-            ),
+          runThenFetchConsole(runningTasks, code)
+            .map { (taskId, console) =>
+              val consoleStr = renderConsole(console)
+              s"""{"task_id": "$taskId", "console": "$consoleStr"}"""
+            },
       )
 
   def fetchConsoleEndpoint(
       runningTasks: Ref[Map[TaskId, TaskState]],
-  ) =
+  ): Route[Any, Nothing] =
     Endpoint(RoutePattern.GET / "fetch_console")
       .query(HttpCodec.query[TaskId]("task_id"))
       .out[MyResponse]
       .implement(taskId =>
-        fetchConsole(runningTasks)(taskId)
+        fetchConsole(runningTasks, taskId)
           .mapBoth(
             error => s"""{"error": "$error"}""",
             console => s"""{"console": "${renderConsole(console)}"}""",
@@ -76,13 +75,13 @@ object MainWeb extends ZIOAppDefault:
 
   def feedInputThenFetchConsoleEndpoint(
       runningTasks: Ref[Map[TaskId, TaskState]],
-  ) =
+  ): Route[Any, Nothing] =
     Endpoint(RoutePattern.GET / "feed_input_then_fetch_console")
       .query(HttpCodec.query[TaskId]("task_id"))
       .query(HttpCodec.query[Line]("input_line"))
       .out[MyResponse]
       .implement((taskId, inputLine) =>
-        feedInputThenFetchConsole(runningTasks)(taskId, inputLine)
+        feedInputThenFetchConsole(runningTasks, taskId, inputLine)
           .mapBoth(
             error => s"""{"error": "$error"}""",
             console => s"""{"console": "${renderConsole(console)}"}""",
@@ -90,7 +89,7 @@ object MainWeb extends ZIOAppDefault:
           .merge,
       )
 
-  def run =
+  def run: ZIO[Any, Throwable, Unit] =
     for {
       runningTasks <- Ref.make(Map.empty[TaskId, TaskState])
       _ <- cleanForever(runningTasks).forkDaemon
@@ -109,13 +108,10 @@ object MainWeb extends ZIOAppDefault:
 
   def runThenFetchConsole(
       runningTasks: Ref[Map[TaskId, TaskState]],
-  )(
       code: Code,
   ): UIO[(TaskId, Console)] =
     for {
-      taskId <- ZIO.succeed(
-        java.util.UUID.randomUUID().toString.replace("-", ""),
-      )
+      taskId <- zio.Random.nextUUID.map(_.toString.replace("-", ""))
       consoleRef <- Ref.make(Vector.empty[Line])
       inputQueue <- Queue.unbounded[Line]
       interactiveBrickRunner = interactive(consoleRef, inputQueue)(_)
@@ -135,7 +131,6 @@ object MainWeb extends ZIOAppDefault:
 
   def fetchConsole(
       runningTasks: Ref[Map[TaskId, TaskState]],
-  )(
       taskId: TaskId,
   ): IO[Message, Console] =
     for {
@@ -148,7 +143,6 @@ object MainWeb extends ZIOAppDefault:
 
   def feedInputThenFetchConsole(
       runningTasks: Ref[Map[TaskId, TaskState]],
-  )(
       taskId: TaskId,
       inputLine: Line,
   ): IO[Message, Console] =
