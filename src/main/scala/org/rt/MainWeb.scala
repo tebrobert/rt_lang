@@ -21,10 +21,10 @@ type Message = String
 type MyResponse = String
 
 case class TaskState(
-  consoleRef: Ref[Console],
-  inputQueue: Queue[Line],
-  task: Fiber[Nothing, Unit],
-  expiredAt: java.time.Instant,
+    consoleRef: Ref[Console],
+    inputQueue: Queue[Line],
+    task: Fiber[Nothing, Unit],
+    expiredAt: java.time.Instant,
 )
 
 object MainWeb extends ZIOAppDefault:
@@ -43,102 +43,127 @@ object MainWeb extends ZIOAppDefault:
   // http://localhost:8080/fetch_console?task_id=237b422f948a425792d9653185cd840d
   // http://localhost:8080/feed_input_then_fetch_console?task_id=eea1acac8e024c5ea0b95ec64633dd98&input_line=12
 
+  def runThenFetchConsoleEndpoint(
+      runningTasks: Ref[Map[TaskId, TaskState]],
+  ) =
+    Endpoint(RoutePattern.GET / "run_then_fetch_console")
+      .query(HttpCodec.query[Code]("code"))
+      .out[MyResponse]
+      .implement(code =>
+        log(s"Code: `$code`") *>
+          runThenFetchConsole(runningTasks)(code)
+            .map((taskId, console) =>
+              s"""{"task_id": "$taskId", "console": "${renderConsole(
+                  console,
+                )}"}""",
+            ),
+      )
+
+  def fetchConsoleEndpoint(
+      runningTasks: Ref[Map[TaskId, TaskState]],
+  ) =
+    Endpoint(RoutePattern.GET / "fetch_console")
+      .query(HttpCodec.query[TaskId]("task_id"))
+      .out[MyResponse]
+      .implement(taskId =>
+        fetchConsole(runningTasks)(taskId)
+          .mapBoth(
+            error => s"""{"error": "$error"}""",
+            console => s"""{"console": "${renderConsole(console)}"}""",
+          )
+          .merge,
+      )
+
+  def feedInputThenFetchConsoleEndpoint(
+      runningTasks: Ref[Map[TaskId, TaskState]],
+  ) =
+    Endpoint(RoutePattern.GET / "feed_input_then_fetch_console")
+      .query(HttpCodec.query[TaskId]("task_id"))
+      .query(HttpCodec.query[Line]("input_line"))
+      .out[MyResponse]
+      .implement((taskId, inputLine) =>
+        feedInputThenFetchConsole(runningTasks)(taskId, inputLine)
+          .mapBoth(
+            error => s"""{"error": "$error"}""",
+            console => s"""{"console": "${renderConsole(console)}"}""",
+          )
+          .merge,
+      )
+
   def run =
     for {
       runningTasks <- Ref.make(Map.empty[TaskId, TaskState])
       _ <- cleanForever(runningTasks).forkDaemon
 
-      routes =
-        Routes(
-          Method.GET / Root -> handler { (_: Request) =>
-            Response.html(Html.raw(Index.page))
-          },
-          Endpoint(RoutePattern.GET / "run_then_fetch_console")
-            .query(HttpCodec.query[Code]("code"))
-            .out[MyResponse]
-            .implement(code =>
-              log(s"Code: `$code`") *>
-              runThenFetchConsole(runningTasks)(code)
-                .map(
-                  (taskId, console) => s"""{"task_id": "$taskId", "console": "${renderConsole(console)}"}""",
-                )
-            ),
-          Endpoint(RoutePattern.GET / "fetch_console")
-            .query(HttpCodec.query[TaskId]("task_id"))
-            .out[MyResponse]
-            .implement(taskId =>
-              fetchConsole(runningTasks)(taskId)
-                .mapBoth(
-                  error => s"""{"error": "$error"}""",
-                  console => s"""{"console": "${renderConsole(console)}"}""",
-                ).merge
-            ),
-          Endpoint(RoutePattern.GET / "feed_input_then_fetch_console")
-            .query(HttpCodec.query[TaskId]("task_id"))
-            .query(HttpCodec.query[Line]("input_line"))
-            .out[MyResponse]
-            .implement((taskId, inputLine) =>
-              feedInputThenFetchConsole(runningTasks)(taskId, inputLine)
-                .mapBoth(
-                  error => s"""{"error": "$error"}""",
-                  console => s"""{"console": "${renderConsole(console)}"}""",
-                ).merge
-            ),
-        )
+      routes = Routes(
+        Method.GET / Root -> handler { (_: Request) =>
+          Response.html(Html.raw(Index.page))
+        },
+        runThenFetchConsoleEndpoint(runningTasks),
+        fetchConsoleEndpoint(runningTasks),
+        feedInputThenFetchConsoleEndpoint(runningTasks),
+      )
 
       _ <- Server.serve(routes).provide(Server.defaultWithPort(myPort))
     } yield ()
 
-
   def runThenFetchConsole(
-    runningTasks: Ref[Map[TaskId, TaskState]],
+      runningTasks: Ref[Map[TaskId, TaskState]],
   )(
-    code: Code,
+      code: Code,
   ): UIO[(TaskId, Console)] =
     for {
-      taskId <- ZIO.succeed(java.util.UUID.randomUUID().toString.replace("-",""))
+      taskId <- ZIO.succeed(
+        java.util.UUID.randomUUID().toString.replace("-", ""),
+      )
       consoleRef <- Ref.make(Vector.empty[Line])
       inputQueue <- Queue.unbounded[Line]
       interactiveBrickRunner = interactive(consoleRef, inputQueue)(_)
-      task <- fullRun(code, interactiveBrickRunner)
-        .unit
-        .catchAll { fail => log(s"task $taskId failed: $fail") }
-        .forkDaemon
+      task <- fullRun(code, interactiveBrickRunner).unit.catchAll { fail =>
+        log(s"task $taskId failed: $fail")
+      }.forkDaemon
       now <- ZIO.clock.flatMap(_.instant)
       _ <- runningTasks.update(
-        _.updated(taskId, TaskState(consoleRef, inputQueue, task, now.plus(myTaskTimeToLive)))
+        _.updated(
+          taskId,
+          TaskState(consoleRef, inputQueue, task, now.plus(myTaskTimeToLive)),
+        ),
       )
       _ <- log(s"Created task $taskId")
       console <- consoleRef.get
     } yield (taskId, console)
 
   def fetchConsole(
-    runningTasks: Ref[Map[TaskId, TaskState]],
+      runningTasks: Ref[Map[TaskId, TaskState]],
   )(
-    taskId: TaskId,
+      taskId: TaskId,
   ): IO[Message, Console] =
     for {
       mbTaskState <- runningTasks.get.map(_.get(taskId))
-      taskState <- ZIO.fromOption(mbTaskState).orElseFail(s"No such task by given taskId: `$taskId`")
+      taskState <- ZIO
+        .fromOption(mbTaskState)
+        .orElseFail(s"No such task by given taskId: `$taskId`")
       console <- taskState.consoleRef.get
     } yield console
 
   def feedInputThenFetchConsole(
-    runningTasks: Ref[Map[TaskId, TaskState]],
+      runningTasks: Ref[Map[TaskId, TaskState]],
   )(
-    taskId: TaskId,
-    inputLine: Line,
+      taskId: TaskId,
+      inputLine: Line,
   ): IO[Message, Console] =
     for {
       mbTaskState <- runningTasks.get.map(_.get(taskId))
-      taskState <- ZIO.fromOption(mbTaskState).orElseFail(s"No such task by given taskId: `$taskId`")
+      taskState <- ZIO
+        .fromOption(mbTaskState)
+        .orElseFail(s"No such task by given taskId: `$taskId`")
       succeed <- taskState.inputQueue.offer(inputLine)
       _ <- ZIO.unless(succeed)(ZIO.fail("Could not provide input line."))
       console <- taskState.consoleRef.get
     } yield console
 
   def cleanForever(
-    runningTasksRef: Ref[Map[TaskId, TaskState]],
+      runningTasksRef: Ref[Map[TaskId, TaskState]],
   ): UIO[Nothing] =
     (for {
       runningTasks <- runningTasksRef.get
@@ -155,4 +180,3 @@ object MainWeb extends ZIOAppDefault:
       }
       _ <- ZIO.clock.flatMap(_.sleep(myTaskTimeToLive))
     } yield ()).forever
-
