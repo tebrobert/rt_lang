@@ -1,0 +1,7 @@
+- Make it build fully before run to detect errors
+
+
+- Make more informative errors (via structures)
+
+
+- Make it web
