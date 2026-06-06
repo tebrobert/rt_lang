@@ -64,30 +64,32 @@ object TestCase11 extends RtTestCase {
     )
 
   val linted_3 =
-    lintedEqAndThen(
-      "greeting",
-      LintedLit("Hey! What is your name?", T_Str),
-      lintedAndThen(
-        "_",
-        LintedCall1(
-          LintedIdf("print", T_Str_To_RIO_Unit),
-          LintedIdf("greeting", T_Str),
-          T_RIO_Unit,
-        ),
+    Right(
+      lintedEqAndThen(
+        "greeting",
+        LintedLit("Hey! What is your name?", T_Str),
         lintedAndThen(
-          "name",
-          LintedIdf("input", T_RIO_Str),
+          "_",
+          LintedCall1(
+            LintedIdf("print", T_Str_To_RIO_Unit),
+            LintedIdf("greeting", T_Str),
+            T_RIO_Unit,
+          ),
           lintedAndThen(
-            "_",
-            LintedCall1(
-              LintedIdf("print", T_Str_To_RIO_Unit),
-              LintedLit("Welcome, ...", T_Str),
-              T_RIO_Unit,
-            ),
-            LintedCall1(
-              LintedIdf("print", T_Str_To_RIO_Unit),
-              LintedIdf("name", T_Str),
-              T_RIO_Unit,
+            "name",
+            LintedIdf("input", T_RIO_Str),
+            lintedAndThen(
+              "_",
+              LintedCall1(
+                LintedIdf("print", T_Str_To_RIO_Unit),
+                LintedLit("Welcome, ...", T_Str),
+                T_RIO_Unit,
+              ),
+              LintedCall1(
+                LintedIdf("print", T_Str_To_RIO_Unit),
+                LintedIdf("name", T_Str),
+                T_RIO_Unit,
+              ),
             ),
           ),
         ),

@@ -46,20 +46,22 @@ object TestCase8 extends RtTestCase {
     )
 
   val linted_3 =
-    lintedAndThen(
-      "s",
-      LintedIdf("input", T_RIO_Str),
+    Right(
       lintedAndThen(
-        "_",
-        LintedCall1(
-          LintedIdf("print", T_Str_To_RIO_Unit),
-          LintedIdf("s", T_Str),
-          T_RIO_Unit,
-        ),
-        LintedCall1(
-          LintedIdf("print", T_Str_To_RIO_Unit),
-          LintedIdf("s", T_Str),
-          T_RIO_Unit,
+        "s",
+        LintedIdf("input", T_RIO_Str),
+        lintedAndThen(
+          "_",
+          LintedCall1(
+            LintedIdf("print", T_Str_To_RIO_Unit),
+            LintedIdf("s", T_Str),
+            T_RIO_Unit,
+          ),
+          LintedCall1(
+            LintedIdf("print", T_Str_To_RIO_Unit),
+            LintedIdf("s", T_Str),
+            T_RIO_Unit,
+          ),
         ),
       ),
     )

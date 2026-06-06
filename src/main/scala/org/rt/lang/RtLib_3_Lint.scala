@@ -326,14 +326,14 @@ object RtLib_3_Lint {
 
   def lint(
     expr: Expr,
-  ): Linted = {
+  ): Either[RtFail, Linted] = {
     val linted_set = lint_set(expr)
     linted_set.toList match {
-      case head :: Nil /*if !head.hasUnk*/ => head
-      case _ => rtFailUnsafe(s"Can't lint `$expr` with `$linted_set`")
+      case head :: Nil /*if !head.hasUnk*/ => Right(head)
+      case _ => rtFail(s"Can't lint `$expr` with `$linted_set`")
     }
   }
 
   def fullLint(code: String): Either[RtFail, Linted] =
-    fullParse(code).map(lint)
+    fullParse(code).flatMap(lint)
 }

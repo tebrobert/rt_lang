@@ -39,22 +39,24 @@ object TestCase4 extends RtTestCase {
     )
 
   val linted_3 =
-    LintedCall1(
-      LintedLambda1(
-        LintedIdf("s", T_RIO(T_Str)),
-        LintedIdf("s", T_RIO(T_Str)),
-        T_RIO(T_Str) tTo T_RIO(T_Str),
-      ),
+    Right(
       LintedCall1(
         LintedLambda1(
           LintedIdf("s", T_RIO(T_Str)),
           LintedIdf("s", T_RIO(T_Str)),
           T_RIO(T_Str) tTo T_RIO(T_Str),
         ),
-        LintedIdf("input", T_RIO(T_Str)),
+        LintedCall1(
+          LintedLambda1(
+            LintedIdf("s", T_RIO(T_Str)),
+            LintedIdf("s", T_RIO(T_Str)),
+            T_RIO(T_Str) tTo T_RIO(T_Str),
+          ),
+          LintedIdf("input", T_RIO(T_Str)),
+          T_RIO(T_Str),
+        ),
         T_RIO(T_Str),
       ),
-      T_RIO(T_Str),
     )
 
   override val mb_mock_4 =

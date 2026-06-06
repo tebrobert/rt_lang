@@ -67,34 +67,36 @@ object TestCase10 extends RtTestCase {
     )
 
   val linted_3 =
-    lintedAndThen(
-      "greeting",
-      LintedCall1(
-        LintedIdf(vPure, T_Str_To_RIO_Str),
-        LintedLit("Hey! What is your name?", T_Str),
-        T_RIO_Str,
-      ),
+    Right(
       lintedAndThen(
-        "_",
+        "greeting",
         LintedCall1(
-          LintedIdf("print", T_Str_To_RIO_Unit),
-          LintedIdf("greeting", T_Str),
-          T_RIO_Unit,
+          LintedIdf(vPure, T_Str_To_RIO_Str),
+          LintedLit("Hey! What is your name?", T_Str),
+          T_RIO_Str,
         ),
         lintedAndThen(
-          "name",
-          LintedIdf("input", T_RIO_Str),
+          "_",
+          LintedCall1(
+            LintedIdf("print", T_Str_To_RIO_Unit),
+            LintedIdf("greeting", T_Str),
+            T_RIO_Unit,
+          ),
           lintedAndThen(
-            "_",
-            LintedCall1(
-              LintedIdf("print", T_Str_To_RIO_Unit),
-              LintedLit("Welcome, ...", T_Str),
-              T_RIO_Unit,
-            ),
-            LintedCall1(
-              LintedIdf("print", T_Str_To_RIO_Unit),
-              LintedIdf("name", T_Str),
-              T_RIO_Unit,
+            "name",
+            LintedIdf("input", T_RIO_Str),
+            lintedAndThen(
+              "_",
+              LintedCall1(
+                LintedIdf("print", T_Str_To_RIO_Unit),
+                LintedLit("Welcome, ...", T_Str),
+                T_RIO_Unit,
+              ),
+              LintedCall1(
+                LintedIdf("print", T_Str_To_RIO_Unit),
+                LintedIdf("name", T_Str),
+                T_RIO_Unit,
+              ),
             ),
           ),
         ),

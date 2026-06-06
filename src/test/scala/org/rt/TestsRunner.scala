@@ -1,62 +1,13 @@
 package org.rt
 
 import org.rt.RuntimeMock.{InputMock, PrintMock, RuntimeMock}
-import org.rt.lang.RtLib_0_2_Builtins.{
-  T_A0,
-  T_Bint,
-  T_Bool,
-  T_RIO,
-  T_Str,
-  T_Unit,
-  tTo,
-}
-import org.rt.lang.RtLib_1_Tokenize.Public.{
-  Tok,
-  TokDot,
-  TokEndl,
-  TokEq,
-  TokEqGr,
-  TokIdf,
-  TokLessMinus,
-  TokLitStr,
-  TokParenClose,
-  TokParenOpen,
-  tokenize,
-}
-import org.rt.lang.RtLib_2_Parse.{
-  Expr,
-  ExprBraced,
-  ExprCall1,
-  ExprIdf,
-  ExprLitBint,
-  ExprLitStr,
-  fullParse,
-  get_lines_reversed,
-  parse,
-  preparse_braced,
-  preparse_call,
-}
-import org.rt.lang.RtLib_3_Lint.{
-  Linted,
-  LintedCall1,
-  LintedIdf,
-  LintedLit,
-  fullLint,
-  lint,
-  lint_set,
-}
-import org.rt.lang.RtLib_4_Build.Public.{
-  Brick,
-  BrickInput,
-  BrickPrint,
-  BuiltRio,
-  BuiltStr,
-  BuiltUnit,
-  build,
-  fullBuild,
-}
+import org.rt.lang.RtLib_0_2_Builtins.{T_A0, T_Bint, T_Bool, T_RIO, T_Str, T_Unit, tTo}
+import org.rt.lang.RtLib_1_Tokenize.Public.{Tok, TokDot, TokEndl, TokEq, TokEqGr, TokIdf, TokLessMinus, TokLitStr, TokParenClose, TokParenOpen, tokenize}
+import org.rt.lang.RtLib_2_Parse.{Expr, ExprBraced, ExprCall1, ExprIdf, ExprLitBint, ExprLitStr, fullParse, get_lines_reversed, parse, preparse_braced, preparse_call}
+import org.rt.lang.RtLib_3_Lint.{Linted, LintedCall1, LintedIdf, LintedLit, fullLint, lint, lint_set}
+import org.rt.lang.RtLib_4_Build.Public.{Brick, BrickInput, BrickPrint, BuiltRio, BuiltStr, BuiltUnit, build, fullBuild}
 import org.rt.lang.RtLib_5_Run
-import org.rt.utils.RtFail.{rtFailUnsafe, rt_try}
+import org.rt.utils.RtFail.{RtFail, rtFailUnsafe, rt_try}
 import org.rt.utils.RtList.rt_assert_at_least_1
 import zio.test.{Spec, ZIOSpecDefault, assertTrue}
 import zio.{Ref, ZIO}
@@ -67,7 +18,7 @@ trait RtTestCase {
   val code_0: String
   val tokens_1: List[Tok]
   val expr_2: Expr
-  val linted_3: Linted
+  val linted_3: Either[RtFail, Linted]
   val mb_mock_4: List[List[RuntimeMock]] = Nil
 }
 
@@ -90,13 +41,15 @@ object TestsRunner extends ZIOSpecDefault {
           },
         )
         ++ allTestCases.flatMap(testCase =>
-          testCase.mb_mock_4.zipWithIndex.map((mock_4, i) =>
-            test(s"run ${testCase.name} $i") {
-              buildRunMocking(testCase.linted_3, mock_4)
-                .catchAll(fail =>
-                  ZIO.succeed(println(fail)).as(assertTrue(false)),
-                )
-            },
+          testCase.linted_3.toSeq.flatMap( linted_3 =>
+            testCase.mb_mock_4.zipWithIndex.map((mock_4, i) =>
+              test(s"run ${testCase.name} $i") {
+                buildRunMocking(linted_3, mock_4)
+                  .catchAll(fail =>
+                    ZIO.succeed(println(fail)).as(assertTrue(false)),
+                  )
+              },
+            ),
           ),
         )
         ++ customTests,

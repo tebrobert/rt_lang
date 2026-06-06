@@ -7,6 +7,7 @@ import org.rt.lang.RtLib_0_2_Builtins.*
 import org.rt.lang.RtLib_1_Tokenize.Public.*
 import org.rt.lang.RtLib_2_Parse.*
 import org.rt.lang.RtLib_3_Lint.*
+import org.rt.utils.RtFail.RtFail
 
 object TestCase17 extends RtTestCase {
   val code_0 =
@@ -20,6 +21,8 @@ object TestCase17 extends RtTestCase {
   val expr_2 =
     ExprIdf("a")
 
-  val linted_3 = // todo likely should fail here
-    LintedIdf("a", T_A0)
+  val linted_3 =
+    Left(
+      RtFail(""),
+    )
 }

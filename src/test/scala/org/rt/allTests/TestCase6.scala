@@ -65,44 +65,48 @@ object TestCase6 extends RtTestCase {
     )
 
   val linted_3 =
-    LintedCall1(
+    Right(
       LintedCall1(
-        LintedIdf(
-          ">>=",
-          (T_Str tTo T_RIO(T_Unit)) tTo (T_RIO(T_Str) tTo T_RIO(T_Unit)),
-        ),
-        LintedLambda1(
-          LintedIdf("s", T_Str),
-          LintedCall1(
+        LintedCall1(
+          LintedIdf(
+            ">>=",
+            (T_Str tTo T_RIO(T_Unit)) tTo (T_RIO(T_Str) tTo T_RIO(T_Unit)),
+          ),
+          LintedLambda1(
+            LintedIdf("s", T_Str),
             LintedCall1(
-              LintedIdf(
-                ">>=",
-                (T_Unit tTo T_RIO(T_Unit)) tTo (T_RIO(T_Unit) tTo T_RIO(T_Unit)),
-              ),
-              LintedLambda1(
-                LintedIdf("u", T_Unit),
-                LintedCall1(
-                  LintedIdf("print", T_Str tTo T_RIO(T_Unit)),
-                  LintedIdf("s", T_Str),
-                  T_RIO(T_Unit),
+              LintedCall1(
+                LintedIdf(
+                  ">>=",
+                  (T_Unit tTo T_RIO(T_Unit)) tTo (T_RIO(T_Unit) tTo T_RIO(
+                    T_Unit,
+                  )),
                 ),
-                T_Unit tTo T_RIO(T_Unit),
+                LintedLambda1(
+                  LintedIdf("u", T_Unit),
+                  LintedCall1(
+                    LintedIdf("print", T_Str tTo T_RIO(T_Unit)),
+                    LintedIdf("s", T_Str),
+                    T_RIO(T_Unit),
+                  ),
+                  T_Unit tTo T_RIO(T_Unit),
+                ),
+                T_RIO(T_Unit) tTo T_RIO(T_Unit),
               ),
-              T_RIO(T_Unit) tTo T_RIO(T_Unit),
-            ),
-            LintedCall1(
-              LintedIdf("print", T_Str tTo T_RIO(T_Unit)),
-              LintedIdf("s", T_Str),
+              LintedCall1(
+                LintedIdf("print", T_Str tTo T_RIO(T_Unit)),
+                LintedIdf("s", T_Str),
+                T_RIO(T_Unit),
+              ),
               T_RIO(T_Unit),
             ),
-            T_RIO(T_Unit),
+            T_Str tTo T_RIO(T_Unit),
           ),
-          T_Str tTo T_RIO(T_Unit),
+          T_RIO(T_Str) tTo T_RIO(T_Unit),
         ),
-        T_RIO(T_Str) tTo T_RIO(T_Unit),
+        LintedIdf("input", T_RIO(T_Str)),
+        T_RIO(T_Unit),
       ),
-      LintedIdf("input", T_RIO(T_Str)),
-      T_RIO(T_Unit),
     )
 
   override val mb_mock_4 =
