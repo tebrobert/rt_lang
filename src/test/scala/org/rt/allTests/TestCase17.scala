@@ -23,6 +23,6 @@ object TestCase17 extends RtTestCase {
 
   val linted_3 =
     Left(
-      RtFail(""),
+      RtFail(""), // todo smth like "Unknown identifier"
     )
 }
