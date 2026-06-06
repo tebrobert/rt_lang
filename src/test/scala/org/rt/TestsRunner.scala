@@ -527,8 +527,7 @@ private object BrickRunner {
 
   def mocking(
       mockedCallsRef: Ref[List[RuntimeMock]],
-  )(
-      brick: Brick,
+  )(  brick: Brick,
   ): BuiltRio =
     BuiltRio(
       for {
