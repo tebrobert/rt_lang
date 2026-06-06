@@ -73,7 +73,7 @@ object TestCase7 extends RtTestCase {
       ),
     )
 
-  val mb_mock_4 =
+  override val mb_mock_4 =
     List(
       List(InputMock("x"), InputMock("y"), PrintMock("x"), PrintMock("y")),
       List(InputMock("s"), InputMock("s"), PrintMock("s"), PrintMock("s")),

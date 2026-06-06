@@ -43,7 +43,7 @@ object TestCase2 extends RtTestCase {
       T_RIO_Str,
     )
 
-  val mb_mock_4 =
+  override val mb_mock_4 =
     List(
       List(InputMock("")),
       List(InputMock("s")),

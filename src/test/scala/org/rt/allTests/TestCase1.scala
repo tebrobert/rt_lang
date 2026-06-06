@@ -22,7 +22,7 @@ object TestCase1 extends RtTestCase {
   val linted_3 =
     LintedIdf("input", T_RIO(T_Str))
 
-  val mb_mock_4 =
+  override val mb_mock_4 =
     List(
       List(InputMock("")),
       List(InputMock("s")),

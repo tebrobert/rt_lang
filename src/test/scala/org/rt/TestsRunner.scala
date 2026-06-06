@@ -68,7 +68,7 @@ trait RtTestCase {
   val tokens_1: List[Tok]
   val expr_2: Expr
   val linted_3: Linted
-  val mb_mock_4: List[List[RuntimeMock]]
+  val mb_mock_4: List[List[RuntimeMock]] = Nil
 }
 
 object TestsRunner extends ZIOSpecDefault {
