@@ -1,4 +1,4 @@
-- Make it build fully before run to detect errors
+- Make it build fully before run to detect errors (the last test)
 
 
 - Make more informative errors (via structures)
