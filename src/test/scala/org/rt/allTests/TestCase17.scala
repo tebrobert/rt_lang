@@ -20,10 +20,10 @@ object TestCase17 extends RtTestCase {
   val expr_2 =
     ExprIdf("a")
 
-  val linted_3 =
+  val linted_3 = // todo likely should fail here
     LintedIdf("a", T_A0)
 
-  val mb_mock_4 =
+  val mb_mock_4 = // todo make it optional and absent
     List(
       List(),
     )
