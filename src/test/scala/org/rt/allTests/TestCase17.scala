@@ -23,6 +23,6 @@ object TestCase17 extends RtTestCase {
 
   val linted_3 =
     Left(
-      RtFail(""), // todo smth like "Unknown identifier"
+      RtFail("Can't lint `ExprIdf(a)` with `Set(LintedIdf(a,A0))`"), // todo: proper case class errors
     )
 }
