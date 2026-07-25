@@ -333,6 +333,8 @@ object RtLib_3_Lint {
       .map(typ => LintedIdf(s, typ))
 
   def lint_set(expr: Expr): Set[Linted] =
+  {
+    val r =
     match_expr(
       case_lit_str = s => Iterable(LintedLit(s, T_Str)),
       case_lit_bint = i => Iterable(LintedLit(i, T_Bint)),
@@ -341,6 +343,10 @@ object RtLib_3_Lint {
       case_lambda_1 = lint_set_lambda_1,
       case_braced = lint_set,
     )(expr).toSet
+
+    println(s"[[lint_set: in `$expr` out `$r`]]")
+    r
+  }
 
   def lint(
       expr: Expr,
