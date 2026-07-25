@@ -357,7 +357,7 @@ object RtLib_3_Lint {
   def lint(
       expr: Expr,
   ): Either[RtFail, Linted] = {
-    val linted_set = lint_set(expr)
+    val linted_set = lint_set(expr/*, lintedIdentifiers = Map.empty*/)
     linted_set.toList match {
       case head :: Nil if !head.hasUnk =>
         Right(head)
