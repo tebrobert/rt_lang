@@ -269,7 +269,10 @@ object RtLib_3_Lint {
     ) // todo - try better typing
     val new_linted_f = linted_f.withTyp(new_typ2_f)
     val new_linted_x = linted_x.withTyp(new_typ2_f.t1)
+    val r=
     LintedCall1(new_linted_f2, new_linted_x, new_typ2_f.t2)
+    println(s"continue_linting_call_1: in linted_f `$linted_f` linted_x `$linted_x` out `$r`")
+    r
   }
 
   def lint_set_call_1(
