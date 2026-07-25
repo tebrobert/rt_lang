@@ -17,7 +17,7 @@ object RtLib_4_Build {
 
     sealed trait Built
 
-    case class BuiltUnit(u: Unit) extends Built // convenient for Scala's side-effects
+    case class BuiltUnit(u: Unit) extends Built // convenient for Scala's side effects
 
     case class BuiltStr(s: Str) extends Built
 
