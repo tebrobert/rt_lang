@@ -347,9 +347,7 @@ object RtLib_3_Lint {
   ): Either[RtFail, Linted] = {
     val linted_set = lint_set(expr)
     linted_set.toList match {
-      case head :: Nil
-          // if !head.hasUnk  // todo uncomment and fix errors
-          =>
+      case head :: Nil if !head.hasUnk =>
         Right(head)
       case _ => rtFail(s"Can't lint `$expr` with `$linted_set`")
     }
