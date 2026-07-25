@@ -139,6 +139,7 @@ object RtLib_3_Lint {
       linted_res: Linted,
       new_typ: Typ,
   ): LintedLambda1 = {
+    val r=
     new_typ match {
       case Unk0(_) =>
         rtFailUnsafe("not implemented...?")
@@ -154,6 +155,8 @@ object RtLib_3_Lint {
 
       case _ => rtFailUnsafe(s"Unexpected type `$new_typ`.")
     }
+    println(s"withTypLambda1: in linted_idf_x `$linted_idf_x` linted_res `$linted_res` new_typ `$new_typ` out `$r`")
+    r
   }
 
   private def withTypCall1(
