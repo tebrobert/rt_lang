@@ -279,11 +279,13 @@ object RtLib_3_Lint {
   }
 
   def lint_set_call_1(
+      lintedIdentifiers: Map[String, Linted],
+  )(
       expr_f: Expr,
       expr_x: Expr,
   ) =
     (for {
-      linted_f <- lint_set(expr_f)
+      linted_f <- lint_set(lintedIdentifiers)(expr_f)
       _ = rtAssertUnsafe(
         (linted_f.typ.isInstanceOf[Typ2]
           && linted_f.typ
@@ -291,7 +293,7 @@ object RtLib_3_Lint {
             .s == builtin_Func // todo - try better typing
         ) || linted_f.typ.isInstanceOf[Unk0],
       )
-      linted_x <- lint_set(expr_x)
+      linted_x <- lint_set(lintedIdentifiers)(expr_x)
 
       mb_current_linted_call1 = rt_try(() =>
         if (linted_f.typ.isInstanceOf[Unk0])
@@ -305,15 +307,17 @@ object RtLib_3_Lint {
 
   // todo - shorten
   def lint_set_lambda_1(
+      lintedIdentifiers: Map[String, Linted],
+  )(
       expr_arg: Expr,
       expr_res: Expr,
   ) =
     (for {
-      linted_arg_raw <- lint_set(expr_arg)
+      linted_arg_raw <- lint_set(lintedIdentifiers)(expr_arg)
       linted_arg = rt_assert_type_LintedIdf_Unsafe(
         linted_arg_raw,
       ) // todo - try better typing
-      linted_res <- lint_set(expr_res)
+      linted_res <- lint_set(lintedIdentifiers)(expr_res)
 
       mb_res = rt_try { () =>
         val linted_arg_s =
@@ -338,16 +342,20 @@ object RtLib_3_Lint {
       .getOrElse(s, Set(T_A0))
       .map(typ => LintedIdf(s, typ))
 
-  def lint_set(expr: Expr): Set[Linted] =
+  def lint_set(
+      lintedIdentifiers: Map[String, Linted],
+  )(
+      expr: Expr,
+  ): Set[Linted] =
   {
     val r =
     match_expr(
       case_lit_str = s => Iterable(LintedLit(s, T_Str)),
       case_lit_bint = i => Iterable(LintedLit(i, T_Bint)),
       case_idf = lint_set_idf,
-      case_call_1 = lint_set_call_1,
-      case_lambda_1 = lint_set_lambda_1,
-      case_braced = lint_set,
+      case_call_1 = lint_set_call_1(lintedIdentifiers),
+      case_lambda_1 = lint_set_lambda_1(lintedIdentifiers),
+      case_braced = lint_set(lintedIdentifiers),
     )(expr).toSet
 
     println(s"[[lint_set: in `$expr` out `$r`]]")
@@ -357,7 +365,7 @@ object RtLib_3_Lint {
   def lint(
       expr: Expr,
   ): Either[RtFail, Linted] = {
-    val linted_set = lint_set(expr/*, lintedIdentifiers = Map.empty*/) //todo
+    val linted_set = lint_set(lintedIdentifiers = Map.empty)(expr)
     linted_set.toList match {
       case head :: Nil if !head.hasUnk =>
         Right(head)

@@ -285,7 +285,7 @@ object TestsRunner extends ZIOSpecDefault {
         ).catchAll(fail => ZIO.succeed(println(fail)).as(assertTrue(false)))
       },
       test("lint_set") {
-        assertTrue(rt_try(() => lint_set(ExprIdf("num"))).isRight)
+        assertTrue(rt_try(() => lint_set(lintedIdentifiers = Map.empty)(ExprIdf("num"))).isRight)
       },
       //test("test_match_list_10") { // todo - to not bind to Scala's `match`
       //  //match_list(
@@ -329,7 +329,7 @@ object TestsRunner extends ZIOSpecDefault {
         eiExpr match {
           case Left(_) => assertTrue(false)
           case Right(expr) =>
-            val actual = lint_set(expr)
+            val actual = lint_set(lintedIdentifiers = Map.empty)(expr)
             val expected =
               Set(
                 LintedCall1(
